@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.Method;\n\nclass PrimitivesTest {\n\n  @Test\n  void testIsPrimitive_withPrimitiveClass() {\n    assertTrue(Primitives.isPrimitive(int.class));\n    assertTrue(Primitives.isPrimitive(boolean.class));\n    assertTrue(Primitives.isPrimitive(double.class));\n    assertTrue(Primitives.isPrimitive(void.class));\n  }\n\n  @Test\n  void testIsPrimitive_withNonPrimitiveClass() {\n    assertFalse(Primitives.isPrimitive(String.class));\n    assertFalse(Primitives.isPrimitive(Object.class));\n    assertFalse(Primitives.isPrimitive(Integer.class));\n  }\n\n  @Test\n  void testIsPrimitive_withNonClassType() throws Exception {\n    // Create a dummy Type that is not Class\n    Type type = new Type() {};\n    assertFalse(Primitives.isPrimitive(type));\n  }\n\n  @Test\n  void testPrivateConstructor() throws Exception {\n    var constructor = Primitives.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    Object instance = constructor.newInstance();\n    assertNotNull(instance);\n  }\n\n  @Test\n  void testIsPrimitive_usingReflection() throws Exception {\n    Method method = Primitives.class.getDeclaredMethod(\"isPrimitive\", Type.class);\n    method.setAccessible(true);\n\n    assertTrue((Boolean) method.invoke(null, int.class));\n    assertFalse((Boolean) method.invoke(null, String.class));\n    assertFalse((Boolean) method.invoke(null, new Type() {}));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 243,
+  "completion_tokens": 329,
+  "total_tokens": 572,
+  "llm_elapsed_time_seconds": 5.6
+}

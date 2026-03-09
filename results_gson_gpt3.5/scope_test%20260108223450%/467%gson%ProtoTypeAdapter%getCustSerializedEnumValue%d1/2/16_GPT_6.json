@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmrSriQXNIV14mzom1xvihuy5kzC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.EnumValueOptions;\nimport com.google.protobuf.Extension;\nimport com.google.common.base.CaseFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.util.Collections;\nimport java.util.HashSet;\nimport java.util.Set;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private Set<Extension<EnumValueOptions, String>> serializedEnumValueExtensions;\n\n  // Mock class to replace EnumSerialization for tests\n  static class MockEnumSerialization {}\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Prepare a mock Extension\n    @SuppressWarnings(\"unchecked\")\n    Extension<EnumValueOptions, String> mockExtension = mock(Extension.class);\n\n    serializedEnumValueExtensions = new HashSet<>();\n    serializedEnumValueExtensions.add(mockExtension);\n\n    // Use the mock class instead of Class.forName\n    Class<?> enumSerializationClass = MockEnumSerialization.class;\n    Object enumSerialization = mock(enumSerializationClass);\n\n    Constructor<ProtoTypeAdapter> constructor = ProtoTypeAdapter.class.getDeclaredConstructor(\n        enumSerializationClass,\n        CaseFormat.class,\n        CaseFormat.class,\n        Set.class,\n        Set.class\n    );\n    constructor.setAccessible(true);\n\n    CaseFormat protoFormat = CaseFormat.LOWER_UNDERSCORE;\n    CaseFormat jsonFormat = CaseFormat.LOWER_CAMEL;\n    Set<Extension<com.google.protobuf.DescriptorProtos.FieldOptions, String>> serializedNameExtensions = Collections.emptySet();\n\n    protoTypeAdapter = constructor.newInstance(\n        enumSerialization,\n        protoFormat,\n        jsonFormat,\n        serializedNameExtensions,\n        serializedEnumValueExtensions\n    );\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsExtensionValue_whenExtensionPresent() throws Exception {\n    EnumValueOptions options = mock(EnumValueOptions.class);\n    Extension<EnumValueOptions, String> extension = serializedEnumValueExtensions.iterator().next();\n\n    // Mock options.hasExtension(extension) to true\n    when(options.hasExtension(extension)).thenReturn(true);\n    // Mock options.getExtension(extension) to return a test string\n    when(options.getExtension(extension)).thenReturn(\"customValue\");\n\n    // Use reflection to invoke private method\n    var method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\", EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultValue\");\n\n    assertEquals(\"customValue\", result);\n    verify(options).hasExtension(extension);\n    verify(options).getExtension(extension);\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsDefaultValue_whenNoExtensionPresent() throws Exception {\n    EnumValueOptions options = mock(EnumValueOptions.class);\n\n    // Mock options.hasExtension(extension) to false for all extensions\n    for (Extension<EnumValueOptions, String> extension : serializedEnumValueExtensions) {\n      when(options.hasExtension(extension)).thenReturn(false);\n    }\n\n    var method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\", EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultValue\");\n\n    assertEquals(\"defaultValue\", result);\n    for (Extension<EnumValueOptions, String> extension : serializedEnumValueExtensions) {\n      verify(options).hasExtension(extension);\n      verify(options, never()).getExtension(extension);\n    }\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsDefaultValue_whenExtensionsEmpty() throws Exception {\n    // Use the mock class instead of Class.forName\n    Class<?> enumSerializationClass = MockEnumSerialization.class;\n    Object enumSerialization = mock(enumSerializationClass);\n\n    Constructor<ProtoTypeAdapter> constructor = ProtoTypeAdapter.class.getDeclaredConstructor(\n        enumSerializationClass,\n        CaseFormat.class,\n        CaseFormat.class,\n        Set.class,\n        Set.class\n    );\n    constructor.setAccessible(true);\n\n    CaseFormat protoFormat = CaseFormat.LOWER_UNDERSCORE;\n    CaseFormat jsonFormat = CaseFormat.LOWER_CAMEL;\n    Set<Extension<com.google.protobuf.DescriptorProtos.FieldOptions, String>> serializedNameExtensions = Collections.emptySet();\n    Set<Extension<EnumValueOptions, String>> emptyExtensions = Collections.emptySet();\n\n    ProtoTypeAdapter adapterWithEmptyExtensions = constructor.newInstance(\n        enumSerialization,\n        protoFormat,\n        jsonFormat,\n        serializedNameExtensions,\n        emptyExtensions\n    );\n\n    EnumValueOptions options = mock(EnumValueOptions.class);\n\n    var method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\", EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(adapterWithEmptyExtensions, options, \"defaultValue\");\n\n    assertEquals(\"defaultValue\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888554,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1027,
+    "prompt_tokens": 2667,
+    "total_tokens": 3694,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.2
+  }
+}

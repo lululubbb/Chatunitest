@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxZgEGHMPxM1KBI8OVil7p3Xv0h7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a spy of CSVParser with a dummy Reader and CSVFormat to allow mocking nextRecord()\n        Reader dummyReader = mock(Reader.class);\n        CSVFormat dummyFormat = mock(CSVFormat.class);\n        parser = Mockito.spy(new CSVParser(dummyReader, dummyFormat));\n\n        // Reset recordNumber and other fields if needed via reflection\n        setField(parser, \"recordNumber\", 0L);\n    }\n\n    @Test\n    public void testGetRecords_multipleRecords() throws IOException {\n        CSVRecord rec1 = mock(CSVRecord.class);\n        CSVRecord rec2 = mock(CSVRecord.class);\n        CSVRecord rec3 = mock(CSVRecord.class);\n\n        // Mock nextRecord() to return three records then null\n        when(parser.nextRecord())\n            .thenReturn(rec1)\n            .thenReturn(rec2)\n            .thenReturn(rec3)\n            .thenReturn(null);\n\n        List<CSVRecord> records = parser.getRecords();\n\n        assertNotNull(records);\n        assertEquals(3, records.size());\n        assertSame(rec1, records.get(0));\n        assertSame(rec2, records.get(1));\n        assertSame(rec3, records.get(2));\n    }\n\n    @Test\n    public void testGetRecords_noRecords() throws IOException {\n        // Mock nextRecord() to return null immediately\n        when(parser.nextRecord()).thenReturn(null);\n\n        List<CSVRecord> records = parser.getRecords();\n\n        assertNotNull(records);\n        assertTrue(records.isEmpty());\n    }\n\n    // Utility method to set private fields via reflection\n    private static void setField(Object target, String fieldName, Object value) throws Exception {\n        java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n\n    // Additional test to invoke private method nextRecord() via reflection (optional)\n    @Test\n    public void testNextRecordViaReflection() throws Exception {\n        // Setup nextRecord() to return null via spy (default behavior)\n        Method nextRecordMethod = CSVParser.class.getDeclaredMethod(\"nextRecord\");\n        nextRecordMethod.setAccessible(true);\n\n        Object result = nextRecordMethod.invoke(parser);\n        assertNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691408,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 552,
+    "prompt_tokens": 638,
+    "total_tokens": 1190,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.37
+  }
+}

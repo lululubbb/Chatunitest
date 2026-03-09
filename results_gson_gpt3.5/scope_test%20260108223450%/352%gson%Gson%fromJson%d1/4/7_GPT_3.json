@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4Lu5UIXqwUKgjxuPWwz0dmNEwU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.Primitives;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass Gson_fromJson_JsonElement_Class_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testFromJson_withValidJsonElementAndClass_returnsCastedObject() throws Exception {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<String> classOfT = String.class;\n    String expectedObject = \"testValue\";\n\n    // Mock static methods Primitives.wrap and cast\n    try (MockedStatic<Primitives> primitivesMockedStatic = mockStatic(Primitives.class)) {\n      // Mock Primitives.wrap(classOfT) to return Class<String>\n      primitivesMockedStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(classOfT);\n\n      // Spy on gson to mock fromJson(JsonElement, TypeToken)\n      Gson spyGson = spy(gson);\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n\n      doReturn(expectedObject).when(spyGson).fromJson(jsonElement, typeToken);\n\n      // Act\n      Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Class.class);\n      fromJsonMethod.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      String actualObject = (String) fromJsonMethod.invoke(spyGson, jsonElement, classOfT);\n\n      // Assert\n      assertEquals(expectedObject, actualObject);\n      primitivesMockedStatic.verify(() -> Primitives.wrap(classOfT));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n\n  @Test\n  public void testFromJson_withNullJsonElement_returnsNull() throws Exception {\n    // Arrange\n    JsonElement jsonElement = null;\n    Class<String> classOfT = String.class;\n\n    try (MockedStatic<Primitives> primitivesMockedStatic = mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(classOfT);\n\n      Gson spyGson = spy(gson);\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n\n      doReturn(null).when(spyGson).fromJson(jsonElement, typeToken);\n\n      // Act\n      Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Class.class);\n      fromJsonMethod.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      String actualObject = (String) fromJsonMethod.invoke(spyGson, jsonElement, classOfT);\n\n      // Assert\n      assertNull(actualObject);\n      primitivesMockedStatic.verify(() -> Primitives.wrap(classOfT));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n\n  @Test\n  public void testFromJson_whenFromJsonThrowsJsonSyntaxException_propagatesException() throws Exception {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<String> classOfT = String.class;\n\n    try (MockedStatic<Primitives> primitivesMockedStatic = mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(classOfT);\n\n      Gson spyGson = spy(gson);\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n\n      doThrow(new JsonSyntaxException(\"syntax error\")).when(spyGson).fromJson(jsonElement, typeToken);\n\n      // Act & Assert\n      Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Class.class);\n      fromJsonMethod.setAccessible(true);\n\n      InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n        fromJsonMethod.invoke(spyGson, jsonElement, classOfT);\n      });\n      Throwable cause = thrown.getCause();\n      assertTrue(cause instanceof JsonSyntaxException);\n      assertEquals(\"syntax error\", cause.getMessage());\n\n      primitivesMockedStatic.verify(() -> Primitives.wrap(classOfT));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885509,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 954,
+    "prompt_tokens": 2755,
+    "total_tokens": 3709,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.87
+  }
+}

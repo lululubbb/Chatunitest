@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnFvEcR6A280qOx88MZnVQnLUPHL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.ParseException;\nimport java.text.SimpleDateFormat;\nimport java.text.ParsePosition;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\nimport java.util.Locale;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n    private Method deserializeToDateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        dateTypeAdapter = new DateTypeAdapter();\n        deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n    }\n\n    private void setDateFormats(List<DateFormat> dateFormats) throws Exception {\n        Field dateFormatsField = DateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        dateFormatsField.set(dateTypeAdapter, dateFormats);\n    }\n\n    @Test\n    public void testDeserializeToDate_withMatchingDateFormat() throws Exception {\n        // Prepare a date string and corresponding DateFormat\n        String dateString = \"2023-06-15\";\n        SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.US);\n        Date expectedDate = sdf.parse(dateString);\n\n        List<DateFormat> dateFormats = new ArrayList<>();\n        dateFormats.add(sdf);\n        setDateFormats(dateFormats);\n\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.nextString()).thenReturn(dateString);\n\n        Date actualDate = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n        assertEquals(expectedDate, actualDate);\n    }\n\n    @Test\n    public void testDeserializeToDate_withMultipleDateFormats_firstFailsSecondSucceeds() throws Exception {\n        String dateString = \"15/06/2023\";\n        SimpleDateFormat sdfFail = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.US);\n        SimpleDateFormat sdfSuccess = new SimpleDateFormat(\"dd/MM/yyyy\", Locale.US);\n        Date expectedDate = sdfSuccess.parse(dateString);\n\n        List<DateFormat> dateFormats = new ArrayList<>();\n        dateFormats.add(sdfFail);\n        dateFormats.add(sdfSuccess);\n        setDateFormats(dateFormats);\n\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.nextString()).thenReturn(dateString);\n\n        Date actualDate = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n        assertEquals(expectedDate, actualDate);\n    }\n\n    @Test\n    public void testDeserializeToDate_withEmptyDateFormats_usesISO8601Utils() throws Exception {\n        // Empty dateFormats list\n        setDateFormats(new ArrayList<>());\n\n        String iso8601DateString = \"2023-06-15T12:34:56Z\";\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.nextString()).thenReturn(iso8601DateString);\n\n        Date actualDate = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n        // We cannot easily build expected Date from ISO8601Utils, but we can verify not null\n        assertNotNull(actualDate);\n    }\n\n    @Test\n    public void testDeserializeToDate_withInvalidDate_throwsJsonSyntaxException() throws Exception {\n        setDateFormats(new ArrayList<>());\n\n        String invalidDateString = \"invalid-date\";\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.nextString()).thenReturn(invalidDateString);\n        when(jsonReader.getPreviousPath()).thenReturn(\"$.date\");\n\n        JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n            deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n        });\n\n        // The exception is wrapped in InvocationTargetException, unwrap it\n        Throwable cause = thrown.getCause();\n        if (cause != null) {\n            assertTrue(cause instanceof JsonSyntaxException);\n            assertTrue(cause.getMessage().contains(\"Failed parsing\"));\n            assertTrue(cause.getMessage().contains(invalidDateString));\n            assertTrue(cause.getMessage().contains(\"$.date\"));\n        } else {\n            // If no cause, check the thrown message\n            assertTrue(thrown.getMessage().contains(\"Failed parsing\"));\n            assertTrue(thrown.getMessage().contains(invalidDateString));\n            assertTrue(thrown.getMessage().contains(\"$.date\"));\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890071,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 975,
+    "prompt_tokens": 1154,
+    "total_tokens": 2129,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 40.17
+  }
+}

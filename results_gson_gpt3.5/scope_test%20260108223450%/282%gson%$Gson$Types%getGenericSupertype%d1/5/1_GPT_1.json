@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmgqY8VSIJ3mh83O2f77JWfpAstr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetGenericSupertype_sameType_returnsContext() throws Exception {\n    Class<?> clazz = String.class;\n    Type context = clazz;\n    Class<?> supertype = clazz;\n\n    Type result = invokeGetGenericSupertype(context, clazz, supertype);\n\n    assertEquals(context, result);\n  }\n\n  interface InterfaceA {}\n  interface InterfaceB extends InterfaceA {}\n  static class ClassWithInterfaces implements InterfaceB {}\n\n  @Test\n  void testGetGenericSupertype_interfaceDirectMatch_returnsGenericInterface() throws Exception {\n    ClassWithInterfaces instance = new ClassWithInterfaces();\n    Class<?> rawType = ClassWithInterfaces.class;\n    Class<?> supertype = InterfaceB.class;\n\n    Type result = invokeGetGenericSupertype(rawType, rawType, supertype);\n\n    Type[] genericInterfaces = rawType.getGenericInterfaces();\n    int index = -1;\n    Class<?>[] interfaces = rawType.getInterfaces();\n    for (int i = 0; i < interfaces.length; i++) {\n      if (interfaces[i] == supertype) {\n        index = i;\n        break;\n      }\n    }\n    assertNotEquals(-1, index);\n    assertEquals(genericInterfaces[index], result);\n  }\n\n  interface SuperInterface {}\n  interface SubInterface extends SuperInterface {}\n  static class ImplClass implements SubInterface {}\n\n  @Test\n  void testGetGenericSupertype_interfaceAssignableFromRecursive() throws Exception {\n    Class<?> rawType = ImplClass.class;\n    Class<?> supertype = SuperInterface.class;\n\n    Type result = invokeGetGenericSupertype(rawType, rawType, supertype);\n\n    // Should return the generic interface of SubInterface from ImplClass or from SubInterface\n    assertNotNull(result);\n    assertTrue(result instanceof Type);\n  }\n\n  static class SuperClass<T> {}\n  static class SubClass extends SuperClass<String> {}\n\n  @Test\n  void testGetGenericSupertype_superclassDirectMatch_returnsGenericSuperclass() throws Exception {\n    Class<?> rawType = SubClass.class;\n    Class<?> supertype = SuperClass.class;\n\n    Type result = invokeGetGenericSupertype(rawType, rawType, supertype);\n\n    Type genericSuperclass = rawType.getGenericSuperclass();\n    assertEquals(genericSuperclass, result);\n  }\n\n  static class GrandParent {}\n  static class Parent extends GrandParent {}\n  static class Child extends Parent {}\n\n  @Test\n  void testGetGenericSupertype_superclassAssignableFromRecursive() throws Exception {\n    Class<?> rawType = Child.class;\n    Class<?> supertype = GrandParent.class;\n\n    Type result = invokeGetGenericSupertype(rawType, rawType, supertype);\n\n    assertNotNull(result);\n    assertTrue(result instanceof Type);\n  }\n\n  @Test\n  void testGetGenericSupertype_noMatch_returnsSupertype() throws Exception {\n    Class<?> rawType = String.class;\n    Class<?> supertype = Number.class;\n\n    Type result = invokeGetGenericSupertype(rawType, rawType, supertype);\n\n    assertEquals(supertype, result);\n  }\n\n  private Type invokeGetGenericSupertype(Type context, Class<?> rawType, Class<?> supertype) throws Exception {\n    java.lang.reflect.Method method = $Gson$Types.class.getDeclaredMethod(\"getGenericSupertype\", Type.class, Class.class, Class.class);\n    method.setAccessible(true);\n    return (Type) method.invoke(null, context, rawType, supertype);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887896,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 749,
+    "prompt_tokens": 861,
+    "total_tokens": 1610,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.54
+  }
+}

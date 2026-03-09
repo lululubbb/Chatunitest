@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cwi4g9V65GhUei0ZSB1XgI7BZ0a0W",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.verification.VerificationMode;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithEscape_validEscapeCharacter_returnCSVFormatObject() {\n        // Given\n        char escape = '\\\\';\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // When\n        CSVFormat result = csvFormat.withEscape(escape);\n\n        // Then\n        assertNotNull(result);\n        assertEquals(escape, result.getEscapeCharacter());\n    }\n\n    @Test\n    public void testWithEscape_invalidEscapeCharacter_throwIllegalArgumentException() {\n        // Given\n        char escape = '\\n';\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // When\n        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n            csvFormat.withEscape(escape);\n        });\n\n        // Then\n        assertEquals(\"The escape character cannot be a line break\", exception.getMessage());\n    }\n\n    @Test\n    public void testWithEscape_privateMethodIsLineBreakCalled() throws Exception {\n        // Given\n        char escape = 'a';\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        CSVFormat spyCsvFormat = spy(csvFormat);\n\n        // When\n        spyCsvFormat.withEscape(escape);\n\n        // Then\n        try {\n            spyCsvFormat.getClass().getDeclaredMethod(\"isLineBreak\", char.class).setAccessible(true);\n            verifyPrivate(spyCsvFormat, times(1), \"isLineBreak\", 'a');\n        } catch (NoSuchMethodException | InvocationTargetException e) {\n            fail(\"isLineBreak method not found or could not be invoked\");\n        }\n    }\n\n    private void verifyPrivate(Object object, VerificationMode mode, String methodName, char escape) throws NoSuchMethodException, InvocationTargetException {\n        try {\n            object.getClass().getDeclaredMethod(methodName, char.class).setAccessible(true);\n            verify(object, mode).invoke(methodName, escape);\n        } catch (IllegalAccessException e) {\n            fail(\"Method could not be accessed\");\n        }\n    }\n\n    private Object invoke(String methodName, char escape) {\n        // Method intentionally left blank for test compilation\n        return null;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768108482,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 472,
+    "prompt_tokens": 1606,
+    "total_tokens": 2078,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.58
+  }
+}

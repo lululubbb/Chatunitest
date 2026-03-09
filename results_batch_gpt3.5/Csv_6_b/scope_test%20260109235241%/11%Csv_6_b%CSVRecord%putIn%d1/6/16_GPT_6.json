@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Fcdhk44AhxVZ9IQbQrZ9u5nff5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n        mapping.put(\"header3\", 2);\n\n        values = new String[] { \"value1\", \"value2\", \"value3\" };\n\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n    }\n\n    @Test\n    void testPutIn_withEmptyMap() {\n        Map<String, String> map = new HashMap<>();\n\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertEquals(3, map.size());\n        assertEquals(\"value1\", map.get(\"header1\"));\n        assertEquals(\"value2\", map.get(\"header2\"));\n        assertEquals(\"value3\", map.get(\"header3\"));\n    }\n\n    @Test\n    void testPutIn_withNonEmptyMapOverwrites() {\n        Map<String, String> map = new HashMap<>();\n        map.put(\"header1\", \"oldValue\");\n        map.put(\"otherKey\", \"otherValue\");\n\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertEquals(4, map.size());\n        assertEquals(\"value1\", map.get(\"header1\")); // overwritten\n        assertEquals(\"value2\", map.get(\"header2\"));\n        assertEquals(\"value3\", map.get(\"header3\"));\n        assertEquals(\"otherValue\", map.get(\"otherKey\")); // untouched\n    }\n\n    @Test\n    void testPutIn_withEmptyMapping() throws NoSuchFieldException, IllegalAccessException {\n        // Use reflection to set private final field mapping to empty map\n        Map<String, Integer> emptyMapping = new HashMap<>();\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n        // Remove final modifier if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(mappingField, mappingField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n        mappingField.set(csvRecord, emptyMapping);\n\n        Map<String, String> map = new HashMap<>();\n        map.put(\"existingKey\", \"existingValue\");\n\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertEquals(1, map.size());\n        assertEquals(\"existingValue\", map.get(\"existingKey\"));\n    }\n\n    @Test\n    void testPutIn_withMappingIndexOutOfBounds() {\n        // Add a mapping entry with index out of bounds to test behavior\n        mapping.put(\"badHeader\", 10);\n\n        // Recreate CSVRecord with this mapping\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n\n        Map<String, String> map = new HashMap<>();\n\n        // The method putIn does not have explicit bounds check, so it will throw ArrayIndexOutOfBoundsException\n        // We test that this exception is thrown\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> csvRecord.putIn(map));\n    }\n\n    @Test\n    void testPutIn_withDifferentMapImplementation() {\n        // Use LinkedHashMap to test generic M\n        java.util.LinkedHashMap<String, String> linkedHashMap = new java.util.LinkedHashMap<>();\n        linkedHashMap.put(\"existingKey\", \"existingValue\");\n\n        java.util.LinkedHashMap<String, String> result = csvRecord.putIn(linkedHashMap);\n\n        assertSame(linkedHashMap, result);\n        assertEquals(4, linkedHashMap.size());\n        assertEquals(\"value1\", linkedHashMap.get(\"header1\"));\n        assertEquals(\"value2\", linkedHashMap.get(\"header2\"));\n        assertEquals(\"value3\", linkedHashMap.get(\"header3\"));\n        assertEquals(\"existingValue\", linkedHashMap.get(\"existingKey\"));\n    }\n\n    @Test\n    void testPutIn_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        Map<String, String> map = new HashMap<>();\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        assertSame(map, result);\n        assertEquals(3, map.size());\n        assertEquals(\"value1\", map.get(\"header1\"));\n        assertEquals(\"value2\", map.get(\"header2\"));\n        assertEquals(\"value3\", map.get(\"header3\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974620,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1072,
+    "prompt_tokens": 1575,
+    "total_tokens": 2647,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.2
+  }
+}

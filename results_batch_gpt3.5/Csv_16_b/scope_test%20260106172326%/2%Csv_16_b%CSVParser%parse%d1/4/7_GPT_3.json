@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxbVSSIiKuwpXScr4PbtpsyYxVlP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    @Test\n    void testParse_withValidInputStreamAndCharsetAndFormat() throws IOException {\n        String csvContent = \"header1,header2\\nvalue1,value2\\n\";\n        InputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Since CSVParser is final and static methods cannot be mocked without mockStatic,\n        // just call the real method and verify it returns non-null and does not throw.\n        CSVParser result = CSVParser.parse(inputStream, StandardCharsets.UTF_8, format);\n\n        assertNotNull(result);\n    }\n\n    @Test\n    void testParse_withNullInputStream_throwsException() {\n        CSVFormat format = mock(CSVFormat.class);\n        InputStream inputStream = null;\n\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            CSVParser.parse(inputStream, StandardCharsets.UTF_8, format);\n        });\n        assertTrue(thrown.getMessage().contains(\"inputStream\"));\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsException() {\n        String csvContent = \"a,b\\n1,2\\n\";\n        InputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));\n        CSVFormat format = null;\n\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            CSVParser.parse(inputStream, StandardCharsets.UTF_8, format);\n        });\n        assertTrue(thrown.getMessage().contains(\"format\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691521,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 387,
+    "prompt_tokens": 1665,
+    "total_tokens": 2052,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.16
+  }
+}

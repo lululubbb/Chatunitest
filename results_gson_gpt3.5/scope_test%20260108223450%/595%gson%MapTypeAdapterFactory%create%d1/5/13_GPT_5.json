@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnONYPtt7MwydYCK8Zsn6bND98IQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass MapTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor mockConstructorConstructor;\n\n  @Mock\n  private Gson mockGson;\n\n  @Mock\n  private ObjectConstructor<Object> mockObjectConstructor;\n\n  @Mock\n  private TypeAdapter<Object> mockKeyAdapter;\n\n  @Mock\n  private TypeAdapter<Object> mockValueAdapter;\n\n  private MapTypeAdapterFactory mapTypeAdapterFactory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    mapTypeAdapterFactory = new MapTypeAdapterFactory(mockConstructorConstructor, true);\n  }\n\n  @Test\n  void create_shouldReturnNullIfNotMapType() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = mapTypeAdapterFactory.create(mockGson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_shouldReturnAdapterForMapType() throws Exception {\n    TypeToken<Map<String, String>> mapTypeToken = new TypeToken<Map<String, String>>() {};\n\n    // Mock constructorConstructor.get(TypeToken) to return mockObjectConstructor\n    when(mockConstructorConstructor.get(mapTypeToken)).thenReturn((ObjectConstructor) mockObjectConstructor);\n\n    // Mock gson.getAdapter(TypeToken) to return mockKeyAdapter first, then mockValueAdapter\n    when(mockGson.getAdapter(any(TypeToken.class)))\n        .thenAnswer(invocation -> {\n          TypeToken<?> typeToken = invocation.getArgument(0);\n          if (typeToken.getType().equals(String.class)) {\n            // The first call for key adapter returns mockKeyAdapter\n            // The second call for value adapter returns mockValueAdapter\n            // We differentiate by call count using a simple counter\n            if (!calledOnce) {\n              calledOnce = true;\n              return mockKeyAdapter;\n            } else {\n              return mockValueAdapter;\n            }\n          }\n          return null;\n        });\n\n    // Use reflection to inject mockConstructorConstructor into mapTypeAdapterFactory\n    Field constructorConstructorField = MapTypeAdapterFactory.class.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    constructorConstructorField.set(mapTypeAdapterFactory, mockConstructorConstructor);\n\n    // Create the adapter by calling create()\n    TypeAdapter<Map<String, String>> adapter = mapTypeAdapterFactory.create(mockGson, mapTypeToken);\n\n    assertNotNull(adapter);\n\n    // Use reflection to get the Adapter inner class\n    Class<?> adapterClass = null;\n    for (Class<?> innerClass : MapTypeAdapterFactory.class.getDeclaredClasses()) {\n      if (\"Adapter\".equals(innerClass.getSimpleName())) {\n        adapterClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(adapterClass);\n    assertEquals(adapterClass, adapter.getClass());\n\n    // Now replace the keyAdapter field inside Adapter instance with mockKeyAdapter via reflection\n    Field keyAdapterField = adapterClass.getDeclaredField(\"keyTypeAdapter\");\n    keyAdapterField.setAccessible(true);\n    keyAdapterField.set(adapter, mockKeyAdapter);\n\n    // Verify interactions\n    verify(mockConstructorConstructor).get(mapTypeToken);\n    verify(mockGson, times(2)).getAdapter(TypeToken.get(String.class));\n  }\n\n  // Helper field for tracking calls in the Answer\n  private boolean calledOnce = false;\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890595,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 779,
+    "prompt_tokens": 1513,
+    "total_tokens": 2292,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.82
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmeBXtK8Uwmjr6cdJib56UqSEE7s",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReader_isLiteral_Test {\n\n  private JsonReader jsonReader;\n  private Method isLiteralMethod;\n  private Method checkLenientMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    // Mock Reader since JsonReader requires it but isLiteral does not use it\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n\n    // Access private method isLiteral(char)\n    isLiteralMethod = JsonReader.class.getDeclaredMethod(\"isLiteral\", char.class);\n    isLiteralMethod.setAccessible(true);\n\n    // Access private method checkLenient()\n    checkLenientMethod = JsonReader.class.getDeclaredMethod(\"checkLenient\");\n    checkLenientMethod.setAccessible(true);\n  }\n\n  private boolean invokeIsLiteral(char c) throws Throwable {\n    try {\n      return (boolean) isLiteralMethod.invoke(jsonReader, c);\n    } catch (InvocationTargetException e) {\n      // Unwrap IOException thrown by isLiteral\n      throw e.getCause();\n    }\n  }\n\n  private void verifyCheckLenientCalled(Object spyReader) throws Exception {\n    // Verify that checkLenient() was called once on spyReader by using reflection\n    // We'll track invocations by overriding checkLenient via Mockito spy and verify via spy's internal Mockito data\n    // Since direct verify(spyReader).checkLenient() is not possible (private method),\n    // we use Mockito's verify(spyReader, times(1)) via reflection on the spy's invocation handler.\n\n    // Alternative approach: use Mockito's verify with a wrapper spy class that exposes checkLenient\n    // But here, we simulate by invoking checkLenient and catching if it was called\n\n    // Instead, we can verify by spying on the checkLenientMethod via Mockito's verify on a wrapper method.\n    // Since this is complicated, the simplest way is to count invocations using Mockito's mocking details.\n\n    // However, Mockito does not track private method calls for verification.\n    // So we use a workaround: create a subclass that overrides checkLenient and counts calls.\n\n    // This method is a placeholder. Actual verification is done in the test method below.\n  }\n\n  @Test\n  void testIsLiteral_returnsFalseForCharsThatReturnFalseWithoutLenientCheck() throws Throwable {\n    // Characters that return false without calling checkLenient()\n    char[] chars = {\n        '{', '}', '[', ']', ':', ',', ' ', '\\t', '\\f', '\\r', '\\n'\n    };\n    for (char c : chars) {\n      assertFalse(invokeIsLiteral(c), \"Expected false for char: '\" + c + \"'\");\n    }\n  }\n\n  @Test\n  void testIsLiteral_callsCheckLenientAndReturnsFalseForLenientChars() throws Throwable {\n    // Characters that call checkLenient() then fall through to return false\n    char[] chars = {'/', '\\\\', ';', '#', '='};\n\n    // Create a subclass of JsonReader to override checkLenient and track calls\n    class JsonReaderSpy extends JsonReader {\n      int checkLenientCallCount = 0;\n\n      JsonReaderSpy(Reader in) {\n        super(in);\n      }\n\n      @Override\n      protected void finalize() throws Throwable {\n        super.finalize();\n      }\n\n      @Override\n      void checkLenient() throws IOException {\n        checkLenientCallCount++;\n        super.checkLenient();\n      }\n    }\n\n    JsonReaderSpy spyReader = new JsonReaderSpy(mock(Reader.class));\n\n    // Use reflection to access the private isLiteral method on spyReader\n    for (char c : chars) {\n      boolean result;\n      try {\n        result = (boolean) isLiteralMethod.invoke(spyReader, c);\n      } catch (InvocationTargetException e) {\n        throw e.getCause();\n      }\n      assertFalse(result, \"Expected false for char: '\" + c + \"'\");\n\n      // Verify that checkLenient() was called once\n      assertEquals(1, spyReader.checkLenientCallCount, \"Expected checkLenient() to be called once for char: '\" + c + \"'\");\n\n      // Reset count for next iteration\n      spyReader.checkLenientCallCount = 0;\n    }\n  }\n\n  @Test\n  void testIsLiteral_returnsTrueForOtherChars() throws Throwable {\n    // Characters that should return true (not in any case above)\n    char[] chars = {\n        'a', 'Z', '0', '9', '_', '+', '-', '*', '%', '@', '^', '!', '`', '~'\n    };\n    for (char c : chars) {\n      assertTrue(invokeIsLiteral(c), \"Expected true for char: '\" + c + \"'\");\n    }\n  }\n\n  @Test\n  void testIsLiteral_checkLenientThrowsIOException() throws Throwable {\n    // Create a subclass of JsonReader to override checkLenient and throw IOException\n    class JsonReaderSpy extends JsonReader {\n      JsonReaderSpy(Reader in) {\n        super(in);\n      }\n\n      @Override\n      void checkLenient() throws IOException {\n        throw new IOException(\"lenient check failed\");\n      }\n    }\n\n    JsonReaderSpy spyReader = new JsonReaderSpy(mock(Reader.class));\n\n    char[] chars = {'/', '\\\\', ';', '#', '='};\n    for (char c : chars) {\n      try {\n        isLiteralMethod.invoke(spyReader, c);\n        fail(\"Expected IOException for char: '\" + c + \"'\");\n      } catch (InvocationTargetException e) {\n        Throwable cause = e.getCause();\n        assertTrue(cause instanceof IOException);\n        assertEquals(\"lenient check failed\", cause.getMessage());\n      }\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887731,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1245,
+    "prompt_tokens": 2047,
+    "total_tokens": 3292,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.61
+  }
+}

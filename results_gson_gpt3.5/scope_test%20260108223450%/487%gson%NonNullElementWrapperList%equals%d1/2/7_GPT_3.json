@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlcnxkWHcQktl4iSYubz7noRbTg1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.util.ArrayList;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private ArrayList<String> mockDelegate;\n  private NonNullElementWrapperList<String> list;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    mockDelegate = mock(ArrayList.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    // Use reflection to set the private final delegate field to the mock\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, mockDelegate);\n  }\n\n  @Test\n  void equals_returnsTrue_whenDelegateEqualsSameObject() {\n    // Use doReturn because equals is final and cannot be stubbed with when()\n    doReturn(true).when(mockDelegate).equals(list);\n    assertTrue(list.equals(list));\n    verify(mockDelegate).equals(list);\n  }\n\n  @Test\n  void equals_returnsTrue_whenDelegateEqualsAnotherObject() {\n    Object other = new Object();\n    doReturn(true).when(mockDelegate).equals(other);\n    assertTrue(list.equals(other));\n    verify(mockDelegate).equals(other);\n  }\n\n  @Test\n  void equals_returnsFalse_whenDelegateEqualsReturnsFalse() {\n    Object other = new Object();\n    doReturn(false).when(mockDelegate).equals(other);\n    assertFalse(list.equals(other));\n    verify(mockDelegate).equals(other);\n  }\n\n  @Test\n  void equals_returnsFalse_whenDelegateEqualsNull() {\n    doReturn(false).when(mockDelegate).equals(null);\n    assertFalse(list.equals(null));\n    verify(mockDelegate).equals(null);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883801,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 389,
+    "prompt_tokens": 2345,
+    "total_tokens": 2734,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.75
+  }
+}

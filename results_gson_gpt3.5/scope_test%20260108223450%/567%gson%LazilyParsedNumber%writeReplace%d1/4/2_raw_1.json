@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectStreamException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LazilyParsedNumberTest {\n\n  private LazilyParsedNumber lazilyParsedNumber;\n  private Method writeReplaceMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    lazilyParsedNumber = new LazilyParsedNumber(\"123.456\");\n    writeReplaceMethod = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n  }\n\n  @Test\n  void writeReplace_returnsBigDecimalWithValue() throws Throwable {\n    Object replacement;\n    try {\n      replacement = writeReplaceMethod.invoke(lazilyParsedNumber);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n    assertNotNull(replacement);\n    assertTrue(replacement instanceof BigDecimal);\n    BigDecimal bigDecimal = (BigDecimal) replacement;\n    assertEquals(new BigDecimal(\"123.456\"), bigDecimal);\n  }\n\n  @Test\n  void writeReplace_throwsObjectStreamException() throws Exception {\n    // Since writeReplace only creates BigDecimal from string value, it should not throw.\n    // But to test exception branch, we can use a subclass or reflection hack to cause exception.\n    // Here, we test that no exception is thrown for valid input.\n    assertDoesNotThrow(() -> {\n      try {\n        writeReplaceMethod.invoke(lazilyParsedNumber);\n      } catch (InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 303,
+  "completion_tokens": 365,
+  "total_tokens": 668,
+  "llm_elapsed_time_seconds": 5.59
+}

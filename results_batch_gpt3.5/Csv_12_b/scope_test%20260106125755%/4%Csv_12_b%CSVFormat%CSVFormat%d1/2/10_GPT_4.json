@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutXti2FSNJwKQZjRXwtcy8Fnwb0y",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testConstructorValidParameters() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] header = new String[]{\"col1\", \"col2\"};\n        CSVFormat format = constructor.newInstance(\n                ',', '\"', QuoteMode.MINIMAL, '#', '\\\\',\n                true, false, \"\\n\", \"NULL\",\n                header, true, true);\n\n        assertEquals(',', format.getDelimiter());\n        assertEquals(Character.valueOf('\"'), format.getQuoteCharacter());\n        assertEquals(QuoteMode.MINIMAL, format.getQuoteMode());\n        assertEquals(Character.valueOf('#'), format.getCommentMarker());\n        assertEquals(Character.valueOf('\\\\'), format.getEscapeCharacter());\n        assertTrue(format.getIgnoreSurroundingSpaces());\n        assertFalse(format.getIgnoreEmptyLines());\n        assertEquals(\"\\n\", format.getRecordSeparator());\n        assertEquals(\"NULL\", format.getNullString());\n        assertArrayEquals(header, format.getHeader());\n        assertTrue(format.getSkipHeaderRecord());\n        assertTrue(format.getAllowMissingColumnNames());\n    }\n\n    @Test\n    public void testConstructorNullHeader() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat format = constructor.newInstance(\n                ',', '\"', null, null, null,\n                false, true, \"\\r\\n\", null,\n                (String[]) null, false, false);\n\n        assertNull(format.getHeader());\n    }\n\n    @Test\n    public void testConstructorDuplicateHeaderThrows() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] dupHeader = new String[]{\"a\", \"b\", \"a\"};\n\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            constructor.newInstance(\n                    ',', '\"', null, null, null,\n                    false, true, \"\\r\\n\", null,\n                    dupHeader, false, false);\n        });\n        assertTrue(thrown.getMessage().contains(\"duplicate entry\"));\n    }\n\n    @Test\n    public void testConstructorDelimiterLineBreakThrows() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Using '\\n' line break as delimiter should throw\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            constructor.newInstance(\n                    '\\n', '\"', null, null, null,\n                    false, true, \"\\r\\n\", null,\n                    (String[]) null, false, false);\n        });\n        assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n    }\n\n    @Test\n    public void testValidateCalled() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Use valid parameters, validate() should not throw\n        String[] header = new String[]{\"x\"};\n        CSVFormat format = constructor.newInstance(\n                ',', '\"', null, null, null,\n                false, true, \"\\r\\n\", null,\n                header, false, false);\n\n        // No exception means validate passed\n        assertNotNull(format);\n    }\n\n    @Test\n    public void testIsLineBreakChar() throws Exception {\n        Method isLineBreak = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreak.setAccessible(true);\n\n        assertTrue((Boolean) isLineBreak.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreak.invoke(null, '\\r'));\n        assertFalse((Boolean) isLineBreak.invoke(null, ','));\n        assertFalse((Boolean) isLineBreak.invoke(null, 'a'));\n    }\n\n    @Test\n    public void testIsLineBreakCharacter() throws Exception {\n        Method isLineBreak = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreak.setAccessible(true);\n\n        assertTrue((Boolean) isLineBreak.invoke(null, (Character) '\\n'));\n        assertTrue((Boolean) isLineBreak.invoke(null, (Character) '\\r'));\n        assertFalse((Boolean) isLineBreak.invoke(null, (Character) ','));\n        assertFalse((Boolean) isLineBreak.invoke(null, (Character) 'a'));\n        assertFalse((Boolean) isLineBreak.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675921,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1176,
+    "prompt_tokens": 2297,
+    "total_tokens": 3473,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.35
+  }
+}

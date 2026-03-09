@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmWB3c2HJW91kkvKk2HQY9scaBAR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass MapTypeAdapterFactoryTest {\n\n  private MapTypeAdapterFactory mapTypeAdapterFactory;\n  private Gson mockGson;\n\n  @BeforeEach\n  void setUp() {\n    // ConstructorConstructor is required but not used in getKeyAdapter, can be mocked or null\n    mapTypeAdapterFactory = new MapTypeAdapterFactory(null, false);\n    mockGson = mock(Gson.class);\n  }\n\n  @Test\n  void testGetKeyAdapter_withPrimitiveBoolean_returnsBooleanAsString() throws Exception {\n    Method method = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, java.lang.reflect.Type.class);\n    method.setAccessible(true);\n\n    TypeAdapter<?> adapter = (TypeAdapter<?>) method.invoke(mapTypeAdapterFactory, mockGson, boolean.class);\n\n    assertSame(TypeAdapters.BOOLEAN_AS_STRING, adapter);\n  }\n\n  @Test\n  void testGetKeyAdapter_withWrapperBoolean_returnsBooleanAsString() throws Exception {\n    Method method = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, java.lang.reflect.Type.class);\n    method.setAccessible(true);\n\n    TypeAdapter<?> adapter = (TypeAdapter<?>) method.invoke(mapTypeAdapterFactory, mockGson, Boolean.class);\n\n    assertSame(TypeAdapters.BOOLEAN_AS_STRING, adapter);\n  }\n\n  @Test\n  void testGetKeyAdapter_withOtherType_callsGsonGetAdapter() throws Exception {\n    Method method = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, java.lang.reflect.Type.class);\n    method.setAccessible(true);\n\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> expectedAdapter = (TypeAdapter<String>) mock(TypeAdapter.class);\n    when(mockGson.getAdapter(stringTypeToken)).thenReturn(expectedAdapter);\n\n    TypeAdapter<?> adapter = (TypeAdapter<?>) method.invoke(mapTypeAdapterFactory, mockGson, String.class);\n\n    assertSame(expectedAdapter, adapter);\n    verify(mockGson).getAdapter(stringTypeToken);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887235,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 490,
+    "prompt_tokens": 1068,
+    "total_tokens": 1558,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.69
+  }
+}

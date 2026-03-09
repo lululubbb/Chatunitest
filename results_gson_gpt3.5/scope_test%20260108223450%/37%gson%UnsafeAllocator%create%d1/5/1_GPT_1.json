@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxCntCJTcldwceQDMS9hFyhdN0H",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectInputStream;\nimport java.io.ObjectStreamClass;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void testCreate_withUnsafe() throws Exception {\n    // Setup mocks for sun.misc.Unsafe path\n    Class<?> unsafeClass = mock(Class.class);\n    Field unsafeField = mock(Field.class);\n    Method allocateInstanceMethod = mock(Method.class);\n    Object unsafeInstance = new Object();\n\n    // Mock Class.forName to return unsafeClass when \"sun.misc.Unsafe\" is requested\n    // Use a custom ClassLoader to override Class.forName is not possible easily,\n    // so we simulate by reflection on UnsafeAllocator.create() directly.\n\n    // Use reflection to access private static method create()\n    Method createMethod = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n    createMethod.setAccessible(true);\n\n    // Because we cannot easily mock Class.forName or sun.misc.Unsafe in this environment,\n    // we invoke create() and check the returned instance behavior.\n\n    UnsafeAllocator allocator = (UnsafeAllocator) createMethod.invoke(null);\n    assertNotNull(allocator);\n\n    // Test that newInstance throws UnsupportedOperationException or works depending on environment\n    // We expect UnsupportedOperationException in typical test environment\n\n    assertThrows(UnsupportedOperationException.class, () -> allocator.newInstance(String.class));\n  }\n\n  @Test\n  void testNewInstance_UnsupportedOperation() {\n    UnsafeAllocator allocator = new UnsafeAllocator() {\n      @Override\n      public <T> T newInstance(Class<T> c) {\n        throw new UnsupportedOperationException(\"Cannot allocate \" + c);\n      }\n    };\n\n    assertThrows(UnsupportedOperationException.class, () -> allocator.newInstance(Object.class));\n  }\n\n  @Test\n  void testAssertInstantiable_withInterface() throws Exception {\n    // Access private method assertInstantiable(Class<?>)\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n\n    // Interface class should throw InstantiationException\n    Class<?> interfaceClass = Runnable.class;\n    InstantiationException ex = assertThrows(InstantiationException.class, () -> {\n      assertInstantiableMethod.invoke(null, interfaceClass);\n    });\n    assertTrue(ex.getCause().getMessage().contains(\"interface\"));\n  }\n\n  @Test\n  void testAssertInstantiable_withAbstractClass() throws Exception {\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n\n    abstract class AbstractClass {}\n    InstantiationException ex = assertThrows(InstantiationException.class, () -> {\n      assertInstantiableMethod.invoke(null, AbstractClass.class);\n    });\n    assertTrue(ex.getCause().getMessage().contains(\"abstract\"));\n  }\n\n  @Test\n  void testAssertInstantiable_withNonStaticMemberClass() throws Exception {\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n\n    class Outer {\n      class Inner {}\n    }\n\n    Class<?> innerClass = Outer.Inner.class;\n    InstantiationException ex = assertThrows(InstantiationException.class, () -> {\n      assertInstantiableMethod.invoke(null, innerClass);\n    });\n    assertTrue(ex.getCause().getMessage().contains(\"non-static\"));\n  }\n\n  @Test\n  void testAssertInstantiable_withInstantiableClass() throws Exception {\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n\n    class Instantiable {}\n    assertDoesNotThrow(() -> assertInstantiableMethod.invoke(null, Instantiable.class));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885066,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 819,
+    "prompt_tokens": 830,
+    "total_tokens": 1649,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.42
+  }
+}

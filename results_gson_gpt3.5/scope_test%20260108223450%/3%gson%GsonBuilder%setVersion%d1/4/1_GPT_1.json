@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlQQz9pKp2J83NBI9fUblAjnCO6T",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private Excluder mockExcluder;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    gsonBuilder = new GsonBuilder();\n\n    // Use reflection to replace the private final Excluder excluder field with a mock\n    mockExcluder = mock(Excluder.class);\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    excluderField.set(gsonBuilder, mockExcluder);\n  }\n\n  @Test\n  public void testSetVersion_validVersion_callsWithVersionAndReturnsThis() {\n    double version = 1.5;\n    Excluder returnedExcluder = mock(Excluder.class);\n    when(mockExcluder.withVersion(version)).thenReturn(returnedExcluder);\n\n    GsonBuilder result = gsonBuilder.setVersion(version);\n\n    assertSame(gsonBuilder, result);\n    // Verify the excluder field was updated to returnedExcluder\n    try {\n      Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n      excluderField.setAccessible(true);\n      Object excluderValue = excluderField.get(gsonBuilder);\n      assertSame(returnedExcluder, excluderValue);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n    verify(mockExcluder).withVersion(version);\n  }\n\n  @Test\n  public void testSetVersion_zeroVersion_callsWithVersionAndReturnsThis() {\n    double version = 0.0;\n    Excluder returnedExcluder = mock(Excluder.class);\n    when(mockExcluder.withVersion(version)).thenReturn(returnedExcluder);\n\n    GsonBuilder result = gsonBuilder.setVersion(version);\n\n    assertSame(gsonBuilder, result);\n    try {\n      Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n      excluderField.setAccessible(true);\n      Object excluderValue = excluderField.get(gsonBuilder);\n      assertSame(returnedExcluder, excluderValue);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n    verify(mockExcluder).withVersion(version);\n  }\n\n  @Test\n  public void testSetVersion_nan_throwsIllegalArgumentException() {\n    double version = Double.NaN;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      gsonBuilder.setVersion(version);\n    });\n    assertEquals(\"Invalid version: \" + version, thrown.getMessage());\n    verifyNoInteractions(mockExcluder);\n  }\n\n  @Test\n  public void testSetVersion_negativeVersion_throwsIllegalArgumentException() {\n    double version = -0.1;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      gsonBuilder.setVersion(version);\n    });\n    assertEquals(\"Invalid version: \" + version, thrown.getMessage());\n    verifyNoInteractions(mockExcluder);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883034,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 712,
+    "prompt_tokens": 1157,
+    "total_tokens": 1869,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.96
+  }
+}

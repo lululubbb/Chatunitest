@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwkC1N7TadMat4A2UrHjWdiPUISG5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testValidate() throws Exception {\n        CSVFormat csvFormat = Mockito.spy(CSVFormat.DEFAULT);\n\n        // Test when delimiter is a line break\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n        Mockito.when(isLineBreakMethod.invoke(csvFormat, Mockito.anyChar())).thenReturn(true);\n        assertThrows(IllegalArgumentException.class, () -> {\n            invokeValidate(csvFormat);\n        });\n\n        // Test when quoteChar character and delimiter are the same\n        Mockito.when(isLineBreakMethod.invoke(csvFormat, Mockito.anyChar())).thenReturn(false);\n        csvFormat = Mockito.spy(CSVFormat.DEFAULT);\n        csvFormat.withQuote('\"');\n        assertThrows(IllegalArgumentException.class, () -> {\n            invokeValidate(csvFormat);\n        });\n\n        // Add more test cases for other conditions in the validate method\n        // ...\n\n        // Test for header containing duplicate entry\n        csvFormat = Mockito.spy(CSVFormat.DEFAULT);\n        csvFormat.withHeader(\"A\", \"B\", \"A\");\n        assertThrows(IllegalArgumentException.class, () -> {\n            invokeValidate(csvFormat);\n        });\n    }\n\n    private void invokeValidate(CSVFormat csvFormat) {\n        try {\n            Method validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n            validateMethod.setAccessible(true);\n            validateMethod.invoke(csvFormat);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768116625,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 344,
+    "prompt_tokens": 2602,
+    "total_tokens": 2946,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 3.99
+  }
+}

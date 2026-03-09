@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm8XZmlT5v6pC08lQYO8Ljd8rz02",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  private static final int PEEKED_NONE = 0;\n  private static final int PEEKED_END_OBJECT = 2;\n  private static final int PEEKED_END_ARRAY = 4;\n  private static final int PEEKED_EOF = 17;\n\n  @BeforeEach\n  void setup() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void hasNext_peekedIsNotNoneAndNotEndTokens_returnsTrue() throws Exception {\n    setPeeked(1); // PEEKED_BEGIN_OBJECT (1), should return true\n    assertTrue(jsonReader.hasNext());\n    setPeeked(3); // PEEKED_BEGIN_ARRAY (3), should return true\n    assertTrue(jsonReader.hasNext());\n    setPeeked(5); // PEEKED_TRUE (5), should return true\n    assertTrue(jsonReader.hasNext());\n  }\n\n  @Test\n  void hasNext_peekedIsNone_callsDoPeekAndReturnsCorrectly() throws Exception {\n    setPeeked(PEEKED_NONE);\n\n    // Use reflection to mock doPeek to return PEEKED_BEGIN_OBJECT (1)\n    Method doPeekMethod = JsonReader.class.getDeclaredMethod(\"doPeek\");\n    doPeekMethod.setAccessible(true);\n\n    // Spy on jsonReader to mock doPeek\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(1).when(spyReader).doPeek();\n\n    assertTrue(spyReader.hasNext());\n\n    doReturn(PEEKED_END_OBJECT).when(spyReader).doPeek();\n    assertFalse(spyReader.hasNext());\n\n    doReturn(PEEKED_END_ARRAY).when(spyReader).doPeek();\n    assertFalse(spyReader.hasNext());\n\n    doReturn(PEEKED_EOF).when(spyReader).doPeek();\n    assertFalse(spyReader.hasNext());\n  }\n\n  @Test\n  void hasNext_peekedIsEndTokens_returnsFalse() throws Exception {\n    setPeeked(PEEKED_END_OBJECT);\n    assertFalse(jsonReader.hasNext());\n    setPeeked(PEEKED_END_ARRAY);\n    assertFalse(jsonReader.hasNext());\n    setPeeked(PEEKED_EOF);\n    assertFalse(jsonReader.hasNext());\n  }\n\n  private void setPeeked(int value) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    peekedField.setInt(jsonReader, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885769,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 607,
+    "prompt_tokens": 1045,
+    "total_tokens": 1652,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.22
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void createExceptionForRecordReflectionException_throwsRuntimeExceptionWithCauseAndMessage() throws Throwable {\n    // Arrange\n    ReflectiveOperationException cause = new ReflectiveOperationException(\"test cause\");\n\n    // Use reflection to access private static method\n    Method method = ReflectionHelper.class.getDeclaredMethod(\"createExceptionForRecordReflectionException\", ReflectiveOperationException.class);\n    method.setAccessible(true);\n\n    // Act & Assert\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      try {\n        method.invoke(null, cause);\n      } catch (InvocationTargetException e) {\n        // unwrap the exception thrown by the invoked method\n        throw e.getCause();\n      }\n    });\n\n    String message = thrown.getMessage();\n    assertNotNull(message);\n    assertTrue(message.contains(\"Unexpected ReflectiveOperationException occurred\"));\n    assertTrue(message.contains(\"Gson\"));\n    assertTrue(message.contains(\"records\"));\n    assertSame(cause, thrown.getCause());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 784,
+  "completion_tokens": 254,
+  "total_tokens": 1038,
+  "llm_elapsed_time_seconds": 6.63
+}

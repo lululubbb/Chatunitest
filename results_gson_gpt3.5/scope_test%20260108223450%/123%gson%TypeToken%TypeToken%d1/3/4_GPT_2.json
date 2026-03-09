@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvloFgNisy0hAauYbsqodfgmwg9nY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\nimport java.util.Objects;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass TypeTokenTest {\n\n  private Type mockType;\n  private Class<?> mockRawType;\n\n  @BeforeEach\n  void setup() {\n    mockType = mock(Type.class);\n    mockRawType = Object.class;\n  }\n\n  @Test\n  void testPrivateConstructor_andFields() throws Exception {\n    try (MockedStatic<$Gson$Types> gsonTypesMockedStatic = Mockito.mockStatic($Gson$Types.class)) {\n      gsonTypesMockedStatic.when(() -> $Gson$Types.canonicalize(mockType)).thenReturn(mockType);\n      gsonTypesMockedStatic.when(() -> $Gson$Types.getRawType(mockType)).thenReturn(mockRawType);\n\n      Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n      constructor.setAccessible(true);\n      TypeToken<?> typeToken = constructor.newInstance(mockType);\n\n      // Check fields rawType, type, hashCode\n      Field rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n      rawTypeField.setAccessible(true);\n      Object rawTypeValue = rawTypeField.get(typeToken);\n      assertEquals(mockRawType, rawTypeValue);\n\n      Field typeField = TypeToken.class.getDeclaredField(\"type\");\n      typeField.setAccessible(true);\n      Object typeValue = typeField.get(typeToken);\n      assertEquals(mockType, typeValue);\n\n      Field hashCodeField = TypeToken.class.getDeclaredField(\"hashCode\");\n      hashCodeField.setAccessible(true);\n      int expectedHash = mockType.hashCode();\n      int hashCodeValue = (int) hashCodeField.get(typeToken);\n      assertEquals(expectedHash, hashCodeValue);\n    }\n  }\n\n  @Test\n  void testPrivateConstructor_nullType_throwsNPE() throws Exception {\n    Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n    constructor.setAccessible(true);\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> constructor.newInstance((Type) null));\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof NullPointerException);\n  }\n\n  @Test\n  void testPrivateConstructor_callsCanonicalizeAndGetRawType() throws Exception {\n    Type sampleType = String.class;\n    try (MockedStatic<$Gson$Types> gsonTypesMockedStatic = Mockito.mockStatic($Gson$Types.class)) {\n      gsonTypesMockedStatic.when(() -> $Gson$Types.canonicalize(sampleType)).thenReturn(sampleType);\n      gsonTypesMockedStatic.when(() -> $Gson$Types.getRawType(sampleType)).thenReturn(String.class);\n\n      Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n      constructor.setAccessible(true);\n      TypeToken<?> token = constructor.newInstance(sampleType);\n\n      gsonTypesMockedStatic.verify(() -> $Gson$Types.canonicalize(sampleType), times(1));\n      gsonTypesMockedStatic.verify(() -> $Gson$Types.getRawType(sampleType), times(1));\n\n      Field rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n      rawTypeField.setAccessible(true);\n      assertEquals(String.class, rawTypeField.get(token));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884511,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 745,
+    "prompt_tokens": 1705,
+    "total_tokens": 2450,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.3
+  }
+}

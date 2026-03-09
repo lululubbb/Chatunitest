@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmFR9gWzWTueCzh6q67d8gCLa5mo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass GsonTypesResolveTest {\n\n    @Test\n    void testResolve_nullToResolve_returnsToResolve() throws Exception {\n        Type context = String.class;\n        Class<?> contextRawType = String.class;\n        Type toResolve = null;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, new HashMap<TypeVariable<?>, Type>());\n\n        assertNull(result);\n    }\n\n    @Test\n    void testResolve_TypeVariable_resolvesCorrectly() throws Exception {\n        class GenericClass<T> {}\n\n        // Create a ParameterizedType representing GenericClass<String>\n        ParameterizedType parameterizedContext = new ParameterizedType() {\n            @Override\n            public Type[] getActualTypeArguments() {\n                return new Type[] { String.class };\n            }\n\n            @Override\n            public Type getRawType() {\n                return GenericClass.class;\n            }\n\n            @Override\n            public Type getOwnerType() {\n                return null;\n            }\n        };\n\n        TypeVariable<?> typeVariable = GenericClass.class.getTypeParameters()[0];\n\n        Type context = parameterizedContext;\n        Class<?> contextRawType = GenericClass.class;\n        Type toResolve = typeVariable;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        Map<TypeVariable<?>, Type> visited = new HashMap<>();\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, visited);\n\n        // Because mapping exists, it should resolve to String.class\n        assertEquals(String.class, result);\n    }\n\n    @Test\n    void testResolve_ParameterizedType_resolvesTypeArguments() throws Exception {\n        class GenericClass<T> {}\n\n        TypeVariable<?> tVar = GenericClass.class.getTypeParameters()[0];\n\n        ParameterizedType parameterizedType = new ParameterizedType() {\n\n            @Override\n            public Type[] getActualTypeArguments() {\n                return new Type[] { tVar };\n            }\n\n            @Override\n            public Type getRawType() {\n                return Map.class;\n            }\n\n            @Override\n            public Type getOwnerType() {\n                return null;\n            }\n        };\n\n        Type context = new ParameterizedType() {\n            @Override\n            public Type[] getActualTypeArguments() {\n                return new Type[] { String.class, Integer.class };\n            }\n\n            @Override\n            public Type getRawType() {\n                return Map.class;\n            }\n\n            @Override\n            public Type getOwnerType() {\n                return null;\n            }\n        };\n        Class<?> contextRawType = Map.class;\n        Type toResolve = parameterizedType;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, new HashMap<TypeVariable<?>, Type>());\n\n        assertNotNull(result);\n        assertTrue(result instanceof ParameterizedType);\n        ParameterizedType resolved = (ParameterizedType) result;\n        assertEquals(Map.class, resolved.getRawType());\n        assertEquals(2, resolved.getActualTypeArguments().length);\n        assertEquals(String.class, resolved.getActualTypeArguments()[0]);\n        assertEquals(Integer.class, resolved.getActualTypeArguments()[1]);\n    }\n\n    @Test\n    void testResolve_GenericArrayType_resolvesComponentType() throws Exception {\n        GenericArrayType genericArrayType = new GenericArrayType() {\n\n            @Override\n            public Type getGenericComponentType() {\n                return String.class;\n            }\n        };\n\n        Type context = String[].class;\n        Class<?> contextRawType = String[].class;\n        Type toResolve = genericArrayType;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, new HashMap<TypeVariable<?>, Type>());\n\n        assertNotNull(result);\n        assertTrue(result instanceof GenericArrayType || result instanceof Class<?>);\n    }\n\n    @Test\n    void testResolve_Class_returnsClass() throws Exception {\n        Type context = String.class;\n        Class<?> contextRawType = String.class;\n        Type toResolve = Integer.class;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, new HashMap<TypeVariable<?>, Type>());\n\n        assertEquals(Integer.class, result);\n    }\n\n    @Test\n    void testResolve_WildcardType_resolvesBounds() throws Exception {\n        WildcardType wildcardType = new WildcardType() {\n\n            @Override\n            public Type[] getUpperBounds() {\n                return new Type[] { Number.class };\n            }\n\n            @Override\n            public Type[] getLowerBounds() {\n                return new Type[] {};\n            }\n        };\n\n        Type context = Number.class;\n        Class<?> contextRawType = Number.class;\n        Type toResolve = wildcardType;\n\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        Type result = (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, new HashMap<TypeVariable<?>, Type>());\n\n        assertNotNull(result);\n        assertTrue(result instanceof WildcardType);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886197,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1269,
+    "prompt_tokens": 2764,
+    "total_tokens": 4033,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.36
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.BeforeExperiment;\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonReader;\nimport java.io.IOException;\nimport java.io.StringReader;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void init() {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Use reflection to invoke the private setUp method\n    Field setUpMethod = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"setUp\").getDeclaringClass().getDeclaredField(\"json\");\n    setUpMethod.setAccessible(true);\n\n    // Invoke the setUp method via reflection\n    BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"setUp\").invoke(benchmark);\n\n    // Verify gson field is initialized\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    Object gsonValue = gsonField.get(benchmark);\n    assertNotNull(gsonValue, \"gson field should be initialized\");\n\n    // Verify json field is initialized and contains expected JSON string\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    String jsonValue = (String) jsonField.get(benchmark);\n    assertNotNull(jsonValue, \"json field should be initialized\");\n    assertTrue(jsonValue.contains(\"\\\"longValue\\\":10\"), \"json should contain longValue 10\");\n    assertTrue(jsonValue.contains(\"\\\"intValue\\\":1\"), \"json should contain intValue 1\");\n    assertTrue(jsonValue.contains(\"\\\"booleanValue\\\":false\"), \"json should contain booleanValue false\");\n    assertTrue(jsonValue.contains(\"\\\"stringValue\\\":\\\"foo\\\"\"), \"json should contain stringValue foo\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 919,
+  "completion_tokens": 395,
+  "total_tokens": 1314,
+  "llm_elapsed_time_seconds": 8.2,
+  "repair_elapsed_time_seconds": 15.41,
+  "round_total_time_seconds": 15.41
+}

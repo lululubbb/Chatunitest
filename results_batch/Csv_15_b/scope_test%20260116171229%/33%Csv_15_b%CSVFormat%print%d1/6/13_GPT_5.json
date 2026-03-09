@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaXx7Lw190bO6tLXiETS6gsG8vmg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        // Use DEFAULT CSVFormat instance for testing\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrintCreatesCSVPrinter() throws Exception {\n        File mockFile = mock(File.class);\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        // Mock CSVPrinter instance\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        // Use a spy on CSVFormat.DEFAULT but do not mock final method directly,\n        // instead use a wrapper CSVFormat subclass with overridden print(File, Charset)\n        CSVFormat spyFormat = new CSVFormatWrapper(csvFormat, mockPrinter);\n\n        CSVPrinter printer = spyFormat.print(mockFile, charset);\n\n        assertNotNull(printer);\n        assertSame(mockPrinter, printer);\n    }\n\n    @Test\n    void testPrintThrowsIOException() {\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        // Passing null file to cause NullPointerException and simulate error\n        assertThrows(NullPointerException.class, () -> {\n            csvFormat.print((File) null, charset);\n        });\n    }\n\n    // Helper subclass to override print(File, Charset) without Mockito issues on final method\n    private static class CSVFormatWrapper extends CSVFormat {\n        private final CSVFormat delegate;\n        private final CSVPrinter printerToReturn;\n\n        CSVFormatWrapper(CSVFormat delegate, CSVPrinter printerToReturn) {\n            super(delegate.getDelimiter(),\n                  delegate.getQuoteCharacter(),\n                  delegate.getQuoteMode(),\n                  delegate.getCommentMarker(),\n                  delegate.getEscapeCharacter(),\n                  delegate.getIgnoreSurroundingSpaces(),\n                  delegate.getIgnoreEmptyLines(),\n                  delegate.getRecordSeparator(),\n                  delegate.getNullString(),\n                  null,\n                  delegate.getHeader(),\n                  delegate.getSkipHeaderRecord(),\n                  delegate.getAllowMissingColumnNames(),\n                  delegate.getIgnoreHeaderCase(),\n                  delegate.getTrim(),\n                  delegate.getTrailingDelimiter(),\n                  delegate.getAutoFlush());\n            this.delegate = delegate;\n            this.printerToReturn = printerToReturn;\n        }\n\n        @Override\n        public CSVPrinter print(final File out, final Charset charset) {\n            return printerToReturn;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556201,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 509,
+    "prompt_tokens": 2178,
+    "total_tokens": 2687,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.06
+  }
+}

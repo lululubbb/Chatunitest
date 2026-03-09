@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIVl6j8N8aX67t09SQ5r1KTre4t",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  public void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  public void beginObject_peekedIsPeekedBeginObject_pushCalledAndPeekedReset() throws Exception {\n    setPeeked(1); // PEEKED_BEGIN_OBJECT = 1\n\n    // Use reflection to spy on push method by subclassing JsonReader\n    JsonReader spyReader = new JsonReader(mockReader) {\n      boolean pushCalled = false;\n      int pushedValue = -1;\n\n      @Override\n      private void push(int newTop) {\n        pushCalled = true;\n        pushedValue = newTop;\n      }\n    };\n    setField(spyReader, \"peeked\", 1);\n\n    // Because push is private, we invoke beginObject on spyReader and check state changes\n    // We use reflection to invoke beginObject on spyReader\n    Method beginObjectMethod = JsonReader.class.getDeclaredMethod(\"beginObject\");\n    beginObjectMethod.setAccessible(true);\n    beginObjectMethod.invoke(spyReader);\n\n    int peekedAfter = getPeeked(spyReader);\n    assertEquals(0, peekedAfter, \"peeked should be reset to PEEKED_NONE after beginObject\");\n\n    // Check stack top pushed is JsonScope.EMPTY_OBJECT (which is 1)\n    Field stackField = JsonReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(spyReader);\n\n    Field stackSizeField = JsonReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = (int) stackSizeField.get(spyReader);\n\n    assertTrue(stackSize > 0, \"stackSize should be > 0 after push\");\n    assertEquals(JsonScope.EMPTY_OBJECT, stack[stackSize - 1], \"top of stack should be EMPTY_OBJECT\");\n  }\n\n  @Test\n  public void beginObject_peekedIsPeekedNone_callsDoPeekAndBehavesCorrectly() throws Exception {\n    setPeeked(0); // PEEKED_NONE = 0\n\n    // Spy jsonReader to mock doPeek to return PEEKED_BEGIN_OBJECT\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(1).when(spyReader).doPeek();\n\n    // Because push is private, we verify stack state after beginObject\n    Method beginObjectMethod = JsonReader.class.getDeclaredMethod(\"beginObject\");\n    beginObjectMethod.setAccessible(true);\n    beginObjectMethod.invoke(spyReader);\n\n    int peekedAfter = getPeeked(spyReader);\n    assertEquals(0, peekedAfter, \"peeked should be reset to PEEKED_NONE after beginObject\");\n\n    Field stackField = JsonReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(spyReader);\n\n    Field stackSizeField = JsonReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = (int) stackSizeField.get(spyReader);\n\n    assertTrue(stackSize > 0, \"stackSize should be > 0 after push\");\n    assertEquals(JsonScope.EMPTY_OBJECT, stack[stackSize - 1], \"top of stack should be EMPTY_OBJECT\");\n  }\n\n  @Test\n  public void beginObject_peekedIsNotBeginObject_throwsIllegalStateException() throws Exception {\n    setPeeked(2); // PEEKED_END_OBJECT, not PEEKED_BEGIN_OBJECT\n\n    // We must mock peek() and locationString() to avoid NPE\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(JsonToken.END_OBJECT).when(spyReader).peek();\n    doReturn(\" at line 1 column 1\").when(spyReader).locationString();\n\n    Method beginObjectMethod = JsonReader.class.getDeclaredMethod(\"beginObject\");\n    beginObjectMethod.setAccessible(true);\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n      beginObjectMethod.invoke(spyReader);\n    });\n\n    // InvocationTargetException wraps the actual exception, unwrap it\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalStateException);\n    assertTrue(cause.getMessage().contains(\"Expected BEGIN_OBJECT but was\"));\n  }\n\n  // Helper to set private field peeked\n  private void setPeeked(int value) {\n    try {\n      Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n      peekedField.setAccessible(true);\n      peekedField.setInt(jsonReader, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  private int getPeeked(Object instance) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    return peekedField.getInt(instance);\n  }\n\n  private void setField(Object instance, String fieldName, Object value) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890231,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1168,
+    "prompt_tokens": 1073,
+    "total_tokens": 2241,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.9
+  }
+}

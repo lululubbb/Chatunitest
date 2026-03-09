@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlO8IJb1UwM2RXxR9bLoHF5lSkhn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void skipToEndOfLine_posBeforeLimit_newlineInBuffer() throws Throwable {\n    // Setup buffer with newline at pos+1\n    setField(jsonReader, \"buffer\", new char[] {'a', '\\n', 'b'});\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 0);\n    setField(jsonReader, \"lineStart\", 0);\n\n    invokeSkipToEndOfLine();\n\n    int pos = getField(jsonReader, \"pos\");\n    int lineNumber = getField(jsonReader, \"lineNumber\");\n    int lineStart = getField(jsonReader, \"lineStart\");\n\n    assertEquals(2, pos);\n    assertEquals(1, lineNumber);\n    assertEquals(2, lineStart);\n  }\n\n  @Test\n  void skipToEndOfLine_posBeforeLimit_carriageReturnInBuffer() throws Throwable {\n    // Setup buffer with carriage return at pos+1\n    setField(jsonReader, \"buffer\", new char[] {'a', '\\r', 'b'});\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 0);\n    setField(jsonReader, \"lineStart\", 0);\n\n    invokeSkipToEndOfLine();\n\n    int pos = getField(jsonReader, \"pos\");\n    int lineNumber = getField(jsonReader, \"lineNumber\");\n    int lineStart = getField(jsonReader, \"lineStart\");\n\n    assertEquals(2, pos);\n    assertEquals(0, lineNumber);\n    assertEquals(0, lineStart);\n  }\n\n  @Test\n  void skipToEndOfLine_posEqualsLimit_fillBufferTrue_newlineFound() throws Throwable {\n    // Setup buffer with pos == limit, fillBuffer(1) returns true and buffer contains newline\n    setField(jsonReader, \"buffer\", new char[] {'a', 'b', '\\n'});\n    setField(jsonReader, \"pos\", 3);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 0);\n    setField(jsonReader, \"lineStart\", 0);\n\n    // Spy the jsonReader to mock fillBuffer\n    JsonReader spyReader = spy(jsonReader);\n    setField(spyReader, \"buffer\", new char[] {'a', 'b', '\\n'});\n    setField(spyReader, \"pos\", 3);\n    setField(spyReader, \"limit\", 3);\n    setField(spyReader, \"lineNumber\", 0);\n    setField(spyReader, \"lineStart\", 0);\n\n    doAnswer(invocation -> {\n      setField(spyReader, \"buffer\", new char[] {'a', 'b', '\\n'});\n      setField(spyReader, \"pos\", 3);\n      setField(spyReader, \"limit\", 3);\n      // Increase limit to simulate fillBuffer success\n      setField(spyReader, \"limit\", 4);\n      return true;\n    }).when(spyReader).fillBuffer(1);\n\n    invokeSkipToEndOfLine(spyReader);\n\n    int pos = getField(spyReader, \"pos\");\n    int lineNumber = getField(spyReader, \"lineNumber\");\n    int lineStart = getField(spyReader, \"lineStart\");\n\n    assertEquals(4, pos);\n    assertEquals(1, lineNumber);\n    assertEquals(4, lineStart);\n  }\n\n  @Test\n  void skipToEndOfLine_posEqualsLimit_fillBufferFalse_noNewline() throws Throwable {\n    // Setup buffer with pos == limit, fillBuffer(1) returns false (EOF)\n    setField(jsonReader, \"buffer\", new char[] {'a', 'b', 'c'});\n    setField(jsonReader, \"pos\", 3);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 0);\n    setField(jsonReader, \"lineStart\", 0);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(false).when(spyReader).fillBuffer(1);\n\n    invokeSkipToEndOfLine(spyReader);\n\n    int pos = getField(spyReader, \"pos\");\n    int lineNumber = getField(spyReader, \"lineNumber\");\n    int lineStart = getField(spyReader, \"lineStart\");\n\n    // pos should remain unchanged\n    assertEquals(3, pos);\n    assertEquals(0, lineNumber);\n    assertEquals(0, lineStart);\n  }\n\n  // Helper to invoke private skipToEndOfLine on default jsonReader instance\n  private void invokeSkipToEndOfLine() throws Throwable {\n    invokeSkipToEndOfLine(jsonReader);\n  }\n\n  // Helper to invoke private skipToEndOfLine on given JsonReader instance\n  private void invokeSkipToEndOfLine(JsonReader reader) throws Throwable {\n    Method method = JsonReader.class.getDeclaredMethod(\"skipToEndOfLine\");\n    method.setAccessible(true);\n    try {\n      method.invoke(reader);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  // Helper to set private fields via reflection\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get private fields via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object target, String fieldName) {\n    try {\n      java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return (T) field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882892,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1383,
+    "prompt_tokens": 1056,
+    "total_tokens": 2439,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.14
+  }
+}

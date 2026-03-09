@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmulqfXTN1OSQ9fX1kw9XQ7eVQEU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        jsonTreeReader = new JsonTreeReader(null);\n\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = new Object[32];\n        stackField.set(jsonTreeReader, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 0);\n    }\n\n    private void setStackAndSize(Object[] stackContent, int size) throws Exception {\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(jsonTreeReader, stackContent);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, size);\n    }\n\n    private JsonToken invokePeek() throws Exception {\n        Method peekMethod = JsonTreeReader.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n        return (JsonToken) peekMethod.invoke(jsonTreeReader);\n    }\n\n    @Test\n    public void testHasNext_withTokenNotEnd_shouldReturnTrue() throws Exception {\n        Object[] stack = new Object[32];\n        stack[0] = new JsonPrimitive(\"value\");\n        setStackAndSize(stack, 1);\n\n        boolean result = jsonTreeReader.hasNext();\n\n        assertTrue(result);\n    }\n\n    @Test\n    public void testHasNext_withTokenEndObject_shouldReturnFalse() throws Exception {\n        // Use reflection to mock peek() method by temporarily replacing it with a proxy\n\n        JsonTreeReader spyReader = mock(JsonTreeReader.class, invocation -> {\n            if (\"peek\".equals(invocation.getMethod().getName())) {\n                return JsonToken.END_OBJECT;\n            }\n            return invocation.callRealMethod();\n        });\n\n        // Because hasNext() calls peek(), we need to call hasNext() on the spy\n        boolean result = spyReader.hasNext();\n\n        assertFalse(result);\n    }\n\n    @Test\n    public void testHasNext_withTokenEndArray_shouldReturnFalse() throws Exception {\n        JsonTreeReader spyReader = mock(JsonTreeReader.class, invocation -> {\n            if (\"peek\".equals(invocation.getMethod().getName())) {\n                return JsonToken.END_ARRAY;\n            }\n            return invocation.callRealMethod();\n        });\n\n        boolean result = spyReader.hasNext();\n\n        assertFalse(result);\n    }\n\n    @Test\n    public void testHasNext_withTokenEndDocument_shouldReturnFalse() throws Exception {\n        JsonTreeReader spyReader = mock(JsonTreeReader.class, invocation -> {\n            if (\"peek\".equals(invocation.getMethod().getName())) {\n                return JsonToken.END_DOCUMENT;\n            }\n            return invocation.callRealMethod();\n        });\n\n        boolean result = spyReader.hasNext();\n\n        assertFalse(result);\n    }\n\n    @Test\n    public void testHasNext_withIOException() throws Exception {\n        JsonTreeReader spyReader = mock(JsonTreeReader.class, invocation -> {\n            if (\"peek\".equals(invocation.getMethod().getName())) {\n                throw new IOException(\"Test IOException\");\n            }\n            return invocation.callRealMethod();\n        });\n\n        IOException thrown = assertThrows(IOException.class, spyReader::hasNext);\n        assertEquals(\"Test IOException\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888759,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 793,
+    "prompt_tokens": 1822,
+    "total_tokens": 2615,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.54
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n  private FieldAttributes fieldAttributes;\n  private Field mockField;\n\n  private static class DummyClass {\n    public int intField;\n    private String stringField;\n  }\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException {\n    mockField = DummyClass.class.getField(\"intField\");\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void getDeclaredClass_returnsFieldType() {\n    Class<?> declaredClass = fieldAttributes.getDeclaredClass();\n    assertEquals(int.class, declaredClass);\n  }\n\n  @Test\n  void getDeclaredClass_withPrivateField_returnsFieldType() throws NoSuchFieldException {\n    Field privateField = DummyClass.class.getDeclaredField(\"stringField\");\n    FieldAttributes fa = new FieldAttributes(privateField);\n    Class<?> declaredClass = fa.getDeclaredClass();\n    assertEquals(String.class, declaredClass);\n  }\n\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 275,
+  "completion_tokens": 233,
+  "total_tokens": 508,
+  "llm_elapsed_time_seconds": 4.18,
+  "repair_elapsed_time_seconds": 9.0,
+  "round_total_time_seconds": 9.0
+}

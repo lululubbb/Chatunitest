@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmmJWaZ9knZhpfMkApxtpZNDXxUc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement mockElement;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n    mockElement = mock(JsonElement.class);\n  }\n\n  @Test\n  public void testGetAsShort_singleElement() {\n    // Arrange\n    jsonArray.add(mockElement);\n    when(mockElement.getAsShort()).thenReturn((short) 123);\n\n    // Act\n    short result = jsonArray.getAsShort();\n\n    // Assert\n    assertEquals(123, result);\n    verify(mockElement).getAsShort();\n  }\n\n  @Test\n  public void testGetAsShort_emptyArray_throwsIllegalStateException() throws Exception {\n    // Arrange\n    // No elements added, so getAsSingleElement() should fail\n\n    // Use reflection to access private getAsSingleElement method\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act & Assert\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      getAsSingleElement.invoke(jsonArray);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n    assertEquals(\"Array must have size 1, but has size 0\", thrown.getCause().getMessage());\n\n    // Also verify getAsShort throws IllegalStateException if no elements\n    IllegalStateException ex = assertThrows(IllegalStateException.class, () -> jsonArray.getAsShort());\n    assertEquals(\"Array must have size 1, but has size 0\", ex.getMessage());\n  }\n\n  @Test\n  public void testGetAsSingleElement_singleElement_returnsElement() throws Exception {\n    // Arrange\n    JsonElement only = mock(JsonElement.class);\n    jsonArray.add(only);\n\n    // Use reflection to access private getAsSingleElement method\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act\n    JsonElement result = (JsonElement) getAsSingleElement.invoke(jsonArray);\n\n    // Assert\n    assertSame(only, result);\n  }\n\n  @Test\n  public void testGetAsSingleElement_multipleElements_throwsIllegalStateException() throws Exception {\n    // Arrange\n    JsonElement first = mock(JsonElement.class);\n    JsonElement second = mock(JsonElement.class);\n    jsonArray.add(first);\n    jsonArray.add(second);\n\n    // Use reflection to access private getAsSingleElement method\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act & Assert\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      getAsSingleElement.invoke(jsonArray);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n    assertEquals(\"Array must have size 1, but has size 2\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  public void testGetAsShort_callsGetAsSingleElement() throws Exception {\n    // Spy on JsonArray to verify getAsSingleElement is called by getAsShort\n    JsonArray spyArray = spy(new JsonArray());\n    spyArray.add(mockElement);\n    when(mockElement.getAsShort()).thenReturn((short) 321);\n\n    // Use reflection to get private getAsSingleElement method\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    short result = spyArray.getAsShort();\n\n    assertEquals(321, result);\n\n    // Verify getAsSingleElement was called by invoking it and comparing to expected\n    JsonElement reflectedElement = (JsonElement) getAsSingleElement.invoke(spyArray);\n    assertSame(mockElement, reflectedElement);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888235,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 866,
+    "prompt_tokens": 1861,
+    "total_tokens": 2727,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.81
+  }
+}

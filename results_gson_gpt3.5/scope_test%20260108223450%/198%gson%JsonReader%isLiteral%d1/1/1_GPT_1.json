@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmdpEjs214KCvyrdyVGOBRaAs5Bo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method isLiteralMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n    isLiteralMethod = JsonReader.class.getDeclaredMethod(\"isLiteral\", char.class);\n    isLiteralMethod.setAccessible(true);\n  }\n\n  @Test\n  void testIsLiteral_returnsFalseForWhitespaceChars() throws Exception {\n    char[] chars = {' ', '\\t', '\\f', '\\r', '\\n', '{', '}', '[', ']', ':', ','};\n    for (char c : chars) {\n      boolean result = (boolean) isLiteralMethod.invoke(jsonReader, c);\n      assertFalse(result, \"Expected false for char: '\" + c + \"'\");\n    }\n  }\n\n  @Test\n  void testIsLiteral_returnsFalseAndCallsCheckLenientForLenientChars() throws Exception {\n    JsonReader spyReader = spy(jsonReader);\n    char[] chars = {'/', '\\\\', ';', '#', '='};\n    for (char c : chars) {\n      boolean result = (boolean) isLiteralMethod.invoke(spyReader, c);\n      assertFalse(result, \"Expected false for lenient char: '\" + c + \"'\");\n    }\n    for (char c : chars) {\n      verify(spyReader, atLeastOnce()).checkLenient();\n    }\n  }\n\n  @Test\n  void testIsLiteral_returnsTrueForOtherChars() throws Exception {\n    // Characters not in any case should return true\n    char[] chars = {'a', 'Z', '0', '9', '_', '+', '-', '*', '%', '@', '!', '\"', '\\''};\n    for (char c : chars) {\n      boolean result = (boolean) isLiteralMethod.invoke(jsonReader, c);\n      assertTrue(result, \"Expected true for char: '\" + c + \"'\");\n    }\n  }\n\n  @Test\n  void testIsLiteral_checkLenientThrowsIOException() throws Exception {\n    JsonReader spyReader = spy(jsonReader);\n    doThrow(new IOException(\"Lenient check failed\")).when(spyReader).checkLenient();\n\n    char[] chars = {'/', '\\\\', ';', '#', '='};\n    for (char c : chars) {\n      IOException thrown = assertThrows(IOException.class, () -> {\n        isLiteralMethod.invoke(spyReader, c);\n      });\n      // InvocationTargetException wraps the IOException, unwrap it\n      Throwable cause = thrown.getCause();\n      assertNotNull(cause);\n      assertTrue(cause instanceof IOException);\n      assertEquals(\"Lenient check failed\", cause.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887709,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 610,
+    "prompt_tokens": 1091,
+    "total_tokens": 1701,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.7
+  }
+}

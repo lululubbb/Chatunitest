@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmp2qyeE43huoAjbr9CdmwhJtD6N",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapRotateLeftTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void rotateLeft_rootWithRightChildAndPivotLeftNonNull_shouldRotateCorrectly() throws Exception {\n    // Setup Nodes with reflection since Node is package-private static class inside LinkedTreeMap\n    Class<?> nodeClass = null;\n    for (Class<?> c : LinkedTreeMap.class.getDeclaredClasses()) {\n      if (\"Node\".equals(c.getSimpleName())) {\n        nodeClass = c;\n        break;\n      }\n    }\n    assertNotNull(nodeClass);\n\n    // Create root Node\n    Object root = createNode(nodeClass, \"rootKey\", \"rootValue\");\n\n    // Create left child of root\n    Object left = createNode(nodeClass, \"leftKey\", \"leftValue\");\n    setField(root, \"left\", left);\n    setField(left, \"parent\", root);\n\n    // Create pivot (right child of root)\n    Object pivot = createNode(nodeClass, \"pivotKey\", \"pivotValue\");\n    setField(root, \"right\", pivot);\n    setField(pivot, \"parent\", root);\n\n    // Create pivotLeft (left child of pivot)\n    Object pivotLeft = createNode(nodeClass, \"pivotLeftKey\", \"pivotLeftValue\");\n    setField(pivot, \"left\", pivotLeft);\n    setField(pivotLeft, \"parent\", pivot);\n\n    // Create pivotRight (right child of pivot)\n    Object pivotRight = createNode(nodeClass, \"pivotRightKey\", \"pivotRightValue\");\n    setField(pivot, \"right\", pivotRight);\n    setField(pivotRight, \"parent\", pivot);\n\n    // Set heights\n    setField(left, \"height\", 2);\n    setField(pivotLeft, \"height\", 3);\n    setField(pivotRight, \"height\", 4);\n    setField(root, \"height\", 1);\n    setField(pivot, \"height\", 1);\n\n    // Spy on map to verify replaceInParent call\n    LinkedTreeMap<String, String> spyMap = spy(map);\n\n    // Use reflection to get rotateLeft method\n    Method rotateLeft = LinkedTreeMap.class.getDeclaredMethod(\"rotateLeft\", nodeClass);\n    rotateLeft.setAccessible(true);\n\n    // Use reflection to mock replaceInParent to verify invocation\n    doNothing().when(spyMap).replaceInParent(root, pivot);\n\n    // Invoke rotateLeft\n    rotateLeft.invoke(spyMap, root);\n\n    // Verify replaceInParent was called with correct args\n    verify(spyMap).replaceInParent(root, pivot);\n\n    // Assert root.right is pivotLeft and pivotLeft.parent is root\n    assertSame(pivotLeft, getField(root, \"right\"));\n    assertSame(root, getField(pivotLeft, \"parent\"));\n\n    // Assert pivot.left is root and root.parent is pivot\n    assertSame(root, getField(pivot, \"left\"));\n    assertSame(pivot, getField(root, \"parent\"));\n\n    // Assert heights updated correctly\n    int expectedRootHeight = Math.max(getIntField(left, \"height\"), getIntField(pivotLeft, \"height\")) + 1;\n    int expectedPivotHeight = Math.max(expectedRootHeight, getIntField(pivotRight, \"height\")) + 1;\n    assertEquals(expectedRootHeight, getIntField(root, \"height\"));\n    assertEquals(expectedPivotHeight, getIntField(pivot, \"height\"));\n  }\n\n  @Test\n  void rotateLeft_rootWithRightChildAndPivotLeftNull_shouldRotateCorrectly() throws Exception {\n    Class<?> nodeClass = null;\n    for (Class<?> c : LinkedTreeMap.class.getDeclaredClasses()) {\n      if (\"Node\".equals(c.getSimpleName())) {\n        nodeClass = c;\n        break;\n      }\n    }\n    assertNotNull(nodeClass);\n\n    Object root = createNode(nodeClass, \"rootKey\", \"rootValue\");\n    Object left = createNode(nodeClass, \"leftKey\", \"leftValue\");\n    setField(root, \"left\", left);\n    setField(left, \"parent\", root);\n\n    Object pivot = createNode(nodeClass, \"pivotKey\", \"pivotValue\");\n    setField(root, \"right\", pivot);\n    setField(pivot, \"parent\", root);\n\n    // pivotLeft is null\n    setField(pivot, \"left\", null);\n\n    Object pivotRight = createNode(nodeClass, \"pivotRightKey\", \"pivotRightValue\");\n    setField(pivot, \"right\", pivotRight);\n    setField(pivotRight, \"parent\", pivot);\n\n    setField(left, \"height\", 2);\n    setField(root, \"height\", 1);\n    setField(pivot, \"height\", 1);\n    setField(pivotRight, \"height\", 4);\n\n    LinkedTreeMap<String, String> spyMap = spy(map);\n\n    Method rotateLeft = LinkedTreeMap.class.getDeclaredMethod(\"rotateLeft\", nodeClass);\n    rotateLeft.setAccessible(true);\n\n    doNothing().when(spyMap).replaceInParent(root, pivot);\n\n    rotateLeft.invoke(spyMap, root);\n\n    verify(spyMap).replaceInParent(root, pivot);\n\n    // root.right should be null (pivotLeft)\n    assertNull(getField(root, \"right\"));\n\n    // pivot.left is root and root.parent is pivot\n    assertSame(root, getField(pivot, \"left\"));\n    assertSame(pivot, getField(root, \"parent\"));\n\n    int expectedRootHeight = Math.max(getIntField(left, \"height\"), 0) + 1;\n    int expectedPivotHeight = Math.max(expectedRootHeight, getIntField(pivotRight, \"height\")) + 1;\n\n    assertEquals(expectedRootHeight, getIntField(root, \"height\"));\n    assertEquals(expectedPivotHeight, getIntField(pivot, \"height\"));\n  }\n\n  private Object createNode(Class<?> nodeClass, Object key, Object value) throws Exception {\n    // Node constructor: Node<K,V>(K key, V value, Node<K,V> parent, Node<K,V> left, Node<K,V> right, int height)\n    // But constructor is package-private, try to find one with (K key, V value, Node parent, Node left, Node right, int height)\n    for (var ctor : nodeClass.getDeclaredConstructors()) {\n      if (ctor.getParameterCount() == 6) {\n        ctor.setAccessible(true);\n        return ctor.newInstance(key, value, null, null, null, 1);\n      }\n    }\n    throw new IllegalStateException(\"No suitable Node constructor found\");\n  }\n\n  private void setField(Object obj, String fieldName, Object value) throws Exception {\n    Field field = obj.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(obj, value);\n  }\n\n  private Object getField(Object obj, String fieldName) throws Exception {\n    Field field = obj.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(obj);\n  }\n\n  private int getIntField(Object obj, String fieldName) throws Exception {\n    Field field = obj.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.getInt(obj);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888404,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1585,
+    "prompt_tokens": 873,
+    "total_tokens": 2458,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.14
+  }
+}

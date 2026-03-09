@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvlcgQhLODy3GsUCXavKlWfhGsor",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.Charset;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private File tempFile;\n\n    @BeforeEach\n    void setup() throws IOException {\n        csvFormat = CSVFormat.DEFAULT;\n        tempFile = File.createTempFile(\"csvformattest\", \".csv\");\n        tempFile.deleteOnExit();\n    }\n\n    @Test\n    void testPrint_withValidFileAndCharset() throws IOException {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVPrinter printer = csvFormat.print(tempFile, charset);\n        assertNotNull(printer);\n        printer.close();\n    }\n\n    @Test\n    void testPrint_withDifferentCharset() throws IOException {\n        Charset charset = Charset.forName(\"ISO-8859-1\");\n        CSVPrinter printer = csvFormat.print(tempFile, charset);\n        assertNotNull(printer);\n        printer.close();\n    }\n\n    @Test\n    void testPrint_withCustomCSVFormat() throws IOException {\n        CSVFormat customFormat = CSVFormat.DEFAULT.withDelimiter(';').withQuote('\\'').withRecordSeparator(\"\\n\");\n        CSVPrinter printer = customFormat.print(tempFile, Charset.defaultCharset());\n        assertNotNull(printer);\n        printer.close();\n    }\n\n    @Test\n    void testPrint_throwsIOExceptionWhenFileCannotBeWritten() {\n        File mockFile = mock(File.class);\n        Charset charset = Charset.defaultCharset();\n        try {\n            // Simulate a file that cannot be opened for writing by mocking FileOutputStream constructor failure\n            csvFormat.print(mockFile, charset);\n            fail(\"Expected IOException\");\n        } catch (IOException e) {\n            // Expected exception\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684460,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 403,
+    "prompt_tokens": 1557,
+    "total_tokens": 1960,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.36
+  }
+}

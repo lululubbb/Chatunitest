@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void testLongValue_parseLongSuccess() throws Exception {\n    // value that can be parsed by Long.parseLong without exception\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123456789\");\n    long result = number.longValue();\n    assertEquals(123456789L, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_bigDecimalUsed() throws Exception {\n    // value that causes Long.parseLong to throw NumberFormatException but BigDecimal can parse\n    // e.g. a number too big for long but valid decimal number\n    String bigValue = \"92233720368547758079223372036854775807\"; // bigger than Long.MAX_VALUE\n    LazilyParsedNumber number = new LazilyParsedNumber(bigValue);\n    long expected = new java.math.BigDecimal(bigValue).longValue();\n    long result = number.longValue();\n    assertEquals(expected, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_invalidNumber() throws Exception {\n    // value that is not a valid number at all\n    // This will cause BigDecimal constructor to throw NumberFormatException,\n    // but the focal method does not catch that, so test expects exception\n    String invalidValue = \"notANumber\";\n    LazilyParsedNumber number = new LazilyParsedNumber(invalidValue);\n    try {\n      number.longValue();\n    } catch (NumberFormatException e) {\n      // expected exception\n      return;\n    }\n    throw new AssertionError(\"Expected NumberFormatException was not thrown\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 326,
+  "completion_tokens": 372,
+  "total_tokens": 698,
+  "llm_elapsed_time_seconds": 7.45
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaH50sjqKQbri5BibYwn9W2StH1g",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private CSVFormat setQuoteCharacter(CSVFormat target, Character value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n        return target;\n    }\n\n    @Test\n    void testIsQuoteCharacterSet_whenQuoteCharacterIsSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote(null);\n        // Using reflection to set private final field quoteCharacter\n        setQuoteCharacter(format, '\\\"');\n\n        boolean result = format.isQuoteCharacterSet();\n        assertTrue(result, \"Expected quoteCharacter to be set\");\n    }\n\n    @Test\n    void testIsQuoteCharacterSet_whenQuoteCharacterIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote('\\\"');\n        // Using reflection to set private final field quoteCharacter to null\n        setQuoteCharacter(format, null);\n\n        boolean result = format.isQuoteCharacterSet();\n        assertFalse(result, \"Expected quoteCharacter to be null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555155,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 301,
+    "prompt_tokens": 2157,
+    "total_tokens": 2458,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.05
+  }
+}

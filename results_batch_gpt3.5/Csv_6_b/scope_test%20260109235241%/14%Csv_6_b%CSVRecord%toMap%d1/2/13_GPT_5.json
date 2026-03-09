@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9D5JrN5bou3AA7ZjMOc1FRZbR7b",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    public void setUp() {\n        // Setup mapping and values for testing\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n        mapping.put(\"header3\", 2);\n\n        values = new String[] { \"value1\", \"value2\", \"value3\" };\n\n        csvRecord = new CSVRecord(values, mapping, \"comment\", 1L);\n    }\n\n    @Test\n    public void testToMapReturnsCorrectMap() {\n        Map<String, String> map = csvRecord.toMap();\n\n        assertNotNull(map);\n        assertEquals(3, map.size());\n        assertEquals(\"value1\", map.get(\"header1\"));\n        assertEquals(\"value2\", map.get(\"header2\"));\n        assertEquals(\"value3\", map.get(\"header3\"));\n    }\n\n    @Test\n    public void testToMapWithEmptyValues() {\n        String[] emptyValues = new String[0];\n        CSVRecord emptyRecord = new CSVRecord(emptyValues, mapping, null, 2L);\n\n        Map<String, String> map = emptyRecord.toMap();\n\n        assertNotNull(map);\n        assertTrue(map.isEmpty());\n    }\n\n    @Test\n    public void testToMapWithEmptyMapping() {\n        Map<String, Integer> emptyMapping = new HashMap<>();\n        CSVRecord record = new CSVRecord(values, emptyMapping, null, 3L);\n\n        Map<String, String> map = record.toMap();\n\n        assertNotNull(map);\n        assertTrue(map.isEmpty());\n    }\n\n    @Test\n    public void testPutInViaReflection() throws Exception {\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        Map<String, String> map = new HashMap<>();\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        assertNotNull(result);\n        assertEquals(map, result);\n        assertEquals(3, result.size());\n        assertEquals(\"value1\", result.get(\"header1\"));\n        assertEquals(\"value2\", result.get(\"header2\"));\n        assertEquals(\"value3\", result.get(\"header3\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 558,
+    "prompt_tokens": 1024,
+    "total_tokens": 1582,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.09
+  }
+}

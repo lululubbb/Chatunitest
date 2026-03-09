@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlcJ7HFdKZGelJw1pAfIDX6xLngR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetCollectionElementType_withParameterizedType() throws Exception {\n    // Create a parameterized type representing Collection<String>\n    ParameterizedType collectionStringType = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] { String.class };\n      }\n\n      @Override\n      public Type getRawType() {\n        return Collection.class;\n      }\n\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // Mock getSupertype to return our parameterized type\n    $Gson$Types spyTypes = spy($Gson$Types.class);\n    // Use reflection to access private static getSupertype method\n    Method getSupertypeMethod = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n    getSupertypeMethod.setAccessible(true);\n\n    // Instead of spying (class is final with private constructor), we will use reflection to call getCollectionElementType directly\n    // But getCollectionElementType calls private static getSupertype inside, so we need to test with a real context type that returns a ParameterizedType\n\n    // Use a concrete class extending Collection<String> to produce a parameterized supertype\n    class StringList extends ArrayList<String> {}\n\n    Type elementType = $Gson$Types.getCollectionElementType(StringList.class, StringList.class);\n    assertEquals(String.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withRawCollection() {\n    // Use raw collection type (no generics)\n    Type elementType = $Gson$Types.getCollectionElementType(Collection.class, Collection.class);\n    assertEquals(Object.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withNonCollectionSupertype() {\n    // Use a class that does not extend Collection (e.g. String)\n    // The method getSupertype returns Object.class or null, so elementType should be Object.class\n    Type elementType = $Gson$Types.getCollectionElementType(String.class, String.class);\n    assertEquals(Object.class, elementType);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883771,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 501,
+    "prompt_tokens": 661,
+    "total_tokens": 1162,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.17
+  }
+}

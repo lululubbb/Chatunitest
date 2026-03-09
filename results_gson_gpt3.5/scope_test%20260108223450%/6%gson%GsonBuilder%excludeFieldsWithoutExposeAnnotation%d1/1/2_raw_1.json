@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private Excluder excluderMock;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n    excluderMock = mock(Excluder.class);\n  }\n\n  @Test\n  void excludeFieldsWithoutExposeAnnotation_shouldUpdateExcluderAndReturnThis() throws Exception {\n    // Arrange\n    // Set private field 'excluder' to mocked excluder\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    excluderField.set(gsonBuilder, excluderMock);\n\n    // Prepare mock behavior: when excludeFieldsWithoutExposeAnnotation() called, return a new Excluder instance (mocked)\n    Excluder newExcluderMock = mock(Excluder.class);\n    when(excluderMock.excludeFieldsWithoutExposeAnnotation()).thenReturn(newExcluderMock);\n\n    // Act\n    GsonBuilder returned = gsonBuilder.excludeFieldsWithoutExposeAnnotation();\n\n    // Assert\n    // Verify that excluder.excludeFieldsWithoutExposeAnnotation() was called once\n    verify(excluderMock, times(1)).excludeFieldsWithoutExposeAnnotation();\n\n    // Verify that the excluder field was updated to newExcluderMock\n    Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n    assertSame(newExcluderMock, updatedExcluder);\n\n    // Verify the method returns the same GsonBuilder instance\n    assertSame(gsonBuilder, returned);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1126,
+  "completion_tokens": 404,
+  "total_tokens": 1530,
+  "llm_elapsed_time_seconds": 7.96
+}

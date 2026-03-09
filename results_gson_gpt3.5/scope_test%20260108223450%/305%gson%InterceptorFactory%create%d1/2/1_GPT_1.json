@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNYnydJkI5tZsFfsUTibQtjJpKq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.interceptors;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.annotation.Annotation;\n\npublic class InterceptorFactoryTest {\n\n  private InterceptorFactory interceptorFactory;\n\n  @BeforeEach\n  public void setUp() {\n    interceptorFactory = new InterceptorFactory();\n  }\n\n  @Test\n  public void create_shouldReturnNull_whenNoInterceptAnnotation() {\n    // Arrange\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    // Act\n    TypeAdapter<Object> adapter = interceptorFactory.create(gson, typeToken);\n\n    // Assert\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_shouldReturnInterceptorAdapter_whenInterceptAnnotationPresent() {\n    // Arrange\n    Gson gson = mock(Gson.class);\n    @InterceptMock\n    class AnnotatedClass {}\n\n    TypeToken<AnnotatedClass> typeToken = TypeToken.get(AnnotatedClass.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AnnotatedClass> delegateAdapter = mock(TypeAdapter.class);\n\n    when(gson.getDelegateAdapter(interceptorFactory, typeToken)).thenReturn(delegateAdapter);\n\n    // Act\n    TypeAdapter<AnnotatedClass> adapter = interceptorFactory.create(gson, typeToken);\n\n    // Assert\n    assertNotNull(adapter);\n    assertNotSame(delegateAdapter, adapter);\n    assertEquals(\"com.google.gson.interceptors.InterceptorAdapter\", adapter.getClass().getName());\n  }\n\n  @Intercept\n  private @interface InterceptMock {\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886700,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 372,
+    "prompt_tokens": 950,
+    "total_tokens": 1322,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.93
+  }
+}

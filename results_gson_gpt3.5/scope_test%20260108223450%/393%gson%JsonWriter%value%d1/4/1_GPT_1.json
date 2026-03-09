@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnFIZPYTUK9WKl1yzl8Z5EiOjXsm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriter_value_Test {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void value_double_writesValue() throws IOException {\n    jsonWriter.value(123.456);\n    assertEquals(\"123.456\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_double_writesNegativeValue() throws IOException {\n    jsonWriter.value(-789.01);\n    assertEquals(\"-789.01\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_double_writesZero() throws IOException {\n    jsonWriter.value(0.0);\n    assertEquals(\"0.0\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_double_throwsOnNaN() {\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.NaN);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_double_throwsOnPositiveInfinity() {\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.POSITIVE_INFINITY);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_double_throwsOnNegativeInfinity() {\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.NEGATIVE_INFINITY);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_double_allowsNaNAndInfinityWhenLenient() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Double.NaN);\n    assertEquals(\"NaN\", stringWriter.toString());\n    stringWriter.getBuffer().setLength(0);\n\n    jsonWriter.value(Double.POSITIVE_INFINITY);\n    assertEquals(\"Infinity\", stringWriter.toString());\n    stringWriter.getBuffer().setLength(0);\n\n    jsonWriter.value(Double.NEGATIVE_INFINITY);\n    assertEquals(\"-Infinity\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_double_callsWriteDeferredName() throws Exception {\n    JsonWriter spyWriter = spy(jsonWriter);\n    doNothing().when(spyWriter).writeDeferredName();\n\n    spyWriter.value(1.23);\n\n    verify(spyWriter).writeDeferredName();\n  }\n\n  @Test\n  public void value_double_callsBeforeValue() throws Exception {\n    JsonWriter spyWriter = spy(jsonWriter);\n    doNothing().when(spyWriter).writeDeferredName();\n    doNothing().when(spyWriter).beforeValue();\n\n    spyWriter.value(4.56);\n\n    verify(spyWriter).beforeValue();\n  }\n\n  @Test\n  public void value_double_appendsCorrectString() throws IOException {\n    jsonWriter.value(1.0/3.0);\n    String output = stringWriter.toString();\n    assertTrue(output.startsWith(\"0.333\"));\n  }\n\n  @Test\n  public void value_double_invokesPrivateWriteDeferredName() throws Exception {\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    writeDeferredName.invoke(jsonWriter);\n  }\n\n  @Test\n  public void value_double_invokesPrivateBeforeValue() throws Exception {\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n    beforeValue.invoke(jsonWriter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890032,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 822,
+    "prompt_tokens": 777,
+    "total_tokens": 1599,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.51
+  }
+}

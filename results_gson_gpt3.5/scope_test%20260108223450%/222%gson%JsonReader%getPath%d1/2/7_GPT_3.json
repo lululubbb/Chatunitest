@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmUaDB7tckJZi2WltYDu3YAktznT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  private int PEEKED_BEGIN_OBJECT;\n  private int PEEKED_BEGIN_ARRAY;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n\n    // Access private static final fields via reflection\n    Field beginObjectField = JsonReader.class.getDeclaredField(\"PEEKED_BEGIN_OBJECT\");\n    beginObjectField.setAccessible(true);\n    PEEKED_BEGIN_OBJECT = beginObjectField.getInt(null);\n\n    Field beginArrayField = JsonReader.class.getDeclaredField(\"PEEKED_BEGIN_ARRAY\");\n    beginArrayField.setAccessible(true);\n    PEEKED_BEGIN_ARRAY = beginArrayField.getInt(null);\n  }\n\n  @Test\n  void testGetPath_default() {\n    // The default stackSize is 0, so path should be \"$\"\n    String path = jsonReader.getPath();\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  void testGetPath_withArrayIndex() throws Exception {\n    // Use reflection to invoke private getPath(boolean)\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    // Setup internal state to simulate stack with an array context\n    // stack[0] = PEEKED_BEGIN_ARRAY to simulate inside an array\n    // stackSize = 1\n    // pathIndices[0] = 5\n    setField(jsonReader, \"stack\", new int[]{PEEKED_BEGIN_ARRAY});\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"pathIndices\", new int[]{5});\n    setField(jsonReader, \"pathNames\", new String[]{null});\n\n    // Call private getPath with false\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$[5]\", path);\n\n    // Call private getPath with true (usePreviousPath)\n    path = (String) getPathMethod.invoke(jsonReader, true);\n    assertEquals(\"$[5]\", path);\n  }\n\n  @Test\n  void testGetPath_withObjectName() throws Exception {\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    // Setup internal state to simulate stack with an object context\n    // stack[0] = PEEKED_BEGIN_OBJECT\n    // stackSize = 1\n    // pathNames[0] = \"key\"\n    setField(jsonReader, \"stack\", new int[]{PEEKED_BEGIN_OBJECT});\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"pathNames\", new String[]{\"key\"});\n    setField(jsonReader, \"pathIndices\", new int[]{0});\n\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$.key\", path);\n\n    path = (String) getPathMethod.invoke(jsonReader, true);\n    assertEquals(\"$.key\", path);\n  }\n\n  @Test\n  void testGetPath_complexPath() throws Exception {\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    // Setup complex stack:\n    // stackSize = 4\n    // stack = {PEEKED_BEGIN_OBJECT, PEEKED_BEGIN_ARRAY, PEEKED_BEGIN_OBJECT, PEEKED_BEGIN_ARRAY}\n    // pathNames = { \"obj1\", null, \"obj2\", null }\n    // pathIndices = {0, 2, 0, 5}\n    int[] stack = {\n      PEEKED_BEGIN_OBJECT,\n      PEEKED_BEGIN_ARRAY,\n      PEEKED_BEGIN_OBJECT,\n      PEEKED_BEGIN_ARRAY\n    };\n    String[] pathNames = {\"obj1\", null, \"obj2\", null};\n    int[] pathIndices = {0, 2, 0, 5};\n    setField(jsonReader, \"stack\", stack);\n    setField(jsonReader, \"stackSize\", 4);\n    setField(jsonReader, \"pathNames\", pathNames);\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$.obj1[2].obj2[5]\", path);\n  }\n\n  // Helper method to set private fields via reflection\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887136,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1054,
+    "prompt_tokens": 2430,
+    "total_tokens": 3484,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 28.98
+  }
+}

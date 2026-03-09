@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpE9URJE5JCNozbY3o0hjYuPgty",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.util.EnumMap;\nimport java.util.EnumSet;\nimport org.junit.jupiter.api.Test;\n\nclass ConstructorConstructorTest {\n\n  @Test\n  void newSpecialCollectionConstructor_withValidEnumSetParameterizedType_constructsEnumSet() throws Exception {\n    Type enumSetType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() {\n        return new Type[] {SampleEnum.class};\n      }\n      @Override public Type getRawType() {\n        return EnumSet.class;\n      }\n      @Override public Type getOwnerType() {\n        return null;\n      }\n    };\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumSet<SampleEnum>> rawType = (Class<? super EnumSet<SampleEnum>>) (Class<?>) EnumSet.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumSet<SampleEnum>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumSet<SampleEnum>>) invokeNewSpecialCollectionConstructor(enumSetType, rawType);\n\n    EnumSet<SampleEnum> result = constructor.construct();\n    assertNotNull(result);\n    assertTrue(result.isEmpty());\n    assertEquals(EnumSet.noneOf(SampleEnum.class), result);\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withInvalidEnumSetType_throwsJsonIOException() throws Exception {\n    Type invalidType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() {\n        return new Type[] {new Object() {}.getClass()};\n      }\n      @Override public Type getRawType() {\n        return EnumSet.class;\n      }\n      @Override public Type getOwnerType() {\n        return null;\n      }\n    };\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumSet<?>> rawType = (Class<? super EnumSet<?>>) (Class<?>) EnumSet.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumSet<?>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumSet<?>>) invokeNewSpecialCollectionConstructor(invalidType, rawType);\n\n    JsonIOException ex = assertThrows(JsonIOException.class, constructor::construct);\n    assertTrue(ex.getMessage().contains(\"Invalid EnumSet type\"));\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withNonParameterizedEnumSetType_throwsJsonIOException() throws Exception {\n    Type nonParameterizedType = EnumSet.class;\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumSet<?>> rawType = (Class<? super EnumSet<?>>) (Class<?>) EnumSet.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumSet<?>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumSet<?>>) invokeNewSpecialCollectionConstructor(nonParameterizedType, rawType);\n\n    JsonIOException ex = assertThrows(JsonIOException.class, constructor::construct);\n    assertTrue(ex.getMessage().contains(\"Invalid EnumSet type\"));\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withValidEnumMapParameterizedType_constructsEnumMap() throws Exception {\n    Type enumMapType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() {\n        return new Type[] {SampleEnum.class, String.class};\n      }\n      @Override public Type getRawType() {\n        return EnumMap.class;\n      }\n      @Override public Type getOwnerType() {\n        return null;\n      }\n    };\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumMap<SampleEnum, String>> rawType = (Class<? super EnumMap<SampleEnum, String>>) (Class<?>) EnumMap.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumMap<SampleEnum, String>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumMap<SampleEnum, String>>) invokeNewSpecialCollectionConstructor(enumMapType, rawType);\n\n    EnumMap<SampleEnum, String> result = constructor.construct();\n    assertNotNull(result);\n    assertTrue(result.isEmpty());\n    assertEquals(new EnumMap<>(SampleEnum.class), result);\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withInvalidEnumMapType_throwsJsonIOException() throws Exception {\n    Type invalidType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() {\n        return new Type[] {new Object() {}.getClass(), String.class};\n      }\n      @Override public Type getRawType() {\n        return EnumMap.class;\n      }\n      @Override public Type getOwnerType() {\n        return null;\n      }\n    };\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumMap<?, String>> rawType = (Class<? super EnumMap<?, String>>) (Class<?>) EnumMap.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumMap<?, String>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumMap<?, String>>) invokeNewSpecialCollectionConstructor(invalidType, rawType);\n\n    JsonIOException ex = assertThrows(JsonIOException.class, constructor::construct);\n    assertTrue(ex.getMessage().contains(\"Invalid EnumMap type\"));\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withNonParameterizedEnumMapType_throwsJsonIOException() throws Exception {\n    Type nonParameterizedType = EnumMap.class;\n    @SuppressWarnings(\"unchecked\")\n    Class<? super EnumMap<?, ?>> rawType = (Class<? super EnumMap<?, ?>>) (Class<?>) EnumMap.class;\n\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<EnumMap<?, ?>> constructor =\n        (ConstructorConstructor.ObjectConstructor<EnumMap<?, ?>>) invokeNewSpecialCollectionConstructor(nonParameterizedType, rawType);\n\n    JsonIOException ex = assertThrows(JsonIOException.class, constructor::construct);\n    assertTrue(ex.getMessage().contains(\"Invalid EnumMap type\"));\n  }\n\n  @Test\n  void newSpecialCollectionConstructor_withNonCollectionType_returnsNull() throws Exception {\n    Type stringType = String.class;\n    Class<? super String> rawType = String.class;\n\n    Object constructor = invokeNewSpecialCollectionConstructor(stringType, rawType);\n\n    assertNull(constructor);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private static <T> Object invokeNewSpecialCollectionConstructor(Type type, Class<? super T> rawType) throws Exception {\n    var method = ConstructorConstructor.class.getDeclaredMethod(\"newSpecialCollectionConstructor\", Type.class, Class.class);\n    method.setAccessible(true);\n    return method.invoke(null, type, rawType);\n  }\n\n  private enum SampleEnum {\n    A, B\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888416,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1382,
+    "prompt_tokens": 2731,
+    "total_tokens": 4113,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.36
+  }
+}

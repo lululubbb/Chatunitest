@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnKh2cK1pgafgdNq4AsnMMjTsUcz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.FieldAttributes;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.List;\n\nclass ExcluderCloneTest {\n\n  @Test\n  void clone_shouldReturnDistinctInstanceWithEqualFieldValues() throws Exception {\n    Excluder original = new Excluder();\n    // set some fields via public methods to change from defaults\n    Excluder configured = original.withVersion(1.0)\n        .withModifiers(Modifier.PUBLIC)\n        .disableInnerClassSerialization()\n        .excludeFieldsWithoutExposeAnnotation()\n        .withExclusionStrategy(new ExclusionStrategy() {\n          @Override\n          public boolean shouldSkipField(FieldAttributes f) {\n            return true;\n          }\n          @Override\n          public boolean shouldSkipClass(Class<?> clazz) {\n            return false;\n          }\n        }, true, false);\n\n    Excluder cloned = configured.clone();\n\n    assertNotSame(configured, cloned);\n\n    // use reflection to access private fields\n    Field versionField = Excluder.class.getDeclaredField(\"version\");\n    versionField.setAccessible(true);\n    Field modifiersField = Excluder.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    Field requireExposeField = Excluder.class.getDeclaredField(\"requireExpose\");\n    requireExposeField.setAccessible(true);\n    Field serializationStrategiesField = Excluder.class.getDeclaredField(\"serializationStrategies\");\n    serializationStrategiesField.setAccessible(true);\n    Field deserializationStrategiesField = Excluder.class.getDeclaredField(\"deserializationStrategies\");\n    deserializationStrategiesField.setAccessible(true);\n\n    assertEquals(versionField.get(configured), versionField.get(cloned));\n    assertEquals(modifiersField.get(configured), modifiersField.get(cloned));\n    assertEquals(serializeInnerClassesField.get(configured), serializeInnerClassesField.get(cloned));\n    assertEquals(requireExposeField.get(configured), requireExposeField.get(cloned));\n\n    // The lists are mutable, so cloning should create new lists with same contents, not the same instance\n    List<?> originalSerializationStrategies = (List<?>) serializationStrategiesField.get(configured);\n    List<?> clonedSerializationStrategies = (List<?>) serializationStrategiesField.get(cloned);\n    assertNotSame(originalSerializationStrategies, clonedSerializationStrategies);\n    assertEquals(originalSerializationStrategies, clonedSerializationStrategies);\n\n    List<?> originalDeserializationStrategies = (List<?>) deserializationStrategiesField.get(configured);\n    List<?> clonedDeserializationStrategies = (List<?>) deserializationStrategiesField.get(cloned);\n    assertNotSame(originalDeserializationStrategies, clonedDeserializationStrategies);\n    assertEquals(originalDeserializationStrategies, clonedDeserializationStrategies);\n  }\n\n  @Test\n  void clone_onDefaultInstance_shouldReturnDistinctInstance() throws Exception {\n    Excluder cloned = Excluder.DEFAULT.clone();\n    assertNotSame(Excluder.DEFAULT, cloned);\n\n    Field versionField = Excluder.class.getDeclaredField(\"version\");\n    versionField.setAccessible(true);\n    Field modifiersField = Excluder.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    Field requireExposeField = Excluder.class.getDeclaredField(\"requireExpose\");\n    requireExposeField.setAccessible(true);\n    Field serializationStrategiesField = Excluder.class.getDeclaredField(\"serializationStrategies\");\n    serializationStrategiesField.setAccessible(true);\n    Field deserializationStrategiesField = Excluder.class.getDeclaredField(\"deserializationStrategies\");\n    deserializationStrategiesField.setAccessible(true);\n\n    assertEquals(versionField.get(Excluder.DEFAULT), versionField.get(cloned));\n    assertEquals(modifiersField.get(Excluder.DEFAULT), modifiersField.get(cloned));\n    assertEquals(serializeInnerClassesField.get(Excluder.DEFAULT), serializeInnerClassesField.get(cloned));\n    assertEquals(requireExposeField.get(Excluder.DEFAULT), requireExposeField.get(cloned));\n\n    // The lists in DEFAULT are empty immutable lists, so the cloned instance should have equal but distinct lists\n    List<?> originalSerializationStrategies = (List<?>) serializationStrategiesField.get(Excluder.DEFAULT);\n    List<?> clonedSerializationStrategies = (List<?>) serializationStrategiesField.get(cloned);\n    assertNotSame(originalSerializationStrategies, clonedSerializationStrategies);\n    assertEquals(originalSerializationStrategies, clonedSerializationStrategies);\n\n    List<?> originalDeserializationStrategies = (List<?>) deserializationStrategiesField.get(Excluder.DEFAULT);\n    List<?> clonedDeserializationStrategies = (List<?>) deserializationStrategiesField.get(cloned);\n    assertNotSame(originalDeserializationStrategies, clonedDeserializationStrategies);\n    assertEquals(originalDeserializationStrategies, clonedDeserializationStrategies);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890367,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1024,
+    "prompt_tokens": 2721,
+    "total_tokens": 3745,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.43
+  }
+}

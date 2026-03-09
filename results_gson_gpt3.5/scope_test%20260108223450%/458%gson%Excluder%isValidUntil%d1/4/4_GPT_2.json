@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlmD1E6nRHtJXg41Pg746VFinikj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.annotations.Until;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ExcluderIsValidUntilTest {\n\n  private Excluder excluder;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n  }\n\n  @Test\n  void isValidUntil_nullAnnotation_returnsTrue() throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isValidUntil\", Until.class);\n    method.setAccessible(true);\n\n    Boolean result = (Boolean) method.invoke(excluder, (Until) null);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void isValidUntil_versionLessThanAnnotationVersion_returnsTrue() throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isValidUntil\", Until.class);\n    method.setAccessible(true);\n\n    setVersion(1.0);\n\n    Until untilAnnotation = mock(Until.class);\n    when(untilAnnotation.value()).thenReturn(2.0);\n\n    Boolean result = (Boolean) method.invoke(excluder, untilAnnotation);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void isValidUntil_versionEqualToAnnotationVersion_returnsFalse() throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isValidUntil\", Until.class);\n    method.setAccessible(true);\n\n    setVersion(2.0);\n\n    Until untilAnnotation = mock(Until.class);\n    when(untilAnnotation.value()).thenReturn(2.0);\n\n    Boolean result = (Boolean) method.invoke(excluder, untilAnnotation);\n\n    assertFalse(result);\n  }\n\n  @Test\n  void isValidUntil_versionGreaterThanAnnotationVersion_returnsFalse() throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isValidUntil\", Until.class);\n    method.setAccessible(true);\n\n    setVersion(3.0);\n\n    Until untilAnnotation = mock(Until.class);\n    when(untilAnnotation.value()).thenReturn(2.0);\n\n    Boolean result = (Boolean) method.invoke(excluder, untilAnnotation);\n\n    assertFalse(result);\n  }\n\n  private void setVersion(double v) throws Exception {\n    Field versionField = Excluder.class.getDeclaredField(\"version\");\n    versionField.setAccessible(true);\n    versionField.setDouble(excluder, v);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884385,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 515,
+    "prompt_tokens": 2725,
+    "total_tokens": 3240,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.96
+  }
+}

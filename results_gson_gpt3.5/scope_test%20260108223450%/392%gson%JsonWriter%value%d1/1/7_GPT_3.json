@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnAdKYCOlWzACODLIvHU0Wcp3G8C",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\nclass JsonWriter_value_Test {\n\n    private Writer mockWriter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    public void setUp() {\n        mockWriter = mock(Writer.class);\n        jsonWriter = new JsonWriter(mockWriter);\n    }\n\n    @Test\n    public void value_writesFloatValueSuccessfully() throws Exception {\n        // Arrange\n        setLenient(false);\n        setDeferredName(null);\n        pushStack(EMPTY_DOCUMENT);\n\n        // Act\n        JsonWriter returned = jsonWriter.value(123.45f);\n\n        // Assert\n        assertSame(jsonWriter, returned);\n        verify(mockWriter).append(\"123.45\");\n    }\n\n    @Test\n    public void value_allowsNaN_andInfinite_whenLenient() throws Exception {\n        setLenient(true);\n        setDeferredName(null);\n        pushStack(EMPTY_DOCUMENT);\n\n        JsonWriter returnedNaN = jsonWriter.value(Float.NaN);\n        verify(mockWriter).append(\"NaN\");\n        assertSame(jsonWriter, returnedNaN);\n\n        JsonWriter returnedPosInf = jsonWriter.value(Float.POSITIVE_INFINITY);\n        verify(mockWriter).append(\"Infinity\");\n        assertSame(jsonWriter, returnedPosInf);\n\n        JsonWriter returnedNegInf = jsonWriter.value(Float.NEGATIVE_INFINITY);\n        verify(mockWriter).append(\"-Infinity\");\n        assertSame(jsonWriter, returnedNegInf);\n    }\n\n    @Test\n    public void value_throwsIllegalArgumentException_forNaN_whenNotLenient() throws Exception {\n        setLenient(false);\n        setDeferredName(null);\n        pushStack(EMPTY_DOCUMENT);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Float.NaN));\n        assertTrue(ex.getMessage().contains(\"Numeric values must be finite\"));\n\n        ex = assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Float.POSITIVE_INFINITY));\n        assertTrue(ex.getMessage().contains(\"Numeric values must be finite\"));\n\n        ex = assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Float.NEGATIVE_INFINITY));\n        assertTrue(ex.getMessage().contains(\"Numeric values must be finite\"));\n    }\n\n    @Test\n    public void value_callsWriteDeferredName_andBeforeValue() throws Exception {\n        setLenient(false);\n        // Create spy on jsonWriter\n        JsonWriter spyWriter = spy(jsonWriter);\n\n        // Set deferredName to \"name\" on spyWriter\n        setField(spyWriter, \"deferredName\", \"name\");\n\n        // Replace 'out' with spy on mockWriter\n        Writer spyOut = spy(mockWriter);\n        setField(spyWriter, \"out\", spyOut);\n\n        // Push EMPTY_DOCUMENT state on spyWriter's stack\n        pushStack(spyWriter, EMPTY_DOCUMENT);\n\n        // Use reflection to get private value(float) method\n        Method valueMethod = JsonWriter.class.getDeclaredMethod(\"value\", float.class);\n        valueMethod.setAccessible(true);\n\n        // Act: invoke value(float) on spyWriter\n        valueMethod.invoke(spyWriter, 42.0f);\n\n        // Assert deferredName cleared\n        assertNull(getField(spyWriter, \"deferredName\"));\n\n        // Assert stack top is NONEMPTY_DOCUMENT\n        int[] stack = (int[]) getField(spyWriter, \"stack\");\n        int stackSize = (int) getField(spyWriter, \"stackSize\");\n        int top = stack[stackSize - 1];\n        assertEquals(NONEMPTY_DOCUMENT, top);\n\n        // Verify append called with \"42.0\"\n        verify(spyOut).append(\"42.0\");\n    }\n\n    // Helper methods to access private fields and manipulate state\n\n    private static final int EMPTY_DOCUMENT = 6;\n    private static final int NONEMPTY_DOCUMENT = 7;\n\n    private void setLenient(boolean lenient) throws Exception {\n        setField(jsonWriter, \"lenient\", lenient);\n    }\n\n    private void setDeferredName(String name) throws Exception {\n        setField(jsonWriter, \"deferredName\", name);\n    }\n\n    private void pushStack(int state) throws Exception {\n        int[] stack = (int[]) getField(jsonWriter, \"stack\");\n        int stackSize = (int) getField(jsonWriter, \"stackSize\");\n        if (stackSize == stack.length) {\n            int[] newStack = new int[stackSize * 2];\n            System.arraycopy(stack, 0, newStack, 0, stackSize);\n            setField(jsonWriter, \"stack\", newStack);\n            stack = newStack;\n        }\n        stack[stackSize] = state;\n        setField(jsonWriter, \"stackSize\", stackSize + 1);\n    }\n\n    private void pushStack(JsonWriter writer, int state) throws Exception {\n        int[] stack = (int[]) getField(writer, \"stack\");\n        int stackSize = (int) getField(writer, \"stackSize\");\n        if (stackSize == stack.length) {\n            int[] newStack = new int[stackSize * 2];\n            System.arraycopy(stack, 0, newStack, 0, stackSize);\n            setField(writer, \"stack\", newStack);\n            stack = newStack;\n        }\n        stack[stackSize] = state;\n        setField(writer, \"stackSize\", stackSize + 1);\n    }\n\n    private static void setField(Object obj, String fieldName, Object value) throws Exception {\n        java.lang.reflect.Field field = getFieldFromClassHierarchy(obj.getClass(), fieldName);\n        field.setAccessible(true);\n        field.set(obj, value);\n    }\n\n    private static Object getField(Object obj, String fieldName) throws Exception {\n        java.lang.reflect.Field field = getFieldFromClassHierarchy(obj.getClass(), fieldName);\n        field.setAccessible(true);\n        return field.get(obj);\n    }\n\n    private static java.lang.reflect.Field getFieldFromClassHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {\n        Class<?> current = clazz;\n        while (current != null) {\n            try {\n                return current.getDeclaredField(fieldName);\n            } catch (NoSuchFieldException e) {\n                current = current.getSuperclass();\n            }\n        }\n        throw new NoSuchFieldException(fieldName);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889743,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1348,
+    "prompt_tokens": 2750,
+    "total_tokens": 4098,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.79
+  }
+}

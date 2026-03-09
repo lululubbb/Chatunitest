@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcq4ayCehYpjyHKFE9Kg4TKxkn0R",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader reader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        reader = new ExtendedBufferedReader(mockReader) {\n            // Override read() to delegate to mockReader.read()\n            @Override\n            public int read() throws IOException {\n                return mockReader.read();\n            }\n\n            // Override mark, reset to delegate to mockReader if needed\n            @Override\n            public void mark(int readAheadLimit) throws IOException {\n                mockReader.mark(readAheadLimit);\n            }\n\n            @Override\n            public void reset() throws IOException {\n                mockReader.reset();\n            }\n        };\n    }\n\n    @Test\n    void testLookAheadReturnsNextChar() throws Exception {\n        // Setup mockReader to return 'A' on read()\n        when(mockReader.read()).thenReturn((int) 'A');\n\n        // call lookAhead and verify it returns 'A'\n        int result = reader.lookAhead();\n        assertEquals('A', result);\n\n        verify(mockReader, times(1)).read();\n        verify(mockReader, times(1)).mark(1);\n        verify(mockReader, times(1)).reset();\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws Exception {\n        // Setup mockReader to return -1 (END_OF_STREAM)\n        when(mockReader.read()).thenReturn(-1);\n\n        int result = reader.lookAhead();\n        assertEquals(-1, result);\n\n        verify(mockReader, times(1)).read();\n        verify(mockReader, times(1)).mark(1);\n        verify(mockReader, times(1)).reset();\n    }\n\n    @Test\n    void testLookAheadMultipleCalls() throws Exception {\n        // Setup mockReader to return 'X' first, then 'Y'\n        when(mockReader.read()).thenReturn((int) 'X').thenReturn((int) 'Y');\n\n        int first = reader.lookAhead();\n        int second = reader.lookAhead();\n\n        // Both calls should return the first char 'X' because mark/reset keeps stream position\n        assertEquals('X', first);\n        assertEquals('X', second);\n\n        verify(mockReader, times(2)).read();\n        verify(mockReader, times(2)).mark(1);\n        verify(mockReader, times(2)).reset();\n    }\n\n    @Test\n    void testLookAheadPrivateAccessUsingReflection() throws Exception {\n        Method lookAheadMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"lookAhead\");\n        lookAheadMethod.setAccessible(true);\n\n        when(mockReader.read()).thenReturn((int) 'Z');\n\n        int result = (int) lookAheadMethod.invoke(reader);\n        assertEquals('Z', result);\n\n        verify(mockReader, times(1)).read();\n        verify(mockReader, times(1)).mark(1);\n        verify(mockReader, times(1)).reset();\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850028,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 658,
+    "prompt_tokens": 895,
+    "total_tokens": 1553,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.49
+  }
+}

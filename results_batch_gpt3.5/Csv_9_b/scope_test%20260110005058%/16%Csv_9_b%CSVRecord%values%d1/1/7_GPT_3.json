@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA0RtVJh0cGJ5VMpKgTNMt4ND9E3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.HashMap;\nimport java.util.Map;\n\nclass CSVRecordTest {\n\n    @Test\n    void testValuesReturnsCorrectArray() throws Exception {\n        String[] expectedValues = new String[] {\"a\", \"b\", \"c\"};\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"one\", 0);\n        mapping.put(\"two\", 1);\n        mapping.put(\"three\", 2);\n        String comment = \"comment\";\n        long recordNumber = 42L;\n\n        // Create instance via constructor\n        CSVRecord record = new CSVRecord(expectedValues, mapping, comment, recordNumber);\n\n        // Access values() method directly since it is package-private\n        String[] actualValues = record.values();\n\n        assertArrayEquals(expectedValues, actualValues);\n    }\n\n    @Test\n    void testValuesWhenEmptyArray() throws Exception {\n        String[] expectedValues = new String[0];\n        Map<String, Integer> mapping = new HashMap<>();\n        String comment = null;\n        long recordNumber = 0L;\n\n        CSVRecord record = new CSVRecord(expectedValues, mapping, comment, recordNumber);\n\n        String[] actualValues = record.values();\n\n        assertArrayEquals(expectedValues, actualValues);\n    }\n\n    @Test\n    void testValuesReflectiveAccess() throws Exception {\n        String[] expectedValues = new String[] {\"x\", \"y\"};\n        Map<String, Integer> mapping = new HashMap<>();\n        String comment = \"c\";\n        long recordNumber = 1L;\n\n        CSVRecord record = new CSVRecord(new String[0], mapping, comment, recordNumber);\n\n        // Use reflection to set private final field 'values'\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n\n        // Remove final modifier on the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(valuesField, valuesField.getModifiers() & ~Modifier.FINAL);\n\n        valuesField.set(record, expectedValues);\n\n        // Invoke values() method and verify\n        String[] actualValues = record.values();\n\n        assertArrayEquals(expectedValues, actualValues);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977523,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 494,
+    "prompt_tokens": 945,
+    "total_tokens": 1439,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.04
+  }
+}

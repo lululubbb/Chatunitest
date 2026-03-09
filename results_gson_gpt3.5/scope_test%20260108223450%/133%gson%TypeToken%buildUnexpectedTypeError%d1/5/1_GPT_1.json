@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmAToeyCDyvjDgJCaUUBb1gxDn2P",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Type;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenTest {\n\n  @Test\n  void testBuildUnexpectedTypeError_singleExpected() throws Exception {\n    Type token = String.class;\n    Class<?>[] expected = {Integer.class};\n\n    // Use reflection to invoke private static method\n    var method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: java.lang.Integer, but got: java.lang.Class, for type token: class java.lang.String.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_multipleExpected() throws Exception {\n    Type token = Double.class;\n    Class<?>[] expected = {Integer.class, String.class, Number.class};\n\n    var method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: java.lang.Integer, java.lang.String, java.lang.Number, but got: java.lang.Class, for type token: class java.lang.Double.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_noExpected() throws Exception {\n    Type token = Boolean.class;\n    Class<?>[] expected = {};\n\n    var method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: but got: java.lang.Class, for type token: class java.lang.Boolean.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885889,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 432,
+    "prompt_tokens": 588,
+    "total_tokens": 1020,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.13
+  }
+}

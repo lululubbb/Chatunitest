@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlu5XgMR8VP8ebD74woHVzu4PgZ2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass JsonArrayTest {\n\n  private JsonElement singleElementMock;\n\n  @BeforeEach\n  void setUp() {\n    singleElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  void testGetAsInt_returnsIntFromSingleElement() {\n    JsonArray spyArray = new JsonArrayWithOverriddenGetAsSingleElement(singleElementMock);\n    JsonArray spy = spy(spyArray);\n\n    when(singleElementMock.getAsInt()).thenReturn(42);\n\n    int result = spy.getAsInt();\n\n    assertEquals(42, result);\n    verify(singleElementMock).getAsInt();\n  }\n\n  @Test\n  void testGetAsInt_throwsIfSingleElementThrows() {\n    JsonArray spyArray = new JsonArrayWithOverriddenGetAsSingleElement(singleElementMock);\n    JsonArray spy = spy(spyArray);\n\n    when(singleElementMock.getAsInt()).thenThrow(new NumberFormatException(\"bad number\"));\n\n    assertThrows(NumberFormatException.class, spy::getAsInt);\n    verify(singleElementMock).getAsInt();\n  }\n\n  @Test\n  void testGetAsSingleElement_privateMethod_returnsCorrectElement() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    JsonElement element = mock(JsonElement.class);\n    jsonArray.add(element);\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    JsonElement returned = (JsonElement) method.invoke(jsonArray);\n\n    assertSame(element, returned);\n  }\n\n  /**\n   * Subclass of JsonArray overriding private getAsSingleElement() via reflection.\n   */\n  private static class JsonArrayWithOverriddenGetAsSingleElement extends JsonArray {\n    private final JsonElement overrideElement;\n\n    JsonArrayWithOverriddenGetAsSingleElement(JsonElement overrideElement) {\n      this.overrideElement = overrideElement;\n    }\n\n    @Override\n    @SuppressWarnings(\"unchecked\")\n    public int getAsInt() {\n      // Override getAsInt to delegate to the overridden getAsSingleElement mock\n      return getAsSingleElement().getAsInt();\n    }\n\n    // Override getAsSingleElement by reflection hack:\n    private JsonElement getAsSingleElement() {\n      return overrideElement;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884873,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 521,
+    "prompt_tokens": 2354,
+    "total_tokens": 2875,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.32
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZ8vXCaBvbpasgQZA8Fucazp9tpJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private ResultSet resultSetMock;\n    private ResultSetMetaData metaDataMock;\n\n    @BeforeEach\n    public void setUp() {\n        resultSetMock = mock(ResultSet.class);\n        metaDataMock = mock(ResultSetMetaData.class);\n    }\n\n    @Test\n    public void testWithHeader_withNonNullResultSet() throws SQLException {\n        when(resultSetMock.getMetaData()).thenReturn(metaDataMock);\n        // Mock metaDataMock.getColumnCount and getColumnName to avoid exceptions\n        when(metaDataMock.getColumnCount()).thenReturn(1);\n        when(metaDataMock.getColumnName(1)).thenReturn(\"header1\");\n\n        CSVFormat originalFormat = CSVFormat.DEFAULT;\n        CSVFormat newFormat = originalFormat.withHeader(resultSetMock);\n\n        verify(resultSetMock, times(1)).getMetaData();\n        assertNotNull(newFormat);\n        assertNotSame(originalFormat, newFormat);\n    }\n\n    @Test\n    public void testWithHeader_withNullResultSet() throws SQLException {\n        CSVFormat originalFormat = CSVFormat.DEFAULT;\n        CSVFormat newFormat = originalFormat.withHeader((ResultSet) null);\n\n        assertNotNull(newFormat);\n        assertNotSame(originalFormat, newFormat);\n    }\n\n    @Test\n    public void testWithHeader_withResultSet_getMetaDataThrows() throws SQLException {\n        when(resultSetMock.getMetaData()).thenThrow(new SQLException(\"metaData error\"));\n\n        CSVFormat originalFormat = CSVFormat.DEFAULT;\n        SQLException thrown = assertThrows(SQLException.class, () -> originalFormat.withHeader(resultSetMock));\n        assertEquals(\"metaData error\", thrown.getMessage());\n\n        verify(resultSetMock, times(1)).getMetaData();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550805,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 427,
+    "prompt_tokens": 1592,
+    "total_tokens": 2019,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.2
+  }
+}

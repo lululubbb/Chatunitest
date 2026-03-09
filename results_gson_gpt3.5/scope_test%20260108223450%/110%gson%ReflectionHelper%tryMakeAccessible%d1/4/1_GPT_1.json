@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlTyDjz7gU5DgdBePNKI6EC4wwA1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<String> constructor = String.class.getDeclaredConstructor(byte[].class);\n    // The constructor is normally not accessible, but tryMakeAccessible should make it accessible and return null\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws Exception {\n    // Create a mock Constructor to throw exception on setAccessible(true)\n    Constructor<?> constructor = mock(Constructor.class);\n    doThrow(new SecurityException(\"no access allowed\")).when(constructor).setAccessible(true);\n    when(constructor.toString()).thenReturn(\"mockConstructor\");\n\n    // Also mock constructorToString to return a fixed string for test\n    // Use reflection to replace the private static method constructorToString since it's static final\n    // Instead, we just rely on the actual constructorToString method, so override toString() of mock\n\n    String message = ReflectionHelper.tryMakeAccessible(constructor);\n\n    assertNotNull(message);\n    assertTrue(message.contains(\"Failed making constructor 'mockConstructor' accessible\"));\n    assertTrue(message.contains(\"no access allowed\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883254,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 305,
+    "prompt_tokens": 465,
+    "total_tokens": 770,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.7
+  }
+}

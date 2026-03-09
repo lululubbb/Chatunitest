@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnR3Xenb9A1yExw9dnII5xzFDwb2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.Primitives;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass GsonFromJsonStringClassTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = spy(new Gson());\n  }\n\n  @Test\n  public void testFromJson_withValidJsonAndClass_shouldReturnObject() throws Exception {\n    String json = \"{\\\"field\\\":\\\"value\\\"}\";\n    Class<?> clazz = String.class;\n    Object expectedObject = \"mockedObject\";\n\n    // Mock fromJson(String, TypeToken) to return expectedObject\n    doReturn(expectedObject).when(gson).fromJson(eq(json), any(TypeToken.class));\n\n    // Mock static Primitives.wrap to return the class itself (String.class)\n    try (MockedStatic<Primitives> primitivesMockedStatic = Mockito.mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(clazz)).thenReturn(clazz);\n\n      Object actual = gson.fromJson(json, clazz);\n\n      assertNotNull(actual);\n      assertEquals(expectedObject, actual);\n      assertSame(clazz, Primitives.wrap(clazz));\n      verify(gson).fromJson(eq(json), any(TypeToken.class));\n    }\n  }\n\n  @Test\n  public void testFromJson_withNullJson_shouldReturnNull() throws Exception {\n    String json = null;\n    Class<?> clazz = String.class;\n\n    doReturn(null).when(gson).fromJson(eq(json), any(TypeToken.class));\n\n    try (MockedStatic<Primitives> primitivesMockedStatic = Mockito.mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(clazz)).thenReturn(clazz);\n\n      Object actual = gson.fromJson(json, clazz);\n\n      assertNull(actual);\n      verify(gson).fromJson(eq(json), any(TypeToken.class));\n    }\n  }\n\n  @Test\n  public void testFromJson_withPrimitiveClass_shouldCastCorrectly() throws Exception {\n    String json = \"123\";\n    Class<Integer> clazz = int.class;\n    Integer expectedObject = 123;\n\n    doReturn(expectedObject).when(gson).fromJson(eq(json), any(TypeToken.class));\n\n    try (MockedStatic<Primitives> primitivesMockedStatic = Mockito.mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(clazz)).thenReturn(Integer.class);\n\n      Integer actual = gson.fromJson(json, clazz);\n\n      assertNotNull(actual);\n      assertEquals(expectedObject, actual);\n      verify(gson).fromJson(eq(json), any(TypeToken.class));\n    }\n  }\n\n  @Test\n  public void testFromJson_whenFromJsonThrowsJsonSyntaxException_shouldPropagate() {\n    String json = \"invalid json\";\n    Class<String> clazz = String.class;\n\n    doThrow(new JsonSyntaxException(\"syntax error\")).when(gson).fromJson(eq(json), any(TypeToken.class));\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(json, clazz));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890761,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 675,
+    "prompt_tokens": 2417,
+    "total_tokens": 3092,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.34
+  }
+}

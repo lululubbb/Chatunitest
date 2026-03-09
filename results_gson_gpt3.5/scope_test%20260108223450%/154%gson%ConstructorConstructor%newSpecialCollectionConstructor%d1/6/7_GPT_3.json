@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmne7s1FBcf461Z2mRkCPP2jmm2L",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.util.EnumMap;\nimport java.util.EnumSet;\nimport org.junit.jupiter.api.Test;\n\nclass ConstructorConstructorTest {\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumSetWithValidParameterizedType() throws Exception {\n    // Arrange\n    ParameterizedType enumSetType = mock(ParameterizedType.class);\n    Class<TestEnum> enumClass = TestEnum.class;\n    when(enumSetType.getActualTypeArguments()).thenReturn(new Type[] {enumClass});\n    when(enumSetType.getRawType()).thenReturn(EnumSet.class);\n\n    // Act\n    ObjectConstructor<?> constructor = invokeNewSpecialCollectionConstructor(enumSetType, EnumSet.class);\n\n    // Assert\n    assertNotNull(constructor);\n    Object instance = constructor.construct();\n    assertTrue(instance instanceof EnumSet);\n    assertEquals(0, ((EnumSet<?>) instance).size());\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumSetWithInvalidParameterizedType() throws Exception {\n    // Arrange\n    ParameterizedType invalidType = mock(ParameterizedType.class);\n    when(invalidType.getActualTypeArguments()).thenReturn(new Type[] {mock(Type.class)});\n    when(invalidType.getRawType()).thenReturn(EnumSet.class);\n\n    // Act & Assert\n    JsonIOException exception = assertThrows(JsonIOException.class,\n        () -> invokeNewSpecialCollectionConstructor(invalidType, EnumSet.class));\n    assertTrue(exception.getMessage().contains(\"Invalid EnumSet type\"));\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumSetWithNonParameterizedType() throws Exception {\n    // Arrange\n    Type nonParameterizedType = String.class;\n\n    // Act & Assert\n    JsonIOException exception = assertThrows(JsonIOException.class,\n        () -> invokeNewSpecialCollectionConstructor(nonParameterizedType, EnumSet.class));\n    assertTrue(exception.getMessage().contains(\"Invalid EnumSet type\"));\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumMapWithValidParameterizedType() throws Exception {\n    // Arrange\n    ParameterizedType enumMapType = mock(ParameterizedType.class);\n    Class<TestEnum> enumClass = TestEnum.class;\n    when(enumMapType.getActualTypeArguments()).thenReturn(new Type[] {enumClass});\n    when(enumMapType.getRawType()).thenReturn(EnumMap.class);\n\n    // Act\n    ObjectConstructor<?> constructor = invokeNewSpecialCollectionConstructor(enumMapType, EnumMap.class);\n\n    // Assert\n    assertNotNull(constructor);\n    Object instance = constructor.construct();\n    assertTrue(instance instanceof EnumMap);\n    assertEquals(0, ((EnumMap<?, ?>) instance).size());\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumMapWithInvalidParameterizedType() throws Exception {\n    // Arrange\n    ParameterizedType invalidType = mock(ParameterizedType.class);\n    when(invalidType.getActualTypeArguments()).thenReturn(new Type[] {mock(Type.class)});\n    when(invalidType.getRawType()).thenReturn(EnumMap.class);\n\n    // Act & Assert\n    JsonIOException exception = assertThrows(JsonIOException.class,\n        () -> invokeNewSpecialCollectionConstructor(invalidType, EnumMap.class));\n    assertTrue(exception.getMessage().contains(\"Invalid EnumMap type\"));\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_enumMapWithNonParameterizedType() throws Exception {\n    // Arrange\n    Type nonParameterizedType = String.class;\n\n    // Act & Assert\n    JsonIOException exception = assertThrows(JsonIOException.class,\n        () -> invokeNewSpecialCollectionConstructor(nonParameterizedType, EnumMap.class));\n    assertTrue(exception.getMessage().contains(\"Invalid EnumMap type\"));\n  }\n\n  @Test\n  void testNewSpecialCollectionConstructor_otherRawTypeReturnsNull() throws Exception {\n    // Act\n    ObjectConstructor<?> constructor = invokeNewSpecialCollectionConstructor(String.class, String.class);\n\n    // Assert\n    assertNull(constructor);\n  }\n\n  // Helper method to invoke the private static method via reflection\n  @SuppressWarnings(\"unchecked\")\n  private static <T> ObjectConstructor<T> invokeNewSpecialCollectionConstructor(Type type, Class<? super T> rawType) throws Exception {\n    java.lang.reflect.Method method = ConstructorConstructor.class.getDeclaredMethod(\n        \"newSpecialCollectionConstructor\", Type.class, Class.class);\n    method.setAccessible(true);\n    return (ObjectConstructor<T>) method.invoke(null, type, rawType);\n  }\n\n  private enum TestEnum {\n    VALUE1, VALUE2\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888318,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 951,
+    "prompt_tokens": 2695,
+    "total_tokens": 3646,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.73
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvltEtaMO69mGI0kQtHZnePIkmItM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement mockElement;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n    mockElement = mock(JsonElement.class);\n  }\n\n  @Test\n  void getAsInt_singleElement_returnsInt() {\n    jsonArray.add(mockElement);\n    when(mockElement.getAsInt()).thenReturn(42);\n\n    int result = jsonArray.getAsInt();\n\n    assertEquals(42, result);\n    verify(mockElement).getAsInt();\n  }\n\n  @Test\n  void getAsInt_emptyArray_throwsIndexOutOfBoundsException() throws Exception {\n    // Use reflection to access private getAsSingleElement()\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {\n      getAsSingleElement.invoke(jsonArray);\n    });\n\n    // getAsInt calls getAsSingleElement which throws when empty\n    assertNotNull(exception);\n  }\n\n  @Test\n  void getAsInt_multipleElements_returnsFirstElementInt() {\n    JsonElement first = mock(JsonElement.class);\n    JsonElement second = mock(JsonElement.class);\n    jsonArray.add(first);\n    jsonArray.add(second);\n\n    when(first.getAsInt()).thenReturn(10);\n    // second.getAsInt() should not be called\n\n    int result = jsonArray.getAsInt();\n\n    assertEquals(10, result);\n    verify(first).getAsInt();\n    verifyNoMoreInteractions(second);\n  }\n\n  @Test\n  void getAsSingleElement_reflectiveInvocation_returnsCorrectElement() throws Exception {\n    jsonArray.add(mockElement);\n\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    JsonElement returned = (JsonElement) getAsSingleElement.invoke(jsonArray);\n\n    assertSame(mockElement, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884820,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 467,
+    "prompt_tokens": 488,
+    "total_tokens": 955,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.61
+  }
+}

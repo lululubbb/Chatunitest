@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnB6wRgncHc3RAc1BxB671VrmOaY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.JsonSerializer;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class TreeTypeAdapterTest {\n\n  @Test\n  public void testNewTypeHierarchyFactory_returnsSingleTypeFactoryWithCorrectParams() throws Exception {\n    Class<?> hierarchyType = Number.class;\n\n    // Use a mock JsonSerializer as the typeAdapter parameter to satisfy Preconditions.checkArgument\n    JsonSerializer<?> typeAdapter = mock(JsonSerializer.class);\n\n    // Invoke the static method TreeTypeAdapter.newTypeHierarchyFactory via reflection\n    Method method = TreeTypeAdapter.class.getDeclaredMethod(\"newTypeHierarchyFactory\", Class.class, Object.class);\n    method.setAccessible(true);\n    Object result = method.invoke(null, hierarchyType, typeAdapter);\n\n    assertNotNull(result);\n    assertTrue(result instanceof TypeAdapterFactory);\n\n    // The returned object is an instance of SingleTypeFactory (package-private)\n    // We verify its internal fields via reflection to ensure correct construction\n\n    Class<?> singleTypeFactoryClass = result.getClass();\n\n    // Verify field 'hierarchyType'\n    var hierarchyTypeField = singleTypeFactoryClass.getDeclaredField(\"hierarchyType\");\n    hierarchyTypeField.setAccessible(true);\n    Object actualHierarchyType = hierarchyTypeField.get(result);\n    assertEquals(hierarchyType, actualHierarchyType);\n\n    // Verify field 'typeAdapter'\n    var typeAdapterField = singleTypeFactoryClass.getDeclaredField(\"typeAdapter\");\n    typeAdapterField.setAccessible(true);\n    Object actualTypeAdapter = typeAdapterField.get(result);\n    assertSame(typeAdapter, actualTypeAdapter);\n\n    // Verify field 'matchRawType' is true\n    var matchRawTypeField = singleTypeFactoryClass.getDeclaredField(\"matchRawType\");\n    matchRawTypeField.setAccessible(true);\n    boolean actualMatchRawType = matchRawTypeField.getBoolean(result);\n    assertTrue(actualMatchRawType);\n\n    // Verify field 'exactType' is null\n    var exactTypeField = singleTypeFactoryClass.getDeclaredField(\"exactType\");\n    exactTypeField.setAccessible(true);\n    Object actualExactType = exactTypeField.get(result);\n    assertNull(actualExactType);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889772,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 473,
+    "prompt_tokens": 1368,
+    "total_tokens": 1841,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.38
+  }
+}

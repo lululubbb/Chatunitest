@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwkF1tvkiR0xYaBqpRsaqyWbpnP1O",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileOutputStream;\nimport java.io.OutputStreamWriter;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport org.powermock.api.mockito.PowerMockito;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testPrint() throws Exception {\n        // Given\n        File file = new File(\"test.csv\");\n        Charset charset = Charset.defaultCharset();\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVPrinter csvPrinterMock = mock(CSVPrinter.class);\n        CSVFormat spyCsvFormat = Mockito.spy(csvFormat);\n\n        OutputStreamWriter outputStreamWriterMock = mock(OutputStreamWriter.class);\n        PowerMockito.whenNew(OutputStreamWriter.class).withArguments(any(FileOutputStream.class), eq(charset))\n                .thenReturn(outputStreamWriterMock);\n\n        PowerMockito.whenNew(CSVPrinter.class).withArguments(eq(outputStreamWriterMock), eq(spyCsvFormat))\n                .thenReturn(csvPrinterMock);\n\n        // When\n        CSVPrinter result = spyCsvFormat.print(file, charset);\n\n        // Then\n        assertEquals(csvPrinterMock, result);\n        PowerMockito.verifyNew(OutputStreamWriter.class).withArguments(any(FileOutputStream.class), eq(charset));\n        PowerMockito.verifyNew(CSVPrinter.class).withArguments(eq(outputStreamWriterMock), eq(spyCsvFormat));\n    }\n}",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768116811,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 299,
+    "prompt_tokens": 2497,
+    "total_tokens": 2796,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 3.52
+  }
+}

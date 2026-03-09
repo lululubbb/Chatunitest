@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7zqSaUAkdXKBto9u8EdT8YadgsP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass LexerIsEscapeTest {\n\n    private Lexer lexer;\n    private CSVFormat formatMock;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n        inMock = mock(ExtendedBufferedReader.class);\n\n        // Create a concrete subclass of Lexer for testing since Lexer is abstract\n        lexer = new Lexer(formatMock, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsEscape_ReturnsTrue_WhenCharEqualsEscape() throws Exception {\n        // Use reflection to set private final field 'escape'\n        setFinalCharField(lexer, \"escape\", 'e');\n\n        // Call isEscape with character equal to escape\n        boolean result = lexer.isEscape('e');\n\n        assertTrue(result, \"isEscape should return true when input equals escape char\");\n    }\n\n    @Test\n    void testIsEscape_ReturnsFalse_WhenCharNotEqualsEscape() throws Exception {\n        setFinalCharField(lexer, \"escape\", 'e');\n\n        boolean result = lexer.isEscape('x');\n\n        assertFalse(result, \"isEscape should return false when input not equals escape char\");\n    }\n\n    // Helper method to set private final char fields via reflection\n    private void setFinalCharField(Object target, String fieldName, char value) throws Exception {\n        java.lang.reflect.Field field = Lexer.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier using reflection (works in Java 8+)\n        java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969798,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 442,
+    "prompt_tokens": 419,
+    "total_tokens": 861,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.78
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.GsonBuildConfig;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  void testCreateExceptionForRecordReflectionException_throwsRuntimeExceptionWithCause() throws Exception {\n    ReflectiveOperationException reflectiveException = new ReflectiveOperationException(\"test reflective exception\");\n\n    // Use reflection to access private static method\n    var method = ReflectionHelper.class.getDeclaredMethod(\"createExceptionForRecordReflectionException\", ReflectiveOperationException.class);\n    method.setAccessible(true);\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      try {\n        method.invoke(null, reflectiveException);\n      } catch (InvocationTargetException ite) {\n        // unwrap the actual exception thrown by the method\n        throw ite.getCause();\n      }\n    });\n\n    String expectedMessageStart = \"Unexpected ReflectiveOperationException occurred (Gson \";\n    String actualMessage = thrown.getMessage();\n    // Check message contains expected start and version string\n    assertEquals(true, actualMessage.startsWith(expectedMessageStart));\n    assertEquals(reflectiveException, thrown.getCause());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 462,
+  "completion_tokens": 294,
+  "total_tokens": 756,
+  "llm_elapsed_time_seconds": 6.12,
+  "repair_elapsed_time_seconds": 10.59,
+  "round_total_time_seconds": 10.59
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9D5UeozaF46u4DTPiIJhCZsEr5Q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private Constructor<CSVRecord> constructor;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException, SecurityException {\n        constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n    }\n\n    @Test\n    public void testSize_withNonEmptyValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        String[] values = new String[] {\"a\", \"b\", \"c\"};\n        Map<String, Integer> mapping = new HashMap<>();\n        CSVRecord record = constructor.newInstance((Object) values, mapping, null, 1L);\n\n        int size = record.size();\n\n        assertEquals(3, size);\n    }\n\n    @Test\n    public void testSize_withEmptyValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        String[] values = new String[0];\n        Map<String, Integer> mapping = Collections.emptyMap();\n        CSVRecord record = constructor.newInstance((Object) values, mapping, null, 1L);\n\n        int size = record.size();\n\n        assertEquals(0, size);\n    }\n\n    @Test\n    public void testSize_withNullValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException {\n        String[] values = null;\n        Map<String, Integer> mapping = Collections.emptyMap();\n\n        try {\n            constructor.newInstance((Object) values, mapping, null, 1L);\n        } catch (InvocationTargetException e) {\n            // If constructor throws NullPointerException, test passes\n            assertEquals(NullPointerException.class, e.getCause().getClass());\n            return;\n        }\n\n        // If no exception, fail the test\n        throw new AssertionError(\"Expected NullPointerException was not thrown\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 455,
+    "prompt_tokens": 910,
+    "total_tokens": 1365,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.33
+  }
+}

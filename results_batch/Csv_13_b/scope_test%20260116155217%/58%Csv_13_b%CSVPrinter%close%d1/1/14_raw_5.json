@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter csvPrinter;\n    private Appendable mockAppendable;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockAppendable = mock(Appendable.class);\n        mockFormat = mock(CSVFormat.class);\n        csvPrinter = new CSVPrinter(mockAppendable, mockFormat);\n    }\n\n    @Test\n    void testClose_outIsCloseable_closesOut() throws Exception {\n        Closeable mockCloseable = mock(Closeable.class);\n        setOutField(csvPrinter, mockCloseable);\n\n        csvPrinter.close();\n\n        verify(mockCloseable, times(1)).close();\n    }\n\n    @Test\n    void testClose_outIsNotCloseable_noException() throws Exception {\n        // out is the mock Appendable which does NOT implement Closeable\n        // Just invoking close() should not throw any exception\n        assertDoesNotThrow(() -> csvPrinter.close());\n    }\n\n    private void setOutField(CSVPrinter printer, Object outInstance) throws Exception {\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, outInstance);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_13_b/scope_test%20260116155217%/58%Csv_13_b%CSVPrinter%close%d1/1/runtemp/Csv_13_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 809,
+  "completion_tokens": 307,
+  "total_tokens": 1116,
+  "llm_elapsed_time_seconds": 5.35
+}

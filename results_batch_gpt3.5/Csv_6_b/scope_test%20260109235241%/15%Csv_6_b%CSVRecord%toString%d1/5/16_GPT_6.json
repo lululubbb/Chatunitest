@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Kc5JoZepdA2vnmH7fZhSbFpJVT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    @Test\n    public void testToString_withNonEmptyValues() throws Exception {\n        String[] values = new String[] {\"a\", \"b\", \"c\"};\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"col1\", 0);\n        mapping.put(\"col2\", 1);\n        mapping.put(\"col3\", 2);\n        String comment = \"comment\";\n        long recordNumber = 123L;\n\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(values, mapping, comment, recordNumber);\n\n        String expected = \"[a, b, c]\";\n        assertEquals(expected, record.toString());\n    }\n\n    @Test\n    public void testToString_withEmptyValues() throws Exception {\n        String[] values = new String[0];\n        Map<String, Integer> mapping = Collections.emptyMap();\n        String comment = null;\n        long recordNumber = 0L;\n\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(values, mapping, comment, recordNumber);\n\n        String expected = \"[]\";\n        assertEquals(expected, record.toString());\n    }\n\n    @Test\n    public void testToString_withNullValuesField() throws Exception {\n        // Create instance with non-null values first\n        String[] values = new String[] {\"x\", \"y\"};\n        Map<String, Integer> mapping = Collections.emptyMap();\n        String comment = null;\n        long recordNumber = 1L;\n\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(values, mapping, comment, recordNumber);\n\n        // Use reflection to set private final field 'values' to null to test behavior\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n\n        // Remove final modifier for the field 'values'\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(valuesField, valuesField.getModifiers() & ~Modifier.FINAL);\n\n        valuesField.set(record, null);\n\n        // toString should handle null gracefully, but Arrays.toString(null) returns \"null\"\n        String expected = \"null\";\n        assertEquals(expected, record.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974930,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 612,
+    "prompt_tokens": 1073,
+    "total_tokens": 1685,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.48
+  }
+}

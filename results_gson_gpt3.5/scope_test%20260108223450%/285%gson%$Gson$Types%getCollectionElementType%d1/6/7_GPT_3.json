@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvldA2fYhbjscZPpMoBQTWQet64FP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetCollectionElementType_withParameterizedCollection() throws Exception {\n    // Prepare a ParameterizedType representing Collection<String>\n    ParameterizedType collectionStringType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() { return new Type[] {String.class}; }\n      @Override public Type getRawType() { return Collection.class; }\n      @Override public Type getOwnerType() { return null; }\n    };\n\n    // Create a dummy class implementing Collection<String>\n    class StringCollection implements Collection<String> {\n      public int size() { return 0; }\n      public boolean isEmpty() { return true; }\n      public boolean contains(Object o) { return false; }\n      public Iterator<String> iterator() { return Collections.emptyIterator(); }\n      public Object[] toArray() { return new Object[0]; }\n      public <T> T[] toArray(T[] a) { return a; }\n      public boolean add(String e) { return false; }\n      public boolean remove(Object o) { return false; }\n      public boolean containsAll(Collection<?> c) { return false; }\n      public boolean addAll(Collection<? extends String> c) { return false; }\n      public boolean removeAll(Collection<?> c) { return false; }\n      public boolean retainAll(Collection<?> c) { return false; }\n      public void clear() {}\n    }\n\n    // Use a generic field to get a ParameterizedType representing Collection<String>\n    class Holder {\n      Collection<String> strings;\n      Collection rawCollection;\n    }\n\n    Field fieldStrings = Holder.class.getDeclaredField(\"strings\");\n    Type context = fieldStrings.getGenericType();\n    Class<?> contextRawType = (Class<?>) ((ParameterizedType) context).getRawType();\n\n    Type elementType = $Gson$Types.getCollectionElementType(context, contextRawType);\n    assertEquals(String.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withRawCollection() throws Exception {\n    // Use raw Collection type (no generics)\n    Class<?> rawCollection = Collection.class;\n    Type context = rawCollection;\n\n    Type elementType = $Gson$Types.getCollectionElementType(context, rawCollection);\n    assertEquals(Object.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withSubtype() throws Exception {\n    // Use a subclass of Collection without generic info, e.g. ArrayList raw type\n\n    Type context = ArrayList.class;\n    Class<?> contextRawType = ArrayList.class;\n\n    Type elementType = $Gson$Types.getCollectionElementType(context, contextRawType);\n    // Since ArrayList is a raw type here, elementType should be Object.class\n    assertEquals(Object.class, elementType instanceof TypeVariable ? Object.class : elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withParameterizedSubtype() throws Exception {\n    // Use a subclass of Collection with generics: ArrayList<String>\n    // Use reflection to get generic superclass of ArrayList<String> field\n\n    class Holder {\n      ArrayList<String> stringList;\n    }\n\n    Field field = Holder.class.getDeclaredField(\"stringList\");\n    Type context = field.getGenericType();\n    Class<?> contextRawType = (Class<?>) ((ParameterizedType) context).getRawType();\n\n    Type elementType = $Gson$Types.getCollectionElementType(context, contextRawType);\n    assertEquals(String.class, elementType);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883824,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 766,
+    "prompt_tokens": 1766,
+    "total_tokens": 2532,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.65
+  }
+}

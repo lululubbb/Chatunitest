@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmen2pVy12Ov2c2bergf9eiklPFy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.FieldOptions;\nimport com.google.protobuf.Extension;\nimport com.google.common.base.CaseFormat;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.Set;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private CaseFormat protoFormat;\n  private CaseFormat jsonFormat;\n  private EnumSerialization enumSerialization;\n  private Set<Extension<FieldOptions, String>> serializedNameExtensions;\n\n  @BeforeEach\n  void setUp() {\n    enumSerialization = mock(EnumSerialization.class);\n    protoFormat = mock(CaseFormat.class);\n    jsonFormat = mock(CaseFormat.class);\n    serializedNameExtensions = Collections.emptySet();\n\n    protoTypeAdapter = new ProtoTypeAdapter(enumSerialization, protoFormat, jsonFormat,\n        serializedNameExtensions, Collections.emptySet());\n  }\n\n  @Test\n  void getCustSerializedName_returnsExtensionValue_whenExtensionPresent() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    Extension<FieldOptions, String> extension = mock(Extension.class);\n    serializedNameExtensions = Collections.singleton(extension);\n\n    FieldOptions options = mock(FieldOptions.class);\n    when(options.hasExtension(extension)).thenReturn(true);\n    when(options.getExtension(extension)).thenReturn(\"customName\");\n\n    protoTypeAdapter = new ProtoTypeAdapter(enumSerialization, protoFormat, jsonFormat,\n        serializedNameExtensions, Collections.emptySet());\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedName\", FieldOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultName\");\n\n    assertEquals(\"customName\", result);\n\n    verify(options).hasExtension(extension);\n    verify(options).getExtension(extension);\n  }\n\n  @Test\n  void getCustSerializedName_returnsFormattedName_whenNoExtensionPresent() throws Exception {\n    FieldOptions options = mock(FieldOptions.class);\n\n    // Setup serializedNameExtensions empty to simulate no extension present\n    serializedNameExtensions = Collections.emptySet();\n    protoTypeAdapter = new ProtoTypeAdapter(enumSerialization, protoFormat, jsonFormat,\n        serializedNameExtensions, Collections.emptySet());\n\n    when(protoFormat.to(jsonFormat, \"defaultName\")).thenReturn(\"formattedName\");\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedName\", FieldOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultName\");\n\n    assertEquals(\"formattedName\", result);\n\n    verify(protoFormat).to(jsonFormat, \"defaultName\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887769,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 583,
+    "prompt_tokens": 738,
+    "total_tokens": 1321,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.79
+  }
+}

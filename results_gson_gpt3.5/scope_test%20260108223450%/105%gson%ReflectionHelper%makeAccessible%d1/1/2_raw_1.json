@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void makeAccessible_shouldSetAccessibleTrue_whenNoException() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n\n    ReflectionHelper.makeAccessible(accessibleObject);\n\n    verify(accessibleObject).setAccessible(true);\n  }\n\n  @Test\n  void makeAccessible_shouldThrowJsonIOException_whenExceptionThrown() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    doThrow(new SecurityException(\"not allowed\")).when(accessibleObject).setAccessible(true);\n\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class, CALLS_REAL_METHODS)) {\n      // Stub getAccessibleObjectDescription to call real method\n      mockedStatic.when(() -> ReflectionHelper.getAccessibleObjectDescription(accessibleObject, false))\n          .thenCallRealMethod();\n\n      JsonIOException exception = assertThrows(JsonIOException.class, () -> ReflectionHelper.makeAccessible(accessibleObject));\n      String message = exception.getMessage();\n\n      assertTrue(message.contains(\"Failed making\"));\n      assertTrue(message.contains(\"accessible\"));\n      assertTrue(message.contains(\"either increase its visibility\"));\n      assertNotNull(exception.getCause());\n      assertEquals(SecurityException.class, exception.getCause().getClass());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 449,
+  "completion_tokens": 322,
+  "total_tokens": 771,
+  "llm_elapsed_time_seconds": 4.63
+}

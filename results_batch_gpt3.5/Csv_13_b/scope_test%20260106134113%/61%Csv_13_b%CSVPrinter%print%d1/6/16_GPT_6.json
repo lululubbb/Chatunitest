@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuSnoPF3DSw1ysM4ASQvE1OFbpCj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException, NoSuchFieldException, IllegalAccessException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n\n        // Inject mocked format into printer using reflection to avoid constructor issues\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        formatField.set(printer, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringIsNull() throws IOException {\n        when(format.getNullString()).thenReturn(null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(null);\n\n        verify(format).getNullString();\n\n        verify(out, never()).append((CharSequence) isNull());\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringIsNonNull() throws IOException {\n        when(format.getNullString()).thenReturn(\"NULL\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.print(null);\n\n        verify(format).getNullString();\n\n        verify(out, atLeastOnce()).append(\"NULL\");\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException {\n        String value = \"testValue\";\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.print(value);\n\n        verify(out, atLeastOnce()).append(value);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679449,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 369,
+    "prompt_tokens": 874,
+    "total_tokens": 1243,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.13
+  }
+}

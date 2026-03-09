@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuQXpdlu0VOA7Jj3tNtHqDNMmZVB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVPrinterTest {\n\n    private CSVFormat formatMock;\n    private Appendable appendableMock;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        appendableMock = mock(Appendable.class);\n        formatMock = mock(CSVFormat.class);\n        // Default behavior for getNullString() is null\n        when(formatMock.getNullString()).thenReturn(null);\n        printer = new CSVPrinter(appendableMock, formatMock);\n    }\n\n    private void verifyPrivatePrint(CSVPrinter spyPrinter, Object object, String strValue, int offset, int len) throws Exception {\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n        // Use Mockito.verify(spyPrinter, times(1)) with invocation handler to check private method call\n        // Since private method cannot be verified directly by Mockito, we invoke it here to simulate verification.\n        // Instead, we use reflection to intercept the call via spy and verify the public print calls indirectly.\n        // Here, we invoke the private method to check no exception, but verification of call is not possible directly.\n        // So, we verify the public print method calls indirectly by spying on the public method.\n        // Alternatively, we can use ArgumentCaptor on public print calls, but the private method is inaccessible.\n\n        // So for this test, we simulate verification by calling private print and catching exceptions.\n        // This method is a helper for test methods.\n    }\n\n    @Test\n    public void testPrint_NullValue_NullStringNull() throws Exception {\n        when(formatMock.getNullString()).thenReturn(null);\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        // Instead of verify(spyPrinter).print(...), verify the public print(Object) call was made once\n        verify(spyPrinter, times(1)).print((Object) null);\n\n        // Optionally, invoke private print method manually to ensure accessibility and correctness\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n        privatePrint.invoke(spyPrinter, null, \"\", 0, 0);\n    }\n\n    @Test\n    public void testPrint_NullValue_NullStringNotNull() throws Exception {\n        final String nullString = \"NULLVAL\";\n        when(formatMock.getNullString()).thenReturn(nullString);\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        verify(spyPrinter, times(1)).print((Object) null);\n\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n        privatePrint.invoke(spyPrinter, null, nullString, 0, nullString.length());\n    }\n\n    @Test\n    public void testPrint_NonNullValue() throws Exception {\n        Object value = 12345;\n        String strValue = value.toString();\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(value);\n\n        verify(spyPrinter, times(1)).print(value);\n\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n        privatePrint.invoke(spyPrinter, value, strValue, 0, strValue.length());\n    }\n\n    @Test\n    public void testPrint_EmptyString() throws Exception {\n        String value = \"\";\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(value);\n\n        verify(spyPrinter, times(1)).print(value);\n\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n        privatePrint.invoke(spyPrinter, value, \"\", 0, 0);\n    }\n\n    @Test\n    public void testPrint_PrivatePrintMethodInvocation() throws Exception {\n        String value = \"abc\";\n        String strValue = value.toString();\n\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        // Call public print with value to set up\n        printer.print(value);\n\n        // Directly invoke private print method to ensure accessibility and no exception\n        privatePrint.invoke(printer, value, strValue, 0, strValue.length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679309,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1035,
+    "prompt_tokens": 1684,
+    "total_tokens": 2719,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.88
+  }
+}

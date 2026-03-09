@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9979bmdLVXrqQLA0sh3IXVLevWD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private Map<String, Integer> mapping;\n    private String[] values;\n    private CSVRecord record;\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n        values = new String[] { \"value1\", \"value2\" };\n        record = new CSVRecord(values, mapping, null, 1L);\n    }\n\n    @Test\n    void testGet_ValidName_ReturnsValue() {\n        assertEquals(\"value1\", record.get(\"header1\"));\n        assertEquals(\"value2\", record.get(\"header2\"));\n    }\n\n    @Test\n    void testGet_MappingNull_ThrowsIllegalStateException() throws Exception {\n        // Use reflection to create CSVRecord with null mapping\n        CSVRecord recordWithNullMapping = createCSVRecordWithMapping(null);\n\n        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> recordWithNullMapping.get(\"header1\"));\n        assertEquals(\"No header mapping was specified, the record values can't be accessed by name\", ex.getMessage());\n    }\n\n    @Test\n    void testGet_NameNotInMapping_ThrowsIllegalArgumentException() {\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> record.get(\"unknown\"));\n        assertTrue(ex.getMessage().contains(\"Mapping for unknown not found\"));\n        assertTrue(ex.getMessage().contains(mapping.keySet().toString()));\n    }\n\n    @Test\n    void testGet_IndexOutOfBounds_ThrowsIllegalArgumentException() throws Exception {\n        Map<String, Integer> badMapping = new HashMap<>();\n        badMapping.put(\"badHeader\", values.length); // index out of bounds\n        CSVRecord badRecord = createCSVRecordWithMapping(badMapping);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> badRecord.get(\"badHeader\"));\n        assertTrue(ex.getMessage().contains(\"Index for header 'badHeader' is \" + values.length));\n        assertTrue(ex.getMessage().contains(\"CSVRecord only has \" + values.length + \" values\"));\n    }\n\n    private CSVRecord createCSVRecordWithMapping(Map<String, Integer> map) throws Exception {\n        Constructor<CSVRecord> ctor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        ctor.setAccessible(true);\n        return ctor.newInstance((Object) values, map, null, 1L);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974217,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 570,
+    "prompt_tokens": 1168,
+    "total_tokens": 1738,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.27
+  }
+}

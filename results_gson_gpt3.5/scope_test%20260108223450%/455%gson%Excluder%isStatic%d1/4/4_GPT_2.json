@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlb21ZfFz4BchRRa1ny872gonlKb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n  private Method isStaticMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    excluder = new Excluder();\n    isStaticMethod = Excluder.class.getDeclaredMethod(\"isStatic\", Class.class);\n    isStaticMethod.setAccessible(true);\n  }\n\n  @Test\n  void testIsStatic_withStaticClass() throws Exception {\n    // Static nested class declared at top level\n    class Outer {}\n    // Declare static nested class as a top-level static class in this test file\n    // Instead, create a static nested class dynamically via a helper class\n    Class<?> staticNestedClass = StaticNested.class;\n    boolean result = (boolean) isStaticMethod.invoke(excluder, staticNestedClass);\n    assertTrue(result, \"Static nested class should be detected as static\");\n  }\n\n  @Test\n  void testIsStatic_withNonStaticClass() throws Exception {\n    // Non-static inner class declared inside a top-level class\n    Class<?> innerClass = Outer.Inner.class;\n    boolean result = (boolean) isStaticMethod.invoke(excluder, innerClass);\n    assertFalse(result, \"Non-static inner class should not be detected as static\");\n  }\n\n  @Test\n  void testIsStatic_withTopLevelClass() throws Exception {\n    // Top-level class is never static\n    boolean result = (boolean) isStaticMethod.invoke(excluder, String.class);\n    assertFalse(result, \"Top-level class should not be detected as static\");\n  }\n\n  @Test\n  void testIsStatic_withAnonymousClass() throws Exception {\n    Object anon = new Object() {};\n    boolean result = (boolean) isStaticMethod.invoke(excluder, anon.getClass());\n    assertFalse(result, \"Anonymous class should not be detected as static\");\n  }\n\n  @Test\n  void testIsStatic_withPrimitiveType() throws Exception {\n    boolean result = (boolean) isStaticMethod.invoke(excluder, int.class);\n    assertFalse(result, \"Primitive type should not be detected as static\");\n  }\n\n  @Test\n  void testIsStatic_withArrayClass() throws Exception {\n    boolean result = (boolean) isStaticMethod.invoke(excluder, String[].class);\n    assertFalse(result, \"Array class should not be detected as static\");\n  }\n\n  // Helper static nested class declared at top level\n  static class StaticNested {}\n\n  // Helper outer class with non-static inner class declared at top level\n  static class Outer {\n    class Inner {}\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883692,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 569,
+    "prompt_tokens": 1123,
+    "total_tokens": 1692,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.55
+  }
+}

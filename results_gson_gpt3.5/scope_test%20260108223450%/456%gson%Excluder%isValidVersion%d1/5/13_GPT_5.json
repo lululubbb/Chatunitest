@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlac5yfnStLcpIRQiPbaOlmE8bL4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.annotations.Since;\nimport com.google.gson.annotations.Until;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n  private Method isValidVersionMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    excluder = new Excluder();\n    isValidVersionMethod = Excluder.class.getDeclaredMethod(\"isValidVersion\", Since.class, Until.class);\n    isValidVersionMethod.setAccessible(true);\n  }\n\n  @Test\n  void testIsValidVersion_bothNull() throws Exception {\n    // since = null, until = null\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, null, null);\n    // isValidSince(null) and isValidUntil(null) should both be true, so result true\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceValid_untilNull() throws Exception {\n    Since since = mock(Since.class);\n    when(since.value()).thenReturn(1.0);\n\n    // Set excluder version to 2.0 to be >= since.value()\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, null);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceInvalid_untilNull() throws Exception {\n    Since since = mock(Since.class);\n    when(since.value()).thenReturn(3.0);\n\n    // Set excluder version to 2.0 to be < since.value()\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, null);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceNull_untilValid() throws Exception {\n    Until until = mock(Until.class);\n    when(until.value()).thenReturn(3.0);\n\n    // Set excluder version to 2.0 to be < until.value()\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, null, until);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceNull_untilInvalid() throws Exception {\n    Until until = mock(Until.class);\n    when(until.value()).thenReturn(1.0);\n\n    // Set excluder version to 2.0 to be > until.value()\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, null, until);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceValid_untilValid() throws Exception {\n    Since since = mock(Since.class);\n    Until until = mock(Until.class);\n\n    when(since.value()).thenReturn(1.0);\n    when(until.value()).thenReturn(3.0);\n\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, until);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceInvalid_untilValid() throws Exception {\n    Since since = mock(Since.class);\n    Until until = mock(Until.class);\n\n    when(since.value()).thenReturn(3.0);\n    when(until.value()).thenReturn(5.0);\n\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, until);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceValid_untilInvalid() throws Exception {\n    Since since = mock(Since.class);\n    Until until = mock(Until.class);\n\n    when(since.value()).thenReturn(1.0);\n    when(until.value()).thenReturn(1.5);\n\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, until);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsValidVersion_sinceInvalid_untilInvalid() throws Exception {\n    Since since = mock(Since.class);\n    Until until = mock(Until.class);\n\n    when(since.value()).thenReturn(3.0);\n    when(until.value()).thenReturn(1.5);\n\n    excluder = excluder.withVersion(2.0);\n\n    boolean result = (boolean) isValidVersionMethod.invoke(excluder, since, until);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsValidVersion_ignoreVersion() throws Exception {\n    // IGNORE_VERSIONS = -1.0 disables version checks\n    Since since = mock(Since.class);\n    Until until = mock(Until.class);\n\n    when(since.value()).thenReturn(100.0);\n    when(until.value()).thenReturn(0.5);\n\n    // Use a new Excluder instance with version set to IGNORE_VERSIONS (-1.0)\n    excluder = new Excluder().withVersion(-1.0);\n\n    // Because withVersion returns a new instance, we must get the isValidVersion method from that instance\n    Method method = Excluder.class.getDeclaredMethod(\"isValidVersion\", Since.class, Until.class);\n    method.setAccessible(true);\n\n    // Use reflection to also access isValidSince and isValidUntil methods to verify IGNORE_VERSIONS behavior\n    Method isValidSinceMethod = Excluder.class.getDeclaredMethod(\"isValidSince\", Since.class);\n    Method isValidUntilMethod = Excluder.class.getDeclaredMethod(\"isValidUntil\", Until.class);\n    isValidSinceMethod.setAccessible(true);\n    isValidUntilMethod.setAccessible(true);\n\n    // Validate that isValidSince and isValidUntil return true when version is IGNORE_VERSIONS\n    boolean validSince = (boolean) isValidSinceMethod.invoke(excluder, since);\n    boolean validUntil = (boolean) isValidUntilMethod.invoke(excluder, until);\n    assertTrue(validSince, \"isValidSince should return true when version is IGNORE_VERSIONS\");\n    assertTrue(validUntil, \"isValidUntil should return true when version is IGNORE_VERSIONS\");\n\n    boolean result = (boolean) method.invoke(excluder, since, until);\n    // Should be true because version is ignored\n    assertTrue(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883666,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1426,
+    "prompt_tokens": 2167,
+    "total_tokens": 3593,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.48
+  }
+}

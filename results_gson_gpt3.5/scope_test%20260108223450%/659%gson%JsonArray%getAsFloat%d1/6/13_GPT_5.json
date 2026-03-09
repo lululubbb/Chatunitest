@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMC1q5vkmJTSoYuaeHvRPqebUzj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArraySpy;\n  private JsonElement jsonElementMock;\n\n  @BeforeEach\n  void setUp() {\n    jsonArraySpy = Mockito.spy(new JsonArray());\n    jsonElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  void getAsFloat_singleElement_returnsFloat() throws Exception {\n    // Arrange\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    // Stub the private method getAsSingleElement on jsonArraySpy using reflection\n    doReturn(jsonElementMock).when(jsonArraySpy, getAsSingleElementMethod).invoke();\n\n    when(jsonElementMock.getAsFloat()).thenReturn(3.14f);\n\n    // Act\n    float result = jsonArraySpy.getAsFloat();\n\n    // Assert\n    assertEquals(3.14f, result, 0.0001f);\n    verify(jsonElementMock).getAsFloat();\n  }\n\n  @Test\n  void getAsSingleElement_privateMethod_returnsFirstElement() throws Exception {\n    // Arrange\n    JsonArray jsonArray = new JsonArray();\n    JsonElement first = mock(JsonElement.class);\n    JsonElement second = mock(JsonElement.class);\n    jsonArray.add(first);\n    jsonArray.add(second);\n\n    // Use reflection to invoke private method getAsSingleElement\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    // Act\n    JsonElement result = (JsonElement) method.invoke(jsonArray);\n\n    // Assert\n    assertSame(first, result);\n  }\n\n  @Test\n  void getAsSingleElement_privateMethod_emptyList_throwsException() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    assertThrows(IndexOutOfBoundsException.class, () -> {\n      method.invoke(jsonArray);\n    });\n  }\n\n  @Test\n  void getAsFloat_withRealJsonArray_returnsFloat() {\n    JsonArray jsonArray = new JsonArray();\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(5.5f);\n    jsonArray.add(jsonPrimitive);\n\n    float result = jsonArray.getAsFloat();\n\n    assertEquals(5.5f, result, 0.0001f);\n  }\n}\n```\n\n**Note:** The key fix is replacing the invalid `doReturn(jsonElementMock).when(jsonArraySpy).getAsSingleElement();` call with the proper way to stub private methods using Mockito\u2019s `when` combined with reflection:\n\n```java\ndoReturn(jsonElementMock).when(jsonArraySpy, getAsSingleElementMethod).invoke();\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890460,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 617,
+    "prompt_tokens": 1078,
+    "total_tokens": 1695,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.74
+  }
+}

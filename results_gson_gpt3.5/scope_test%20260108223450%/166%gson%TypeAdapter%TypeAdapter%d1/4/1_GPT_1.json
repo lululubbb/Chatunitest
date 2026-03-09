@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnGZP3wbJCFif9afFgP4228Xe5Ls",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class TypeAdapterTest {\n\n    private TypeAdapter<String> typeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                if (value == null) {\n                    out.nullValue();\n                } else {\n                    out.value(value);\n                }\n            }\n\n            @Override\n            public String read(JsonReader in) throws IOException {\n                if (in.peek() == JsonToken.NULL) {\n                    in.nextNull();\n                    return null;\n                }\n                return in.nextString();\n            }\n        };\n    }\n\n    @Test\n    public void testToJson_WriterAndValue() throws IOException {\n        StringWriter writer = new StringWriter();\n        typeAdapter.toJson(writer, \"test\");\n        assertEquals(\"\\\"test\\\"\", writer.toString());\n\n        writer = new StringWriter();\n        typeAdapter.toJson(writer, null);\n        assertEquals(\"null\", writer.toString());\n    }\n\n    @Test\n    public void testToJson_StringValue() {\n        String json = typeAdapter.toJson(\"test\");\n        assertEquals(\"\\\"test\\\"\", json);\n\n        json = typeAdapter.toJson(null);\n        assertEquals(\"null\", json);\n    }\n\n    @Test\n    public void testToJsonTree() {\n        JsonElement jsonElement = typeAdapter.toJsonTree(\"test\");\n        assertTrue(jsonElement.isJsonPrimitive());\n        assertEquals(\"test\", jsonElement.getAsString());\n\n        jsonElement = typeAdapter.toJsonTree(null);\n        assertTrue(jsonElement.isJsonNull());\n    }\n\n    @Test\n    public void testFromJson_Reader() throws IOException {\n        StringReader reader = new StringReader(\"\\\"test\\\"\");\n        String result = typeAdapter.fromJson(reader);\n        assertEquals(\"test\", result);\n\n        reader = new StringReader(\"null\");\n        result = typeAdapter.fromJson(reader);\n        assertNull(result);\n    }\n\n    @Test\n    public void testFromJson_String() {\n        String result = typeAdapter.fromJson(\"\\\"test\\\"\");\n        assertEquals(\"test\", result);\n\n        result = typeAdapter.fromJson(\"null\");\n        assertNull(result);\n    }\n\n    @Test\n    public void testFromJsonTree() {\n        JsonElement jsonElement = new JsonPrimitive(\"test\");\n        String result = typeAdapter.fromJsonTree(jsonElement);\n        assertEquals(\"test\", result);\n\n        result = typeAdapter.fromJsonTree(JsonNull.INSTANCE);\n        assertNull(result);\n    }\n\n    @Test\n    public void testNullSafe() throws IOException {\n        TypeAdapter<String> nullSafeAdapter = typeAdapter.nullSafe();\n\n        StringWriter writer = new StringWriter();\n        nullSafeAdapter.write(new JsonWriter(writer), null);\n        assertEquals(\"null\", writer.toString());\n\n        StringWriter writer2 = new StringWriter();\n        nullSafeAdapter.write(new JsonWriter(writer2), \"value\");\n        assertEquals(\"\\\"value\\\"\", writer2.toString());\n    }\n\n    @Test\n    public void testPrivateMethodsInvocation() throws Exception {\n        // Using reflection to invoke private methods if any existed.\n        // The provided class has no private methods, but this is a demonstration.\n\n        Method toJsonMethod = TypeAdapter.class.getDeclaredMethod(\"toJson\", Writer.class, Object.class);\n        toJsonMethod.setAccessible(true);\n\n        StringWriter writer = new StringWriter();\n        toJsonMethod.invoke(typeAdapter, writer, \"reflectionTest\");\n        assertEquals(\"\\\"reflectionTest\\\"\", writer.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890111,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 833,
+    "prompt_tokens": 329,
+    "total_tokens": 1162,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.55
+  }
+}

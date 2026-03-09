@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZPIAlB6D8r5Mes42Vep3f7sw0Nq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        // Set the new value\n        field.set(target, value);\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // Using reflection to set private final field header to null\n        setFinalField(format, \"header\", null);\n\n        String[] header = format.getHeader();\n        assertNull(header, \"Header should be null when header field is null\");\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNotNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String[] originalHeader = new String[] {\"col1\", \"col2\", \"col3\"};\n\n        // Using reflection to set private final field header to a non-null array\n        setFinalField(format, \"header\", originalHeader);\n\n        String[] header = format.getHeader();\n        assertNotNull(header, \"Header should not be null when header field is set\");\n        assertArrayEquals(originalHeader, header, \"Returned header should match the original header\");\n\n        // Verify that the returned array is a clone (modifying returned array does not affect original)\n        header[0] = \"modified\";\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] headerAfterModification = (String[]) headerField.get(format);\n        assertArrayEquals(originalHeader, headerAfterModification, \"Original header should not be affected by modifications to returned array\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551820,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 445,
+    "prompt_tokens": 1555,
+    "total_tokens": 2000,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.02
+  }
+}

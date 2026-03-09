@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmcVtW6eJ22BzmGSgPSTEz1yZ61T",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\npublic class SerializationBenchmarkTest {\n\n  private SerializationBenchmark benchmark;\n\n  @BeforeEach\n  public void init() {\n    benchmark = new SerializationBenchmark();\n  }\n\n  @Test\n  public void testSetUp_prettyFalse() throws Exception {\n    // Set private field pretty to false\n    setPrivateField(benchmark, \"pretty\", false);\n\n    // Invoke private method setUp via reflection\n    invokeSetUp(benchmark);\n\n    // Verify gson instance is not pretty printing\n    Object gson = getPrivateField(benchmark, \"gson\");\n    assertNotNull(gson);\n    assertEquals(\"com.google.gson.Gson\", gson.getClass().getName());\n\n    // Verify bag is initialized correctly\n    Object bag = getPrivateField(benchmark, \"bag\");\n    assertNotNull(bag);\n    assertEquals(\"com.google.gson.metrics.BagOfPrimitives\", bag.getClass().getName());\n  }\n\n  @Test\n  public void testSetUp_prettyTrue() throws Exception {\n    // Set private field pretty to true\n    setPrivateField(benchmark, \"pretty\", true);\n\n    // Invoke private method setUp via reflection\n    invokeSetUp(benchmark);\n\n    // Verify gson instance is pretty printing (GsonBuilder creates Gson subclass)\n    Object gson = getPrivateField(benchmark, \"gson\");\n    assertNotNull(gson);\n    // GsonBuilder.create() returns Gson instance, check class name is Gson\n    assertEquals(\"com.google.gson.Gson\", gson.getClass().getName());\n\n    // Verify bag is initialized correctly\n    Object bag = getPrivateField(benchmark, \"bag\");\n    assertNotNull(bag);\n    assertEquals(\"com.google.gson.metrics.BagOfPrimitives\", bag.getClass().getName());\n  }\n\n  private void invokeSetUp(SerializationBenchmark instance) throws Exception {\n    Method setUpMethod = SerializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    setUpMethod.setAccessible(true);\n    setUpMethod.invoke(instance);\n  }\n\n  private void setPrivateField(Object instance, String fieldName, Object value) throws Exception {\n    var field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n\n  private Object getPrivateField(Object instance, String fieldName) throws Exception {\n    var field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(instance);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887627,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 540,
+    "prompt_tokens": 282,
+    "total_tokens": 822,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.17
+  }
+}

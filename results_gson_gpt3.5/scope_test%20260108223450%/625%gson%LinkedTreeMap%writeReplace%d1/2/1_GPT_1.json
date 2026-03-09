@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlYrKHJKomNSySvTdS1rkE52f6Ps",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectStreamException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.LinkedHashMap;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapTest {\n\n  private LinkedTreeMap<String, String> linkedTreeMap;\n\n  @BeforeEach\n  void setUp() {\n    linkedTreeMap = new LinkedTreeMap<>();\n    linkedTreeMap.put(\"key1\", \"value1\");\n    linkedTreeMap.put(\"key2\", \"value2\");\n  }\n\n  @Test\n  void testWriteReplace_returnsLinkedHashMapWithSameEntries() throws Exception {\n    Method writeReplaceMethod = LinkedTreeMap.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    Object result = writeReplaceMethod.invoke(linkedTreeMap);\n\n    assertNotNull(result);\n    assertTrue(result instanceof LinkedHashMap);\n\n    @SuppressWarnings(\"unchecked\")\n    LinkedHashMap<String, String> map = (LinkedHashMap<String, String>) result;\n\n    assertEquals(linkedTreeMap.size(), map.size());\n    assertEquals(\"value1\", map.get(\"key1\"));\n    assertEquals(\"value2\", map.get(\"key2\"));\n  }\n\n  @Test\n  void testWriteReplace_onEmptyMap() throws Exception {\n    LinkedTreeMap<String, String> emptyMap = new LinkedTreeMap<>();\n\n    Method writeReplaceMethod = LinkedTreeMap.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    Object result = writeReplaceMethod.invoke(emptyMap);\n\n    assertNotNull(result);\n    assertTrue(result instanceof LinkedHashMap);\n\n    @SuppressWarnings(\"unchecked\")\n    LinkedHashMap<String, String> map = (LinkedHashMap<String, String>) result;\n    assertTrue(map.isEmpty());\n  }\n\n  @Test\n  void testWriteReplace_reflectionInvocationException_wrapped() throws Exception {\n    Method writeReplaceMethod = LinkedTreeMap.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    LinkedTreeMap<String, String> spyMap = spy(linkedTreeMap);\n\n    // We cannot mock private method directly; instead, test that reflection invocation exception is handled externally.\n    // This test ensures that the method is accessible and callable via reflection.\n    assertDoesNotThrow(() -> {\n      Object result = writeReplaceMethod.invoke(spyMap);\n      assertNotNull(result);\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883557,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 522,
+    "prompt_tokens": 706,
+    "total_tokens": 1228,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.77
+  }
+}

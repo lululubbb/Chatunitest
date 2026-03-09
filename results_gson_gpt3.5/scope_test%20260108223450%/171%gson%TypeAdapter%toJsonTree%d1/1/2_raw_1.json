@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass TypeAdapterTest {\n\n  private TypeAdapter<String> typeAdapter;\n  private JsonTreeWriter jsonTreeWriterMock;\n\n  @BeforeEach\n  void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) throws IOException {\n        // Simulate writing by calling methods on JsonWriter\n        if (\"throw\".equals(value)) {\n          throw new IOException(\"Forced IOException\");\n        }\n        out.value(value);\n      }\n\n      @Override\n      public String read(JsonReader in) {\n        return null;\n      }\n    };\n  }\n\n  @Test\n  void toJsonTree_shouldReturnJsonElementForValidValue() throws IOException {\n    JsonElement jsonElement = typeAdapter.toJsonTree(\"test\");\n    assertNotNull(jsonElement);\n    assertTrue(jsonElement.isJsonPrimitive());\n    assertEquals(\"test\", jsonElement.getAsString());\n  }\n\n  @Test\n  void toJsonTree_shouldThrowJsonIOExceptionWhenWriteThrowsIOException() {\n    JsonIOException exception = assertThrows(JsonIOException.class, () -> typeAdapter.toJsonTree(\"throw\"));\n    assertNotNull(exception.getCause());\n    assertTrue(exception.getCause() instanceof IOException);\n    assertEquals(\"Forced IOException\", exception.getCause().getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/171%gson%TypeAdapter%toJsonTree%d1/1/temp/TypeAdapter_171_1Test.java:32: 错误: 找不到符号\n      public String read(JsonReader in) {\n                         ^\n  符号: 类 JsonReader\n1 个错误\n",
+  "prompt_tokens": 376,
+  "completion_tokens": 331,
+  "total_tokens": 707,
+  "llm_elapsed_time_seconds": 6.3
+}

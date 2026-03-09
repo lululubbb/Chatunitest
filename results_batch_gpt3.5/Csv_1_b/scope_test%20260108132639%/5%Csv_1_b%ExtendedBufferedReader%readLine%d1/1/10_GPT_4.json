@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvcrYdeihnAJst6WarBPZL81WOs8j",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadLine_nonNullNonEmptyLine_updatesLastCharAndIncrementsCounter() throws Exception {\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n\n        // Mock underlying reader's read to simulate \"Hello\\n\"\n        when(mockReader.read(any(char[].class), anyInt(), anyInt()))\n                .thenAnswer(invocation -> {\n                    char[] buf = invocation.getArgument(0);\n                    int offset = invocation.getArgument(1);\n                    int length = invocation.getArgument(2);\n                    String s = \"Hello\\n\";\n                    int toCopy = Math.min(length, s.length());\n                    s.getChars(0, toCopy, buf, offset);\n                    return toCopy;\n                });\n\n        // Call real method readLine()\n        doCallRealMethod().when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"Hello\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals('o', lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_nonNullEmptyLine_lastCharNotUpdatedButCounterIncremented() throws Exception {\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n\n        // Mock underlying reader to return \"\\n\"\n        when(mockReader.read(any(char[].class), anyInt(), anyInt()))\n                .thenAnswer(invocation -> {\n                    char[] buf = invocation.getArgument(0);\n                    int offset = invocation.getArgument(1);\n                    int length = invocation.getArgument(2);\n                    String s = \"\\n\";\n                    int toCopy = Math.min(length, s.length());\n                    s.getChars(0, toCopy, buf, offset);\n                    return toCopy;\n                });\n\n        // Set lastChar to UNDEFINED before call\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        lastCharField.setInt(spyReader, ExtendedBufferedReader.UNDEFINED);\n\n        // Call real method readLine()\n        doCallRealMethod().when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"\", line);\n\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_nullLine_setsLastCharToEndOfStream() throws Exception {\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n\n        // Mock underlying reader to return -1 (end of stream)\n        when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenReturn(-1);\n\n        // Call real method readLine()\n        doCallRealMethod().when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertNull(line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(0, lineCounter);\n    }\n\n    @Test\n    void testReadLine_multipleCalls_incrementsLineCounter() throws Exception {\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n\n        // Setup a sequence of reads for \"a\\n\", \"b\\n\", then end of stream\n        when(mockReader.read(any(char[].class), anyInt(), anyInt()))\n                .thenAnswer(new org.mockito.stubbing.Answer<Integer>() {\n                    private final String[] lines = {\"a\\n\", \"b\\n\"};\n                    private int index = 0;\n                    private int pos = 0;\n\n                    @Override\n                    public Integer answer(org.mockito.invocation.InvocationOnMock invocation) {\n                        char[] buf = invocation.getArgument(0);\n                        int offset = invocation.getArgument(1);\n                        int length = invocation.getArgument(2);\n\n                        if (index >= lines.length) {\n                            return -1;\n                        }\n\n                        String currentLine = lines[index];\n                        int remaining = currentLine.length() - pos;\n                        if (remaining <= 0) {\n                            index++;\n                            pos = 0;\n                            return answer(invocation);\n                        }\n\n                        int toCopy = Math.min(length, remaining);\n                        currentLine.getChars(pos, pos + toCopy, buf, offset);\n                        pos += toCopy;\n                        return toCopy;\n                    }\n                });\n\n        // Call real method readLine()\n        doCallRealMethod().when(spyReader).readLine();\n\n        assertEquals(\"a\", spyReader.readLine());\n        assertEquals(\"b\", spyReader.readLine());\n        assertNull(spyReader.readLine());\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(2, lineCounter);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850120,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1351,
+    "prompt_tokens": 1755,
+    "total_tokens": 3106,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.05
+  }
+}

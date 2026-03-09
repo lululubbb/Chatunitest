@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void getAsJsonObject_whenIsJsonObjectTrue_returnsThisAsJsonObject() {\n    JsonObject jsonObjectMock = mock(JsonObject.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonObjectMock.isJsonObject()).thenReturn(true);\n    JsonObject result = jsonObjectMock.getAsJsonObject();\n    assertSame(jsonObjectMock, result);\n  }\n\n  @Test\n  void getAsJsonObject_whenIsJsonObjectFalse_throwsIllegalStateException() {\n    JsonElement jsonElement = mock(JsonElement.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonElement.isJsonObject()).thenReturn(false);\n    // Override toString to avoid Gson serialization of the mock object\n    doReturn(\"mockedJsonElement\").when(jsonElement).toString();\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElement::getAsJsonObject);\n    assertEquals(\"Not a JSON Object: mockedJsonElement\", exception.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 988,
+  "completion_tokens": 248,
+  "total_tokens": 1236,
+  "llm_elapsed_time_seconds": 8.7
+}

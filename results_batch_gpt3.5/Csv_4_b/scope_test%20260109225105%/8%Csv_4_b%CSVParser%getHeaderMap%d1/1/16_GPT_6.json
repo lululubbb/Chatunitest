@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8CK1NpffpX2aC8FIDcR9XJ8WPsx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a CSVFormat mock or dummy as constructor requires it\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Use a dummy Reader since constructor requires one, use StringReader with empty content\n        java.io.Reader reader = new java.io.StringReader(\"\");\n\n        // Construct CSVParser instance normally\n        csvParser = new CSVParser(reader, format);\n\n        // Use reflection to set the final headerMap field to an empty LinkedHashMap to avoid null issues\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n\n        // Remove final modifier from headerMap field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerMapField, headerMapField.getModifiers() & ~Modifier.FINAL);\n\n        headerMapField.set(csvParser, new LinkedHashMap<String, Integer>());\n    }\n\n    private void setHeaderMap(Map<String, Integer> map) throws Exception {\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerMapField, headerMapField.getModifiers() & ~Modifier.FINAL);\n\n        headerMapField.set(csvParser, map);\n    }\n\n    @Test\n    public void testGetHeaderMapReturnsCopyNotOriginal() throws Exception {\n        // Setup headerMap with some entries\n        Map<String, Integer> originalHeaderMap = new LinkedHashMap<>();\n        originalHeaderMap.put(\"column1\", 0);\n        originalHeaderMap.put(\"column2\", 1);\n\n        // Set the private final headerMap field to originalHeaderMap via reflection\n        setHeaderMap(originalHeaderMap);\n\n        // Call getHeaderMap\n        Map<String, Integer> returnedMap = csvParser.getHeaderMap();\n\n        // Assert returned map equals the original content\n        assertEquals(originalHeaderMap, returnedMap);\n\n        // Assert returned map is a different instance (defensive copy)\n        assertNotSame(originalHeaderMap, returnedMap);\n\n        // Modify returned map, original should not change\n        returnedMap.put(\"column3\", 2);\n        assertFalse(originalHeaderMap.containsKey(\"column3\"));\n    }\n\n    @Test\n    public void testGetHeaderMapWhenEmpty() throws Exception {\n        // Set headerMap to empty map\n        Map<String, Integer> emptyHeaderMap = new LinkedHashMap<>();\n        setHeaderMap(emptyHeaderMap);\n\n        // Call getHeaderMap\n        Map<String, Integer> returnedMap = csvParser.getHeaderMap();\n\n        // Assert returned map is empty but not null\n        assertNotNull(returnedMap);\n        assertTrue(returnedMap.isEmpty());\n        assertNotSame(emptyHeaderMap, returnedMap);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970572,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 683,
+    "prompt_tokens": 1282,
+    "total_tokens": 1965,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.41
+  }
+}

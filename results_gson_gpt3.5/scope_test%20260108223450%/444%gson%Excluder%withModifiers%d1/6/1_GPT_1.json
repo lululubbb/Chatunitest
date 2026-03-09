@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMyuXZu2qRodyDVHa0RdwytQsJy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  public void testWithModifiers_noModifiers() {\n    Excluder excluder = new Excluder();\n    Excluder result = excluder.withModifiers();\n    assertNotNull(result);\n    assertNotSame(excluder, result);\n    // default modifiers are TRANSIENT | STATIC, after withModifiers() with no args modifiers should be 0\n    // use reflection to verify private field modifiers\n    int modifiers = getModifiers(result);\n    assertEquals(0, modifiers);\n  }\n\n  @Test\n  public void testWithModifiers_singleModifier() {\n    Excluder excluder = new Excluder();\n    Excluder result = excluder.withModifiers(Modifier.FINAL);\n    assertNotNull(result);\n    assertNotSame(excluder, result);\n    int modifiers = getModifiers(result);\n    assertEquals(Modifier.FINAL, modifiers);\n  }\n\n  @Test\n  public void testWithModifiers_multipleModifiers() {\n    Excluder excluder = new Excluder();\n    int combined = Modifier.FINAL | Modifier.PUBLIC | Modifier.PROTECTED;\n    Excluder result = excluder.withModifiers(Modifier.FINAL, Modifier.PUBLIC, Modifier.PROTECTED);\n    assertNotNull(result);\n    assertNotSame(excluder, result);\n    int modifiers = getModifiers(result);\n    assertEquals(combined, modifiers);\n  }\n\n  @Test\n  public void testWithModifiers_cloneCalled() {\n    // Since clone() is protected, we test indirectly that a new instance is returned and fields are reset\n    Excluder excluder = new Excluder();\n    int originalModifiers = getModifiers(excluder);\n    Excluder result = excluder.withModifiers(Modifier.FINAL);\n    assertNotSame(excluder, result);\n    int newModifiers = getModifiers(result);\n    assertNotEquals(originalModifiers, newModifiers);\n    assertEquals(Modifier.FINAL, newModifiers);\n  }\n\n  private int getModifiers(Excluder excluder) {\n    try {\n      Field modifiersField = Excluder.class.getDeclaredField(\"modifiers\");\n      modifiersField.setAccessible(true);\n      return modifiersField.getInt(excluder);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890508,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 524,
+    "prompt_tokens": 617,
+    "total_tokens": 1141,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.3
+  }
+}

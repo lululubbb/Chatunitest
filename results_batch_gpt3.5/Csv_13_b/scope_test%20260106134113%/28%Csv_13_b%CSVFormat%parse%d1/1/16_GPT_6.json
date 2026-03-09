@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuED7AHB5px6LS6wP3T81GVI3Klw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVFormatTest {\n\n    @Mock\n    private Reader mockReader;\n\n    private CSVFormat csvFormat;\n\n    private AutoCloseable mocks;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mocks = MockitoAnnotations.openMocks(this);\n        csvFormat = CSVFormat.DEFAULT;\n\n        // Mock behavior of Reader to avoid IOException on read\n        when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenReturn(-1);\n    }\n\n    @AfterEach\n    void tearDown() throws Exception {\n        if (mocks != null) {\n            mocks.close();\n        }\n    }\n\n    @Test\n    void testParseReturnsCSVParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVParser parser = csvFormat.parse(mockReader);\n        assertNotNull(parser);\n\n        // Use reflection to get the private 'format' field from CSVParser\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat parserFormat = (CSVFormat) formatField.get(parser);\n\n        assertEquals(csvFormat, parserFormat);\n    }\n\n    @Test\n    void testParseWithNullReaderThrowsNullPointerException() {\n        assertThrows(NullPointerException.class, () -> csvFormat.parse(null));\n    }\n\n    @Test\n    void testParseDifferentFormats() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat format1 = CSVFormat.newFormat(';').withQuote('\\'').withIgnoreEmptyLines(true);\n        CSVParser parser1 = format1.parse(mockReader);\n        assertNotNull(parser1);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat parser1Format = (CSVFormat) formatField.get(parser1);\n        assertEquals(format1, parser1Format);\n\n        CSVFormat format2 = CSVFormat.DEFAULT.withDelimiter('|').withQuote(null);\n        CSVParser parser2 = format2.parse(mockReader);\n        assertNotNull(parser2);\n\n        CSVFormat parser2Format = (CSVFormat) formatField.get(parser2);\n        assertEquals(format2, parser2Format);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678545,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 535,
+    "prompt_tokens": 1799,
+    "total_tokens": 2334,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.12
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlOzu1kheiqF64OdPqNUN72OvkP7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.internal.bind.NumberTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class NumberTypeAdapterTest {\n\n    private ToNumberStrategy toNumberStrategy;\n    private NumberTypeAdapter adapter;\n    private JsonReader jsonReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        toNumberStrategy = mock(ToNumberStrategy.class);\n        jsonReader = mock(JsonReader.class);\n\n        Constructor<NumberTypeAdapter> constructor = NumberTypeAdapter.class.getDeclaredConstructor(ToNumberStrategy.class);\n        constructor.setAccessible(true);\n        adapter = constructor.newInstance(toNumberStrategy);\n    }\n\n    @Test\n    public void testRead_NullToken_ReturnsNull() throws IOException {\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        // nextNull() should be called\n        doNothing().when(jsonReader).nextNull();\n\n        Number result = adapter.read(jsonReader);\n\n        InOrder inOrder = inOrder(jsonReader);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    public void testRead_NumberToken_ReturnsNumberFromStrategy() throws IOException {\n        when(jsonReader.peek()).thenReturn(JsonToken.NUMBER);\n        Number expectedNumber = 42;\n        when(toNumberStrategy.readNumber(jsonReader)).thenReturn(expectedNumber);\n\n        Number result = adapter.read(jsonReader);\n\n        InOrder inOrder = inOrder(jsonReader, toNumberStrategy);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(toNumberStrategy).readNumber(jsonReader);\n        assertEquals(expectedNumber, result);\n    }\n\n    @Test\n    public void testRead_StringToken_ReturnsNumberFromStrategy() throws IOException {\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n        Number expectedNumber = 3.14;\n        when(toNumberStrategy.readNumber(jsonReader)).thenReturn(expectedNumber);\n\n        Number result = adapter.read(jsonReader);\n\n        InOrder inOrder = inOrder(jsonReader, toNumberStrategy);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(toNumberStrategy).readNumber(jsonReader);\n        assertEquals(expectedNumber, result);\n    }\n\n    @Test\n    public void testRead_UnexpectedToken_ThrowsJsonSyntaxException() throws IOException {\n        when(jsonReader.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n        when(jsonReader.getPath()).thenReturn(\"$.somePath\");\n\n        JsonSyntaxException exception = assertThrows(JsonSyntaxException.class, () -> {\n            adapter.read(jsonReader);\n        });\n\n        assertTrue(exception.getMessage().contains(\"Expecting number, got: BEGIN_ARRAY; at path $.somePath\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882945,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 632,
+    "prompt_tokens": 1025,
+    "total_tokens": 1657,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.81
+  }
+}

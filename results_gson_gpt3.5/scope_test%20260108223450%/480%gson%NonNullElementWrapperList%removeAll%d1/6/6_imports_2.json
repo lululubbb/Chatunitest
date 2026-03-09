@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  private ArrayList<String> mockDelegate;\n  private NonNullElementWrapperList<String> list;\n\n  @BeforeEach\n  void setUp() {\n    mockDelegate = Mockito.mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(mockDelegate);\n  }\n\n  @Test\n  void removeAll_delegatesToDelegateAndReturnsTrue() {\n    Collection<?> toRemove = Arrays.asList(\"a\", \"b\");\n\n    when(mockDelegate.removeAll(toRemove)).thenReturn(true);\n\n    boolean result = list.removeAll(toRemove);\n\n    verify(mockDelegate).removeAll(toRemove);\n    assertTrue(result);\n  }\n\n  @Test\n  void removeAll_delegatesToDelegateAndReturnsFalse() {\n    Collection<?> toRemove = Arrays.asList(\"x\", \"y\", \"z\");\n\n    when(mockDelegate.removeAll(toRemove)).thenReturn(false);\n\n    boolean result = list.removeAll(toRemove);\n\n    verify(mockDelegate).removeAll(toRemove);\n    assertFalse(result);\n  }\n\n  @Test\n  void removeAll_withEmptyCollection() {\n    Collection<?> toRemove = Arrays.asList();\n\n    when(mockDelegate.removeAll(toRemove)).thenReturn(false);\n\n    boolean result = list.removeAll(toRemove);\n\n    verify(mockDelegate).removeAll(toRemove);\n    assertFalse(result);\n  }\n\n  @Test\n  void removeAll_withNullCollection_throwsNullPointerException() {\n    // Arrange: make the mock throw NullPointerException when removeAll is called with null\n    when(mockDelegate.removeAll(null)).thenThrow(NullPointerException.class);\n\n    // Act & Assert\n    assertThrows(NullPointerException.class, () -> list.removeAll(null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1103,
+  "completion_tokens": 415,
+  "total_tokens": 1518,
+  "llm_elapsed_time_seconds": 4.77,
+  "repair_elapsed_time_seconds": 14.93,
+  "round_total_time_seconds": 14.93
+}

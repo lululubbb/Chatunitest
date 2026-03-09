@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwlvJ0jm0aEALuhrKDqn9rTmlNwW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.BACKSLASH;\nimport static org.apache.commons.csv.Constants.COMMA;\nimport static org.apache.commons.csv.Constants.DOUBLE_QUOTE_CHAR;\nimport static org.apache.commons.csv.Constants.PIPE;\nimport static org.apache.commons.csv.Constants.TAB;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetDelimiter_Default() {\n        // Using predefined DEFAULT format, delimiter should be COMMA\n        assertEquals(COMMA, CSVFormat.DEFAULT.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_Excel() {\n        // Excel inherits from DEFAULT, delimiter should be COMMA\n        assertEquals(COMMA, CSVFormat.EXCEL.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_InformixUnload() {\n        // Informix unload uses PIPE delimiter\n        assertEquals(PIPE, CSVFormat.INFORMIX_UNLOAD.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_InformixUnloadCsv() {\n        // Informix unload csv uses COMMA delimiter\n        assertEquals(COMMA, CSVFormat.INFORMIX_UNLOAD_CSV.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_MySQL() {\n        // MySQL uses TAB delimiter\n        assertEquals(TAB, CSVFormat.MYSQL.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_PostgreSQLCsv() {\n        // PostgreSQL CSV uses COMMA delimiter\n        assertEquals(COMMA, CSVFormat.POSTGRESQL_CSV.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_PostgreSQLText() {\n        // PostgreSQL Text uses TAB delimiter\n        assertEquals(TAB, CSVFormat.POSTGRESQL_TEXT.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_Rfc4180() {\n        // RFC4180 inherits from DEFAULT, delimiter should be COMMA\n        assertEquals(COMMA, CSVFormat.RFC4180.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_Tdf() {\n        // TDF uses TAB delimiter\n        assertEquals(TAB, CSVFormat.TDF.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_CustomDelimiterUsingReflection() throws Exception {\n        // Create a CSVFormat instance with a custom delimiter using reflection to invoke the constructor\n        CSVFormat customFormat = createCSVFormatWithDelimiter(';');\n\n        assertEquals(';', customFormat.getDelimiter());\n    }\n\n    // Helper method to create CSVFormat instance with custom delimiter via reflection\n    private CSVFormat createCSVFormatWithDelimiter(char delimiter) throws Exception {\n        // Use the DEFAULT instance as base\n        CSVFormat defaultFormat = CSVFormat.DEFAULT;\n\n        // Access private fields via reflection\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] header = (String[]) headerField.get(defaultFormat);\n\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        String[] headerComments = (String[]) headerCommentsField.get(defaultFormat);\n\n        // Find the private constructor with all params\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        return constructor.newInstance(\n                delimiter,                            // delimiter\n                defaultFormat.getQuoteCharacter(),   // quoteChar\n                defaultFormat.getQuoteMode(),        // quoteMode\n                defaultFormat.getCommentMarker(),    // commentStart\n                defaultFormat.getEscapeCharacter(),  // escape\n                defaultFormat.getIgnoreSurroundingSpaces(), // ignoreSurroundingSpaces\n                defaultFormat.getIgnoreEmptyLines(), // ignoreEmptyLines\n                defaultFormat.getRecordSeparator(),  // recordSeparator\n                defaultFormat.getNullString(),       // nullString\n                headerComments,                      // headerComments (Object[])\n                header,                             // header (String[])\n                defaultFormat.getSkipHeaderRecord(), // skipHeaderRecord\n                defaultFormat.getAllowMissingColumnNames(), // allowMissingColumnNames\n                defaultFormat.getIgnoreHeaderCase(), // ignoreHeaderCase\n                defaultFormat.getTrim(),              // trim\n                defaultFormat.getTrailingDelimiter(),// trailingDelimiter\n                defaultFormat.getAutoFlush()          // autoFlush\n        );\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688323,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 968,
+    "prompt_tokens": 2170,
+    "total_tokens": 3138,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.38
+  }
+}

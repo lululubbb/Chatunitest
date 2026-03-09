@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaPgWnANRtQ3e0HTQQ5zsR9UHjN6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithHeaderTest {\n\n    private enum TestEnum {\n        FIRST, SECOND, THIRD\n    }\n\n    @Test\n    void testWithHeader_NullEnum_ReturnsFormatWithNullHeader() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader((Class<? extends Enum<?>>) null);\n        assertNotNull(result);\n        assertNull(result.getHeader());\n        assertNotSame(baseFormat, result);\n    }\n\n    @Test\n    void testWithHeader_EmptyEnum_ReturnsFormatWithEmptyHeader() {\n        enum EmptyEnum {}\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(EmptyEnum.class);\n        assertNotNull(result);\n        String[] header = result.getHeader();\n        assertNotNull(header);\n        assertEquals(0, header.length);\n        assertNotSame(baseFormat, result);\n    }\n\n    @Test\n    void testWithHeader_EnumWithValues_ReturnsFormatWithHeaderNames() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(TestEnum.class);\n        assertNotNull(result);\n        String[] header = result.getHeader();\n        assertNotNull(header);\n        assertArrayEquals(new String[] { \"FIRST\", \"SECOND\", \"THIRD\" }, header);\n        assertNotSame(baseFormat, result);\n    }\n\n    @Test\n    void testWithHeader_PrivateMethodInvocation() throws Exception {\n        // Using reflection to invoke private withHeader(String[]) method\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", String[].class);\n        withHeaderMethod.setAccessible(true);\n\n        String[] headers = new String[] { \"A\", \"B\", \"C\" };\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(baseFormat, (Object) headers);\n\n        assertNotNull(result);\n        assertArrayEquals(headers, result.getHeader());\n        assertNotSame(baseFormat, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555688,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 457,
+    "prompt_tokens": 1854,
+    "total_tokens": 2311,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.55
+  }
+}

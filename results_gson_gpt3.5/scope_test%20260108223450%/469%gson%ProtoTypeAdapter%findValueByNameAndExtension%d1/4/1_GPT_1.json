@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmvnDJXXNHabbNPnu09tSUIiixNP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.protobuf.Descriptors.EnumDescriptor;\nimport com.google.protobuf.Descriptors.EnumValueDescriptor;\nimport com.google.protobuf.DescriptorProtos.EnumValueOptions;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.Set;\n\npublic class ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapterName;\n  private ProtoTypeAdapter protoTypeAdapterValue;\n\n  private EnumDescriptor enumDescriptorMock;\n  private EnumValueDescriptor enumValueDescriptorMock1;\n  private EnumValueDescriptor enumValueDescriptorMock2;\n\n  private JsonElement jsonElementMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create ProtoTypeAdapter instances with enumSerialization = NAME and VALUE\n    var enumSerializationName = EnumSerialization.NAME;\n    var enumSerializationValue = EnumSerialization.VALUE;\n\n    // Use reflection to invoke the private constructor\n    var constructor = ProtoTypeAdapter.class.getDeclaredConstructor(\n        EnumSerialization.class,\n        com.google.common.base.CaseFormat.class,\n        com.google.common.base.CaseFormat.class,\n        Set.class,\n        Set.class);\n    constructor.setAccessible(true);\n\n    protoTypeAdapterName = constructor.newInstance(\n        enumSerializationName,\n        com.google.common.base.CaseFormat.LOWER_UNDERSCORE,\n        com.google.common.base.CaseFormat.LOWER_CAMEL,\n        Collections.emptySet(),\n        Collections.emptySet());\n\n    protoTypeAdapterValue = constructor.newInstance(\n        enumSerializationValue,\n        com.google.common.base.CaseFormat.LOWER_UNDERSCORE,\n        com.google.common.base.CaseFormat.LOWER_CAMEL,\n        Collections.emptySet(),\n        Collections.emptySet());\n\n    // Mock EnumDescriptor and EnumValueDescriptors\n    enumDescriptorMock = mock(EnumDescriptor.class);\n    enumValueDescriptorMock1 = mock(EnumValueDescriptor.class);\n    enumValueDescriptorMock2 = mock(EnumValueDescriptor.class);\n\n    // Mock JsonElement\n    jsonElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  public void testFindValueByNameAndExtension_enumSerializationName_matchFound() throws Exception {\n    // Setup enumSerialization = NAME\n    // Setup enumValueDescriptorMock1.getOptions() and getName()\n    var optionsMock = mock(EnumValueOptions.class);\n    when(enumValueDescriptorMock1.getOptions()).thenReturn(optionsMock);\n    when(enumValueDescriptorMock1.getName()).thenReturn(\"ENUM_ONE\");\n\n    when(enumValueDescriptorMock2.getOptions()).thenReturn(mock(EnumValueOptions.class));\n    when(enumValueDescriptorMock2.getName()).thenReturn(\"ENUM_TWO\");\n\n    // Setup enumDescriptor.getValues()\n    when(enumDescriptorMock.getValues())\n        .thenReturn(java.util.List.of(enumValueDescriptorMock1, enumValueDescriptorMock2));\n\n    // Mock getAsString() returns the custom serialized enum value of enumValueDescriptorMock1\n    // We need to mock getCustSerializedEnumValue to return the enumValue string to match jsonElementMock.getAsString()\n    // Because getCustSerializedEnumValue is private, we will spy protoTypeAdapterName and mock that method\n\n    // Spy protoTypeAdapterName\n    var spyAdapter = org.mockito.Mockito.spy(protoTypeAdapterName);\n    // Mock getCustSerializedEnumValue to return \"custom_enum_one\" for enumValueDescriptorMock1\n    doReturn(\"custom_enum_one\").when(spyAdapter).getCustSerializedEnumValue(any(), eq(\"ENUM_ONE\"));\n    doReturn(\"custom_enum_two\").when(spyAdapter).getCustSerializedEnumValue(any(), eq(\"ENUM_TWO\"));\n\n    when(jsonElementMock.getAsString()).thenReturn(\"custom_enum_one\");\n\n    // Invoke private method findValueByNameAndExtension\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"findValueByNameAndExtension\", EnumDescriptor.class, JsonElement.class);\n    method.setAccessible(true);\n\n    EnumValueDescriptor result = (EnumValueDescriptor) method.invoke(spyAdapter, enumDescriptorMock, jsonElementMock);\n\n    assertSame(enumValueDescriptorMock1, result);\n  }\n\n  @Test\n  public void testFindValueByNameAndExtension_enumSerializationName_noMatch_throws() throws Exception {\n    when(enumDescriptorMock.getValues()).thenReturn(java.util.List.of());\n\n    when(jsonElementMock.getAsString()).thenReturn(\"unknown_enum\");\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"findValueByNameAndExtension\", EnumDescriptor.class, JsonElement.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      method.invoke(protoTypeAdapterName, enumDescriptorMock, jsonElementMock);\n    });\n\n    // InvocationTargetException wraps the thrown exception, unwrap it\n    assertTrue(thrown.getCause() instanceof IllegalArgumentException);\n    assertTrue(thrown.getCause().getMessage().contains(\"Unrecognized enum name\"));\n  }\n\n  @Test\n  public void testFindValueByNameAndExtension_enumSerializationValue_matchFound() throws Exception {\n    when(jsonElementMock.getAsInt()).thenReturn(1);\n\n    when(enumDescriptorMock.findValueByNumber(1)).thenReturn(enumValueDescriptorMock1);\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"findValueByNameAndExtension\", EnumDescriptor.class, JsonElement.class);\n    method.setAccessible(true);\n\n    EnumValueDescriptor result = (EnumValueDescriptor) method.invoke(protoTypeAdapterValue, enumDescriptorMock, jsonElementMock);\n\n    assertSame(enumValueDescriptorMock1, result);\n  }\n\n  @Test\n  public void testFindValueByNameAndExtension_enumSerializationValue_noMatch_throws() throws Exception {\n    when(jsonElementMock.getAsInt()).thenReturn(999);\n\n    when(enumDescriptorMock.findValueByNumber(999)).thenReturn(null);\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"findValueByNameAndExtension\", EnumDescriptor.class, JsonElement.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      method.invoke(protoTypeAdapterValue, enumDescriptorMock, jsonElementMock);\n    });\n\n    // InvocationTargetException wraps the thrown exception, unwrap it\n    assertTrue(thrown.getCause() instanceof IllegalArgumentException);\n    assertTrue(thrown.getCause().getMessage().contains(\"Unrecognized enum value\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888823,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1337,
+    "prompt_tokens": 851,
+    "total_tokens": 2188,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.23
+  }
+}

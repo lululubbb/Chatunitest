@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnEZEyzjDsy4GcytPv8HkqWHMnDz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.sql;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.sql.SqlTimeTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.sql.Time;\nimport java.text.SimpleDateFormat;\n\nclass SqlTimeTypeAdapterTest {\n\n    private SqlTimeTypeAdapter adapter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Use reflection to instantiate the private constructor\n        var constructor = SqlTimeTypeAdapter.class.getDeclaredConstructor();\n        constructor.setAccessible(true);\n        adapter = constructor.newInstance();\n\n        jsonWriter = mock(JsonWriter.class);\n    }\n\n    @Test\n    void write_nullValue_invokesNullValue() throws IOException {\n        adapter.write(jsonWriter, null);\n        verify(jsonWriter).nullValue();\n        verifyNoMoreInteractions(jsonWriter);\n    }\n\n    @Test\n    void write_nonNullValue_writesFormattedTime() throws Exception {\n        // Prepare a Time instance with a fixed time\n        SimpleDateFormat sdf = new SimpleDateFormat(\"HH:mm:ss\");\n        long timeMillis = sdf.parse(\"15:30:45\").getTime();\n        Time time = new Time(timeMillis);\n\n        // Because format is private final field, get it via reflection to produce expected string\n        SimpleDateFormat format = (SimpleDateFormat) getPrivateField(adapter, \"format\");\n        String expectedFormatted = format.format(time);\n\n        adapter.write(jsonWriter, time);\n\n        InOrder inOrder = inOrder(jsonWriter);\n        inOrder.verify(jsonWriter).value(expectedFormatted);\n        verifyNoMoreInteractions(jsonWriter);\n    }\n\n    // Utility method to get private field value by reflection\n    private Object getPrivateField(Object instance, String fieldName) throws Exception {\n        Field field = instance.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return field.get(instance);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889987,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 425,
+    "prompt_tokens": 935,
+    "total_tokens": 1360,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.41
+  }
+}

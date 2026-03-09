@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWWuc8GKMWWKBJIB5bqKYCHLn1L",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.ToNumberPolicy;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class NumberTypeAdapterTest {\n\n  @Test\n  void newFactory_createsFactory_thatReturnsAdapterForNumber() throws Exception {\n    // Arrange\n    ToNumberStrategy strategy = ToNumberPolicy.LAZILY_PARSED_NUMBER;\n\n    // Use reflection to access private static method newFactory\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n\n    // Act\n    Object factoryObj = newFactoryMethod.invoke(null, strategy);\n\n    // Assert factory is TypeAdapterFactory\n    assertNotNull(factoryObj);\n    assertTrue(factoryObj instanceof TypeAdapterFactory);\n    TypeAdapterFactory factory = (TypeAdapterFactory) factoryObj;\n\n    // Create mocks for Gson and TypeToken\n    Gson gson = mock(Gson.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<Number> numberTypeToken = (TypeToken<Number>) (TypeToken<?>) TypeToken.get(Number.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<String> stringTypeToken = (TypeToken<String>) (TypeToken<?>) TypeToken.get(String.class);\n\n    // When type is Number.class, should return non-null adapter\n    TypeAdapter<?> adapterForNumber = factory.create(gson, numberTypeToken);\n    assertNotNull(adapterForNumber);\n    assertEquals(Number.class, adapterForNumber.getClass().getDeclaredMethod(\"read\", com.google.gson.stream.JsonReader.class).getReturnType());\n\n    // When type is not Number.class, should return null\n    TypeAdapter<?> adapterForString = factory.create(gson, stringTypeToken);\n    assertNull(adapterForString);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883412,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 423,
+    "prompt_tokens": 429,
+    "total_tokens": 852,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.62
+  }
+}

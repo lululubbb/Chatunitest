@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4xQ3YqF2Duqukh1NqYrbjAg7Qh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_withJsonElementAndClass_shouldReturnProperInstance() throws Exception {\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<String> classOfT = String.class;\n\n    // Use reflection to access Primitives.wrap(Class)\n    Method wrapMethod = null;\n    try {\n      Class<?> primitivesClass = Class.forName(\"com.google.gson.internal.Primitives\");\n      wrapMethod = primitivesClass.getMethod(\"wrap\", Class.class);\n    } catch (ClassNotFoundException e) {\n      // fallback or fail\n      fail(\"Primitives class not found\");\n    }\n\n    try (MockedStatic<TypeToken> typeTokenMockedStatic = Mockito.mockStatic(TypeToken.class)) {\n\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n      typeTokenMockedStatic.when(() -> TypeToken.get(classOfT)).thenReturn(typeToken);\n\n      // Spy on gson to mock fromJson(json, TypeToken)\n      Gson spyGson = spy(gson);\n      String expectedObject = \"test\";\n      doReturn(expectedObject).when(spyGson).fromJson(jsonElement, typeToken);\n\n      // Mock Primitives.wrap(classOfT) by reflection\n      Class<?> wrappedClass = (Class<?>) wrapMethod.invoke(null, classOfT);\n\n      // Call the method under test\n      String actualObject = spyGson.fromJson(jsonElement, classOfT);\n\n      // Verify the returned object is cast properly\n      assertSame(expectedObject, actualObject);\n\n      // Verify interactions\n      typeTokenMockedStatic.verify(() -> TypeToken.get(classOfT));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n\n  @Test\n  public void fromJson_withPrimitiveClass_shouldWrapAndCast() throws Exception {\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<Integer> classOfT = int.class;\n\n    // Use reflection to access Primitives.wrap(Class)\n    Method wrapMethod = null;\n    try {\n      Class<?> primitivesClass = Class.forName(\"com.google.gson.internal.Primitives\");\n      wrapMethod = primitivesClass.getMethod(\"wrap\", Class.class);\n    } catch (ClassNotFoundException e) {\n      fail(\"Primitives class not found\");\n    }\n\n    try (MockedStatic<TypeToken> typeTokenMockedStatic = Mockito.mockStatic(TypeToken.class)) {\n\n      Class<?> wrappedClass = (Class<?>) wrapMethod.invoke(null, classOfT);\n\n      typeTokenMockedStatic.when(() -> TypeToken.get(wrappedClass)).thenReturn(TypeToken.get(wrappedClass));\n\n      TypeToken<Integer> typeToken = TypeToken.get(wrappedClass);\n\n      Gson spyGson = spy(gson);\n      Integer expectedObject = 42;\n      doReturn(expectedObject).when(spyGson).fromJson(jsonElement, typeToken);\n\n      Integer actualObject = spyGson.fromJson(jsonElement, classOfT);\n\n      assertSame(expectedObject, actualObject);\n\n      typeTokenMockedStatic.verify(() -> TypeToken.get(wrappedClass));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n\n  @Test\n  public void fromJson_withNullJsonElement_shouldReturnNull() throws Exception {\n    JsonElement jsonElement = null;\n    Class<String> classOfT = String.class;\n\n    // Use reflection to access Primitives.wrap(Class)\n    Method wrapMethod = null;\n    try {\n      Class<?> primitivesClass = Class.forName(\"com.google.gson.internal.Primitives\");\n      wrapMethod = primitivesClass.getMethod(\"wrap\", Class.class);\n    } catch (ClassNotFoundException e) {\n      fail(\"Primitives class not found\");\n    }\n\n    try (MockedStatic<TypeToken> typeTokenMockedStatic = Mockito.mockStatic(TypeToken.class)) {\n\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n      typeTokenMockedStatic.when(() -> TypeToken.get(classOfT)).thenReturn(typeToken);\n\n      Gson spyGson = spy(gson);\n      doReturn(null).when(spyGson).fromJson(jsonElement, typeToken);\n\n      String actualObject = spyGson.fromJson(jsonElement, classOfT);\n\n      assertNull(actualObject);\n\n      typeTokenMockedStatic.verify(() -> TypeToken.get(classOfT));\n      verify(spyGson).fromJson(jsonElement, typeToken);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885547,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1016,
+    "prompt_tokens": 2331,
+    "total_tokens": 3347,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.88
+  }
+}

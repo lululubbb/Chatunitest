@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass JsonElementTest {\n\n  static class JsonElementImpl extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return null;\n    }\n  }\n\n  @Test\n  void testToString_success() throws IOException {\n    JsonElement element = spy(new JsonElementImpl());\n\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(element), any(JsonWriter.class)))\n          .thenAnswer(invocation -> {\n            JsonWriter writer = invocation.getArgument(1);\n            writer.value(\"mocked\");\n            return null;\n          });\n\n      String result = element.toString();\n\n      assertNotNull(result);\n      assertTrue(result.contains(\"mocked\"));\n      streamsMockedStatic.verify(() -> Streams.write(eq(element), any(JsonWriter.class)));\n    }\n  }\n\n  @Test\n  void testToString_throwsIOException_assertionError() throws IOException {\n    JsonElement element = spy(new JsonElementImpl());\n\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(element), any(JsonWriter.class)))\n          .thenThrow(new IOException(\"mock IO exception\"));\n\n      AssertionError error = assertThrows(AssertionError.class, element::toString);\n      assertTrue(error.getCause() instanceof IOException);\n      assertEquals(\"mock IO exception\", error.getCause().getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 427,
+  "completion_tokens": 375,
+  "total_tokens": 802,
+  "llm_elapsed_time_seconds": 6.56,
+  "repair_elapsed_time_seconds": 20.1,
+  "round_total_time_seconds": 20.1
+}

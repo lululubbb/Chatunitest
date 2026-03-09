@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlXksGpjuQDVmVwDaBCnmv9nz0fn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonWriter_value_Boolean_Test {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void value_nullValue_callsNullValueAndReturnsJsonWriter() throws IOException {\n    // Spy to verify nullValue() call\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n    JsonWriter returned = spyWriter.value((Boolean) null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, returned);\n  }\n\n  @Test\n  void value_true_writesTrue() throws IOException {\n    JsonWriter writer = jsonWriter.value(true);\n\n    assertSame(jsonWriter, writer);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  void value_false_writesFalse() throws IOException {\n    JsonWriter writer = jsonWriter.value(false);\n\n    assertSame(jsonWriter, writer);\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  void value_callsWriteDeferredNameAndBeforeValue() throws Exception {\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n    // Setup deferredName to non-null to trigger writeDeferredName() logic\n    spyWriter.name(\"key\");\n    spyWriter.value(true);\n\n    // Use reflection to verify private methods were called\n    Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n    writeDeferredNameMethod.invoke(spyWriter);\n\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n    beforeValueMethod.invoke(spyWriter);\n  }\n\n  @Test\n  void value_afterBeginObjectWithName_writesNameAndBoolean() throws IOException {\n    jsonWriter.beginObject();\n    jsonWriter.name(\"bool\");\n    jsonWriter.value(true);\n    jsonWriter.endObject();\n\n    assertEquals(\"{\\\"bool\\\":true}\", stringWriter.toString());\n  }\n\n  @Test\n  void value_afterBeginArray_writesBoolean() throws IOException {\n    jsonWriter.beginArray();\n    jsonWriter.value(false);\n    jsonWriter.endArray();\n\n    assertEquals(\"[false]\", stringWriter.toString());\n  }\n\n  @Test\n  void value_withLenientTrue_writesBoolean() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(true);\n\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  void value_withHtmlSafeTrue_writesBoolean() throws IOException {\n    jsonWriter.setHtmlSafe(true);\n    jsonWriter.value(false);\n\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  void value_withSerializeNullsFalse_andNullValue_returnsJsonWriter() throws IOException {\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n    spyWriter.setSerializeNulls(false);\n\n    JsonWriter returned = spyWriter.value((Boolean) null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883488,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 698,
+    "prompt_tokens": 1588,
+    "total_tokens": 2286,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.87
+  }
+}

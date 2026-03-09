@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm6aJfYlRzq96LVRaR2gD421NXAc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport java.io.EOFException;\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass Gson_FromJson_Test {\n\n  private Gson gson;\n  private JsonReader reader;\n  private TypeToken<String> typeToken;\n  private Gson spyGson;\n\n  private int peekCallCount = 0;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n    reader = mock(JsonReader.class);\n    typeToken = TypeToken.get(String.class);\n    spyGson = spy(gson);\n  }\n\n  @Test\n  public void fromJson_shouldReturnNull_whenEmptyDocument() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n    // peek() throws EOFException on empty document\n    doThrow(new EOFException()).when(reader).peek();\n\n    String result = spyGson.fromJson(reader, typeToken);\n\n    assertNull(result);\n    InOrder inOrder = inOrder(reader);\n    inOrder.verify(reader).isLenient();\n    inOrder.verify(reader).setLenient(true);\n    inOrder.verify(reader).peek();\n    inOrder.verify(reader).setLenient(false);\n  }\n\n  @Test\n  public void fromJson_shouldThrowJsonSyntaxException_onEOFException_whenNotEmpty() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n\n    // We reset peekCallCount for this test\n    peekCallCount = 0;\n\n    // Mock getAdapter to avoid NPE\n    @SuppressWarnings(\"unchecked\")\n    com.google.gson.TypeAdapter<String> adapter = mock(com.google.gson.TypeAdapter.class);\n    doReturn(adapter).when(spyGson).getAdapter(typeToken);\n\n    // We override peek to throw EOFException on second call\n    doAnswer(invocation -> {\n      if (peekCallCount == 0) {\n        peekCallCount++;\n        return JsonToken.BEGIN_OBJECT;\n      } else {\n        throw new EOFException();\n      }\n    }).when(reader).peek();\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      spyGson.fromJson(reader, typeToken);\n    });\n\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof EOFException);\n  }\n\n  @Test\n  public void fromJson_shouldThrowJsonSyntaxException_onIllegalStateException() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n    doThrow(new IllegalStateException(\"illegal state\")).when(reader).peek();\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      spyGson.fromJson(reader, typeToken);\n    });\n\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n    assertEquals(\"illegal state\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  public void fromJson_shouldThrowJsonSyntaxException_onIOException() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n    doThrow(new IOException(\"io exception\")).when(reader).peek();\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      spyGson.fromJson(reader, typeToken);\n    });\n\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"io exception\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  public void fromJson_shouldThrowAssertionError_withMessage() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n    AssertionError error = new AssertionError(\"assertion failed\");\n    doThrow(error).when(reader).peek();\n\n    AssertionError thrown = assertThrows(AssertionError.class, () -> {\n      spyGson.fromJson(reader, typeToken);\n    });\n\n    assertTrue(thrown.getMessage().contains(\"GSON\"));\n    assertTrue(thrown.getMessage().contains(\"assertion failed\"));\n    assertEquals(error, thrown.getCause());\n  }\n\n  @Test\n  public void fromJson_shouldReturnDeserializedObject_whenNoException() throws IOException {\n    when(reader.isLenient()).thenReturn(false);\n    when(reader.peek()).thenReturn(JsonToken.STRING);\n\n    @SuppressWarnings(\"unchecked\")\n    com.google.gson.TypeAdapter<String> adapter = mock(com.google.gson.TypeAdapter.class);\n    when(spyGson.getAdapter(typeToken)).thenReturn(adapter);\n    when(adapter.read(reader)).thenReturn(\"deserialized\");\n\n    String result = spyGson.fromJson(reader, typeToken);\n\n    assertEquals(\"deserialized\", result);\n    InOrder inOrder = inOrder(reader, adapter);\n    inOrder.verify(reader).isLenient();\n    inOrder.verify(reader).setLenient(true);\n    inOrder.verify(reader).peek();\n    inOrder.verify(spyGson).getAdapter(typeToken);\n    inOrder.verify(adapter).read(reader);\n    inOrder.verify(reader).setLenient(false);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885648,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1077,
+    "prompt_tokens": 2177,
+    "total_tokens": 3254,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.57
+  }
+}

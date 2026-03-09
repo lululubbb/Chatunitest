@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuw09ugOvcz0ZbvqYEf19KdFPVQJJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintlnTest {\n\n    private CSVFormat csvFormat;\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        appendable = mock(Appendable.class);\n    }\n\n    private CSVFormat createCSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n                                      Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n                                      boolean ignoreEmptyLines, String recordSeparator, String nullString,\n                                      Object[] headerComments, String[] header, boolean skipHeaderRecord,\n                                      boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n                                      boolean trailingDelimiter) {\n        try {\n            Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(\n                    char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                    boolean.class, boolean.class, String.class, String.class, Object[].class,\n                    String[].class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n            ctor.setAccessible(true);\n\n            // Defensive null for arrays to avoid null pointer in varargs parameter in reflection\n            Object[] safeHeaderComments = headerComments != null ? headerComments : new Object[0];\n            String[] safeHeader = header != null ? header : new String[0];\n\n            return ctor.newInstance(delimiter, quoteChar, quoteMode, commentStart, escape,\n                    ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString,\n                    safeHeaderComments, safeHeader, skipHeaderRecord, allowMissingColumnNames,\n                    ignoreHeaderCase, trim, trailingDelimiter);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    void testPrintln_withTrailingDelimiterAndRecordSeparator() throws IOException {\n        csvFormat = createCSVFormat(',', '\"', null, null, null, false, false, \"\\n\",\n                null, null, null, false, false, false, false, true);\n\n        csvFormat.println(appendable);\n\n        verify(appendable).append(',');\n        verify(appendable).append(\"\\n\");\n    }\n\n    @Test\n    void testPrintln_withTrailingDelimiterNoRecordSeparator() throws IOException {\n        csvFormat = createCSVFormat(',', '\"', null, null, null, false, false, null,\n                null, null, null, false, false, false, false, true);\n\n        csvFormat.println(appendable);\n\n        verify(appendable).append(',');\n        verify(appendable, never()).append((String) isNull());\n    }\n\n    @Test\n    void testPrintln_noTrailingDelimiterWithRecordSeparator() throws IOException {\n        csvFormat = createCSVFormat(',', '\"', null, null, null, false, false, \"\\r\\n\",\n                null, null, null, false, false, false, false, false);\n\n        csvFormat.println(appendable);\n\n        verify(appendable, never()).append(',');\n        verify(appendable).append(\"\\r\\n\");\n    }\n\n    @Test\n    void testPrintln_noTrailingDelimiterNoRecordSeparator() throws IOException {\n        csvFormat = createCSVFormat(',', '\"', null, null, null, false, false, null,\n                null, null, null, false, false, false, false, false);\n\n        csvFormat.println(appendable);\n\n        verify(appendable, never()).append(',');\n        verify(appendable, never()).append(anyString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767685361,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 772,
+    "prompt_tokens": 2340,
+    "total_tokens": 3112,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.87
+  }
+}

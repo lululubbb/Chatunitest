@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuulQH2FMZCLw7Rszsmybi7ExCHnU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterFlushTest {\n\n    private Appendable appendable;\n    private CSVFormat csvFormat;\n    private CSVPrinter csvPrinter;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        appendable = mock(Appendable.class);\n        csvFormat = mock(CSVFormat.class);\n        csvPrinter = new CSVPrinter(appendable, csvFormat);\n    }\n\n    @Test\n    void flush_whenOutIsFlushable_shouldCallFlush() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Flushable flushable = mock(Flushable.class);\n        // Create CSVPrinter with a dummy Appendable (mock), then replace 'out' with flushable via reflection\n        CSVPrinter printer = new CSVPrinter(mock(Appendable.class), csvFormat);\n\n        // Use reflection to set private final field 'out' to flushable\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, flushable);\n\n        printer.flush();\n\n        verify(flushable).flush();\n    }\n\n    @Test\n    void flush_whenOutIsNotFlushable_shouldNotThrow() throws IOException {\n        // appendable is not Flushable\n        csvPrinter.flush();\n        // no exception means pass\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680604,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 329,
+    "prompt_tokens": 924,
+    "total_tokens": 1253,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.63
+  }
+}

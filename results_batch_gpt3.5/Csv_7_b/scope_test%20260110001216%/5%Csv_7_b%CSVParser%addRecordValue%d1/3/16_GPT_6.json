@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9QUgKXaJUxPB9XfXRwvRN9g13IC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n    private CSVFormat mockFormat;\n    private Token mockToken;\n    private List<String> recordList;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Mock CSVFormat\n        mockFormat = mock(CSVFormat.class);\n\n        // Create parser instance with a dummy Reader and mocked format\n        parser = new CSVParser(new java.io.StringReader(\"\"), mockFormat);\n\n        // Access private final field 'reusableToken' via reflection\n        Field tokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        tokenField.setAccessible(true);\n        mockToken = (Token) tokenField.get(parser);\n\n        // Access private final field 'record' via reflection\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        recordList = (List<String>) recordField.get(parser);\n\n        // Clear record list before each test\n        recordList.clear();\n    }\n\n    @Test\n    public void testAddRecordValue_nullStringIsNull_addsInput() throws Exception {\n        // Setup reusableToken.content to return \"testValue\"\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"testValue\");\n        contentField.set(mockToken, content);\n\n        // format.getNullString() returns null\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        // Invoke private method addRecordValue\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        method.setAccessible(true);\n        method.invoke(parser);\n\n        // Verify record contains \"testValue\"\n        assertEquals(1, recordList.size());\n        assertEquals(\"testValue\", recordList.get(0));\n    }\n\n    @Test\n    public void testAddRecordValue_nullStringNotNull_inputEqualsNullString_addsNull() throws Exception {\n        // Setup reusableToken.content to \"null\"\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"null\");\n        contentField.set(mockToken, content);\n\n        // format.getNullString() returns \"null\"\n        when(mockFormat.getNullString()).thenReturn(\"null\");\n\n        // Invoke private method addRecordValue\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        method.setAccessible(true);\n        method.invoke(parser);\n\n        // Verify record contains null (case insensitive match)\n        assertEquals(1, recordList.size());\n        assertNull(recordList.get(0));\n    }\n\n    @Test\n    public void testAddRecordValue_nullStringNotNull_inputNotEqualsNullString_addsInput() throws Exception {\n        // Setup reusableToken.content to \"value\"\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"value\");\n        contentField.set(mockToken, content);\n\n        // format.getNullString() returns \"null\"\n        when(mockFormat.getNullString()).thenReturn(\"null\");\n\n        // Invoke private method addRecordValue\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        method.setAccessible(true);\n        method.invoke(parser);\n\n        // Verify record contains \"value\"\n        assertEquals(1, recordList.size());\n        assertEquals(\"value\", recordList.get(0));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975294,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 762,
+    "prompt_tokens": 1459,
+    "total_tokens": 2221,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 13.49
+  }
+}

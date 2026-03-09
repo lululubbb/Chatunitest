@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        // For static fields, target should be null\n        if (Modifier.isStatic(field.getModifiers())) {\n            field.set(null, value);\n        } else {\n            field.set(target, value);\n        }\n    }\n\n    @Test\n    void testGetHeaderReturnsCloneWhenHeaderIsNotNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String[] header = new String[] {\"a\", \"b\", \"c\"};\n        setFinalField(format, \"header\", header);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNotNull(returnedHeader);\n        assertArrayEquals(header, returnedHeader);\n        assertNotSame(header, returnedHeader);\n    }\n\n    @Test\n    void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        setFinalField(format, \"header\", null);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNull(returnedHeader);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_13_b/scope_test%20260116155217%/12%Csv_13_b%CSVFormat%getHeader%d1/4/runtemp/Csv_13_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1495,
+  "completion_tokens": 325,
+  "total_tokens": 1820,
+  "llm_elapsed_time_seconds": 4.45
+}

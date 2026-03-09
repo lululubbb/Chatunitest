@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuggDRmoQ0sRpSBKccMrQgNNLo14",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormatWithComments;\n    private CSVFormat csvFormatWithoutComments;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create instance with headerComments set\n        csvFormatWithComments = CSVFormat.DEFAULT.withHeaderComments(\"comment1\", \"comment2\");\n\n        // Create instance with headerComments null (default)\n        csvFormatWithoutComments = CSVFormat.DEFAULT;\n\n        // Using reflection to forcibly set headerComments to null in csvFormatWithComments to test null case\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        headerCommentsField.set(csvFormatWithoutComments, null);\n    }\n\n    @Test\n    public void testGetHeaderComments_whenHeaderCommentsSet() {\n        String[] comments = csvFormatWithComments.getHeaderComments();\n        assertNotNull(comments, \"The returned headerComments array should not be null\");\n        assertArrayEquals(new String[]{\"comment1\", \"comment2\"}, comments, \"The returned headerComments should match what was set\");\n\n        // Verify that returned array is a clone (modifying returned array should not affect internal state)\n        comments[0] = \"modified\";\n        String[] commentsAgain = csvFormatWithComments.getHeaderComments();\n        assertEquals(\"comment1\", commentsAgain[0], \"Modifying returned array should not affect internal headerComments\");\n    }\n\n    @Test\n    public void testGetHeaderComments_whenHeaderCommentsNull() throws Exception {\n        // Using reflection to forcibly set headerComments to null in csvFormatWithComments instance to test null return\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        headerCommentsField.set(csvFormatWithComments, null);\n\n        assertNull(csvFormatWithComments.getHeaderComments(), \"getHeaderComments should return null if headerComments field is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680310,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 436,
+    "prompt_tokens": 1142,
+    "total_tokens": 1578,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.65
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmu4YSu5CqODQKDUM0Wo4dlDFchg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.util.Comparator;\n\nclass LinkedTreeMap_FindByObjectTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    // Use natural ordering comparator (null comparator)\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void findByObject_withExistingKey_returnsNode() throws Exception {\n    // Put a key-value pair\n    map.put(\"key1\", \"value1\");\n\n    // Access private findByObject via reflection\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> node = (Node<String, String>) findByObject.invoke(map, \"key1\");\n    assertNotNull(node);\n    assertEquals(\"key1\", node.key);\n    assertEquals(\"value1\", node.value);\n  }\n\n  @Test\n  void findByObject_withNonExistingKey_returnsNull() throws Exception {\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> node = (Node<String, String>) findByObject.invoke(map, \"nonexistent\");\n    assertNull(node);\n  }\n\n  @Test\n  void findByObject_withNullKey_returnsNull() throws Exception {\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> node = (Node<String, String>) findByObject.invoke(map, (Object) null);\n    assertNull(node);\n  }\n\n  @Test\n  void findByObject_withWrongKeyType_returnsNull() throws Exception {\n    // Create a LinkedTreeMap with String keys\n    LinkedTreeMap<String, String> stringMap = new LinkedTreeMap<>();\n\n    // Put a valid entry\n    stringMap.put(\"key\", \"value\");\n\n    // Access private findByObject via reflection\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    Node<String, String> node = null;\n    try {\n      @SuppressWarnings(\"unchecked\")\n      Node<String, String> result = (Node<String, String>) findByObject.invoke(stringMap, 12345);\n      node = result;\n    } catch (Exception e) {\n      Throwable cause = e.getCause();\n      if (!(cause instanceof ClassCastException)) {\n        throw e;\n      }\n      // expected ClassCastException wrapped, so node remains null\n    }\n    assertNull(node);\n  }\n\n  @Test\n  void findByObject_withComparatorDifferentKeyType_returnsNull() throws Exception {\n    // Create a LinkedTreeMap with comparator that only accepts Integers (simulate)\n    @SuppressWarnings(\"unchecked\")\n    Comparator<Object> comparator = mock(Comparator.class);\n    // Mock comparator to throw ClassCastException when comparing a String key\n    when(comparator.compare(any(), any())).thenAnswer(invocation -> {\n      Object arg1 = invocation.getArgument(0);\n      Object arg2 = invocation.getArgument(1);\n      if (!(arg1 instanceof Integer) || !(arg2 instanceof Integer)) {\n        throw new ClassCastException();\n      }\n      return ((Integer) arg1).compareTo((Integer) arg2);\n    });\n\n    LinkedTreeMap<Object, String> cmpMap = new LinkedTreeMap<>(comparator, false);\n    cmpMap.put(1, \"one\");\n\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    Node<Object, String> node = null;\n    try {\n      @SuppressWarnings(\"unchecked\")\n      Node<Object, String> result = (Node<Object, String>) findByObject.invoke(cmpMap, \"stringKey\");\n      node = result;\n    } catch (Exception e) {\n      Throwable cause = e.getCause();\n      if (!(cause instanceof ClassCastException)) {\n        throw e;\n      }\n      // expected ClassCastException wrapped, so node remains null\n    }\n    assertNull(node);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888716,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 949,
+    "prompt_tokens": 2792,
+    "total_tokens": 3741,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.55
+  }
+}

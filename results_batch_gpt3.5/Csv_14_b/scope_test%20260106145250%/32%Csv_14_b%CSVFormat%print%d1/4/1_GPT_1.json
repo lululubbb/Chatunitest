@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvssAagNcy9yiLYDYqdy080nTNDZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.Charset;\nimport java.nio.file.Path;\nimport java.nio.file.Paths;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testPrint_withPath_callsPrintWithFile() throws Exception {\n        // Arrange\n        Path mockPath = mock(Path.class);\n        File mockFile = mock(File.class);\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        when(mockPath.toFile()).thenReturn(mockFile);\n\n        // Spy on csvFormat to mock print(File, Charset)\n        CSVFormat spyFormat = Mockito.spy(csvFormat);\n        doReturn(mockPrinter).when(spyFormat).print(mockFile, charset);\n\n        // Act\n        CSVPrinter printer = spyFormat.print(mockPath, charset);\n\n        // Assert\n        assertNotNull(printer);\n        assertSame(mockPrinter, printer);\n        verify(mockPath).toFile();\n        verify(spyFormat).print(mockFile, charset);\n    }\n\n    @Test\n    public void testPrint_withNullCharset_throwsNullPointerException() throws Exception {\n        Path mockPath = mock(Path.class);\n\n        assertThrows(NullPointerException.class, () -> csvFormat.print(mockPath, null));\n    }\n\n    @Test\n    public void testPrint_withNullPath_throwsNullPointerException() throws Exception {\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        assertThrows(NullPointerException.class, () -> csvFormat.print(null, charset));\n    }\n\n    @Test\n    public void testPrint_withRealPathAndCharset_returnsPrinter() throws IOException {\n        Path tempPath = Paths.get(System.getProperty(\"java.io.tmpdir\"), \"csvformattest.csv\");\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVPrinter printer = format.print(tempPath, charset);\n\n        assertNotNull(printer);\n        printer.close();\n        // Cleanup file if created\n        File file = tempPath.toFile();\n        if (file.exists()) {\n            file.delete();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684910,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 527,
+    "prompt_tokens": 1533,
+    "total_tokens": 2060,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.69
+  }
+}

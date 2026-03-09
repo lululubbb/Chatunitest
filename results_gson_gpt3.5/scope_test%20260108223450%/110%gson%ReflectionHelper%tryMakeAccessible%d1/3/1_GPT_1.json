@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlTwzi1up4qlaBnqiyxcnyMxTAgb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<String> constructor = String.class.getDeclaredConstructor(String.class);\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws Exception {\n    // Create a mock Constructor that throws exception on setAccessible(true)\n    Constructor<?> constructor = mock(Constructor.class);\n    doThrow(new SecurityException(\"Access denied\")).when(constructor).setAccessible(true);\n    when(constructor.toString()).thenReturn(\"mockConstructor\");\n\n    // We need to mock constructorToString static method call inside tryMakeAccessible.\n    // Since constructorToString is static and in the same class, we cannot mock it easily with Mockito 3.\n    // Instead, we rely on the actual constructorToString method by using a real Constructor.\n    // So instead, create a spy on ReflectionHelper class to mock constructorToString.\n    // But since constructorToString is static, Mockito 3 cannot mock static methods without inline mock maker.\n    // So we will not mock constructorToString, but rely on the exception message and the returned string containing exception message.\n\n    String message = ReflectionHelper.tryMakeAccessible(constructor);\n\n    assertNotNull(message);\n    assertTrue(message.contains(\"Failed making constructor\"));\n    assertTrue(message.contains(\"Access denied\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883252,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 345,
+    "prompt_tokens": 465,
+    "total_tokens": 810,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.23
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaKLn1YS8zzqTpQirvta8bCPiPrS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.io.PrintWriter;\nimport java.lang.reflect.Field;\nimport java.io.OutputStreamWriter;\nimport java.io.Writer;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private PrintWriter originalOut;\n\n    @BeforeEach\n    void setUp() {\n        // CSVPrinter stores a Writer wrapping System.out, so we keep a reference for comparison\n        originalOut = new PrintWriter(System.out, true);\n    }\n\n    @AfterEach\n    void tearDown() {\n        // No system out replacement done, so nothing to restore\n    }\n\n    @Test\n    void testPrinterReturnsCSVPrinterWithSystemOut() throws IOException {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVPrinter printer = csvFormat.printer();\n        assertNotNull(printer);\n        assertEquals(CSVPrinter.class, printer.getClass());\n\n        try {\n            Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n            outField.setAccessible(true);\n            Object out = outField.get(printer);\n            assertNotNull(out);\n            // The 'out' field is a Writer wrapping System.out, so check it's a Writer instance\n            assertTrue(out instanceof Writer);\n\n            // Additionally, check that the underlying writer is wrapping System.out by checking toString or class\n            // (optional, can be omitted if implementation details vary)\n        } catch (NoSuchFieldException e) {\n            fail(\"CSVPrinter.out field not found\");\n        } catch (IllegalAccessException e) {\n            fail(\"Cannot access CSVPrinter.out field\");\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555357,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 357,
+    "prompt_tokens": 2191,
+    "total_tokens": 2548,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.39
+  }
+}

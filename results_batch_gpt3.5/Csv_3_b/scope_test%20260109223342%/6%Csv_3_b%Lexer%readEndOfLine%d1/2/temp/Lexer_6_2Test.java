@@ -1,0 +1,128 @@
+package org.apache.commons.csv;
+import org.junit.jupiter.api.Timeout;
+import static org.apache.commons.csv.Constants.BACKSPACE;
+import static org.apache.commons.csv.Constants.CR;
+import static org.apache.commons.csv.Constants.END_OF_STREAM;
+import static org.apache.commons.csv.Constants.FF;
+import static org.apache.commons.csv.Constants.LF;
+import static org.apache.commons.csv.Constants.TAB;
+import static org.apache.commons.csv.Constants.UNDEFINED;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class Lexer_6_2Test {
+
+    private Lexer lexer;
+    private ExtendedBufferedReader inMock;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        inMock = mock(ExtendedBufferedReader.class);
+        CSVFormat formatMock = mock(CSVFormat.class);
+
+        lexer = new Lexer(formatMock, inMock) {
+            @Override
+            Token nextToken(Token reusableToken) {
+                return null;
+            }
+
+            @Override
+            boolean isWhitespace(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isStartOfLine(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isEndOfFile(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isDelimiter(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isEscape(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isQuoteChar(int c) {
+                return false;
+            }
+
+            @Override
+            boolean isCommentStart(int c) {
+                return false;
+            }
+        };
+
+        // Use reflection to set the private final field 'in' to our mock
+        Field inField = Lexer.class.getDeclaredField("in");
+        inField.setAccessible(true);
+        inField.set(lexer, inMock);
+    }
+
+    @Test
+    @Timeout(8000)
+    void testReadEndOfLine_CR_followedByLF() throws Exception {
+        when(inMock.lookAhead()).thenReturn((int) '\n');
+        when(inMock.read()).thenReturn((int) '\n');
+
+        // call readEndOfLine with CR
+        boolean result = lexer.readEndOfLine('\r');
+
+        verify(inMock).lookAhead();
+        verify(inMock).read();
+
+        assertTrue(result, "Should return true for CR followed by LF");
+    }
+
+    @Test
+    @Timeout(8000)
+    void testReadEndOfLine_CR_notFollowedByLF() throws Exception {
+        when(inMock.lookAhead()).thenReturn((int) 'x');
+
+        boolean result = lexer.readEndOfLine('\r');
+
+        verify(inMock).lookAhead();
+        verify(inMock, never()).read();
+
+        assertTrue(result, "Should return true for CR not followed by LF");
+    }
+
+    @Test
+    @Timeout(8000)
+    void testReadEndOfLine_LF() throws Exception {
+        // No lookAhead or read expected
+        boolean result = lexer.readEndOfLine('\n');
+
+        verify(inMock, never()).lookAhead();
+        verify(inMock, never()).read();
+
+        assertTrue(result, "Should return true for LF");
+    }
+
+    @Test
+    @Timeout(8000)
+    void testReadEndOfLine_OtherChar() throws Exception {
+        boolean result = lexer.readEndOfLine('x');
+
+        verify(inMock, never()).lookAhead();
+        verify(inMock, never()).read();
+
+        assertFalse(result, "Should return false for non CR/LF char");
+    }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZTT4VzQ9qUKiidG9XCZdBm5FIz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  private static Class<?> recordClassMock;\n\n  @BeforeAll\n  static void setup() {\n    recordClassMock = RecordClassMock.class;\n  }\n\n  @Test\n  void testGetRecordComponentNames_returnsExpected() {\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class, Mockito.CALLS_REAL_METHODS)) {\n      // Get the actual RecordHelper class from ReflectionHelper\n      Class<?> recordHelperClass = Class.forName(\"com.google.gson.internal.reflect.ReflectionHelper$RecordHelper\");\n\n      // Create a proxy instance implementing the RecordHelper interface\n      String[] expected = new String[] {\"component1\", \"component2\"};\n      Object proxy = java.lang.reflect.Proxy.newProxyInstance(\n          recordHelperClass.getClassLoader(),\n          new Class<?>[]{recordHelperClass},\n          (proxyObj, method, args) -> {\n            if (\"getRecordComponentNames\".equals(method.getName()) && args.length == 1) {\n              return expected;\n            }\n            return null;\n          });\n\n      // Use reflection to set private static final RECORD_HELPER field\n      Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n      recordHelperField.setAccessible(true);\n\n      // Remove final modifier from the field\n      Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n      modifiersField.setAccessible(true);\n      modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n      // Set the proxy instance to the RECORD_HELPER field\n      recordHelperField.set(null, proxy);\n\n      String[] actual = ReflectionHelper.getRecordComponentNames(recordClassMock);\n      assertArrayEquals(expected, actual);\n    } catch (Exception e) {\n      fail(\"Exception during test: \" + e);\n    }\n  }\n\n  // Dummy record class mock for testing\n  private static class RecordClassMock {\n    // Empty class, just for test\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887439,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 471,
+    "prompt_tokens": 1761,
+    "total_tokens": 2232,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.43
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuul5jGT2BFDXl10EaJ4Ag7pw4rSd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderReturnsCloneWhenHeaderIsNotNull() throws Exception {\n        // Create a new CSVFormat instance without header\n        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader((String[]) null);\n\n        // Use reflection to set the private final 'header' field to originalHeader\n        String[] originalHeader = new String[]{\"col1\", \"col2\"};\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n\n        // Remove final modifier using reflection on Field modifiers (Java 12+ requires different approach, \n        // but for simplicity assuming Java 8-11 here)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerField, headerField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        headerField.set(csvFormat, originalHeader);\n\n        String[] returnedHeader = csvFormat.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(originalHeader, returnedHeader, \"Returned header should equal original header\");\n        assertNotSame(originalHeader, returnedHeader, \"Returned header should be a clone, not the same instance\");\n    }\n\n    @Test\n    void testGetHeaderReturnsNullWhenHeaderIsNull() {\n        // Create a new CSVFormat instance with no header\n        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader((String[]) null);\n\n        String[] returnedHeader = csvFormat.getHeader();\n\n        assertNull(returnedHeader, \"Returned header should be null when header field is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680583,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 383,
+    "prompt_tokens": 1458,
+    "total_tokens": 1841,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 3.92
+  }
+}

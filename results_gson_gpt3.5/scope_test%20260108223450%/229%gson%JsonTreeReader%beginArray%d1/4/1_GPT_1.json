@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn969R1GQoguFVTGcbrpZ5V4I04e",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\nclass JsonTreeReaderBeginArrayTest {\n\n  private JsonTreeReader jsonTreeReader;\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    jsonArray = new JsonArray();\n    jsonArray.add(new com.google.gson.JsonPrimitive(\"elem1\"));\n    jsonArray.add(new com.google.gson.JsonPrimitive(\"elem2\"));\n    jsonTreeReader = new JsonTreeReader(jsonArray);\n\n    // Use reflection to set stack and stackSize to simulate the state before beginArray is called\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = jsonArray;\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = -1;\n\n    // Mock expect method to do nothing since it is private and called in beginArray\n    // We will use reflection to override it to avoid exceptions\n    Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n    expectMethod.setAccessible(true);\n    // We cannot directly mock private methods with Mockito, so we will spy on the instance\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doNothing().when(spyReader).expect(JsonToken.BEGIN_ARRAY);\n    jsonTreeReader = spyReader;\n  }\n\n  @Test\n  void testBeginArray_success() throws Exception {\n    // Use reflection to invoke beginArray\n    Method beginArrayMethod = JsonTreeReader.class.getDeclaredMethod(\"beginArray\");\n    beginArrayMethod.setAccessible(true);\n\n    beginArrayMethod.invoke(jsonTreeReader);\n\n    // Verify that stackSize increased by 1\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(2, stackSize);\n\n    // Verify top of stack is an iterator over jsonArray\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    Object top = stack[stackSize - 1];\n    assertTrue(top instanceof Iterator);\n\n    // Verify pathIndices[stackSize - 1] == 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(0, pathIndices[stackSize - 1]);\n  }\n\n  @Test\n  void testBeginArray_expectThrows() throws Exception {\n    // Spy on jsonTreeReader to throw IOException on expect\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doThrow(new IOException(\"Expected token not found\")).when(spyReader).expect(JsonToken.BEGIN_ARRAY);\n\n    Method beginArrayMethod = JsonTreeReader.class.getDeclaredMethod(\"beginArray\");\n    beginArrayMethod.setAccessible(true);\n\n    IOException thrown = assertThrows(IOException.class, () -> beginArrayMethod.invoke(spyReader));\n    assertTrue(thrown.getCause().getMessage().contains(\"Expected token not found\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889648,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 828,
+    "prompt_tokens": 586,
+    "total_tokens": 1414,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.2
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn2s7zS5onRn0IE74H6iYPANut29",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport javax.annotation.PostConstruct;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\n\nclass PostConstructAdapterFactoryTest {\n\n    private PostConstructAdapterFactory factory;\n\n    @BeforeEach\n    void setUp() {\n        factory = new PostConstructAdapterFactory();\n    }\n\n    static class TestClassWithPostConstruct {\n        @PostConstruct\n        private void init() {\n        }\n    }\n\n    static class TestClassWithoutPostConstruct {\n        private void init() {\n        }\n    }\n\n    @Test\n    void create_returnsPostConstructAdapter_whenPostConstructMethodPresent() throws Exception {\n        Gson gson = mock(Gson.class);\n        TypeToken<TestClassWithPostConstruct> typeToken = TypeToken.get(TestClassWithPostConstruct.class);\n\n        Method postConstructMethod = TestClassWithPostConstruct.class.getDeclaredMethod(\"init\");\n        postConstructMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<TestClassWithPostConstruct> delegateAdapter = mock(TypeAdapter.class);\n\n        when(gson.getDelegateAdapter(factory, typeToken)).thenReturn(delegateAdapter);\n\n        TypeAdapter<TestClassWithPostConstruct> adapter = factory.create(gson, typeToken);\n\n        assertNotNull(adapter);\n        assertEquals(\"com.google.gson.typeadapters.PostConstructAdapterFactory$PostConstructAdapter\", adapter.getClass().getName());\n\n        // Use reflection to verify the PostConstruct method is correctly set in adapter\n        Field postConstructField = getPostConstructField(adapter);\n        postConstructField.setAccessible(true);\n        Method methodInAdapter = (Method) postConstructField.get(adapter);\n        assertEquals(postConstructMethod, methodInAdapter);\n    }\n\n    @Test\n    void create_returnsNull_whenNoPostConstructMethodPresent() {\n        Gson gson = mock(Gson.class);\n        TypeToken<TestClassWithoutPostConstruct> typeToken = TypeToken.get(TestClassWithoutPostConstruct.class);\n\n        TypeAdapter<TestClassWithoutPostConstruct> adapter = factory.create(gson, typeToken);\n\n        assertNull(adapter);\n    }\n\n    @Test\n    void create_findsPostConstructInSuperclass() throws Exception {\n        class Parent {\n            @PostConstruct\n            private void parentInit() {\n            }\n        }\n        class Child extends Parent {\n        }\n\n        Gson gson = mock(Gson.class);\n        TypeToken<Child> typeToken = TypeToken.get(Child.class);\n\n        Method postConstructMethod = Parent.class.getDeclaredMethod(\"parentInit\");\n        postConstructMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<Child> delegateAdapter = mock(TypeAdapter.class);\n\n        when(gson.getDelegateAdapter(factory, typeToken)).thenReturn(delegateAdapter);\n\n        TypeAdapter<Child> adapter = factory.create(gson, typeToken);\n\n        assertNotNull(adapter);\n        assertEquals(\"com.google.gson.typeadapters.PostConstructAdapterFactory$PostConstructAdapter\", adapter.getClass().getName());\n\n        Field postConstructField = getPostConstructField(adapter);\n        postConstructField.setAccessible(true);\n        Method methodInAdapter = (Method) postConstructField.get(adapter);\n        assertEquals(postConstructMethod, methodInAdapter);\n    }\n\n    @Test\n    void create_returnsNull_whenTypeIsObject() {\n        Gson gson = mock(Gson.class);\n        TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n        TypeAdapter<Object> adapter = factory.create(gson, typeToken);\n\n        assertNull(adapter);\n    }\n\n    private Field getPostConstructField(Object adapter) throws NoSuchFieldException {\n        Class<?> clazz = adapter.getClass();\n        while (clazz != null) {\n            try {\n                return clazz.getDeclaredField(\"postConstruct\");\n            } catch (NoSuchFieldException e) {\n                clazz = clazz.getSuperclass();\n            }\n        }\n        throw new NoSuchFieldException(\"Field 'postConstruct' not found in adapter class hierarchy\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889262,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 846,
+    "prompt_tokens": 1745,
+    "total_tokens": 2591,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.2
+  }
+}

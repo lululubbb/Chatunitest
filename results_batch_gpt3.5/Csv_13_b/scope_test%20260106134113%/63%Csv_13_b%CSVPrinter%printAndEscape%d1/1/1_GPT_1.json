@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuuOvQzmv4IgsTgZevGsxS5tJ7ug",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.getEscapeCharacter()).thenReturn('\\\\');\n        printer = new CSVPrinter(out, format);\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len) throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, value, offset, len);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    void testPrintAndEscape_noSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        invokePrintAndEscape(input, 0, input.length());\n        verify(out).append(input, 0, input.length());\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_withDelimiter() throws Throwable {\n        String input = \"abc,def\";\n        // ',' at position 3\n        invokePrintAndEscape(input, 0, input.length());\n\n        // Expected calls:\n        // append \"abc\"\n        // append escape char\n        // append ','\n        // append \"def\"\n        verify(out).append(input, 0, 3);\n        verify(out).append('\\\\');\n        verify(out).append(',');\n        verify(out).append(input, 4, 7);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_withEscapeChar() throws Throwable {\n        when(format.getEscapeCharacter()).thenReturn('\\\\');\n        String input = \"abc\\\\def\";\n        // '\\' at position 3\n        invokePrintAndEscape(input, 0, input.length());\n\n        verify(out).append(input, 0, 3);\n        verify(out).append('\\\\');\n        verify(out).append('\\\\');\n        verify(out).append(input, 4, 7);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_withLF() throws Throwable {\n        String input = \"abc\\ndef\";\n        // '\\n' at position 3\n        invokePrintAndEscape(input, 0, input.length());\n\n        verify(out).append(input, 0, 3);\n        verify(out).append('\\\\');\n        verify(out).append('n');\n        verify(out).append(input, 4, 7);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_withCR() throws Throwable {\n        String input = \"abc\\rdef\";\n        // '\\r' at position 3\n        invokePrintAndEscape(input, 0, input.length());\n\n        verify(out).append(input, 0, 3);\n        verify(out).append('\\\\');\n        verify(out).append('r');\n        verify(out).append(input, 4, 7);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_offsetAndLen() throws Throwable {\n        String input = \"0123456789\";\n        // substring \"3456\" (offset 3, len 4)\n        invokePrintAndEscape(input, 3, 4);\n        verify(out).append(input, 3, 7);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_emptyInput() throws Throwable {\n        String input = \"\";\n        invokePrintAndEscape(input, 0, 0);\n        verifyNoInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_allSpecialChars() throws Throwable {\n        // Compose string with all special chars: CR, LF, delimiter, escape\n        when(format.getDelimiter()).thenReturn(';');\n        when(format.getEscapeCharacter()).thenReturn('~');\n        String input = \"\\r\\n;~\";\n        invokePrintAndEscape(input, 0, input.length());\n\n        // Expected sequence:\n        // '\\r' -> append escape '~', 'r'\n        // '\\n' -> append escape '~', 'n'\n        // ';' -> append escape '~', ';'\n        // '~' -> append escape '~', '~'\n        // No normal chars, so no append with range calls expected\n\n        verify(out, times(4)).append('~');\n        verify(out).append('r');\n        verify(out).append('n');\n        verify(out).append(';');\n        verify(out).append('~');\n        verifyNoMoreInteractions(out);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767681160,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1050,
+    "prompt_tokens": 999,
+    "total_tokens": 2049,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.47
+  }
+}

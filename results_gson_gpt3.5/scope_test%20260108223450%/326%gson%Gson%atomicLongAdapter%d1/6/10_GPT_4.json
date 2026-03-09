@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJMEYAl4OL7l0a0rXSvGq6UCv5R",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.atomic.AtomicLong;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nclass Gson_atomicLongAdapter_Test {\n\n  private Method atomicLongAdapterMethod;\n\n  @BeforeEach\n  void setup() throws NoSuchMethodException {\n    atomicLongAdapterMethod = Gson.class.getDeclaredMethod(\"atomicLongAdapter\", TypeAdapter.class);\n    atomicLongAdapterMethod.setAccessible(true);\n  }\n\n  @Test\n  void testAtomicLongAdapter_write_and_read() throws Throwable {\n    // Prepare a mock TypeAdapter<Number>\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> mockLongAdapter = mock(TypeAdapter.class);\n\n    // Stub the read method to return a Number\n    when(mockLongAdapter.read(any(JsonReader.class))).thenReturn(123L);\n\n    // Invoke atomicLongAdapter to get TypeAdapter<AtomicLong>\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, mockLongAdapter);\n\n    // Verify that nullSafe() returns a non-null adapter\n    assertNotNull(atomicLongAdapter);\n\n    // Prepare JsonWriter and AtomicLong for write test\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter jsonWriter = new JsonWriter(stringWriter);\n    AtomicLong atomicLongValue = new AtomicLong(456L);\n\n    // Call write and verify that mockLongAdapter.write was called with correct value\n    atomicLongAdapter.write(jsonWriter, atomicLongValue);\n    jsonWriter.flush();\n\n    ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);\n    verify(mockLongAdapter, times(1)).write(any(JsonWriter.class), captor.capture());\n    assertEquals(456L, captor.getValue());\n\n    // Prepare JsonReader for read test\n    StringReader stringReader = new StringReader(\"123\");\n    JsonReader jsonReader = new JsonReader(stringReader);\n\n    // Call read and verify returned AtomicLong value\n    AtomicLong result = atomicLongAdapter.read(jsonReader);\n    assertNotNull(result);\n    assertEquals(123L, result.get());\n\n    // Verify that mockLongAdapter.read was called twice (once in setup and once here)\n    // But since the first call is from when(mockLongAdapter.read(...)) stub, it doesn't count.\n    // So the read should be called exactly once here.\n    verify(mockLongAdapter, times(1)).read(any(JsonReader.class));\n  }\n\n  @Test\n  void testAtomicLongAdapter_write_null() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> mockLongAdapter = mock(TypeAdapter.class);\n    when(mockLongAdapter.read(any(JsonReader.class))).thenReturn(0L);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, mockLongAdapter);\n\n    // The adapter is nullSafe, so writing null should not throw and should write JSON null\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n    atomicLongAdapter.write(jsonWriter, null);\n    jsonWriter.flush();\n\n    assertEquals(\"null\", stringWriter.toString());\n\n    // Verify that no write call was made to the mockLongAdapter when writing null\n    verify(mockLongAdapter, never()).write(any(JsonWriter.class), any());\n  }\n\n  @Test\n  void testAtomicLongAdapter_read_null() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> mockLongAdapter = mock(TypeAdapter.class);\n\n    // The wrapped adapter read(null) should throw or handle null; simulate returning null\n    when(mockLongAdapter.read(any(JsonReader.class))).thenReturn(null);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, mockLongAdapter);\n\n    // Provide JSON \"null\"\n    StringReader stringReader = new StringReader(\"null\");\n    JsonReader jsonReader = new JsonReader(stringReader);\n\n    // Because of nullSafe, read(null) returns null AtomicLong\n    AtomicLong result = atomicLongAdapter.read(jsonReader);\n    assertNull(result);\n\n    // Verify that mockLongAdapter.read was called once\n    verify(mockLongAdapter, times(1)).read(any(JsonReader.class));\n  }\n\n  @Test\n  void testAtomicLongAdapter_read_invalid_throws() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> mockLongAdapter = mock(TypeAdapter.class);\n\n    // Simulate the wrapped adapter throwing IOException on read\n    when(mockLongAdapter.read(any(JsonReader.class))).thenThrow(new IOException(\"mock exception\"));\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, mockLongAdapter);\n\n    StringReader stringReader = new StringReader(\"123\");\n    JsonReader jsonReader = new JsonReader(stringReader);\n\n    IOException thrown = assertThrows(IOException.class, () -> atomicLongAdapter.read(jsonReader));\n    assertEquals(\"mock exception\", thrown.getMessage());\n\n    // Verify that mockLongAdapter.read was called once\n    verify(mockLongAdapter, times(1)).read(any(JsonReader.class));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890284,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1164,
+    "prompt_tokens": 2747,
+    "total_tokens": 3911,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.83
+  }
+}

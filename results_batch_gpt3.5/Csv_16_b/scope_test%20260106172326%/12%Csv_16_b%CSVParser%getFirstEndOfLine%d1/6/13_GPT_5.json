@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxmJtljI423SRd6n97sfAFI3CEEO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.io.StringReader;\n\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.Lexer;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n    private Lexer lexerMock;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a Reader for the CSVParser constructor\n        Reader reader = new StringReader(\"\");\n\n        // Create a CSVFormat instance (can be null or default)\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Instantiate CSVParser using its public constructor (Reader, CSVFormat)\n        csvParser = new CSVParser(reader, format);\n\n        // Mock Lexer\n        lexerMock = mock(Lexer.class);\n\n        // Inject the mocked lexer into csvParser\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @Test\n    public void testGetFirstEndOfLine_ReturnsExpectedString() {\n        // Arrange\n        String expectedEol = \"\\n\";\n        when(lexerMock.getFirstEol()).thenReturn(expectedEol);\n\n        // Act\n        String actualEol = csvParser.getFirstEndOfLine();\n\n        // Assert\n        assertEquals(expectedEol, actualEol);\n    }\n\n    @Test\n    public void testGetFirstEndOfLine_ReturnsEmptyString() {\n        // Arrange\n        String expectedEol = \"\";\n        when(lexerMock.getFirstEol()).thenReturn(expectedEol);\n\n        // Act\n        String actualEol = csvParser.getFirstEndOfLine();\n\n        // Assert\n        assertEquals(expectedEol, actualEol);\n    }\n\n    @Test\n    public void testGetFirstEndOfLine_ReturnsNull() {\n        // Arrange\n        when(lexerMock.getFirstEol()).thenReturn(null);\n\n        // Act\n        String actualEol = csvParser.getFirstEndOfLine();\n\n        // Assert\n        assertEquals(null, actualEol);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692191,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 487,
+    "prompt_tokens": 1161,
+    "total_tokens": 1648,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.13
+  }
+}

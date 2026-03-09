@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMbLEUchlq837AupdlK8IZ4u2Oo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Type;\nimport java.util.HashMap;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass MapTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor mockConstructorConstructor;\n\n  @Mock\n  private Gson mockGson;\n\n  @Mock\n  private ObjectConstructor<Object> mockObjectConstructor;\n\n  @Mock\n  private TypeAdapter<Object> mockKeyAdapter;\n\n  @Mock\n  private TypeAdapter<Object> mockValueAdapter;\n\n  private MapTypeAdapterFactory mapTypeAdapterFactory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    mapTypeAdapterFactory = new MapTypeAdapterFactory(mockConstructorConstructor, true);\n  }\n\n  @Test\n  void create_shouldReturnNullIfNotMapType() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = mapTypeAdapterFactory.create(mockGson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_shouldReturnAdapterForMapType() {\n    TypeToken<Map<String, String>> mapTypeToken = new TypeToken<Map<String, String>>() {};\n\n    // Mock static method $Gson$Types.getMapKeyAndValueTypes(Type, Class)\n    // Since we cannot mock static methods directly here, we simulate the behavior by using real types:\n    // key type: String.class, value type: String.class\n\n    when(mockConstructorConstructor.get(mapTypeToken)).thenReturn((ObjectConstructor) mockObjectConstructor);\n    when(mockGson.getAdapter(TypeToken.get(String.class))).thenReturn((TypeAdapter) mockValueAdapter);\n\n    // Spy on mapTypeAdapterFactory to mock getKeyAdapter call\n    MapTypeAdapterFactory spyFactory = spy(mapTypeAdapterFactory);\n    doReturn(mockKeyAdapter).when(spyFactory).getKeyAdapter(mockGson, String.class);\n\n    TypeAdapter<Map<String, String>> adapter =\n        spyFactory.create(mockGson, mapTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(MapTypeAdapterFactory.Adapter.class, adapter.getClass());\n\n    // Verify interactions\n    verify(mockConstructorConstructor).get(mapTypeToken);\n    verify(mockGson).getAdapter(TypeToken.get(String.class));\n    verify(spyFactory).getKeyAdapter(mockGson, String.class);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890485,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 560,
+    "prompt_tokens": 1303,
+    "total_tokens": 1863,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.99
+  }
+}

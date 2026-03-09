@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7xVRuAlpiGKivALMTwbamak73x3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerIsCommentStartTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Mock CSVFormat and ExtendedBufferedReader as they are dependencies of Lexer constructor\n        CSVFormat mockFormat = mock(CSVFormat.class);\n        ExtendedBufferedReader mockReader = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass of Lexer since Lexer is abstract\n        lexer = new Lexer(mockFormat, mockReader) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Use reflection to set the private final field commentStart (fix typo)\n        Field commentStartField = Lexer.class.getDeclaredField(\"commmentStart\");\n        commentStartField.setAccessible(true);\n        commentStartField.set(lexer, '#'); // set comment start char to '#'\n    }\n\n    @Test\n    void testIsCommentStartReturnsTrueWhenCharMatches() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart('#');\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsCommentStartReturnsFalseWhenCharDoesNotMatch() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart('!');\n        assertFalse(result);\n    }\n\n    @Test\n    void testIsCommentStartReturnsFalseForNegativeInt() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart(-1);\n        assertFalse(result);\n    }\n\n    private boolean invokeIsCommentStart(int c) throws Exception {\n        Method method = Lexer.class.getDeclaredMethod(\"isCommentStart\", int.class);\n        method.setAccessible(true);\n        return (boolean) method.invoke(lexer, c);\n    }\n}\n```\n\n---\n\n**Fixed version with corrected field name:**\n\n```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerIsCommentStartTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Mock CSVFormat and ExtendedBufferedReader as they are dependencies of Lexer constructor\n        CSVFormat mockFormat = mock(CSVFormat.class);\n        ExtendedBufferedReader mockReader = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass of Lexer since Lexer is abstract\n        lexer = new Lexer(mockFormat, mockReader) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Use reflection to set the private final field commmentStart (fix typo to commentStart)\n        Field commentStartField = Lexer.class.getDeclaredField(\"commmentStart\");\n        commentStartField.setAccessible(true);\n        commentStartField.set(lexer, '#'); // set comment start char to '#'\n    }\n\n    @Test\n    void testIsCommentStartReturnsTrueWhenCharMatches() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart('#');\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsCommentStartReturnsFalseWhenCharDoesNotMatch() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart('!');\n        assertFalse(result);\n    }\n\n    @Test\n    void testIsCommentStartReturnsFalseForNegativeInt() throws Exception {\n        // The comment start char is set to '#'\n        boolean result = invokeIsCommentStart(-1);\n        assertFalse(result);\n    }\n\n    private boolean invokeIsCommentStart(int c) throws Exception {\n        Method method = Lexer.class.getDeclaredMethod(\"isCommentStart\", int.class);\n        method.setAccessible(true);\n        return (boolean) method.invoke(lexer, c);\n    }\n}\n```\n\n---\n\n**Note:** The field name in the `Lexer` class is `commmentStart` (with three `m`s), so the reflection must use exactly `\"commmentStart\"` to avoid `NoSuchFieldException`. The unit test above uses the correct field name matching the source code.",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969653,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 914,
+    "prompt_tokens": 906,
+    "total_tokens": 1820,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.44
+  }
+}

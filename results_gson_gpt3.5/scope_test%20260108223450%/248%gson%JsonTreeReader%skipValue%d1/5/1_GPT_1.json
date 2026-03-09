@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn1sNoo2z3e1SkdFmEKb2i1er7WV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a JsonElement to initialize JsonTreeReader\n    JsonElement element = new JsonPrimitive(\"test\");\n    jsonTreeReader = new JsonTreeReader(element);\n  }\n\n  @Test\n  public void testSkipValue_NAME() throws Exception {\n    // Arrange\n    // Use reflection to mock peek() to return NAME\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.NAME).when(spyReader).peek();\n\n    // Use reflection to mock nextName(true)\n    Method nextNameMethod = JsonTreeReader.class.getDeclaredMethod(\"nextName\", boolean.class);\n    nextNameMethod.setAccessible(true);\n\n    // Act\n    spyReader.skipValue();\n\n    // Assert\n    verify(spyReader).peek();\n    verify(spyReader).nextName(true);\n  }\n\n  @Test\n  public void testSkipValue_END_ARRAY() throws Exception {\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.END_ARRAY).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).peek();\n    verify(spyReader).endArray();\n  }\n\n  @Test\n  public void testSkipValue_END_OBJECT() throws Exception {\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.END_OBJECT).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).peek();\n    verify(spyReader).endObject();\n  }\n\n  @Test\n  public void testSkipValue_END_DOCUMENT() throws Exception {\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.END_DOCUMENT).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).peek();\n    // No other method should be called\n    verify(spyReader, never()).popStack();\n  }\n\n  @Test\n  public void testSkipValue_DefaultStackSizeZero() throws Exception {\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.STRING).when(spyReader).peek();\n\n    // Set stackSize to 0 using reflection\n    setField(spyReader, \"stackSize\", 0);\n\n    spyReader.skipValue();\n\n    verify(spyReader).peek();\n    verify(spyReader).popStack();\n\n    int stackSize = (int) getField(spyReader, \"stackSize\");\n    assertEquals(0, stackSize);\n  }\n\n  @Test\n  public void testSkipValue_DefaultStackSizePositive() throws Exception {\n    JsonTreeReader spyReader = spy(jsonTreeReader);\n    doReturn(JsonToken.BOOLEAN).when(spyReader).peek();\n\n    // Set stackSize to 2 and pathIndices array with known values\n    setField(spyReader, \"stackSize\", 2);\n    int[] pathIndices = new int[32];\n    pathIndices[1] = 5;\n    setField(spyReader, \"pathIndices\", pathIndices);\n\n    spyReader.skipValue();\n\n    verify(spyReader).peek();\n    verify(spyReader).popStack();\n\n    int[] updatedPathIndices = (int[]) getField(spyReader, \"pathIndices\");\n    assertEquals(6, updatedPathIndices[1]);\n  }\n\n  // Helper method to set private fields via reflection\n  private static void setField(Object target, String fieldName, Object value) throws Exception {\n    java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  // Helper method to get private fields via reflection\n  private static Object getField(Object target, String fieldName) throws Exception {\n    java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(target);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889200,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 914,
+    "prompt_tokens": 655,
+    "total_tokens": 1569,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.25
+  }
+}

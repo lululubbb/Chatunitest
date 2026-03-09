@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private File tempFile;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        csvFormat = CSVFormat.DEFAULT;\n        tempFile = File.createTempFile(\"csvformattest\", \".csv\");\n        tempFile.deleteOnExit();\n    }\n\n    @Test\n    public void testPrint_File_Charset_Success() throws IOException {\n        CSVPrinter printer = csvFormat.print(tempFile, StandardCharsets.UTF_8);\n        assertNotNull(printer);\n        printer.close();\n        assertTrue(tempFile.length() >= 0);\n    }\n\n    @Test\n    public void testPrint_File_Charset_IOException() {\n        File nonExistentDir = new File(tempFile.getParentFile(), \"nonexistentDir/nonexistent.csv\");\n        assertThrows(IOException.class, () -> csvFormat.print(nonExistentDir, StandardCharsets.UTF_8));\n    }\n\n    @Test\n    public void testPrint_File_Charset_WithDifferentFormat() throws IOException {\n        CSVFormat format = CSVFormat.EXCEL.withDelimiter(';').withQuote('\\'');\n        CSVPrinter printer = format.print(tempFile, StandardCharsets.ISO_8859_1);\n        assertNotNull(printer);\n        printer.close();\n        assertTrue(tempFile.length() >= 0);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260106160527%/33%Csv_15_b%CSVFormat%print%d1/2/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2199,
+  "completion_tokens": 328,
+  "total_tokens": 2527,
+  "llm_elapsed_time_seconds": 4.98
+}

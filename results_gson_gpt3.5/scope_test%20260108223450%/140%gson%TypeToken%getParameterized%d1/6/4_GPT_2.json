@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnGuWo3txJYhoVgY5c6o6Cz4Ynek",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.*;\nimport java.util.Map;\nimport org.junit.jupiter.api.Test;\n\nclass TypeToken_GetParameterizedTest {\n\n  @Test\n  void getParameterized_nullRawType_throwsNPE() {\n    assertThrows(NullPointerException.class, () -> TypeToken.getParameterized(null));\n  }\n\n  @Test\n  void getParameterized_nullTypeArguments_throwsNPE() {\n    assertThrows(NullPointerException.class, () -> TypeToken.getParameterized(String.class, (Type[]) null));\n  }\n\n  @Test\n  void getParameterized_rawTypeNotClass_throwsIllegalArgumentException() {\n    Type rawType = mock(Type.class);\n    // rawType is not instance of Class\n    assertThrows(IllegalArgumentException.class, () -> TypeToken.getParameterized(rawType));\n  }\n\n  @Test\n  void getParameterized_typeArgumentsCountMismatch_throwsIllegalArgumentException() {\n    Class<?> rawType = Map.class; // Map<K,V> has 2 type parameters\n    Type[] typeArgs = new Type[] {String.class}; // only 1 argument\n\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,\n        () -> TypeToken.getParameterized(rawType, typeArgs));\n    assertTrue(ex.getMessage().contains(\"requires 2 type arguments\"));\n  }\n\n  @Test\n  void getParameterized_typeArgumentDoesNotSatisfyBounds_throwsIllegalArgumentException() throws Exception {\n    // Create a generic class with bounded type variable: Bounded<T extends Number>\n    // We will violate the bound by passing String (which does not extend Number)\n    // Use reflection to define the class to avoid compilation issues in some environments\n\n    // Define class Bounded<T extends Number> dynamically\n    class Bounded<T extends Number> {}\n    Type rawType = Bounded.class;\n    Type[] typeArgs = new Type[] {String.class}; // String does not extend Number\n\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,\n        () -> TypeToken.getParameterized(rawType, typeArgs));\n    assertTrue(ex.getMessage().contains(\"does not satisfy bounds\"));\n  }\n\n  @Test\n  void getParameterized_validInput_returnsTypeTokenWithCorrectType() {\n    // Use Map<String, Integer>\n    Class<?> rawType = Map.class;\n    Type[] typeArgs = new Type[] {String.class, Integer.class};\n\n    TypeToken<?> token = TypeToken.getParameterized(rawType, typeArgs);\n    assertNotNull(token);\n\n    Type type = token.getType();\n    assertTrue(type instanceof ParameterizedType);\n\n    ParameterizedType pType = (ParameterizedType) type;\n    assertEquals(rawType, pType.getRawType());\n\n    Type[] actualArgs = pType.getActualTypeArguments();\n    assertArrayEquals(typeArgs, actualArgs);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890132,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 607,
+    "prompt_tokens": 2758,
+    "total_tokens": 3365,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.32
+  }
+}

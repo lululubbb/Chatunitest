@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void init() {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Invoke package-private method setUp() via reflection\n    Method method = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    method.setAccessible(true);\n    method.invoke(benchmark);\n\n    // Check gson field is initialized\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    Gson gson = (Gson) gsonField.get(benchmark);\n    assertNotNull(gson);\n\n    // Check json field is initialized and contains expected JSON string\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    String json = (String) jsonField.get(benchmark);\n    assertNotNull(json);\n    assertTrue(json.contains(\"\\\"longValue\\\":10\"));\n    assertTrue(json.contains(\"\\\"intValue\\\":1\"));\n    assertTrue(json.contains(\"\\\"booleanValue\\\":false\"));\n    assertTrue(json.contains(\"\\\"stringValue\\\":\\\"foo\\\"\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1015,
+  "completion_tokens": 314,
+  "total_tokens": 1329,
+  "llm_elapsed_time_seconds": 12.65
+}

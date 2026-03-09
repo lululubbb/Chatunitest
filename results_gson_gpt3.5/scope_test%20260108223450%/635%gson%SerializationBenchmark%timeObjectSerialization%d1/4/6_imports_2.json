@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.BeforeExperiment;\nimport com.google.caliper.Param;\nimport com.google.gson.GsonBuilder;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass SerializationBenchmarkTest {\n\n  private SerializationBenchmark serializationBenchmark;\n\n  @Mock\n  private Gson gsonMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    MockitoAnnotations.openMocks(this);\n    serializationBenchmark = new SerializationBenchmark();\n\n    // Use reflection to set private fields gson and bag\n    java.lang.reflect.Field gsonField = SerializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(serializationBenchmark, gsonMock);\n\n    java.lang.reflect.Field bagField = SerializationBenchmark.class.getDeclaredField(\"bag\");\n    bagField.setAccessible(true);\n    bagField.set(serializationBenchmark, new BagOfPrimitives());\n\n    // Set pretty field as well (even if not used here)\n    java.lang.reflect.Field prettyField = SerializationBenchmark.class.getDeclaredField(\"pretty\");\n    prettyField.setAccessible(true);\n    prettyField.set(serializationBenchmark, false);\n  }\n\n  @Test\n  void testTimeObjectSerialization_zeroReps() {\n    serializationBenchmark.timeObjectSerialization(0);\n    verify(gsonMock, never()).toJson(any());\n  }\n\n  @Test\n  void testTimeObjectSerialization_multipleReps() {\n    int reps = 5;\n    serializationBenchmark.timeObjectSerialization(reps);\n    verify(gsonMock, times(reps)).toJson(any(BagOfPrimitives.class));\n  }\n}\n\n// Dummy BagOfPrimitives class for compilation\nclass BagOfPrimitives {}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1170,
+  "completion_tokens": 342,
+  "total_tokens": 1512,
+  "llm_elapsed_time_seconds": 6.64,
+  "repair_elapsed_time_seconds": 17.0,
+  "round_total_time_seconds": 17.0
+}

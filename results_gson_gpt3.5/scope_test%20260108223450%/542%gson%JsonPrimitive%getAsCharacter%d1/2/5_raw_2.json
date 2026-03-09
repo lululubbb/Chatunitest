@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  void testGetAsCharacter_withNonEmptyString() throws Exception {\n    JsonPrimitive jsonPrimitive = Mockito.spy(new JsonPrimitive(\"abc\"));\n\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsCharacter\");\n    method.setAccessible(true);\n    char result = (char) method.invoke(jsonPrimitive);\n\n    assertEquals('a', result);\n  }\n\n  @Test\n  void testGetAsCharacter_withEmptyString_throwsException() throws Exception {\n    JsonPrimitive jsonPrimitive = Mockito.spy(new JsonPrimitive(\"\"));\n\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsCharacter\");\n    method.setAccessible(true);\n\n    Throwable thrown = assertThrows(Throwable.class, () -> {\n      method.invoke(jsonPrimitive);\n    });\n\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof UnsupportedOperationException);\n    assertEquals(\"String value is empty\", cause.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1026,
+  "completion_tokens": 232,
+  "total_tokens": 1258,
+  "llm_elapsed_time_seconds": 4.11
+}

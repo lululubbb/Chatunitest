@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\nimport static org.mockito.Mockito.*;\n\nclass JsonReaderInternalAccessTest {\n\n    private JsonReaderInternalAccess jsonReaderInternalAccess;\n    private JsonReader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(JsonReader.class);\n        jsonReaderInternalAccess = new JsonReaderInternalAccess() {\n            @Override\n            public void promoteNameToValue(JsonReader reader) throws IOException {\n                // No implementation, abstract method must be overridden for testing\n            }\n        };\n        JsonReaderInternalAccess.INSTANCE = jsonReaderInternalAccess;\n    }\n\n    @Test\n    void testPromoteNameToValue_invocation() {\n        assertDoesNotThrow(() -> jsonReaderInternalAccess.promoteNameToValue(mockReader));\n        verifyNoInteractions(mockReader);\n    }\n\n    @Test\n    void testInvokePromoteNameToValueByReflection() throws Exception {\n        Method method = JsonReaderInternalAccess.class.getDeclaredMethod(\"promoteNameToValue\", JsonReader.class);\n        method.setAccessible(true);\n        assertDoesNotThrow(() -> method.invoke(jsonReaderInternalAccess, mockReader));\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 207,
+  "completion_tokens": 287,
+  "total_tokens": 494,
+  "llm_elapsed_time_seconds": 5.75,
+  "repair_elapsed_time_seconds": 20.98,
+  "round_total_time_seconds": 20.98
+}

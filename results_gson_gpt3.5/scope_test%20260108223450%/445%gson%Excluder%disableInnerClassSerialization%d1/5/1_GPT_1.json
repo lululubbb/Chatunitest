@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCwaAOgHxWB87DaMGzDdS1ivq8f",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  void disableInnerClassSerialization_shouldReturnCloneWithSerializeInnerClassesFalse() throws Exception {\n    Excluder original = new Excluder();\n\n    // Use reflection to invoke private clone() method to verify clone behavior\n    Method cloneMethod = Excluder.class.getDeclaredMethod(\"clone\");\n    cloneMethod.setAccessible(true);\n    Excluder clonedViaReflection = (Excluder) cloneMethod.invoke(original);\n    assertNotNull(clonedViaReflection);\n    // By default, serializeInnerClasses is true\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    assertTrue(serializeInnerClassesField.getBoolean(original));\n    assertTrue(serializeInnerClassesField.getBoolean(clonedViaReflection));\n\n    // Call the focal method\n    Excluder result = original.disableInnerClassSerialization();\n\n    // Check that result is a different instance (clone)\n    assertNotSame(original, result);\n\n    // Check that serializeInnerClasses is false in the result\n    assertFalse(serializeInnerClassesField.getBoolean(result));\n\n    // Original's serializeInnerClasses remains true\n    assertTrue(serializeInnerClassesField.getBoolean(original));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889886,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 303,
+    "prompt_tokens": 601,
+    "total_tokens": 904,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.65
+  }
+}

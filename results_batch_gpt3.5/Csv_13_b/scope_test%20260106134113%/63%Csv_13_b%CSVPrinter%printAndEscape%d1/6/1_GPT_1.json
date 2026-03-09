@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuuwbDMjkWf3rrX6sLHsCYEFoUSA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.LF;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable outMock;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        outMock = mock(Appendable.class);\n        formatMock = mock(CSVFormat.class);\n        when(formatMock.getDelimiter()).thenReturn(',');\n        when(formatMock.getEscapeCharacter()).thenReturn('\\\\');\n        printer = new CSVPrinter(outMock, formatMock);\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len) throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, value, offset, len);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    void testPrintAndEscape_noSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        invokePrintAndEscape(input, 0, input.length());\n\n        verify(outMock).append(input, 0, input.length());\n        verifyNoMoreInteractions(outMock);\n    }\n\n    @Test\n    void testPrintAndEscape_withDelimiter() throws Throwable {\n        String input = \"hello,world\";\n        // delimiter is ','\n        invokePrintAndEscape(input, 0, input.length());\n\n        // Expected calls:\n        // append \"hello\"\n        // append escape character '\\'\n        // append ','\n        // append \"world\"\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append(input, 0, 5);\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append(',');\n        inOrder.verify(outMock).append(input, 6, 11);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintAndEscape_withEscapeChar() throws Throwable {\n        String input = \"hello\\\\world\";\n        invokePrintAndEscape(input, 0, input.length());\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append(input, 0, 5);\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append(input, 6, 11);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintAndEscape_withCR() throws Throwable {\n        String input = \"hello\\rworld\";\n        invokePrintAndEscape(input, 0, input.length());\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append(input, 0, 5);\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append('r');\n        inOrder.verify(outMock).append(input, 6, 11);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintAndEscape_withLF() throws Throwable {\n        String input = \"hello\\nworld\";\n        invokePrintAndEscape(input, 0, input.length());\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append(input, 0, 5);\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append('n');\n        inOrder.verify(outMock).append(input, 6, 11);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintAndEscape_emptyInput() throws Throwable {\n        String input = \"\";\n        invokePrintAndEscape(input, 0, 0);\n\n        verifyNoInteractions(outMock);\n    }\n\n    @Test\n    void testPrintAndEscape_partialInput() throws Throwable {\n        String input = \"abc,def\";\n        // only print \"bc,d\"\n        invokePrintAndEscape(input, 1, 4);\n\n        InOrder inOrder = inOrder(outMock);\n        // substring \"bc\"\n        inOrder.verify(outMock).append(input, 1, 3);\n        // escape and delimiter ','\n        inOrder.verify(outMock).append('\\\\');\n        inOrder.verify(outMock).append(',');\n        // substring \"d\"\n        inOrder.verify(outMock).append(input, 4, 5);\n        inOrder.verifyNoMoreInteractions();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767681194,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 986,
+    "prompt_tokens": 999,
+    "total_tokens": 1985,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.01
+  }
+}

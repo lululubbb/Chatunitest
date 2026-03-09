@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmCCpGNBUjkpLU1XVxfT78NCpafb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.internal.$Gson$Types;\n\nclass GsonTypesResolveTest {\n\n    @Test\n    void testResolve_withClassToResolve() throws Exception {\n        Class<?> contextRawType = String.class;\n        Type toResolve = Integer.class;\n        Type context = Object.class;\n\n        // invoke private resolve with empty visited map\n        Type result = invokeResolve(context, contextRawType, toResolve, new HashMap<>());\n\n        assertEquals(Integer.class, result);\n    }\n\n    @Test\n    void testResolve_withTypeVariableResolved() throws Exception {\n        // Prepare a class with a type variable\n        class GenericClass<T> {\n            TypeVariable<?> getTypeVariable() {\n                return GenericClass.class.getTypeParameters()[0];\n            }\n        }\n\n        TypeVariable<?> typeVariable = new GenericClass<String>().getTypeVariable();\n        Class<?> contextRawType = GenericClass.class;\n        Type context = newParameterizedTypeWithOwner(null, GenericClass.class, String.class);\n\n        Type result = invokeResolve(context, contextRawType, typeVariable, new HashMap<>());\n\n        assertEquals(String.class, result);\n    }\n\n    @Test\n    void testResolve_withGenericArrayType() throws Exception {\n        Type componentType = Integer.class;\n        GenericArrayType genericArrayType = $Gson$Types.arrayOf(componentType);\n\n        Type result = invokeResolve(Object.class, Object.class, genericArrayType, new HashMap<>());\n\n        assertTrue(result instanceof GenericArrayType);\n        assertEquals(componentType, ((GenericArrayType) result).getGenericComponentType());\n    }\n\n    @Test\n    void testResolve_withParameterizedType() throws Exception {\n        Type rawType = Map.class;\n        Type[] typeArgs = new Type[] {String.class, Integer.class};\n        ParameterizedType parameterizedType = $Gson$Types.newParameterizedTypeWithOwner(null, (Class<?>) rawType, typeArgs);\n\n        Type result = invokeResolve(Object.class, Object.class, parameterizedType, new HashMap<>());\n\n        assertTrue(result instanceof ParameterizedType);\n        ParameterizedType pt = (ParameterizedType) result;\n        assertEquals(rawType, pt.getRawType());\n        assertArrayEquals(typeArgs, pt.getActualTypeArguments());\n    }\n\n    @Test\n    void testResolve_withWildcardTypeSubtype() throws Exception {\n        Type bound = Number.class;\n        WildcardType wildcardType = $Gson$Types.subtypeOf(bound);\n\n        Type result = invokeResolve(Object.class, Object.class, wildcardType, new HashMap<>());\n\n        assertTrue(result instanceof WildcardType);\n        WildcardType wt = (WildcardType) result;\n        assertArrayEquals(new Type[] {bound}, wt.getUpperBounds());\n    }\n\n    @Test\n    void testResolve_withWildcardTypeSupertype() throws Exception {\n        Type bound = Integer.class;\n        WildcardType wildcardType = $Gson$Types.supertypeOf(bound);\n\n        Type result = invokeResolve(Object.class, Object.class, wildcardType, new HashMap<>());\n\n        assertTrue(result instanceof WildcardType);\n        WildcardType wt = (WildcardType) result;\n        assertArrayEquals(new Type[] {bound}, wt.getLowerBounds());\n    }\n\n    @Test\n    void testResolve_withTypeVariableLoop() throws Exception {\n        // Create a type variable that maps to itself to test cycle detection\n        class Loop<T> {\n            TypeVariable<?> getTypeVariable() {\n                return Loop.class.getTypeParameters()[0];\n            }\n        }\n        TypeVariable<?> typeVariable = new Loop<>().getTypeVariable();\n        Class<?> contextRawType = Loop.class;\n        Type context = newParameterizedTypeWithOwner(null, Loop.class, typeVariable);\n\n        Map<TypeVariable<?>, Type> visited = new HashMap<>();\n        visited.put(typeVariable, typeVariable);\n\n        Type result = invokeResolve(context, contextRawType, typeVariable, visited);\n\n        // Should return typeVariable itself to prevent infinite recursion\n        assertEquals(typeVariable, result);\n    }\n\n    private Type invokeResolve(Type context, Class<?> contextRawType, Type toResolve,\n            Map<TypeVariable<?>, Type> visited) throws Exception {\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class,\n                Map.class);\n        resolveMethod.setAccessible(true);\n        return (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, visited);\n    }\n\n    private ParameterizedType newParameterizedTypeWithOwner(Type ownerType, Type rawType, Type... typeArguments)\n            throws Exception {\n        Method method = $Gson$Types.class.getDeclaredMethod(\"newParameterizedTypeWithOwner\", Type.class, Type.class,\n                Type[].class);\n        method.setAccessible(true);\n        return (ParameterizedType) method.invoke(null, ownerType, rawType, typeArguments);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885996,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1038,
+    "prompt_tokens": 628,
+    "total_tokens": 1666,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.85
+  }
+}

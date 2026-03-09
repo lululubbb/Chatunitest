@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n    Field mockField;\n    FieldAttributes fieldAttributes;\n\n    @BeforeEach\n    void setUp() throws NoSuchFieldException, SecurityException {\n        mockField = mock(Field.class);\n        when(mockField.toString()).thenReturn(\"mockFieldToString\");\n        fieldAttributes = new FieldAttributes(mockField);\n    }\n\n    @Test\n    void testToString_returnsFieldToString() {\n        String result = fieldAttributes.toString();\n        assertEquals(\"mockFieldToString\", result);\n        // Removed verify(mockField).toString(); because Mockito forbids verifying toString()\n    }\n\n    @Test\n    void testToString_realField() throws NoSuchFieldException {\n        Field realField = SampleClass.class.getDeclaredField(\"someField\");\n        FieldAttributes fa = new FieldAttributes(realField);\n        String expected = realField.toString();\n        assertEquals(expected, fa.toString());\n    }\n\n    // Helper class for real field test\n    static class SampleClass {\n        private int someField;\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 961,
+  "completion_tokens": 275,
+  "total_tokens": 1236,
+  "llm_elapsed_time_seconds": 5.83,
+  "repair_elapsed_time_seconds": 24.09,
+  "round_total_time_seconds": 24.09
+}

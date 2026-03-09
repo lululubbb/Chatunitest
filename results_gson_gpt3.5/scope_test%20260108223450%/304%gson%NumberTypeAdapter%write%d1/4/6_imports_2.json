@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\n\nclass NumberTypeAdapterTest {\n\n    private NumberTypeAdapter numberTypeAdapter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        Constructor<NumberTypeAdapter> constructor = NumberTypeAdapter.class.getDeclaredConstructor(com.google.gson.ToNumberStrategy.class);\n        constructor.setAccessible(true);\n        // Using null for ToNumberStrategy since constructor is private and not used in write()\n        numberTypeAdapter = constructor.newInstance((Object) null);\n        jsonWriter = Mockito.mock(JsonWriter.class);\n    }\n\n    @Test\n    void write_withNonNullNumber_callsJsonWriterValue() throws IOException {\n        Number value = 123;\n\n        numberTypeAdapter.write(jsonWriter, value);\n\n        verify(jsonWriter).value(value);\n    }\n\n    @Test\n    void write_withNullNumber_callsJsonWriterValueWithNull() throws IOException {\n        Number value = null;\n\n        numberTypeAdapter.write(jsonWriter, value);\n\n        verify(jsonWriter).value((Number) null);\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 633,
+  "completion_tokens": 262,
+  "total_tokens": 895,
+  "llm_elapsed_time_seconds": 3.98,
+  "repair_elapsed_time_seconds": 19.52,
+  "round_total_time_seconds": 19.52
+}

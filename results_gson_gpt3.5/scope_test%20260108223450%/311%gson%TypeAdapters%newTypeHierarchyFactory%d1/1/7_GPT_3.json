@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmoNFdxLHSMlj3ZGWM6fSKQbqNe2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdaptersTest {\n\n  private TypeAdapter<String> mockTypeAdapter;\n  private Gson mockGson;\n  private JsonWriter mockJsonWriter;\n  private JsonReader mockJsonReader;\n\n  @BeforeEach\n  void setUp() {\n    mockTypeAdapter = mock(TypeAdapter.class);\n    mockGson = mock(Gson.class);\n    mockJsonWriter = mock(JsonWriter.class);\n    mockJsonReader = mock(JsonReader.class);\n  }\n\n  @Test\n  void testCreate_withAssignableType_writeDelegatesToTypeAdapter() throws IOException {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(String.class, mockTypeAdapter);\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> adapter = factory.create(mockGson, typeToken);\n    assertNotNull(adapter);\n\n    String value = \"testValue\";\n    adapter.write(mockJsonWriter, value);\n\n    // verify write delegates to mockTypeAdapter with the original value\n    verify(mockTypeAdapter).write(mockJsonWriter, value);\n  }\n\n  @Test\n  void testCreate_withNonAssignableType_returnsNull() {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(String.class, mockTypeAdapter);\n    TypeToken<Integer> typeToken = TypeToken.get(Integer.class);\n    TypeAdapter<Integer> adapter = factory.create(mockGson, typeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  void testRead_withCorrectInstanceType_returnsResult() throws IOException {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(CharSequence.class, (TypeAdapter) mockTypeAdapter);\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> adapter = factory.create(mockGson, typeToken);\n    assertNotNull(adapter);\n\n    String expected = \"result\";\n    when(mockTypeAdapter.read(mockJsonReader)).thenReturn(expected);\n\n    String result = adapter.read(mockJsonReader);\n    assertEquals(expected, result);\n  }\n\n  @Test\n  void testRead_withNullResult_returnsNull() throws IOException {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(CharSequence.class, (TypeAdapter) mockTypeAdapter);\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> adapter = factory.create(mockGson, typeToken);\n    assertNotNull(adapter);\n\n    when(mockTypeAdapter.read(mockJsonReader)).thenReturn(null);\n\n    String result = adapter.read(mockJsonReader);\n    assertNull(result);\n  }\n\n  @Test\n  void testRead_withIncorrectInstanceType_throwsJsonSyntaxException() throws IOException {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(CharSequence.class, (TypeAdapter) mockTypeAdapter);\n    TypeToken<StringBuilder> typeToken = TypeToken.get(StringBuilder.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<StringBuilder> adapter = factory.create(mockGson, typeToken);\n    assertNotNull(adapter);\n\n    Object wrongInstance = new Object();\n    // Return an Object that is NOT a String to avoid ClassCastException\n    when(mockTypeAdapter.read(mockJsonReader)).thenReturn((String) null);\n    // Use doAnswer to simulate returning wrongInstance after casting\n    doAnswer(invocation -> wrongInstance).when(mockTypeAdapter).read(mockJsonReader);\n    when(mockJsonReader.getPreviousPath()).thenReturn(\"$\");\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      adapter.read(mockJsonReader);\n    });\n    assertTrue(thrown.getMessage().contains(\"Expected a \" + StringBuilder.class.getName()));\n    assertTrue(thrown.getMessage().contains(\"but was \" + wrongInstance.getClass().getName()));\n  }\n\n  @Test\n  void testToString_returnsExpectedString() {\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(String.class, mockTypeAdapter);\n    String toString = factory.toString();\n    assertTrue(toString.contains(\"Factory[typeHierarchy=\" + String.class.getName()));\n    assertTrue(toString.contains(\"adapter=\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888363,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 949,
+    "prompt_tokens": 2464,
+    "total_tokens": 3413,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.76
+  }
+}

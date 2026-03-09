@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAOzmCni6Mt50RC10cEhZpZDdiI7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        parser = Mockito.mock(CSVParser.class, Mockito.CALLS_REAL_METHODS);\n\n        // Use reflection to set the private reusableToken field to avoid NullPointerException in nextRecord()\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        reusableTokenField.set(parser, new Token());\n\n        // Also set the private field 'record' to avoid potential NPE if used internally\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        recordField.set(parser, new ArrayList<String>());\n    }\n\n    @Test\n    void testGetRecords_withMultipleRecords() throws IOException {\n        CSVRecord record1 = mock(CSVRecord.class);\n        CSVRecord record2 = mock(CSVRecord.class);\n        CSVRecord record3 = mock(CSVRecord.class);\n\n        // Setup nextRecord() to return 3 records and then null\n        when(parser.nextRecord())\n            .thenReturn(record1)\n            .thenReturn(record2)\n            .thenReturn(record3)\n            .thenReturn(null);\n\n        List<CSVRecord> records = new ArrayList<>();\n        List<CSVRecord> result = parser.getRecords(records);\n\n        assertSame(records, result);\n        assertEquals(3, records.size());\n        assertTrue(records.contains(record1));\n        assertTrue(records.contains(record2));\n        assertTrue(records.contains(record3));\n\n        verify(parser, times(4)).nextRecord();\n    }\n\n    @Test\n    void testGetRecords_withNoRecords() throws IOException {\n        when(parser.nextRecord()).thenReturn(null);\n\n        List<CSVRecord> records = new ArrayList<>();\n        List<CSVRecord> result = parser.getRecords(records);\n\n        assertSame(records, result);\n        assertTrue(records.isEmpty());\n\n        verify(parser, times(1)).nextRecord();\n    }\n\n    @Test\n    void testGetRecords_withDifferentCollectionType() throws IOException {\n        CSVRecord record1 = mock(CSVRecord.class);\n\n        when(parser.nextRecord())\n            .thenReturn(record1)\n            .thenReturn(null);\n\n        // Use LinkedList to test generic collection type\n        java.util.LinkedList<CSVRecord> linkedList = new java.util.LinkedList<>();\n        java.util.Collection<CSVRecord> result = parser.getRecords(linkedList);\n\n        assertSame(linkedList, result);\n        assertEquals(1, linkedList.size());\n        assertTrue(linkedList.contains(record1));\n\n        verify(parser, times(2)).nextRecord();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979045,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 610,
+    "prompt_tokens": 1141,
+    "total_tokens": 1751,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.03
+  }
+}

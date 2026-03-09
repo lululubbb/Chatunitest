@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn04BftdUyTfXMQ2jKkawTiZmhct",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapRemoveTest {\n\n  private LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  public void setUp() {\n    map = new LinkedTreeMap<>(null, false);\n  }\n\n  @Test\n  public void testRemove_existingKey_returnsValueAndRemovesNode() {\n    // Put a key-value pair\n    map.put(\"key1\", \"value1\");\n    assertEquals(1, map.size());\n\n    // Remove the key\n    String removedValue = map.remove(\"key1\");\n\n    // Verify returned value\n    assertEquals(\"value1\", removedValue);\n\n    // Verify size decreased\n    assertEquals(0, map.size());\n\n    // Verify key is no longer contained\n    assertFalse(map.containsKey(\"key1\"));\n  }\n\n  @Test\n  public void testRemove_nonExistingKey_returnsNull() {\n    // Map is empty\n    assertNull(map.remove(\"nonexistent\"));\n  }\n\n  @Test\n  public void testRemove_nullKey_whenAllowed() {\n    // Create map allowing null values (and keys)\n    LinkedTreeMap<String, String> mapAllowNull = new LinkedTreeMap<>(null, true);\n    mapAllowNull.put(null, \"nullValue\");\n    assertEquals(\"nullValue\", mapAllowNull.remove(null));\n    assertFalse(mapAllowNull.containsKey(null));\n  }\n\n  @Test\n  public void testRemove_nullKey_whenNotAllowed() {\n    // By default allowNullValues is false, so put(null, ...) should throw or behave accordingly\n    assertThrows(NullPointerException.class, () -> map.put(null, \"value\"));\n    // Removing null key should return null\n    assertNull(map.remove(null));\n  }\n\n  @Test\n  public void testRemove_internalRemoveInternalByKey_invokedAndResultHandled() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Use reflection to invoke private removeInternalByKey to verify remove uses it correctly\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n\n    // Put a key to have a node\n    map.put(\"key2\", \"value2\");\n\n    // Remove node by key using reflection\n    Object node = removeInternalByKey.invoke(map, \"key2\");\n    assertNotNull(node);\n\n    // Now remove should return null for that key since it was already removed by reflection call\n    String removedValue = map.remove(\"key2\");\n    assertNull(removedValue);\n\n    // Removing again returns null\n    assertNull(map.remove(\"key2\"));\n  }\n\n  @Test\n  public void testRemove_multipleEntries_removesCorrectOne() {\n    map.put(\"k1\", \"v1\");\n    map.put(\"k2\", \"v2\");\n    map.put(\"k3\", \"v3\");\n\n    assertEquals(\"v2\", map.remove(\"k2\"));\n    assertNull(map.remove(\"k2\"));\n    assertEquals(2, map.size());\n    assertFalse(map.containsKey(\"k2\"));\n    assertTrue(map.containsKey(\"k1\"));\n    assertTrue(map.containsKey(\"k3\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889088,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 707,
+    "prompt_tokens": 2764,
+    "total_tokens": 3471,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.29
+  }
+}

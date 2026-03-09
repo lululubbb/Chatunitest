@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlkttm37WP75P6NVDQk97qYvUIY6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = Mockito.spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void remove_WithValidIndex_RemovesAndReturnsElement() {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n    delegate.add(\"c\");\n\n    String removed = list.remove(1);\n\n    assertEquals(\"b\", removed);\n    verify(delegate).remove(1);\n    assertEquals(2, list.size());\n    assertEquals(\"a\", list.get(0));\n    assertEquals(\"c\", list.get(1));\n  }\n\n  @Test\n  void remove_WithIndexOutOfBounds_ThrowsException() {\n    delegate.add(\"a\");\n\n    assertThrows(IndexOutOfBoundsException.class, () -> list.remove(5));\n    // Remove the verify(delegate, never()).remove(5); line because delegate.remove(5) is called internally and throws\n    // We cannot verify that it was never called since it is called and throws\n  }\n\n  @Test\n  void remove_PrivateMethod_nonNull_ReturnsElement() throws Exception {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    String element = \"test\";\n    Object result = nonNullMethod.invoke(list, element);\n    assertEquals(element, result);\n\n    assertThrows(Exception.class, () -> nonNullMethod.invoke(list, (Object) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884303,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 390,
+    "prompt_tokens": 1136,
+    "total_tokens": 1526,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.55
+  }
+}

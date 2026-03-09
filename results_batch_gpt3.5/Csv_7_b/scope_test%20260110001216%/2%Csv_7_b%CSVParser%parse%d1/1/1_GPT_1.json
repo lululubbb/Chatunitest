@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9RSQ74eEGY20L6qEq0y7gcgddeE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParse_withValidStringAndFormat_returnsCSVParser() throws IOException {\n        String input = \"header1,header2\\nvalue1,value2\";\n        try (MockedStatic<Assertions> assertionsMock = Mockito.mockStatic(Assertions.class)) {\n            // Assertions.notNull does nothing (void), so no action needed on mock\n            CSVParser parser = CSVParser.parse(input, format);\n            assertNotNull(parser);\n            // The parser should use a StringReader internally (cannot access directly)\n            // Just verify that the format is set correctly via reflection\n            var formatField = CSVParser.class.getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            CSVFormat actualFormat = (CSVFormat) formatField.get(parser);\n            assertSame(format, actualFormat);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Reflection failed: \" + e.getMessage());\n        }\n    }\n\n    @Test\n    void testParse_withNullString_throwsException() {\n        try (MockedStatic<Assertions> assertionsMock = Mockito.mockStatic(Assertions.class)) {\n            assertionsMock.when(() -> Assertions.notNull(null, \"string\"))\n                    .thenThrow(new IllegalArgumentException(\"string must not be null\"));\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                CSVParser.parse(null, format);\n            });\n            assertEquals(\"string must not be null\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsException() {\n        String input = \"a,b,c\";\n        try (MockedStatic<Assertions> assertionsMock = Mockito.mockStatic(Assertions.class)) {\n            assertionsMock.when(() -> Assertions.notNull(input, \"string\")).thenCallRealMethod();\n            assertionsMock.when(() -> Assertions.notNull(null, \"format\"))\n                    .thenThrow(new IllegalArgumentException(\"format must not be null\"));\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                CSVParser.parse(input, null);\n            });\n            assertEquals(\"format must not be null\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975354,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 539,
+    "prompt_tokens": 493,
+    "total_tokens": 1032,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.09
+  }
+}

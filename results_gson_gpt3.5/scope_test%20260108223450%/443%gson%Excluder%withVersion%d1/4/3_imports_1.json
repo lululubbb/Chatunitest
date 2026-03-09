@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.FieldAttributes;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.annotations.Expose;\nimport com.google.gson.annotations.Since;\nimport com.google.gson.annotations.Until;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  @Test\n  void testWithVersionCreatesNewExcluderWithGivenVersion() {\n    Excluder original = new Excluder();\n    double version = 1.23;\n\n    Excluder result = original.withVersion(version);\n\n    assertNotNull(result);\n    assertNotSame(original, result);\n\n    // Use reflection to get the private field 'version'\n    double originalVersion = getVersion(original);\n    double resultVersion = getVersion(result);\n\n    assertEquals(-1.0d, originalVersion, 0.0d, \"Original Excluder version must be default IGNORE_VERSIONS\");\n    assertEquals(version, resultVersion, 0.0d, \"Result Excluder version must be set to given version\");\n  }\n\n  private double getVersion(Excluder excluder) {\n    try {\n      java.lang.reflect.Field versionField = Excluder.class.getDeclaredField(\"version\");\n      versionField.setAccessible(true);\n      return versionField.getDouble(excluder);\n    } catch (ReflectiveOperationException e) {\n      fail(\"Reflection failed to access version field: \" + e.getMessage());\n      return Double.NaN; // unreachable\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 599,
+  "completion_tokens": 281,
+  "total_tokens": 880,
+  "llm_elapsed_time_seconds": 5.66,
+  "repair_elapsed_time_seconds": 16.62,
+  "round_total_time_seconds": 16.62
+}

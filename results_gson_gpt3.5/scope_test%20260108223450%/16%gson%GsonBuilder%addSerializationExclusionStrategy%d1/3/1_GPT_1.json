@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBg7BcVQFo05DX2EV38L2yfYQIv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private ExclusionStrategy mockStrategy;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n    mockStrategy = mock(ExclusionStrategy.class);\n  }\n\n  @Test\n  public void addSerializationExclusionStrategy_shouldAddStrategyToExcluder() throws Exception {\n    // Arrange\n    Excluder initialExcluder = getExcluderFromGsonBuilder(gsonBuilder);\n    Excluder spyExcluder = spy(initialExcluder);\n    setExcluderToGsonBuilder(gsonBuilder, spyExcluder);\n\n    Excluder returnedExcluder = new Excluder();\n    doReturn(returnedExcluder).when(spyExcluder).withExclusionStrategy(eq(mockStrategy), eq(true), eq(false));\n\n    // Act\n    GsonBuilder returned = gsonBuilder.addSerializationExclusionStrategy(mockStrategy);\n\n    // Assert\n    assertSame(gsonBuilder, returned, \"addSerializationExclusionStrategy should return this\");\n    verify(spyExcluder).withExclusionStrategy(mockStrategy, true, false);\n\n    Excluder excluderAfter = getExcluderFromGsonBuilder(gsonBuilder);\n    assertSame(returnedExcluder, excluderAfter, \"Excluder field should be updated with returned Excluder\");\n  }\n\n  @Test\n  public void addSerializationExclusionStrategy_nullStrategy_shouldThrowNullPointerException() {\n    assertThrows(NullPointerException.class, () -> gsonBuilder.addSerializationExclusionStrategy(null));\n  }\n\n  private static Excluder getExcluderFromGsonBuilder(GsonBuilder builder) throws Exception {\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    return (Excluder) excluderField.get(builder);\n  }\n\n  private static void setExcluderToGsonBuilder(GsonBuilder builder, Excluder excluder) throws Exception {\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    excluderField.set(builder, excluder);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889808,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 533,
+    "prompt_tokens": 1137,
+    "total_tokens": 1670,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.08
+  }
+}

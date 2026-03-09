@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9QrTs7PCxp9bvkoQfMxzaugMc05",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Use a constructor with Reader and CSVFormat since others are static factory methods\n        csvParser = new CSVParser(mock(java.io.Reader.class), mock(CSVFormat.class));\n    }\n\n    @Test\n    public void testGetHeaderMap_NullHeaderMap() throws Exception {\n        // Set headerMap to null using reflection\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        headerMapField.set(csvParser, null);\n\n        Map<String, Integer> result = csvParser.getHeaderMap();\n        assertNull(result, \"Expected null when headerMap is null\");\n    }\n\n    @Test\n    public void testGetHeaderMap_NonNullHeaderMap() throws Exception {\n        // Prepare a LinkedHashMap with some entries\n        LinkedHashMap<String, Integer> originalMap = new LinkedHashMap<>();\n        originalMap.put(\"header1\", 0);\n        originalMap.put(\"header2\", 1);\n\n        // Set headerMap field using reflection\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        headerMapField.set(csvParser, originalMap);\n\n        Map<String, Integer> result = csvParser.getHeaderMap();\n\n        assertNotNull(result, \"Expected non-null map when headerMap is set\");\n        assertEquals(originalMap, result, \"Returned map should be equal to the original headerMap\");\n        assertNotSame(originalMap, result, \"Returned map should be a new instance (defensive copy)\");\n\n        // Modify returned map and verify original is not affected\n        result.put(\"header3\", 2);\n        assertFalse(originalMap.containsKey(\"header3\"), \"Original headerMap should not be affected by modifications to returned map\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975317,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 452,
+    "prompt_tokens": 485,
+    "total_tokens": 937,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.97
+  }
+}

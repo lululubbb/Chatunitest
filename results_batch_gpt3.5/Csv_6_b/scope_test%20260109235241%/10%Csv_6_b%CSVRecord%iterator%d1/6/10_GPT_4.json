@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9FC8bRxyMeCv1BgXUA3lRNAFfiC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private String[] values;\n    private Map<String, Integer> mapping;\n    private String comment;\n    private long recordNumber;\n\n    @BeforeEach\n    public void setUp() {\n        values = new String[] {\"value1\", \"value2\", \"value3\"};\n        mapping = new HashMap<>();\n        mapping.put(\"col1\", 0);\n        mapping.put(\"col2\", 1);\n        mapping.put(\"col3\", 2);\n        comment = \"some comment\";\n        recordNumber = 123L;\n\n        csvRecord = createCSVRecord(values, mapping, comment, recordNumber);\n    }\n\n    private CSVRecord createCSVRecord(String[] values, Map<String, Integer> mapping, String comment, long recordNumber) {\n        try {\n            Class<CSVRecord> clazz = CSVRecord.class;\n            Constructor<CSVRecord> ctor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n            ctor.setAccessible(true);\n            return ctor.newInstance(values, mapping, comment, recordNumber);\n        } catch (Exception e) {\n            throw new RuntimeException(\"Failed to create CSVRecord instance\", e);\n        }\n    }\n\n    @Test\n    public void testIterator_returnsIteratorOverValuesList() {\n        Iterator<String> iterator = csvRecord.iterator();\n        assertNotNull(iterator);\n\n        List<String> expectedList = Arrays.asList(values);\n        List<String> actualList = new ArrayList<>();\n        iterator.forEachRemaining(actualList::add);\n\n        assertEquals(expectedList, actualList);\n    }\n\n    @Test\n    public void testIterator_emptyValues() {\n        CSVRecord emptyRecord = createCSVRecord(new String[0], Collections.emptyMap(), null, 0L);\n        Iterator<String> iterator = emptyRecord.iterator();\n        assertNotNull(iterator);\n        assertFalse(iterator.hasNext());\n    }\n\n    @Test\n    public void testToList_privateMethod() throws Exception {\n        Method toListMethod = CSVRecord.class.getDeclaredMethod(\"toList\");\n        toListMethod.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<String> list = (List<String>) toListMethod.invoke(csvRecord);\n        assertEquals(Arrays.asList(values), list);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974594,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 518,
+    "prompt_tokens": 1018,
+    "total_tokens": 1536,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.49
+  }
+}

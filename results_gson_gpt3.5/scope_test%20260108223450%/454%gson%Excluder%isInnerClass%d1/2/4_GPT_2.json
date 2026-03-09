@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnK3TbVhrwJ7K1cSCC0DSQWHAHoR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n  private Excluder excluder;\n  private Method isInnerClassMethod;\n\n  static class StaticMemberClass {}\n\n  class NonStaticMemberClass {}\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    excluder = new Excluder();\n    isInnerClassMethod = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    isInnerClassMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testIsInnerClass_withStaticMemberClass() throws Exception {\n    boolean result = (boolean) isInnerClassMethod.invoke(excluder, StaticMemberClass.class);\n    assertFalse(result, \"Static member class should not be considered inner class\");\n  }\n\n  @Test\n  public void testIsInnerClass_withNonStaticMemberClass() throws Exception {\n    boolean result = (boolean) isInnerClassMethod.invoke(excluder, NonStaticMemberClass.class);\n    assertTrue(result, \"Non-static member class should be considered inner class\");\n  }\n\n  @Test\n  public void testIsInnerClass_withTopLevelClass() throws Exception {\n    boolean result = (boolean) isInnerClassMethod.invoke(excluder, Excluder.class);\n    assertFalse(result, \"Top-level class should not be considered inner class\");\n  }\n\n  @Test\n  public void testIsInnerClass_withAnonymousClass() throws Exception {\n    Object anonymousInstance = new Object() {};\n    Class<?> anonymousClass = anonymousInstance.getClass();\n    boolean result = (boolean) isInnerClassMethod.invoke(excluder, anonymousClass);\n    // anonymous classes are not member classes, so isInnerClass returns false\n    // but Excluder treats anonymous classes as inner classes via isAnonymousOrNonStaticLocal()\n    // so we accept false here as per isInnerClass implementation\n    assertFalse(result, \"Anonymous class should not be considered inner class by isInnerClass\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890327,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 439,
+    "prompt_tokens": 1346,
+    "total_tokens": 1785,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.81
+  }
+}

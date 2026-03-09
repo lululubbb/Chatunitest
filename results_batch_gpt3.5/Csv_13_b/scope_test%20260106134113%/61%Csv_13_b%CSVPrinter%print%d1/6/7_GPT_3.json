@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuQpZLtfBTPBtMQTAAkfmKUG0xf4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringIsNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        when(format.getNullString()).thenReturn(null);\n\n        // Spy on printer to intercept private method calls\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(null);\n\n        // Verify that private print(Object, CharSequence, int, int) is called with empty string\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // Use reflection to verify the private print call argument\n        // We verify by intercepting the call using Mockito spy and doAnswer\n        // But since private method cannot be mocked, we verify indirectly by verifying out.append is never called with null\n\n        verify(format).getNullString();\n        verifyNoInteractions(out); // Because printing empty string shouldn't append anything (depending on implementation)\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringIsNonNull() throws IOException {\n        when(format.getNullString()).thenReturn(\"NULL\");\n\n        CSVPrinter spyPrinter = Mockito.spy(new CSVPrinter(out, format));\n        spyPrinter.print(null);\n\n        // Verify format.getNullString() called\n        verify(format).getNullString();\n\n        // Verify that out.append is called with \"NULL\" somewhere inside print\n        // Since out is mocked Appendable, verify append called with \"NULL\"\n        try {\n            verify(out, atLeastOnce()).append(\"NULL\");\n        } catch (IOException e) {\n            fail(\"IOException thrown during verification: \" + e.getMessage());\n        }\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException {\n        String value = \"testValue\";\n        CSVPrinter spyPrinter = Mockito.spy(new CSVPrinter(out, format));\n        spyPrinter.print(value);\n\n        // Verify that out.append is called with value.toString()\n        try {\n            verify(out, atLeastOnce()).append(value);\n        } catch (IOException e) {\n            fail(\"IOException thrown during verification: \" + e.getMessage());\n        }\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679327,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 576,
+    "prompt_tokens": 1143,
+    "total_tokens": 1719,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.16
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9QfjloQD3cwRukEAvWcCFlHb91b",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private File mockFile;\n    private CSVFormat mockFormat;\n    private FileReader mockFileReader;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockFile = mock(File.class);\n        mockFormat = mock(CSVFormat.class);\n        mockFileReader = mock(FileReader.class);\n    }\n\n    @Test\n    void testParse_NullFile_ThrowsException() {\n        CSVFormat format = mock(CSVFormat.class);\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(null, format);\n        });\n        assertEquals(\"file\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_NullFormat_ThrowsException() {\n        File file = mock(File.class);\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(file, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_ValidFileAndFormat_ReturnsCSVParser() throws IOException {\n        try (MockedStatic<Assertions> mockedAssertions = Mockito.mockStatic(Assertions.class);\n             MockedStatic<CSVParser> mockedCSVParser = Mockito.mockStatic(CSVParser.class)) {\n\n            // Assertions.notNull does nothing (no exception)\n            mockedAssertions.when(() -> Assertions.notNull(any(), anyString())).thenAnswer(invocation -> null);\n\n            File file = mock(File.class);\n            CSVFormat format = mock(CSVFormat.class);\n\n            FileReader fileReader = mock(FileReader.class);\n            // Spy on CSVParser constructor by mocking new CSVParser(FileReader, CSVFormat)\n            // Since constructor cannot be mocked directly, we mock the new FileReader(file) call\n\n            // Mock FileReader constructor call\n            try (MockedStatic<FileReader> mockedFileReaderStatic = Mockito.mockStatic(FileReader.class)) {\n                mockedFileReaderStatic.when(() -> new FileReader(file)).thenReturn(fileReader);\n\n                CSVParser parser = new CSVParser(fileReader, format);\n                // We expect parse to return new CSVParser(fileReader, format)\n                CSVParser result = CSVParser.parse(file, format);\n                assertNotNull(result);\n                assertEquals(parser.getClass(), result.getClass());\n            }\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975305,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 538,
+    "prompt_tokens": 493,
+    "total_tokens": 1031,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.66
+  }
+}

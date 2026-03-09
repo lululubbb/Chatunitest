@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmIjZF9rndqz1rdtjDG6Xdz1bDLs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android;\n\nimport static org.mockito.Mockito.*;\n\nimport android.os.Bundle;\nimport android.widget.TextView;\nimport com.google.gson.Gson;\nimport com.google.gson.examples.android.model.Cart;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class GsonProguardExampleActivityTest {\n\n  private GsonProguardExampleActivity activity;\n  private TextView mockTextView;\n\n  @BeforeEach\n  public void setUp() {\n    activity = spy(new GsonProguardExampleActivity());\n\n    // Mock findViewById to return a mocked TextView\n    mockTextView = mock(TextView.class);\n    doReturn(mockTextView).when(activity).findViewById(anyInt());\n  }\n\n  @Test\n  public void testOnCreate() throws Exception {\n    // Mock Bundle parameter\n    Bundle mockBundle = mock(Bundle.class);\n\n    // Mock super.onCreate(Bundle)\n    doNothing().when(activity).superOnCreate(any());\n\n    // Mock setContentView(int)\n    doNothing().when(activity).setContentView(anyInt());\n\n    // Mock buildCart() to return a controlled Cart instance\n    Cart mockCart = mock(Cart.class);\n    doReturn(mockCart).when(activity, \"buildCart\");\n\n    // Mock Cart.toString() for consistent output\n    when(mockCart.toString()).thenReturn(\"mockCartToString\");\n\n    // Prepare Gson mock to control toJson and fromJson\n    try (MockedStatic<Gson> gsonStaticMock = Mockito.mockStatic(Gson.class)) {\n      Gson gson = spy(new Gson());\n      gsonStaticMock.when(Gson::new).thenReturn(gson);\n\n      // Mock gson.toJson(cart)\n      doReturn(\"mockJson\").when(gson).toJson(mockCart);\n\n      // Mock gson.fromJson(json, Cart.class)\n      Cart fromJsonCart = mock(Cart.class);\n      when(fromJsonCart.toString()).thenReturn(\"mockFromJsonCartToString\");\n      doReturn(fromJsonCart).when(gson).fromJson(anyString(), eq(Cart.class));\n\n      // Call onCreate\n      activity.onCreate(mockBundle);\n\n      // Verify calls\n      verify(activity).superOnCreate(mockBundle);\n      verify(activity).setContentView(R.layout.main);\n      verify(activity).findViewById(R.id.tv);\n      verify(mockTextView).setText(org.mockito.ArgumentMatchers.contains(\"mockCartToString\"));\n      verify(mockTextView).invalidate();\n    }\n  }\n\n  // Helper to call private buildCart() via reflection\n  @Test\n  public void testBuildCart() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method buildCartMethod = GsonProguardExampleActivity.class.getDeclaredMethod(\"buildCart\");\n    buildCartMethod.setAccessible(true);\n    Cart cart = (Cart) buildCartMethod.invoke(activity);\n    // Assert cart is not null\n    assert cart != null;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886401,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 627,
+    "prompt_tokens": 472,
+    "total_tokens": 1099,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.55
+  }
+}

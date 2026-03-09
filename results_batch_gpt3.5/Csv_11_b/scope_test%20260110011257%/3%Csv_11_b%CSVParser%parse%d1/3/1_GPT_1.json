@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwANdN29d3SxdywSybRosVS5xaytK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVParserParseTest {\n\n    private URL mockUrl;\n    private Charset charset;\n    private CSVFormat format;\n    private InputStream mockInputStream;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n\n        charset = Charset.forName(\"UTF-8\");\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_NullUrl_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((URL) null, charset, format);\n        });\n        assertEquals(\"url\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullCharset_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, null, format);\n        });\n        assertEquals(\"charset\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidArguments_ReturnsCSVParser() throws IOException {\n        try (MockedStatic<Assertions> mockedAssertions = Mockito.mockStatic(Assertions.class)) {\n            // Setup Assertions.notNull to call real method or throw NPE as expected\n            mockedAssertions.when(() -> Assertions.notNull(any(), any())).thenAnswer(invocation -> {\n                Object arg = invocation.getArgument(0);\n                String name = invocation.getArgument(1);\n                if (arg == null) {\n                    throw new NullPointerException(name);\n                }\n                return null;\n            });\n\n            CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n\n            assertNotNull(parser);\n            // Additional asserts to verify internal state can be done by reflection if needed\n        }\n        verify(mockUrl).openStream();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978961,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 526,
+    "prompt_tokens": 523,
+    "total_tokens": 1049,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.72
+  }
+}

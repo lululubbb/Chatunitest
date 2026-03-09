@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMpuWjNYHHzJIaMuV824T6mfH3M",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.HashMap;\nimport java.util.Map;\n\npublic class MapTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor constructorConstructor;\n\n  @Mock\n  private Gson gson;\n\n  @Mock\n  private ObjectConstructor<HashMap<?, ?>> objectConstructor;\n\n  @BeforeEach\n  public void setUp() {\n    MockitoAnnotations.openMocks(this);\n  }\n\n  @Test\n  public void create_shouldReturnNullIfNotMap() {\n    MapTypeAdapterFactory factory = new MapTypeAdapterFactory(constructorConstructor, false);\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_shouldReturnAdapterForMap() throws Exception {\n    MapTypeAdapterFactory factory = new MapTypeAdapterFactory(constructorConstructor, false);\n    TypeToken<HashMap<String, Integer>> mapTypeToken = new TypeToken<HashMap<String, Integer>>() {};\n\n    // Spy on factory to allow partial mocking\n    MapTypeAdapterFactory spyFactory = spy(factory);\n\n    Type keyType = String.class;\n    TypeAdapter<String> keyAdapter = mock(TypeAdapter.class);\n\n    // Use reflection to access private getKeyAdapter method and mock its call\n    Method getKeyAdapterMethod = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, Type.class);\n    getKeyAdapterMethod.setAccessible(true);\n    doReturn(keyAdapter).when(spyFactory).createKeyAdapterMock(gson, keyType);\n\n    // Instead of spying getKeyAdapter directly (private), override create() to call our mock\n    // We'll create a subclass for this purpose:\n    MapTypeAdapterFactory factoryWithMockedKeyAdapter = new MapTypeAdapterFactory(constructorConstructor, false) {\n      @Override\n      @SuppressWarnings(\"unchecked\")\n      protected TypeAdapter<?> getKeyAdapter(Gson context, Type keyTypeParam) {\n        if (keyTypeParam.equals(keyType)) {\n          return keyAdapter;\n        }\n        return super.getKeyAdapter(context, keyTypeParam);\n      }\n    };\n\n    MapTypeAdapterFactory spyFactory2 = spy(factoryWithMockedKeyAdapter);\n\n    TypeAdapter<Integer> valueAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(ArgumentMatchers.<TypeToken<Integer>>any())).thenReturn(valueAdapter);\n\n    // Fix constructorConstructor.get() type mismatch by using raw TypeToken and raw ObjectConstructor\n    @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n    TypeToken rawMapTypeToken = mapTypeToken;\n    @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n    ObjectConstructor rawObjectConstructor = objectConstructor;\n\n    when(constructorConstructor.get(rawMapTypeToken)).thenReturn(rawObjectConstructor);\n\n    TypeAdapter<HashMap<String, Integer>> adapter = spyFactory2.create(gson, mapTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890499,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 727,
+    "prompt_tokens": 1514,
+    "total_tokens": 2241,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.67
+  }
+}

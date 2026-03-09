@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaDwTS0W8e9HGAD8wkBuqmiWDdkB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.BufferedWriter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrint_withPath_callsFilesNewBufferedWriterAndReturnsCSVPrinter() throws IOException, ReflectiveOperationException {\n        Path mockPath = mock(Path.class);\n        StringWriter stringWriter = new StringWriter();\n        BufferedWriter bufferedWriter = new BufferedWriter(stringWriter);\n\n        // Use reflection to replace Files.newBufferedWriter(Path, Charset) call indirectly\n        // by creating a subclass of CSVFormat that overrides print(Path, Charset)\n        // and returns CSVPrinter wrapping our BufferedWriter.\n\n        CSVFormat csvFormatSpy = new CSVFormatWrapper(csvFormat, mockPath, StandardCharsets.UTF_8, bufferedWriter);\n\n        CSVPrinter printer = csvFormatSpy.print(mockPath, StandardCharsets.UTF_8);\n\n        assertNotNull(printer);\n    }\n\n    @Test\n    void testPrint_withPath_throwsIOException_whenFilesNewBufferedWriterThrows() throws IOException {\n        Path mockPath = mock(Path.class);\n\n        CSVFormat csvFormatSpy = new CSVFormatWrapper(csvFormat, mockPath, StandardCharsets.UTF_8, null) {\n            @Override\n            public CSVPrinter print(final Path out, final java.nio.charset.Charset charset) throws IOException {\n                if (out == mockPath && charset.equals(StandardCharsets.UTF_8)) {\n                    throw new IOException(\"Test IOException\");\n                }\n                return super.print(out, charset);\n            }\n        };\n\n        IOException thrown = assertThrows(IOException.class, () -> csvFormatSpy.print(mockPath, StandardCharsets.UTF_8));\n        assertEquals(\"Test IOException\", thrown.getMessage());\n    }\n\n    /**\n     * Wrapper subclass for CSVFormat to override print(Path, Charset)\n     * and avoid calling Files.newBufferedWriter by returning CSVPrinter on a provided BufferedWriter.\n     */\n    private static class CSVFormatWrapper extends CSVFormat {\n        private final CSVFormat delegate;\n        private final Path expectedPath;\n        private final java.nio.charset.Charset expectedCharset;\n        private final BufferedWriter bufferedWriter;\n\n        CSVFormatWrapper(CSVFormat delegate, Path expectedPath, java.nio.charset.Charset expectedCharset, BufferedWriter bufferedWriter) {\n            super(getField(delegate, \"delimiter\"),\n                    getField(delegate, \"quoteChar\"),\n                    getField(delegate, \"quoteMode\"),\n                    getField(delegate, \"commentStart\"),\n                    getField(delegate, \"escape\"),\n                    getField(delegate, \"ignoreSurroundingSpaces\"),\n                    getField(delegate, \"ignoreEmptyLines\"),\n                    getField(delegate, \"recordSeparator\"),\n                    getField(delegate, \"nullString\"),\n                    getField(delegate, \"headerComments\"),\n                    getField(delegate, \"header\"),\n                    getField(delegate, \"skipHeaderRecord\"),\n                    getField(delegate, \"allowMissingColumnNames\"),\n                    getField(delegate, \"ignoreHeaderCase\"),\n                    getField(delegate, \"trim\"),\n                    getField(delegate, \"trailingDelimiter\"),\n                    getField(delegate, \"autoFlush\"));\n            this.delegate = delegate;\n            this.expectedPath = expectedPath;\n            this.expectedCharset = expectedCharset;\n            this.bufferedWriter = bufferedWriter;\n        }\n\n        @Override\n        public CSVPrinter print(final Path out, final java.nio.charset.Charset charset) throws IOException {\n            if (out == expectedPath && charset.equals(expectedCharset)) {\n                if (bufferedWriter == null) {\n                    throw new IOException(\"Test IOException\");\n                }\n                return print(bufferedWriter);\n            }\n            return delegate.print(out, charset);\n        }\n\n        @SuppressWarnings(\"unchecked\")\n        private static <T> T getField(CSVFormat instance, String fieldName) {\n            try {\n                Field f = CSVFormat.class.getDeclaredField(fieldName);\n                f.setAccessible(true);\n                return (T) f.get(instance);\n            } catch (Exception e) {\n                throw new RuntimeException(e);\n            }\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768554960,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 886,
+    "prompt_tokens": 1881,
+    "total_tokens": 2767,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.91
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAKhZIvucYxFw3tyGQLHDQRsgvlb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileInputStream;\nimport java.io.InputStreamReader;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\nclass CSVParserParseFileTest {\n\n    private File mockFile;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        mockFile = mock(File.class);\n        charset = Charset.defaultCharset();\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParseFileSuccess() throws Exception {\n        // Mock FileInputStream construction to avoid actual file IO\n        try (MockedConstruction<FileInputStream> mockedFileInputStream = Mockito.mockConstruction(FileInputStream.class)) {\n            // Mock InputStreamReader construction to avoid actual IO\n            try (MockedConstruction<InputStreamReader> mockedInputStreamReader = Mockito.mockConstruction(InputStreamReader.class,\n                    (mock, context) -> {\n                        // no-op\n                    })) {\n                CSVParser parser = CSVParser.parse(mockFile, charset, format);\n                assertNotNull(parser);\n                // Check internal state by reflection (format)\n                var formatField = CSVParser.class.getDeclaredField(\"format\");\n                formatField.setAccessible(true);\n                assertSame(format, formatField.get(parser));\n            }\n        }\n    }\n\n    @Test\n    void testParseFileNullFile() {\n        NullPointerException thrown = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(null, charset, format));\n        assertEquals(\"file\", thrown.getMessage());\n    }\n\n    @Test\n    void testParseFileNullFormat() {\n        NullPointerException thrown = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(mockFile, charset, null));\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978779,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 413,
+    "prompt_tokens": 523,
+    "total_tokens": 936,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.59
+  }
+}

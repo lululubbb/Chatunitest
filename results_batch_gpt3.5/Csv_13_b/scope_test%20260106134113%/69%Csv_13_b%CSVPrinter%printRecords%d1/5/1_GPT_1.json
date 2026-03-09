@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuFmittVhhsGTRw5TjgaWZE0dlVC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withNullIterable() throws IOException {\n        Iterable<?> values = Collections.emptyList();\n        printer.printRecords(values);\n        // no output expected, no exception thrown\n        verifyNoInteractions(out);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects() throws IOException {\n        Iterable<?> values = Arrays.asList(\"value1\", \"value2\");\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(2)).printRecord(any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjectArray() throws IOException {\n        Object[] arr1 = new Object[] { \"a\", \"b\" };\n        Object[] arr2 = new Object[] { \"c\", \"d\" };\n        Iterable<?> values = Arrays.asList(arr1, arr2);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(2)).printRecord(any(Object[].class));\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfIterable() throws IOException {\n        Iterable<String> inner1 = Arrays.asList(\"x\", \"y\");\n        Iterable<String> inner2 = Arrays.asList(\"z\");\n        Iterable<?> values = Arrays.asList(inner1, inner2);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(2)).printRecord(any(Iterable.class));\n    }\n\n    @Test\n    void testPrintRecords_withMixedIterable() throws IOException {\n        Object[] arr = new Object[] { \"a\" };\n        Iterable<String> inner = Arrays.asList(\"x\");\n        String str = \"string\";\n        Iterable<?> values = Arrays.asList(arr, inner, str);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(1)).printRecord(any(Object[].class));\n        verify(spyPrinter, times(1)).printRecord(any(Iterable.class));\n        verify(spyPrinter, times(1)).printRecord(str);\n    }\n\n    @Test\n    void testPrintRecords_withIOExceptionFromPrintRecord() throws IOException {\n        Iterable<?> values = Collections.singletonList(\"value\");\n        CSVPrinter spyPrinter = spy(printer);\n        doThrow(new IOException(\"fail\")).when(spyPrinter).printRecord(any());\n\n        IOException thrown = assertThrows(IOException.class, () -> spyPrinter.printRecords(values));\n        assertEquals(\"fail\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678642,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 653,
+    "prompt_tokens": 476,
+    "total_tokens": 1129,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.17
+  }
+}

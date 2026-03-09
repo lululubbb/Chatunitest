@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZLRlTeATVXQZezmamUriKPmpoQs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterCloseTest {\n\n    private Closeable closeableOut;\n    private CSVPrinter printerWithCloseable;\n    private CSVPrinter printerWithNonCloseable;\n    private Appendable nonCloseableOut;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        closeableOut = mock(Closeable.class);\n        CSVFormat format = mock(CSVFormat.class);\n        // Create a wrapper Appendable around Closeable to satisfy constructor parameter\n        Appendable closeableAppendable = new AppendableCloseableWrapper(closeableOut);\n        printerWithCloseable = createCSVPrinterWithOut(closeableAppendable, format);\n\n        nonCloseableOut = new StringBuilder();\n        printerWithNonCloseable = createCSVPrinterWithOut(nonCloseableOut, format);\n    }\n\n    @Test\n    void close_closesOutIfCloseable() throws IOException {\n        printerWithCloseable.close();\n        verify(closeableOut, times(1)).close();\n    }\n\n    @Test\n    void close_doesNotThrowIfOutNotCloseable() {\n        assertDoesNotThrow(() -> printerWithNonCloseable.close());\n    }\n\n    // Helper method to create CSVPrinter instance with specified out and format using reflection\n    private CSVPrinter createCSVPrinterWithOut(Appendable out, CSVFormat format) throws Exception {\n        Constructor<CSVPrinter> constructor = CSVPrinter.class.getDeclaredConstructor(Appendable.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(out, format);\n    }\n\n    // Wrapper class to adapt Closeable to Appendable\n    private static class AppendableCloseableWrapper implements Appendable, Closeable {\n        private final Closeable closeable;\n\n        AppendableCloseableWrapper(Closeable closeable) {\n            this.closeable = closeable;\n        }\n\n        @Override\n        public Appendable append(CharSequence csq) {\n            return this;\n        }\n\n        @Override\n        public Appendable append(CharSequence csq, int start, int end) {\n            return this;\n        }\n\n        @Override\n        public Appendable append(char c) {\n            return this;\n        }\n\n        @Override\n        public void close() throws IOException {\n            closeable.close();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551581,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 533,
+    "prompt_tokens": 1237,
+    "total_tokens": 1770,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.46
+  }
+}

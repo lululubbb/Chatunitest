@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlnu5EXyTAP8EqGzPsoawKXEneUa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.*;\nimport java.util.Map;\nimport java.util.HashMap;\nimport java.util.Objects;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nclass TypeTokenTest {\n\n  private TypeToken<?> typeTokenInstance;\n\n  @Test\n  void testPrivateConstructorWithValidType() throws Exception {\n    Type type = String.class;\n    Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n    constructor.setAccessible(true);\n    TypeToken<?> instance = constructor.newInstance(type);\n\n    // Verify fields\n    Field typeField = TypeToken.class.getDeclaredField(\"type\");\n    typeField.setAccessible(true);\n    Type actualType = (Type) typeField.get(instance);\n    assertEquals($Gson$Types.canonicalize(type), actualType);\n\n    Field rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n    rawTypeField.setAccessible(true);\n    Class<?> rawType = (Class<?>) rawTypeField.get(instance);\n    assertEquals($Gson$Types.getRawType(actualType), rawType);\n\n    Field hashCodeField = TypeToken.class.getDeclaredField(\"hashCode\");\n    hashCodeField.setAccessible(true);\n    int hashCode = hashCodeField.getInt(instance);\n    assertEquals(actualType.hashCode(), hashCode);\n  }\n\n  @Test\n  void testPrivateConstructorWithNullTypeThrowsNPE() throws Exception {\n    Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n    constructor.setAccessible(true);\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      constructor.newInstance((Object) null);\n    });\n    assertNotNull(exception);\n  }\n\n  @Test\n  void testGetRawTypeAndGetType() throws Exception {\n    TypeToken<String> token = TypeToken.get(String.class);\n    assertEquals(String.class, token.getRawType());\n    assertEquals(String.class, token.getType());\n  }\n\n  @Test\n  void testEqualsAndHashCode() throws Exception {\n    TypeToken<String> token1 = TypeToken.get(String.class);\n    TypeToken<String> token2 = TypeToken.get(String.class);\n    TypeToken<Integer> token3 = TypeToken.get(Integer.class);\n\n    assertEquals(token1, token2);\n    assertEquals(token1.hashCode(), token2.hashCode());\n\n    assertNotEquals(token1, token3);\n    assertNotEquals(token1.hashCode(), token3.hashCode());\n\n    assertNotEquals(token1, null);\n    assertNotEquals(token1, \"some string\");\n  }\n\n  @Test\n  void testToString() {\n    TypeToken<String> token = TypeToken.get(String.class);\n    String toString = token.toString();\n    assertTrue(toString.contains(\"java.lang.String\"));\n  }\n\n  @Test\n  void testGetStaticMethods() {\n    TypeToken<?> token = TypeToken.get(String.class);\n    assertNotNull(token);\n\n    TypeToken<?> parameterized = TypeToken.getParameterized(Map.class, String.class, Integer.class);\n    assertNotNull(parameterized);\n    assertTrue(parameterized.getType() instanceof ParameterizedType);\n\n    TypeToken<?> arrayToken = TypeToken.getArray(String.class);\n    assertNotNull(arrayToken);\n    assertTrue(arrayToken.getType() instanceof GenericArrayType || arrayToken.getType() instanceof Class);\n  }\n\n  @Test\n  void testDeprecatedIsAssignableFromMethods() {\n    TypeToken<String> token = TypeToken.get(String.class);\n\n    assertTrue(token.isAssignableFrom(String.class));\n    assertTrue(token.isAssignableFrom((Type) String.class));\n    assertTrue(token.isAssignableFrom(TypeToken.get(String.class)));\n\n    assertFalse(token.isAssignableFrom(Integer.class));\n    assertFalse(token.isAssignableFrom((Type) Integer.class));\n    assertFalse(token.isAssignableFrom(TypeToken.get(Integer.class)));\n  }\n\n  @Test\n  void testPrivateGetTypeTokenTypeArgument() throws Exception {\n    TypeToken<String> token = TypeToken.get(String.class);\n    var method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(token);\n    // For String.class, this should be Object.class or null depending on implementation\n    assertNotNull(result);\n  }\n\n  @Test\n  void testPrivateStaticIsAssignableFromMethods() throws Exception {\n    Method isAssignableFromGenericArrayType = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class, GenericArrayType.class);\n    isAssignableFromGenericArrayType.setAccessible(true);\n\n    GenericArrayType genericArrayType = mock(GenericArrayType.class);\n    when(genericArrayType.getGenericComponentType()).thenReturn(String.class);\n\n    Boolean result = (Boolean) isAssignableFromGenericArrayType.invoke(null, String[].class, genericArrayType);\n    assertNotNull(result);\n\n    Method isAssignableFromParameterizedType = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class, ParameterizedType.class, Map.class);\n    isAssignableFromParameterizedType.setAccessible(true);\n\n    ParameterizedType parameterizedType = mock(ParameterizedType.class);\n    Map<String, Type> typeVarMap = new HashMap<>();\n    Boolean paramResult = (Boolean) isAssignableFromParameterizedType.invoke(null, String.class, parameterizedType, typeVarMap);\n    assertNotNull(paramResult);\n  }\n\n  @Test\n  void testPrivateStaticTypeEquals() throws Exception {\n    Method typeEquals = TypeToken.class.getDeclaredMethod(\"typeEquals\", ParameterizedType.class, ParameterizedType.class, Map.class);\n    typeEquals.setAccessible(true);\n\n    ParameterizedType pt1 = mock(ParameterizedType.class);\n    ParameterizedType pt2 = mock(ParameterizedType.class);\n    Map<String, Type> map = new HashMap<>();\n\n    Boolean result = (Boolean) typeEquals.invoke(null, pt1, pt2, map);\n    assertNotNull(result);\n  }\n\n  @Test\n  void testPrivateStaticBuildUnexpectedTypeError() throws Exception {\n    Method buildUnexpectedTypeError = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    buildUnexpectedTypeError.setAccessible(true);\n\n    AssertionError error = (AssertionError) buildUnexpectedTypeError.invoke(null, String.class, new Class[]{Integer.class});\n    assertTrue(error.getMessage().contains(\"Expected one of\"));\n  }\n\n  @Test\n  void testPrivateStaticMatches() throws Exception {\n    Method matches = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    matches.setAccessible(true);\n\n    Map<String, Type> map = new HashMap<>();\n    Boolean result = (Boolean) matches.invoke(null, String.class, String.class, map);\n    assertTrue(result);\n\n    result = (Boolean) matches.invoke(null, String.class, Integer.class, map);\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884490,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1439,
+    "prompt_tokens": 545,
+    "total_tokens": 1984,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 29.32
+  }
+}

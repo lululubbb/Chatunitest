@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIrAuqFkIZEtC15ONTrxAb5pykN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.atomic.AtomicLong;\n\nclass Gson_atomicLongAdapter_Test {\n\n  private TypeAdapter<Number> mockLongAdapter;\n  private TypeAdapter<AtomicLong> atomicLongAdapter;\n\n  @BeforeEach\n  @SuppressWarnings(\"unchecked\")\n  public void setUp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    mockLongAdapter = mock(TypeAdapter.class);\n\n    Method method = Gson.class.getDeclaredMethod(\"atomicLongAdapter\", TypeAdapter.class);\n    method.setAccessible(true);\n    atomicLongAdapter = (TypeAdapter<AtomicLong>) method.invoke(null, mockLongAdapter);\n  }\n\n  @Test\n  public void write_shouldDelegateToLongAdapter() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n    AtomicLong atomicLong = new AtomicLong(123L);\n\n    atomicLongAdapter.write(mockWriter, atomicLong);\n\n    verify(mockLongAdapter).write(mockWriter, 123L);\n  }\n\n  @Test\n  public void write_shouldWriteNullWhenValueIsNull() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n\n    atomicLongAdapter.write(mockWriter, null);\n\n    verify(mockLongAdapter).write(mockWriter, null);\n  }\n\n  @Test\n  public void read_shouldDelegateToLongAdapterAndWrapInAtomicLong() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    Number numberValue = 456L;\n    when(mockLongAdapter.read(mockReader)).thenReturn(numberValue);\n\n    AtomicLong result = atomicLongAdapter.read(mockReader);\n\n    verify(mockLongAdapter).read(mockReader);\n    assertNotNull(result);\n    assertEquals(456L, result.get());\n  }\n\n  @Test\n  public void read_shouldReturnAtomicLongWithZero_whenLongAdapterReturnsNull() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockLongAdapter.read(mockReader)).thenReturn(null);\n\n    AtomicLong result = atomicLongAdapter.read(mockReader);\n\n    assertNotNull(result);\n    assertEquals(0L, result.get());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890253,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 496,
+    "prompt_tokens": 2762,
+    "total_tokens": 3258,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.72
+  }
+}

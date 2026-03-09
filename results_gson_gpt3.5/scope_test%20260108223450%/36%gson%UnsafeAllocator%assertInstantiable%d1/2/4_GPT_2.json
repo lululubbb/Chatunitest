@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmj3vbMqR3WEIaPA65BavIQv8OtE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void assertInstantiable_noException() throws Exception {\n    // Arrange\n    Class<?> clazz = String.class;\n\n    // Act & Assert\n    // Should not throw any exception\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n    assertDoesNotThrow(() -> assertInstantiableMethod.invoke(null, clazz));\n  }\n\n  @Test\n  void assertInstantiable_throwsAssertionError() throws Exception {\n    // Arrange\n    Class<?> clazz = AbstractListSubclass.class;\n\n    Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiableMethod.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      assertInstantiableMethod.invoke(null, clazz);\n    });\n\n    Throwable cause = thrown.getCause();\n    assertTrue(cause instanceof AssertionError);\n    assertTrue(cause.getMessage().startsWith(\"UnsafeAllocator is used for non-instantiable type:\"));\n  }\n\n  // A dummy abstract class to simulate non-instantiable class for the test\n  abstract static class AbstractListSubclass extends java.util.AbstractList<Object> {\n    @Override\n    public Object get(int index) { return null; }\n    @Override\n    public int size() { return 0; }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888033,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 348,
+    "prompt_tokens": 960,
+    "total_tokens": 1308,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.58
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn2uSQH6inRtOXolLUUOqr79goen",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.mockStatic;\nimport static org.mockito.Mockito.when;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.ReflectionAccessFilterHelper;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.Excluder;\nimport com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;\nimport com.google.gson.internal.bind.JsonAdapterAnnotationTypeAdapterFactory;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Member;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\npublic class ReflectiveTypeAdapterFactoryTest {\n\n  private static class TestMember extends AccessibleObject implements Member {\n    private final int modifiers;\n    private final boolean isStatic;\n\n    TestMember(int modifiers, boolean isStatic) {\n      this.modifiers = modifiers;\n      this.isStatic = isStatic;\n    }\n\n    @Override\n    public Class<?> getDeclaringClass() {\n      return TestMember.class;\n    }\n\n    @Override\n    public String getName() {\n      return \"testMember\";\n    }\n\n    @Override\n    public int getModifiers() {\n      return modifiers;\n    }\n\n    @Override\n    public boolean isSynthetic() {\n      return false;\n    }\n\n    @Override\n    public void setAccessible(boolean flag) {\n      // no-op\n    }\n\n    @Override\n    public boolean isAccessible() {\n      return true;\n    }\n  }\n\n  @Test\n  void checkAccessible_allowsAccessibleMember() throws Exception {\n    Method member = TestMember.class.getDeclaredMethod(\"getName\");\n    Object object = new Object();\n\n    try (MockedStatic<ReflectionAccessFilterHelper> mocked = mockStatic(ReflectionAccessFilterHelper.class)) {\n      mocked.when(() -> ReflectionAccessFilterHelper.canAccess(member, object)).thenReturn(true);\n\n      // invoke private static method via reflection\n      java.lang.reflect.Method checkAccessibleMethod = ReflectiveTypeAdapterFactory.class\n          .getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class);\n      checkAccessibleMethod.setAccessible(true);\n      // should not throw\n      checkAccessibleMethod.invoke(null, object, member);\n    }\n  }\n\n  @Test\n  void checkAccessible_allowsAccessibleStaticMember() throws Exception {\n    Method member = TestMember.class.getDeclaredMethod(\"getName\");\n    Object object = new Object();\n\n    // Create a mock member with static modifier\n    Member staticMember = new Member() {\n      @Override\n      public Class<?> getDeclaringClass() {\n        return TestMember.class;\n      }\n\n      @Override\n      public String getName() {\n        return \"staticMember\";\n      }\n\n      @Override\n      public int getModifiers() {\n        return Modifier.STATIC;\n      }\n\n      @Override\n      public boolean isSynthetic() {\n        return false;\n      }\n    };\n\n    try (MockedStatic<ReflectionAccessFilterHelper> mocked = mockStatic(ReflectionAccessFilterHelper.class)) {\n      // For static member, object param is null\n      mocked.when(() -> ReflectionAccessFilterHelper.canAccess(staticMember, null)).thenReturn(true);\n\n      java.lang.reflect.Method checkAccessibleMethod = ReflectiveTypeAdapterFactory.class\n          .getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class);\n      checkAccessibleMethod.setAccessible(true);\n      // should not throw\n      checkAccessibleMethod.invoke(null, object, staticMember);\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenNotAccessible() throws Exception {\n    Field field = TestMember.class.getDeclaredField(\"modifiers\");\n    Object object = new Object();\n\n    try (MockedStatic<ReflectionAccessFilterHelper> mocked = mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<com.google.gson.internal.ReflectionHelper> mockedHelper = mockStatic(com.google.gson.internal.ReflectionHelper.class)) {\n      mocked.when(() -> ReflectionAccessFilterHelper.canAccess(field, object)).thenReturn(false);\n      mockedHelper.when(() -> com.google.gson.internal.ReflectionHelper.getAccessibleObjectDescription(field, true))\n          .thenReturn(\"field description\");\n\n      java.lang.reflect.Method checkAccessibleMethod = ReflectiveTypeAdapterFactory.class\n          .getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class);\n      checkAccessibleMethod.setAccessible(true);\n\n      JsonIOException thrown = assertThrows(JsonIOException.class,\n          () -> checkAccessibleMethod.invoke(null, object, field));\n\n      // Because invoke wraps exceptions in InvocationTargetException, unwrap:\n      // But assertThrows unwraps automatically, so no need to unwrap here.\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889264,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 950,
+    "prompt_tokens": 787,
+    "total_tokens": 1737,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.3
+  }
+}

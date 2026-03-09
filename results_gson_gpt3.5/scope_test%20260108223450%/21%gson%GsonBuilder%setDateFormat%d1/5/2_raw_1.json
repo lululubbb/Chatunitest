@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertSame;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void testSetDateFormat_WithPattern_ShouldSetDatePatternAndReturnThis() throws Exception {\n    String pattern = \"yyyy-MM-dd\";\n\n    GsonBuilder returned = gsonBuilder.setDateFormat(pattern);\n\n    // Verify returned instance is the same\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to verify private field datePattern is set correctly\n    Field datePatternField = GsonBuilder.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n    String actualPattern = (String) datePatternField.get(gsonBuilder);\n    assertEquals(pattern, actualPattern);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1083,
+  "completion_tokens": 211,
+  "total_tokens": 1294,
+  "llm_elapsed_time_seconds": 3.45
+}

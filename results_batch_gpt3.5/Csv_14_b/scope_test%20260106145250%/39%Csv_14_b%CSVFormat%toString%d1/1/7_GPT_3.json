@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvcTlzXciiMq02upUb7UbN2sWz07",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass CSVFormatToStringTest {\n\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n\n    private String invokeToString(CSVFormat format) throws Exception {\n        Method toStringMethod = CSVFormat.class.getDeclaredMethod(\"toString\");\n        toStringMethod.setAccessible(true);\n        return (String) toStringMethod.invoke(format);\n    }\n\n    @Test\n    public void testToString_DefaultDelimiterOnly() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        // delimiter set, no other fields set\n        String result = invokeToString(format);\n        assertTrue(result.contains(\"Delimiter=<,>\"));\n        assertFalse(result.contains(\"Escape=<\"));\n        assertFalse(result.contains(\"QuoteChar=<\"));\n        assertFalse(result.contains(\"CommentStart=<\"));\n        assertFalse(result.contains(\"NullString=<\"));\n        assertFalse(result.contains(\"RecordSeparator=<\"));\n        assertFalse(result.contains(\"EmptyLines:ignored\"));\n        assertFalse(result.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(result.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    public void testToString_AllFieldsSet() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(';');\n        setField(format, \"escapeCharacter\", '\\\\');\n        setField(format, \"quoteCharacter\", '\"');\n        setField(format, \"commentMarker\", '#');\n        setField(format, \"nullString\", \"NULL\");\n        setField(format, \"recordSeparator\", \"\\n\");\n        setField(format, \"ignoreEmptyLines\", true);\n        setField(format, \"ignoreSurroundingSpaces\", true);\n        setField(format, \"ignoreHeaderCase\", true);\n        setField(format, \"skipHeaderRecord\", true);\n        setField(format, \"headerComments\", new String[] {\"comment1\", \"comment2\"});\n        setField(format, \"header\", new String[] {\"col1\", \"col2\"});\n\n        String result = invokeToString(format);\n\n        assertTrue(result.contains(\"Delimiter=<;>\"));\n        assertTrue(result.contains(\"Escape=<\\\\>\"));\n        assertTrue(result.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(result.contains(\"CommentStart=<#>\"));\n        assertTrue(result.contains(\"NullString=<NULL>\"));\n        assertTrue(result.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(result.contains(\"EmptyLines:ignored\"));\n        assertTrue(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(result.contains(\"HeaderComments:[comment1, comment2]\"));\n        assertTrue(result.contains(\"Header:[col1, col2]\"));\n    }\n\n    @Test\n    public void testToString_NullRecordSeparatorAndNullHeaderCommentsAndHeader() throws Exception {\n        CSVFormat format = CSVFormat.newFormat('|');\n        setField(format, \"recordSeparator\", null);\n        setField(format, \"headerComments\", null);\n        setField(format, \"header\", null);\n        setField(format, \"skipHeaderRecord\", false);\n\n        String result = invokeToString(format);\n\n        assertTrue(result.contains(\"Delimiter=<>\") || result.contains(\"Delimiter=<|>\"));\n        assertFalse(result.contains(\"RecordSeparator=<\"));\n        assertFalse(result.contains(\"HeaderComments:\"));\n        assertFalse(result.contains(\"Header:\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    public void testToString_SkipHeaderRecordFalse() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        setField(format, \"skipHeaderRecord\", false);\n\n        String result = invokeToString(format);\n\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    public void testToString_SkipHeaderRecordTrue() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        setField(format, \"skipHeaderRecord\", true);\n\n        String result = invokeToString(format);\n\n        assertTrue(result.contains(\"SkipHeaderRecord:true\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683893,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 907,
+    "prompt_tokens": 2337,
+    "total_tokens": 3244,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.99
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnTqe4FBSekDLs58VahV7S4bnCTZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class JsonParserTest {\n\n  @Test\n  public void testParseString_validJson_returnsJsonElement() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonElement element = JsonParser.parseString(json);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  public void testParseString_emptyJson_throwsException() {\n    String json = \"\";\n    assertThrows(com.google.gson.JsonIOException.class, () -> {\n      JsonParser.parseString(json);\n    });\n  }\n\n  @Test\n  public void testParseReader_Reader_validJson() throws IOException {\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n    JsonElement element = JsonParser.parseReader(reader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  public void testParseReader_Reader_emptyJson_throwsException() {\n    Reader reader = new StringReader(\"\");\n    assertThrows(com.google.gson.JsonIOException.class, () -> {\n      JsonParser.parseReader(reader);\n    });\n  }\n\n  @Test\n  public void testParseReader_JsonReader_validJson() throws IOException {\n    JsonReader jsonReader = new JsonReader(new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    JsonElement element = JsonParser.parseReader(jsonReader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  public void testParseReader_JsonReader_emptyJson_throwsException() {\n    JsonReader jsonReader = new JsonReader(new StringReader(\"\"));\n    assertThrows(com.google.gson.JsonIOException.class, () -> {\n      JsonParser.parseReader(jsonReader);\n    });\n  }\n\n  @Test\n  public void testDeprecatedParse_String_validJson() throws Throwable {\n    JsonParser parser = new JsonParser();\n    Method parseMethod = JsonParser.class.getDeclaredMethod(\"parse\", String.class);\n    parseMethod.setAccessible(true);\n    Object element = parseMethod.invoke(parser, \"{\\\"key\\\":\\\"value\\\"}\");\n    assertNotNull(element);\n    assertTrue(element instanceof JsonElement);\n  }\n\n  @Test\n  public void testDeprecatedParse_Reader_validJson() throws Throwable {\n    JsonParser parser = new JsonParser();\n    Method parseMethod = JsonParser.class.getDeclaredMethod(\"parse\", Reader.class);\n    parseMethod.setAccessible(true);\n    Object element = parseMethod.invoke(parser, new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    assertNotNull(element);\n    assertTrue(element instanceof JsonElement);\n  }\n\n  @Test\n  public void testDeprecatedParse_JsonReader_validJson() throws Throwable {\n    JsonParser parser = new JsonParser();\n    Method parseMethod = JsonParser.class.getDeclaredMethod(\"parse\", JsonReader.class);\n    parseMethod.setAccessible(true);\n    JsonReader jr = new JsonReader(new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    Object element = parseMethod.invoke(parser, jr);\n    assertNotNull(element);\n    assertTrue(element instanceof JsonElement);\n  }\n\n  @Test\n  public void testParseReader_JsonReader_malformedJson_throws() throws IOException {\n    JsonReader jsonReader = spy(new JsonReader(new StringReader(\"{malformed json\")));\n    assertThrows(com.google.gson.JsonSyntaxException.class, () -> {\n      JsonParser.parseReader(jsonReader);\n    });\n  }\n\n  @Test\n  public void testParseReader_JsonReader_ioException_throws() throws IOException {\n    JsonReader jsonReader = mock(JsonReader.class);\n    when(jsonReader.peek()).thenThrow(new IOException(\"IO error\"));\n    assertThrows(com.google.gson.JsonIOException.class, () -> {\n      JsonParser.parseReader(jsonReader);\n    });\n  }\n\n  @Test\n  public void testParseReader_JsonReader_emptyJson_throwsIllegalStateException() throws IOException {\n    JsonReader jsonReader = new JsonReader(new StringReader(\"\"));\n    assertThrows(com.google.gson.JsonIOException.class, () -> {\n      JsonParser.parseReader(jsonReader);\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890934,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 901,
+    "prompt_tokens": 2377,
+    "total_tokens": 3278,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.94
+  }
+}

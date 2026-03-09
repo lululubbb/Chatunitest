@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmPfgV9R1RHBxfPPVGOm0rAcEQBh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonSerializationContext;\nimport com.google.gson.JsonSerializer;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.internal.bind.TreeTypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.internal.Streams;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass TreeTypeAdapterWriteTest {\n\n  private JsonSerializer<Object> serializer;\n  private TypeAdapter<Object> delegateAdapter;\n  private JsonWriter jsonWriter;\n  private TreeTypeAdapter<Object> treeTypeAdapter;\n  private TypeAdapterFactory skipPast;\n  private TypeToken<Object> typeToken;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    serializer = mock(JsonSerializer.class);\n    delegateAdapter = mock(TypeAdapter.class);\n    skipPast = mock(TypeAdapterFactory.class);\n    typeToken = TypeToken.get(Object.class);\n\n    // Create a JsonWriter with StringWriter to avoid IOException on writes\n    jsonWriter = new JsonWriter(new StringWriter());\n\n    // Construct TreeTypeAdapter instance with nullSafe = true\n    treeTypeAdapter = new TreeTypeAdapter<>(serializer, null, null, typeToken, skipPast, true);\n\n    // Inject delegate adapter via reflection\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(treeTypeAdapter, delegateAdapter);\n\n    // Inject gson field as null (not used in test)\n    Field gsonField = TreeTypeAdapter.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(treeTypeAdapter, null);\n  }\n\n  @Test\n  void write_withSerializerAndNonNullValue_invokesSerializeAndStreamsWrite() throws IOException {\n    Object value = new Object();\n    JsonElement jsonElement = mock(JsonElement.class);\n\n    when(serializer.serialize(eq(value), any(Type.class), any(JsonSerializationContext.class))).thenReturn(jsonElement);\n\n    // Spy Streams class static write method by using Mockito inline or just verify call via partial mock\n    // Since Streams.write is static, we cannot mock it directly without additional tools.\n    // So we test by verifying serializer call and no delegate call.\n\n    treeTypeAdapter.write(jsonWriter, value);\n\n    verify(serializer).serialize(eq(value), eq(typeToken.getType()), any(JsonSerializationContext.class));\n    // We cannot verify Streams.write directly, but no exceptions means it was called.\n    verifyNoInteractions(delegateAdapter);\n  }\n\n  @Test\n  void write_withSerializerAndNullValueAndNullSafe_callsNullValueOnWriter() throws IOException {\n    TreeTypeAdapter<Object> adapter = new TreeTypeAdapter<>(serializer, null, null, typeToken, skipPast, true);\n\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    adapter.write(spyWriter, null);\n\n    verify(spyWriter).nullValue();\n    verifyNoInteractions(serializer);\n  }\n\n  @Test\n  void write_withSerializerAndNullValueAndNotNullSafe_invokesSerialize() throws IOException {\n    TreeTypeAdapter<Object> adapter = new TreeTypeAdapter<>(serializer, null, null, typeToken, skipPast, false);\n\n    JsonWriter spyWriter = spy(jsonWriter);\n    Object value = null;\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(serializer.serialize(eq(value), any(Type.class), any(JsonSerializationContext.class))).thenReturn(jsonElement);\n\n    adapter.write(spyWriter, value);\n\n    verify(serializer).serialize(eq(value), eq(typeToken.getType()), any(JsonSerializationContext.class));\n    verify(spyWriter, never()).nullValue();\n  }\n\n  @Test\n  void write_withoutSerializer_delegatesWrite() throws IOException, Exception {\n    TreeTypeAdapter<Object> adapter = new TreeTypeAdapter<>(null, null, null, typeToken, skipPast, true);\n\n    // Inject delegate adapter via reflection\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(adapter, delegateAdapter);\n\n    Object value = new Object();\n\n    adapter.write(jsonWriter, value);\n\n    verify(delegateAdapter).write(jsonWriter, value);\n  }\n\n  @Test\n  void write_withoutSerializerAndNullValue_delegatesWrite() throws IOException, Exception {\n    TreeTypeAdapter<Object> adapter = new TreeTypeAdapter<>(null, null, null, typeToken, skipPast, true);\n\n    // Inject delegate adapter via reflection\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(adapter, delegateAdapter);\n\n    Object value = null;\n\n    adapter.write(jsonWriter, value);\n\n    verify(delegateAdapter).write(jsonWriter, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886831,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1020,
+    "prompt_tokens": 806,
+    "total_tokens": 1826,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.44
+  }
+}

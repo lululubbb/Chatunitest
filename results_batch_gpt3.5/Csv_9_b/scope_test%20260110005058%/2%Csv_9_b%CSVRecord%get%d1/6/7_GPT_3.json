@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA3F3ZXrsyU3EJlyqzDuzGWwymm6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    @Test\n    void testGet_withEnum_returnsValueForEnumName() throws Exception {\n        // Prepare mapping and values\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"ENUMNAME\", 1);\n        String[] values = new String[] {\"zero\", \"one\", \"two\"};\n        String comment = \"comment\";\n        long recordNumber = 5L;\n\n        // Create CSVRecord instance using package-private constructor via reflection\n        CSVRecord record = new CSVRecord(values, mapping, comment, recordNumber);\n\n        // Create enum mock with toString() returning \"ENUMNAME\"\n        Enum<?> enumMock = mock(Enum.class);\n        when(enumMock.toString()).thenReturn(\"ENUMNAME\");\n\n        // Call get(Enum<?>)\n        String result = record.get(enumMock);\n\n        // Assert that it returns values[1] = \"one\"\n        assertEquals(\"one\", result);\n    }\n\n    @Test\n    void testGet_withEnum_returnsNullIfMappingAbsent() throws Exception {\n        Map<String, Integer> mapping = new HashMap<>();\n        String[] values = new String[] {\"zero\", \"one\", \"two\"};\n        String comment = null;\n        long recordNumber = 1L;\n\n        CSVRecord record = new CSVRecord(values, mapping, comment, recordNumber);\n\n        Enum<?> enumMock = mock(Enum.class);\n        when(enumMock.toString()).thenReturn(\"UNKNOWN\");\n\n        String result = record.get(enumMock);\n\n        assertEquals(null, result);\n    }\n\n    @Test\n    void testGet_withEnum_callsGetStringUsingReflection() throws Exception {\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"TEST\", 0);\n        String[] values = new String[] {\"value0\"};\n        CSVRecord record = new CSVRecord(values, mapping, null, 0L);\n\n        Enum<?> enumMock = mock(Enum.class);\n        when(enumMock.toString()).thenReturn(\"TEST\");\n\n        // Use reflection to invoke private get(String)\n        Method privateGetString = CSVRecord.class.getDeclaredMethod(\"get\", String.class);\n        privateGetString.setAccessible(true);\n\n        // Call get(Enum<?>) which calls public get(String), test indirectly\n        String resultFromPublic = record.get(enumMock);\n        String resultFromPrivate = (String) privateGetString.invoke(record, \"TEST\");\n\n        assertEquals(resultFromPrivate, resultFromPublic);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977697,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 558,
+    "prompt_tokens": 1011,
+    "total_tokens": 1569,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.25
+  }
+}

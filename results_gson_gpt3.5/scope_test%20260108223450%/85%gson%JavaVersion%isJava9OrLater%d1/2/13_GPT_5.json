@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlXLSn61J8OkelrMjYuVGArBr9y2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nclass JavaVersionTest {\n\n  @Test\n  void testIsJava9OrLater_whenVersionIsLessThan9() throws Exception {\n    try (MockedStatic<JavaVersion> mockedStatic = Mockito.mockStatic(JavaVersion.class, Mockito.CALLS_REAL_METHODS)) {\n      setMajorJavaVersion(8);\n      assertFalse(JavaVersion.isJava9OrLater());\n    }\n  }\n\n  @Test\n  void testIsJava9OrLater_whenVersionIsEqualTo9() throws Exception {\n    try (MockedStatic<JavaVersion> mockedStatic = Mockito.mockStatic(JavaVersion.class, Mockito.CALLS_REAL_METHODS)) {\n      setMajorJavaVersion(9);\n      assertTrue(JavaVersion.isJava9OrLater());\n    }\n  }\n\n  @Test\n  void testIsJava9OrLater_whenVersionIsGreaterThan9() throws Exception {\n    try (MockedStatic<JavaVersion> mockedStatic = Mockito.mockStatic(JavaVersion.class, Mockito.CALLS_REAL_METHODS)) {\n      setMajorJavaVersion(11);\n      assertTrue(JavaVersion.isJava9OrLater());\n    }\n  }\n\n  @Test\n  void testDetermineMajorJavaVersion_invocation() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"determineMajorJavaVersion\");\n    method.setAccessible(true);\n    int version = (int) method.invoke(null);\n    // The version should be positive\n    assertTrue(version > 0);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_string() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n\n    assertEquals(8, ((Integer) method.invoke(null, \"1.8.0_231\")).intValue());\n    assertEquals(9, ((Integer) method.invoke(null, \"9\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc\")).intValue());\n  }\n\n  @Test\n  void testParseDotted() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    method.setAccessible(true);\n\n    assertEquals(8, ((Integer) method.invoke(null, \"1.8.0_231\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc.def\")).intValue());\n  }\n\n  @Test\n  void testExtractBeginningInt() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"extractBeginningInt\", String.class);\n    method.setAccessible(true);\n\n    assertEquals(1, ((Integer) method.invoke(null, \"1.8.0_231\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc123\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"\")).intValue());\n  }\n\n  @Test\n  void testGetMajorJavaVersion_noArgs() {\n    int version = JavaVersion.getMajorJavaVersion();\n    assertTrue(version > 0);\n  }\n\n  private void setMajorJavaVersion(int version) throws Exception {\n    Field field = JavaVersion.class.getDeclaredField(\"majorJavaVersion\");\n    field.setAccessible(true);\n\n    // Remove final modifier using reflection\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    // Remove static final cached value by resetting the class initialization via Unsafe or similar is complicated.\n    // Instead, forcibly set the field value via reflection:\n    field.set(null, version);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 873,
+    "prompt_tokens": 1620,
+    "total_tokens": 2493,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.22
+  }
+}

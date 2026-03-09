@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmniMu1yQXwwupOZqyvoLDz3L101",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonArray;\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  static class JsonElementSubclass extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return this;\n    }\n  }\n\n  @Test\n  void getAsShort_throwsOnBaseClass() {\n    JsonElement element = new JsonElementSubclass();\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, element::getAsShort);\n    // The exception message should be the simple class name of the subclass\n    assertEquals(\"JsonElementSubclass\", exception.getMessage());\n  }\n\n  @Test\n  void getAsShort_fromJsonPrimitive() {\n    JsonPrimitive primitive = new JsonPrimitive((short) 123);\n    assertEquals((short) 123, primitive.getAsShort());\n\n    JsonPrimitive primitiveFromString = new JsonPrimitive(\"456\");\n    assertEquals((short) 456, primitiveFromString.getAsShort());\n\n    JsonPrimitive primitiveFromNumber = new JsonPrimitive(789);\n    assertEquals((short) 789, primitiveFromNumber.getAsShort());\n  }\n\n  @Test\n  void getAsShort_fromJsonNull_throws() {\n    JsonNull jsonNull = JsonNull.INSTANCE;\n    assertThrows(UnsupportedOperationException.class, jsonNull::getAsShort);\n  }\n\n  @Test\n  void getAsShort_fromJsonObject_throws() {\n    JsonObject jsonObject = new JsonObject();\n    assertThrows(UnsupportedOperationException.class, jsonObject::getAsShort);\n  }\n\n  @Test\n  void getAsShort_fromJsonArray_throws() {\n    JsonArray jsonArray = new JsonArray();\n    // Add one element to avoid IllegalStateException for empty array\n    jsonArray.add(new JsonPrimitive((short) 123));\n    assertThrows(UnsupportedOperationException.class, jsonArray::getAsShort);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888322,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 444,
+    "prompt_tokens": 1113,
+    "total_tokens": 1557,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.95
+  }
+}

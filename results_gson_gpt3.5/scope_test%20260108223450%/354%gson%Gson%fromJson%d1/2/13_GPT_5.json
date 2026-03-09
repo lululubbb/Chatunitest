@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmLtL1UN2F8tXnTbyeqyJzVmbEpz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass Gson_FromJson_JsonElement_TypeToken_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_nullJson_returnsNull() throws Exception {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    String result = gson.fromJson((JsonElement) null, typeToken);\n    assertNull(result);\n  }\n\n  @Test\n  public void fromJson_nonNullJson_invokesFromJsonJsonTreeReaderTypeToken() throws Exception {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    // Spy on gson to verify interaction with fromJson(JsonReader, TypeToken)\n    Gson spyGson = Mockito.spy(gson);\n\n    // Use reflection to get the fromJson(JsonReader, TypeToken) method to avoid ambiguity\n    Method fromJsonReaderMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonReader.class, TypeToken.class);\n    fromJsonReaderMethod.setAccessible(true);\n\n    // We will stub the fromJson(JsonReader, TypeToken) to return a known value\n    String expected = \"expectedResult\";\n    doReturn(expected).when(spyGson).fromJson(any(JsonReader.class), eq(typeToken));\n\n    // Act\n    String actual = spyGson.fromJson(jsonElement, typeToken);\n\n    // Assert\n    assertEquals(expected, actual);\n\n    // Verify fromJson(JsonReader, TypeToken) called with JsonTreeReader wrapping jsonElement\n    verify(spyGson).fromJson(argThat(reader -> {\n      if (!(reader instanceof JsonTreeReader)) return false;\n      try {\n        var jsonField = JsonTreeReader.class.getDeclaredField(\"json\");\n        jsonField.setAccessible(true);\n        Object innerJson = jsonField.get(reader);\n        return innerJson == jsonElement;\n      } catch (Exception e) {\n        return false;\n      }\n    }), eq(typeToken));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886597,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 500,
+    "prompt_tokens": 2264,
+    "total_tokens": 2764,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.2
+  }
+}

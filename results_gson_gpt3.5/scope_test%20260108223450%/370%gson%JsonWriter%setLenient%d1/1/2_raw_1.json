@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void testSetLenientTrue() throws NoSuchFieldException, IllegalAccessException {\n    jsonWriter.setLenient(true);\n\n    Field lenientField = JsonWriter.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    boolean lenientValue = (boolean) lenientField.get(jsonWriter);\n\n    assertTrue(lenientValue);\n  }\n\n  @Test\n  void testSetLenientFalse() throws NoSuchFieldException, IllegalAccessException {\n    // Set initially true to verify change to false\n    Field lenientField = JsonWriter.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    lenientField.set(jsonWriter, true);\n\n    jsonWriter.setLenient(false);\n\n    boolean lenientValue = (boolean) lenientField.get(jsonWriter);\n    assertFalse(lenientValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 723,
+  "completion_tokens": 292,
+  "total_tokens": 1015,
+  "llm_elapsed_time_seconds": 8.2
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlb1TLlNHqyX65zBvuTNUIYi5O6M",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private ArrayList<String> delegate;\n  private NonNullElementWrapperList<String> list;\n\n  @BeforeEach\n  void setUp() {\n    delegate = spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void add_insertsElementAtIndex() {\n    list.add(0, \"test\");\n    assertEquals(1, list.size());\n    assertEquals(\"test\", list.get(0));\n    verify(delegate).add(0, \"test\");\n  }\n\n  @Test\n  void add_nullElement_throwsNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> list.add(0, null));\n    assertNotNull(thrown);\n  }\n\n  @Test\n  void nonNull_privateMethod_returnsElementIfNotNull() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    String element = \"element\";\n    Object result = nonNullMethod.invoke(list, element);\n    assertEquals(element, result);\n  }\n\n  @Test\n  void nonNull_privateMethod_throwsIfNull() throws NoSuchMethodException {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    assertThrows(InvocationTargetException.class, () -> {\n      try {\n        nonNullMethod.invoke(list, new Object[] { null });\n      } catch (InvocationTargetException e) {\n        // The cause should be NullPointerException\n        assertTrue(e.getCause() instanceof NullPointerException);\n        throw e;\n      }\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883691,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 434,
+    "prompt_tokens": 375,
+    "total_tokens": 809,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.04
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlRpLq48uqw27bi0PWfMPIBy63ud",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n  }\n\n  // Since Excluder is final, we cannot extend it.\n  // Instead, we create a wrapper class that delegates to an Excluder instance,\n  // and overrides the methods excludeClassChecks and excludeClassInStrategy by delegation.\n\n  static class TestExcluder implements TypeAdapterFactory {\n    private final Excluder delegate;\n    private final boolean excludeClassChecksValue;\n    private final boolean excludeClassInStrategySerializeValue;\n    private final boolean excludeClassInStrategyDeserializeValue;\n\n    TestExcluder(boolean excludeClassChecksValue,\n                 boolean excludeClassInStrategySerializeValue,\n                 boolean excludeClassInStrategyDeserializeValue) {\n      this.delegate = new Excluder();\n      this.excludeClassChecksValue = excludeClassChecksValue;\n      this.excludeClassInStrategySerializeValue = excludeClassInStrategySerializeValue;\n      this.excludeClassInStrategyDeserializeValue = excludeClassInStrategyDeserializeValue;\n    }\n\n    // We need to replicate the create method logic with our overrides for excludeClassChecks and excludeClassInStrategy\n    @Override\n    @SuppressWarnings(\"unchecked\")\n    public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {\n      Class<?> rawType = type.getRawType();\n\n      // Use overridden excludeClassChecks\n      boolean excludeClass = excludeClassChecksValue;\n\n      // Use overridden excludeClassInStrategy\n      final boolean skipSerialize = excludeClass || excludeClassInStrategySerializeValue;\n      final boolean skipDeserialize = excludeClass || excludeClassInStrategyDeserializeValue;\n\n      if (!skipSerialize && !skipDeserialize) {\n        return null;\n      }\n\n      return new TypeAdapter<T>() {\n        private TypeAdapter<T> delegateAdapter;\n\n        @Override\n        public T read(JsonReader in) throws IOException {\n          if (skipDeserialize) {\n            in.skipValue();\n            return null;\n          }\n          return delegate().read(in);\n        }\n\n        @Override\n        public void write(JsonWriter out, T value) throws IOException {\n          if (skipSerialize) {\n            out.nullValue();\n            return;\n          }\n          delegate().write(out, value);\n        }\n\n        private TypeAdapter<T> delegate() {\n          TypeAdapter<T> d = delegateAdapter;\n          return d != null ? d : (delegateAdapter = gson.getDelegateAdapter(delegate, type));\n        }\n      };\n    }\n  }\n\n  @Test\n  void create_shouldReturnNullIfNotExcluded() {\n    Gson gson = mock(Gson.class);\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = excluder.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_shouldReturnTypeAdapterThatSkipsDeserialize() throws IOException {\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    TestExcluder testExcluder = new TestExcluder(true, false, false);\n\n    TypeAdapter<Object> adapter = testExcluder.create(gson, typeToken);\n\n    assertNotNull(adapter);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    Object result = adapter.read(jsonReader);\n\n    verify(jsonReader).skipValue();\n    assertNull(result);\n  }\n\n  @Test\n  void create_shouldReturnTypeAdapterThatSkipsSerialize() throws IOException {\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    TestExcluder testExcluder = new TestExcluder(false, true, false);\n\n    TypeAdapter<Object> adapter = testExcluder.create(gson, typeToken);\n\n    assertNotNull(adapter);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n    Object value = new Object();\n    adapter.write(jsonWriter, value);\n\n    verify(jsonWriter).nullValue();\n  }\n\n  @Test\n  void create_shouldDelegateReadAndWriteWhenNotSkipped() throws IOException {\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    TestExcluder testExcluder = new TestExcluder(false, false, false);\n\n    TypeAdapter<Object> adapter = testExcluder.create(gson, typeToken);\n\n    assertNull(adapter);\n\n    // Now test with exclusion to get non-null adapter and delegate calls\n    testExcluder = new TestExcluder(true, false, false);\n\n    TypeAdapter<Object> delegateAdapter = mock(TypeAdapter.class);\n    when(gson.getDelegateAdapter(testExcluder.delegate, typeToken)).thenReturn(delegateAdapter);\n\n    adapter = testExcluder.create(gson, typeToken);\n    assertNotNull(adapter);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    Object expectedRead = new Object();\n    when(delegateAdapter.read(jsonReader)).thenReturn(expectedRead);\n    Object actualRead = adapter.read(jsonReader);\n    assertSame(expectedRead, actualRead);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n    Object value = new Object();\n    adapter.write(jsonWriter, value);\n    verify(delegateAdapter).write(jsonWriter, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883121,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1177,
+    "prompt_tokens": 2255,
+    "total_tokens": 3432,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.12
+  }
+}

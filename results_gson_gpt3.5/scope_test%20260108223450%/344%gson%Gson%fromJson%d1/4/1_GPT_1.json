@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlraADZKKVo0dvOxsogt78s1ee1t",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Type;\n\npublic class GsonFromJsonStringTypeTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_withValidJson_callsFromJsonWithTypeTokenAndReturnsResult() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Type type = String.class;\n    TypeToken<String> typeToken = TypeToken.get(type);\n    String expectedResult = \"result\";\n\n    // Spy on gson to mock fromJson(String, TypeToken)\n    Gson spyGson = Mockito.spy(gson);\n\n    // Mock TypeToken.get(Type) static method\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      mockedTypeToken.when(() -> TypeToken.get(type)).thenReturn(typeToken);\n      doReturn(expectedResult).when(spyGson).fromJson(json, typeToken);\n\n      // Invoke the focal method\n      String actualResult = spyGson.fromJson(json, type);\n\n      assertEquals(expectedResult, actualResult);\n      verify(spyGson).fromJson(json, typeToken);\n    }\n  }\n\n  @Test\n  void fromJson_withNullJson_returnsNull() {\n    String json = null;\n    Type type = String.class;\n\n    String result = gson.fromJson(json, type);\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_withNullType_throwsNullPointerException() {\n    String json = \"{}\";\n    Type type = null;\n\n    assertThrows(NullPointerException.class, () -> gson.fromJson(json, type));\n  }\n\n  @Test\n  void fromJson_withInvalidJson_throwsJsonSyntaxException() {\n    String json = \"invalid json\";\n    Type type = Object.class;\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(json, type));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884718,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 459,
+    "prompt_tokens": 1601,
+    "total_tokens": 2060,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.98
+  }
+}

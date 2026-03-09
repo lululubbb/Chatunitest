@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9hAYsx3eIJVnJCQ8DufbZzwhhGM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithHeader_NewHeader() throws Exception {\n        // Arrange\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        // Act\n        CSVFormat result = original.withHeader(\"col1\", \"col2\", \"col3\");\n\n        // Assert\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertArrayEquals(new String[]{\"col1\", \"col2\", \"col3\"}, result.getHeader());\n\n        // Original header remains null\n        assertNull(original.getHeader());\n\n        // All other fields equal\n        assertEquals(original.getDelimiter(), result.getDelimiter());\n        assertEquals(original.getQuoteChar(), result.getQuoteChar());\n        assertEquals(original.getQuotePolicy(), result.getQuotePolicy());\n        assertEquals(original.getCommentStart(), result.getCommentStart());\n        assertEquals(original.getEscape(), result.getEscape());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n    }\n\n    @Test\n    public void testWithHeader_EmptyHeader() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        CSVFormat result = original.withHeader();\n\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertArrayEquals(new String[0], result.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_NullHeader() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        CSVFormat result = original.withHeader((String[]) null);\n\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_PrivateConstructorViaReflection() throws Exception {\n        // Using reflection to invoke private constructor and then withHeader method to verify consistency\n\n        // Access private constructor\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Class<?> quotePolicyClass = clazz.getDeclaredClasses()[0]; // Assuming the first declared class is Quote\n\n        Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(char.class, Character.class,\n                quotePolicyClass, Character.class, Character.class, boolean.class, boolean.class,\n                String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] initialHeader = new String[]{\"a\", \"b\"};\n        CSVFormat instance = constructor.newInstance(',', '\"', null, null, null,\n                false, true, \"\\r\\n\", null, initialHeader, false);\n\n        // Call withHeader on this instance\n        CSVFormat newFormat = instance.withHeader(\"x\", \"y\");\n\n        assertNotNull(newFormat);\n        assertArrayEquals(new String[]{\"x\", \"y\"}, newFormat.getHeader());\n        assertArrayEquals(initialHeader, instance.getHeader());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976328,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 657,
+    "prompt_tokens": 1754,
+    "total_tokens": 2411,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.13
+  }
+}

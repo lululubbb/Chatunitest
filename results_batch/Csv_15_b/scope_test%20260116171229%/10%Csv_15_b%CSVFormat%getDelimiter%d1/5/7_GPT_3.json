@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaO59FiZJmzWYa0GgxF1JkMXZISu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormatDefault;\n    private CSVFormat csvFormatCustom;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        csvFormatDefault = CSVFormat.DEFAULT;\n\n        // Use reflection to instantiate CSVFormat since constructor is private\n        java.lang.reflect.Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        csvFormatCustom = constructor.newInstance(',', null, null, null, null, false, true, \"\\r\\n\",\n                null, null, null, false, false, false, false, false, false);\n    }\n\n    @Test\n    void testGetDelimiter_Default() {\n        assertEquals(',', csvFormatDefault.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_CustomDelimiter() {\n        CSVFormat custom = csvFormatDefault.withDelimiter('|');\n        assertEquals('|', custom.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_OtherPredefinedFormats() {\n        assertEquals(',', CSVFormat.EXCEL.getDelimiter());\n        assertEquals('|', CSVFormat.INFORMIX_UNLOAD.getDelimiter());\n        assertEquals(',', CSVFormat.INFORMIX_UNLOAD_CSV.getDelimiter());\n        assertEquals('\\t', CSVFormat.MYSQL.getDelimiter());\n        assertEquals(',', CSVFormat.POSTGRESQL_CSV.getDelimiter());\n        assertEquals('\\t', CSVFormat.POSTGRESQL_TEXT.getDelimiter());\n        assertEquals(',', CSVFormat.RFC4180.getDelimiter());\n        assertEquals('\\t', CSVFormat.TDF.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_NewFormatStaticFactory() {\n        CSVFormat format = CSVFormat.newFormat(';');\n        assertEquals(';', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_WithReflection() throws Exception {\n        // Using reflection to access private field 'delimiter'\n        java.lang.reflect.Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        delimiterField.setAccessible(true);\n        delimiterField.set(csvFormatCustom, ':');\n        assertEquals(':', csvFormatCustom.getDelimiter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555589,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 519,
+    "prompt_tokens": 2364,
+    "total_tokens": 2883,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.31
+  }
+}

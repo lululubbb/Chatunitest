@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutRqFd4BPctn7tQaWzR6639FBrqp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.invocation.InvocationOnMock;\nimport org.mockito.stubbing.Answer;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Proxy;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormatWithNormalValues() {\n        String formatted = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        assertNotNull(formatted);\n        assertTrue(formatted.contains(\"value1\"));\n        assertTrue(formatted.contains(\"value2\"));\n        assertTrue(formatted.contains(\"value3\"));\n    }\n\n    @Test\n    public void testFormatWithEmptyValues() {\n        String formatted = csvFormat.format();\n        assertNotNull(formatted);\n        assertEquals(\"\", formatted);\n    }\n\n    @Test\n    public void testFormatWithNullValues() {\n        String formatted = csvFormat.format((Object) null);\n        assertNotNull(formatted);\n        assertEquals(\"\", formatted);\n    }\n\n    @Test\n    public void testFormatThrowsIllegalStateExceptionOnIOException() throws Exception {\n        // Create a proxy CSVPrinter that throws IOException on printRecord\n        Class<?> csvPrinterClass = CSVPrinter.class;\n\n        Constructor<?> constructor = csvPrinterClass.getDeclaredConstructor(Appendable.class, CSVFormat.class);\n        constructor.setAccessible(true);\n\n        CSVPrinter proxyPrinter = (CSVPrinter) Proxy.newProxyInstance(\n                csvPrinterClass.getClassLoader(),\n                new Class<?>[]{csvPrinterClass},\n                new InvocationHandler() {\n                    @Override\n                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n                        if (\"printRecord\".equals(method.getName())) {\n                            throw new IOException(\"IO error\");\n                        }\n                        // For other methods, do nothing or default\n                        if (method.getReturnType().isPrimitive()) {\n                            if (method.getReturnType() == boolean.class) {\n                                return false;\n                            } else if (method.getReturnType() == int.class) {\n                                return 0;\n                            } else if (method.getReturnType() == long.class) {\n                                return 0L;\n                            } else if (method.getReturnType() == float.class) {\n                                return 0f;\n                            } else if (method.getReturnType() == double.class) {\n                                return 0d;\n                            } else if (method.getReturnType() == byte.class) {\n                                return (byte) 0;\n                            } else if (method.getReturnType() == short.class) {\n                                return (short) 0;\n                            } else if (method.getReturnType() == char.class) {\n                                return (char) 0;\n                            }\n                        }\n                        return null;\n                    }\n                });\n\n        // Use reflection to replace the CSVFormat.format method's internal CSVPrinter creation with our proxy\n        // Since we cannot change CSVFormat, we use a subclass to override format\n\n        CSVFormat csvFormatWithMockPrinter = new CSVFormat(DEFAULT_DELIMITER,\n                DEFAULT_QUOTE_CHAR,\n                null,\n                null,\n                null,\n                false,\n                true,\n                \"\\r\\n\",\n                null,\n                null,\n                false,\n                false) {\n            @Override\n            public String format(final Object... values) {\n                final StringWriter out = new StringWriter();\n                try {\n                    // Use the proxyPrinter instead of new CSVPrinter()\n                    proxyPrinter.printRecord(values);\n                    return out.toString().trim();\n                } catch (final IOException e) {\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatWithMockPrinter.format(\"a\", \"b\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n\n    // constants from CSVFormat.DEFAULT to construct the subclass\n    private static final char DEFAULT_DELIMITER = ',';\n    private static final Character DEFAULT_QUOTE_CHAR = '\"';\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675546,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 916,
+    "prompt_tokens": 1596,
+    "total_tokens": 2512,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.15
+  }
+}

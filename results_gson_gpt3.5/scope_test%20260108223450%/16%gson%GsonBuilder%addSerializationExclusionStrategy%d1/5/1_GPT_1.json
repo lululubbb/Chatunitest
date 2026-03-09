@@ -1,0 +1,46 @@
+{
+  "id": "chatcmpl-CvnBjOveholxygbIA3osL13LlQWeR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private ExclusionStrategy mockStrategy;\n  private Excluder originalExcluder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n    mockStrategy = mock(ExclusionStrategy.class);\n  }\n\n  @Test\n  public void addSerializationExclusionStrategy_shouldThrowNullPointerException_whenStrategyIsNull() {\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.addSerializationExclusionStrategy(null);\n    });\n    assertNotNull(exception);\n  }\n\n  @Test\n  public void addSerializationExclusionStrategy_shouldAddStrategyAndReturnThis() throws Exception {\n    // Access the original excluder field value for later comparison\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    originalExcluder = (Excluder) excluderField.get(gsonBuilder);\n\n    // Spy on the original excluder to verify withExclusionStrategy call\n    Excluder spyExcluder = spy(originalExcluder);\n    excluderField.set(gsonBuilder, spyExcluder);\n\n    // Stub withExclusionStrategy to return a new Excluder instance\n    Excluder newExcluder = new Excluder();\n    doReturn(newExcluder).when(spyExcluder).withExclusionStrategy(eq(mockStrategy), eq(true), eq(false));\n\n    // Call the focal method\n    GsonBuilder returned = gsonBuilder.addSerializationExclusionStrategy(mockStrategy);\n\n    // Verify the returned object is the same instance\n    assertSame(gsonBuilder, returned);\n\n    // Verify withExclusionStrategy was called with correct arguments\n    verify(spyExcluder).withExclusionStrategy(mockStrategy, true, false);\n\n    // Verify the excluder field was updated to newExcluder\n    Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n    assertSame(newExcluder, updatedExcluder);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      },
+      "content_filter_result": {
+        "error": {
+          "code": "content_filter_error",
+          "message": "The contents are not filtered"
+        }
+      }
+    }
+  ],
+  "created": 1767889811,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 507,
+    "prompt_tokens": 1137,
+    "total_tokens": 1644,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.42
+  }
+}

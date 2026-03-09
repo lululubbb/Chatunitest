@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void setNumberToNumberStrategy_whenNull_throwsNullPointerException() {\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.setNumberToNumberStrategy(null);\n    });\n    assertNull(exception.getMessage());\n  }\n\n  @Test\n  void setNumberToNumberStrategy_setsFieldAndReturnsThis() throws Exception {\n    // Use the actual ToNumberStrategy interface from com.google.gson package\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n\n    GsonBuilder returned = gsonBuilder.setNumberToNumberStrategy(mockStrategy);\n    assertSame(gsonBuilder, returned);\n\n    // Using reflection to verify private field numberToNumberStrategy\n    Field field = GsonBuilder.class.getDeclaredField(\"numberToNumberStrategy\");\n    field.setAccessible(true);\n    Object fieldValue = field.get(gsonBuilder);\n    assertSame(mockStrategy, fieldValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1712,
+  "completion_tokens": 266,
+  "total_tokens": 1978,
+  "llm_elapsed_time_seconds": 5.97
+}

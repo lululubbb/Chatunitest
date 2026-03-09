@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmPevKoQJuVaVEEyK6NpB4NsY7e4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.Test;\n\nclass TreeTypeAdapterTest {\n\n  @Test\n  void newFactoryWithMatchRawType_matchRawTypeTrue_createsSingleTypeFactory() {\n    TypeToken<String> exactType = TypeToken.get(String.class);\n    // Use a mock TypeAdapter instead of Object to satisfy Preconditions\n    TypeAdapter<?> typeAdapter = mock(TypeAdapter.class);\n\n    // Pass the actual TypeAdapter instance, not just Object\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactoryWithMatchRawType(exactType, typeAdapter);\n\n    assertNotNull(factory);\n\n    // Use reflection to verify SingleTypeFactory internal fields\n    try {\n      var clazz = factory.getClass();\n      var typeAdapterField = clazz.getDeclaredField(\"typeAdapter\");\n      typeAdapterField.setAccessible(true);\n      Object actualTypeAdapter = typeAdapterField.get(factory);\n      assertSame(typeAdapter, actualTypeAdapter);\n\n      var exactTypeField = clazz.getDeclaredField(\"exactType\");\n      exactTypeField.setAccessible(true);\n      Object actualExactType = exactTypeField.get(factory);\n      assertEquals(exactType, actualExactType);\n\n      var matchRawTypeField = clazz.getDeclaredField(\"matchRawType\");\n      matchRawTypeField.setAccessible(true);\n      boolean actualMatchRawType = matchRawTypeField.getBoolean(factory);\n      assertTrue(actualMatchRawType);\n\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  void newFactoryWithMatchRawType_matchRawTypeFalse_createsSingleTypeFactory() {\n    // Create a TypeToken with a parameterized type so getType() != getRawType()\n    TypeToken<java.util.List<String>> exactType = new TypeToken<java.util.List<String>>() {};\n    // Use a mock TypeAdapter instead of Object to satisfy Preconditions\n    TypeAdapter<?> typeAdapter = mock(TypeAdapter.class);\n\n    // Pass the actual TypeAdapter instance, not just Object\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactoryWithMatchRawType(exactType, typeAdapter);\n\n    assertNotNull(factory);\n\n    // Verify SingleTypeFactory internal fields via reflection\n    try {\n      var clazz = factory.getClass();\n      var typeAdapterField = clazz.getDeclaredField(\"typeAdapter\");\n      typeAdapterField.setAccessible(true);\n      Object actualTypeAdapter = typeAdapterField.get(factory);\n      assertSame(typeAdapter, actualTypeAdapter);\n\n      var exactTypeField = clazz.getDeclaredField(\"exactType\");\n      exactTypeField.setAccessible(true);\n      Object actualExactType = exactTypeField.get(factory);\n      assertEquals(exactType, actualExactType);\n\n      var matchRawTypeField = clazz.getDeclaredField(\"matchRawType\");\n      matchRawTypeField.setAccessible(true);\n      boolean actualMatchRawType = matchRawTypeField.getBoolean(factory);\n      assertFalse(actualMatchRawType);\n\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886830,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 678,
+    "prompt_tokens": 1970,
+    "total_tokens": 2648,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.39
+  }
+}

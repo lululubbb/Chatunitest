@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVFormatIsQuotingTest {\n\n    @Test\n    void testIsQuotingWhenQuoteCharIsNotNull() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // DEFAULT has quoteChar = DOUBLE_QUOTE_CHAR (not null)\n        assertTrue(format.isQuoting());\n    }\n\n    @Test\n    void testIsQuotingWhenQuoteCharIsNull() throws Exception {\n        // Create a CSVFormat with quoteChar set to null using reflection to bypass immutability\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        Field quoteCharField = CSVFormat.class.getDeclaredField(\"quoteChar\");\n        quoteCharField.setAccessible(true);\n\n        // Remove final modifier from the field (works in Java 8 and earlier)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(quoteCharField, quoteCharField.getModifiers() & ~Modifier.FINAL);\n\n        // Since quoteChar is Character, set to null is allowed\n        quoteCharField.set(format, null);\n\n        assertFalse(format.isQuoting());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_8_b/scope_test%20260110002242%/22%Csv_8_b%CSVFormat%isQuoting%d1/3/runtemp/Csv_8_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1237,
+  "completion_tokens": 265,
+  "total_tokens": 1502,
+  "llm_elapsed_time_seconds": 5.59
+}

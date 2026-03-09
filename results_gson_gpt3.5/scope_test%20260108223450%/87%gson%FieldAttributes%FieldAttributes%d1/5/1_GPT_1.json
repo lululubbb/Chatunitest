@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm3y3veEsWjBiVwph0sMbdOySxCl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Type;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n  private Field field;\n  private FieldAttributes fieldAttributes;\n\n  static class Dummy {\n    public int publicField;\n    @Deprecated\n    private String privateField;\n  }\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException {\n    field = Dummy.class.getDeclaredField(\"publicField\");\n    fieldAttributes = new FieldAttributes(field);\n  }\n\n  @Test\n  void constructor_nullField_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> new FieldAttributes(null));\n  }\n\n  @Test\n  void getDeclaringClass_returnsFieldDeclaringClass() {\n    assertEquals(Dummy.class, fieldAttributes.getDeclaringClass());\n  }\n\n  @Test\n  void getName_returnsFieldName() {\n    assertEquals(\"publicField\", fieldAttributes.getName());\n  }\n\n  @Test\n  void getDeclaredType_returnsFieldGenericType() {\n    assertEquals(int.class, fieldAttributes.getDeclaredType());\n  }\n\n  @Test\n  void getDeclaredClass_returnsFieldType() {\n    assertEquals(int.class, fieldAttributes.getDeclaredClass());\n  }\n\n  @Test\n  void getAnnotation_existingAnnotation_returnsAnnotation() throws NoSuchFieldException {\n    Field privateField = Dummy.class.getDeclaredField(\"privateField\");\n    FieldAttributes fa = new FieldAttributes(privateField);\n    Deprecated deprecated = fa.getAnnotation(Deprecated.class);\n    assertNotNull(deprecated);\n  }\n\n  @Test\n  void getAnnotation_nonExistingAnnotation_returnsNull() {\n    Deprecated deprecated = fieldAttributes.getAnnotation(Deprecated.class);\n    assertNull(deprecated);\n  }\n\n  @Test\n  void getAnnotations_returnsAllAnnotations() throws NoSuchFieldException {\n    Field privateField = Dummy.class.getDeclaredField(\"privateField\");\n    FieldAttributes fa = new FieldAttributes(privateField);\n    Collection<Annotation> annotations = fa.getAnnotations();\n    assertNotNull(annotations);\n    assertTrue(annotations.stream().anyMatch(a -> a.annotationType() == Deprecated.class));\n  }\n\n  @Test\n  void hasModifier_checksModifiers() {\n    assertTrue(fieldAttributes.hasModifier(Modifier.PUBLIC));\n    assertFalse(fieldAttributes.hasModifier(Modifier.PRIVATE));\n  }\n\n  @Test\n  void toString_containsFieldName() {\n    String s = fieldAttributes.toString();\n    assertTrue(s.contains(\"publicField\"));\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885486,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 551,
+    "prompt_tokens": 277,
+    "total_tokens": 828,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.4
+  }
+}

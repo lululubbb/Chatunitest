@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw91EGyFaW8yJJzLhQGmrNgIwKMNY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintNullValue_nullStringNull() throws IOException {\n        when(format.getNullString()).thenReturn(null);\n        // Call print with null value\n        printer.print(null);\n\n        // Verify out.append was called at least once with any CharSequence\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintNullValue_nullStringNonNull() throws IOException {\n        final String nullStr = \"NULLSTR\";\n        when(format.getNullString()).thenReturn(nullStr);\n        printer.print(null);\n\n        // verify out.append called with nullStr\n        verify(out, atLeastOnce()).append(contains(nullStr));\n    }\n\n    @Test\n    void testPrintNonNullValue() throws IOException {\n        String value = \"testValue\";\n        printer.print(value);\n\n        // verify out.append called with string containing value\n        verify(out, atLeastOnce()).append(contains(value));\n    }\n\n    @Test\n    void testPrintPrivateMethodInvocation() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        String obj = \"objVal\";\n        String val = \"valVal\";\n\n        // invoke private print method\n        printMethod.invoke(printer, obj, val, 0, val.length());\n\n        // verify out.append called at least once\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973728,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 446,
+    "prompt_tokens": 1110,
+    "total_tokens": 1556,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.35
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class GsonBuilderTest {\n\n  @Test\n  public void testSetLenient() throws Exception {\n    GsonBuilder builder = new GsonBuilder();\n\n    // Initially lenient should be default (likely false)\n    Field lenientField = GsonBuilder.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    boolean initialLenient = (boolean) lenientField.get(builder);\n\n    // Call setLenient and verify it returns the same instance\n    GsonBuilder returned = builder.setLenient();\n    assertSame(builder, returned, \"setLenient should return the same GsonBuilder instance\");\n\n    // Verify lenient field is set to true\n    boolean lenientAfter = (boolean) lenientField.get(builder);\n    assertTrue(lenientAfter, \"lenient field should be true after setLenient call\");\n\n    // If initial was already true, still should remain true\n    if (initialLenient) {\n      assertTrue(lenientAfter);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1063,
+  "completion_tokens": 234,
+  "total_tokens": 1297,
+  "llm_elapsed_time_seconds": 7.44
+}

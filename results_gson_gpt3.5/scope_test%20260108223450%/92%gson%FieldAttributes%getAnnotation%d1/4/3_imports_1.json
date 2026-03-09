@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass FieldAttributesTest {\n\n  private FieldAttributes fieldAttributes;\n  private Field mockField;\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException, SecurityException {\n    // Create a real Field instance from a test class for realistic behavior\n    mockField = TestClass.class.getDeclaredField(\"annotatedField\");\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void testGetAnnotation_existingAnnotation() {\n    Deprecated annotation = fieldAttributes.getAnnotation(Deprecated.class);\n    assertNotNull(annotation);\n    assertEquals(Deprecated.class, annotation.annotationType());\n  }\n\n  @Test\n  void testGetAnnotation_nonExistingAnnotation() {\n    Override annotation = fieldAttributes.getAnnotation(Override.class);\n    assertNull(annotation);\n  }\n\n  @Test\n  void testGetAnnotation_nullAnnotationClass_throwsException() {\n    assertThrows(NullPointerException.class, () -> fieldAttributes.getAnnotation(null));\n  }\n\n  // Helper test class with annotated field\n  private static class TestClass {\n    @Deprecated\n    private String annotatedField;\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 280,
+  "completion_tokens": 284,
+  "total_tokens": 564,
+  "llm_elapsed_time_seconds": 12.13,
+  "repair_elapsed_time_seconds": 17.67,
+  "round_total_time_seconds": 17.67
+}

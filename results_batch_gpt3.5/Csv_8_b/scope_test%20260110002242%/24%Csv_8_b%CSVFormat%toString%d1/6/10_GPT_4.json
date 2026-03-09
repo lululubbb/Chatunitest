@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9ndI0wMOxmpxQcz6JmXCUSJZlCp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    private CSVFormat createCSVFormat(char delimiter, Character quoteChar, Quote quotePolicy,\n                                      Character commentStart, Character escape,\n                                      boolean ignoreSurroundingSpaces, boolean ignoreEmptyLines,\n                                      String recordSeparator, String nullString, String[] header,\n                                      boolean skipHeaderRecord) throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(delimiter, quoteChar, quotePolicy, commentStart, escape,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header, skipHeaderRecord);\n    }\n\n    @Test\n    void testToString_allFieldsSet() throws Exception {\n        String[] header = {\"A\", \"B\"};\n        CSVFormat format = createCSVFormat(';', '\"', Quote.MINIMAL, '#', '\\\\',\n                true, true, \"\\n\", \"NULL\", header, true);\n\n        String toStringResult = format.toString();\n\n        String expectedStart = \"Delimiter=<;>\";\n        assertTrue(toStringResult.startsWith(expectedStart));\n        assertTrue(toStringResult.contains(\"Escape=<\\\\>\"));\n        assertTrue(toStringResult.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(toStringResult.contains(\"CommentStart=<#>\"));\n        assertTrue(toStringResult.contains(\"NullString=<NULL>\"));\n        assertTrue(toStringResult.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(toStringResult.contains(\"EmptyLines:ignored\"));\n        assertTrue(toStringResult.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(toStringResult.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(toStringResult.contains(\"Header:\" + Arrays.toString(header)));\n    }\n\n    @Test\n    void testToString_noOptionalFields() throws Exception {\n        CSVFormat format = createCSVFormat(',', null, null, null, null,\n                false, false, null, null, null, false);\n\n        String toStringResult = format.toString();\n\n        assertEquals(\"Delimiter=<,> SkipHeaderRecord:false\", toStringResult);\n    }\n\n    @Test\n    void testToString_someOptionalFields() throws Exception {\n        CSVFormat format = createCSVFormat(',', '\"', Quote.MINIMAL, null, null,\n                false, true, null, null, null, false);\n\n        String toStringResult = format.toString();\n\n        assertTrue(toStringResult.contains(\"Delimiter=<,>\"));\n        assertTrue(toStringResult.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(toStringResult.contains(\"EmptyLines:ignored\"));\n        assertTrue(toStringResult.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    void testPrivateIsLineBreak_char() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n\n        assertTrue((Boolean) method.invoke(null, '\\n'));\n        assertTrue((Boolean) method.invoke(null, '\\r'));\n        assertFalse((Boolean) method.invoke(null, 'a'));\n    }\n\n    @Test\n    void testPrivateIsLineBreak_Character() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        method.setAccessible(true);\n\n        assertTrue((Boolean) method.invoke(null, (Character) '\\n'));\n        assertTrue((Boolean) method.invoke(null, (Character) '\\r'));\n        assertFalse((Boolean) method.invoke(null, (Character) 'a'));\n        assertFalse((Boolean) method.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976729,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 807,
+    "prompt_tokens": 2046,
+    "total_tokens": 2853,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.01
+  }
+}

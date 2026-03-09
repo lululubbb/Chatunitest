@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmSB0ktCTrrjRtRbi2jKn2OfD4af",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n\n    // Use reflection to set the private 'json' field\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    // Provide valid JSON matching the expected fields\n    jsonField.set(benchmark, \"{\\\"longValue\\\":1234567890123,\\\"intValue\\\":42,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"test\\\"}\");\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesStreaming_zeroReps() throws Exception {\n    // reps = 0, no iteration, no exception\n    benchmark.timeBagOfPrimitivesStreaming(0);\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesStreaming_oneRep() throws Exception {\n    // reps = 1, should parse JSON once without exception\n    benchmark.timeBagOfPrimitivesStreaming(1);\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesStreaming_multipleReps() throws Exception {\n    // reps = 5, multiple iterations\n    benchmark.timeBagOfPrimitivesStreaming(5);\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesStreaming_unexpectedNameThrows() throws Exception {\n    // Set json with an unexpected field to trigger IOException\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"longValue\\\":1,\\\"intValue\\\":2,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"str\\\",\\\"unexpected\\\":\\\"value\\\"}\");\n\n    IOException thrown = assertThrows(IOException.class, () -> benchmark.timeBagOfPrimitivesStreaming(1));\n    assertTrue(thrown.getMessage().contains(\"Unexpected name\"));\n  }\n\n  @Test\n  void testPrivateGsonFieldExists() throws Exception {\n    // Just verify private Gson field exists and is accessible\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    assertNotNull(gsonField);\n  }\n\n  @Test\n  void testInvokeTimeBagOfPrimitivesStreamingUsingReflection() throws Exception {\n    Method method = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"timeBagOfPrimitivesStreaming\", int.class);\n    method.setAccessible(true);\n\n    // reps = 2\n    method.invoke(benchmark, 2);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886987,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 599,
+    "prompt_tokens": 489,
+    "total_tokens": 1088,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.34
+  }
+}

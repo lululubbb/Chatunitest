@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmDkUYlEpaecZESc1LwdhSqTINc3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n  private JsonReader jsonReader;\n  private Method nextQuotedValueMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    jsonReader = new JsonReader(mock(java.io.Reader.class));\n    nextQuotedValueMethod = JsonReader.class.getDeclaredMethod(\"nextQuotedValue\", char.class);\n    nextQuotedValueMethod.setAccessible(true);\n  }\n\n  @Test\n  public void nextQuotedValue_returnsStringWithoutEscape() throws Throwable {\n    // Setup buffer with quoted string: \"hello\"\n    setField(\"buffer\", new char[] {'h', 'e', 'l', 'l', 'o', '\"'});\n    setField(\"pos\", 0);\n    setField(\"limit\", 6);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    String result = invokeNextQuotedValue('\"');\n    assertEquals(\"hello\", result);\n    assertEquals(6, getField(\"pos\"));\n  }\n\n  @Test\n  public void nextQuotedValue_returnsStringWithEscapedChar() throws Throwable {\n    // Setup buffer with quoted string: \"hel\\nlo\"\n    // buffer: h e l \\ n l o \"\n    // indexes:0 1 2 3 4 5 6 7\n    setField(\"buffer\", new char[] {'h', 'e', 'l', '\\\\', 'n', 'l', 'o', '\"'});\n    setField(\"pos\", 0);\n    setField(\"limit\", 8);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    // We must mock readEscapeCharacter to return '\\n'\n    JsonReader spyReader = spy(jsonReader);\n    doReturn('\\n').when(spyReader).readEscapeCharacter();\n\n    String result = (String) nextQuotedValueMethod.invoke(spyReader, '\"');\n    assertEquals(\"hel\\nlo\", result);\n    assertEquals(8, getField(spyReader, \"pos\"));\n  }\n\n  @Test\n  public void nextQuotedValue_updatesLineNumberOnNewline() throws Throwable {\n    // Setup buffer with quoted string containing newline: \"he\\nllo\"\n    setField(\"buffer\", new char[] {'h', 'e', '\\n', 'l', 'l', 'o', '\"'});\n    setField(\"pos\", 0);\n    setField(\"limit\", 7);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    String result = invokeNextQuotedValue('\"');\n    assertEquals(\"he\\nllo\", result);\n    assertEquals(7, getField(\"pos\"));\n    assertEquals(1, getField(\"lineNumber\"));\n    assertEquals(3, getField(\"lineStart\"));\n  }\n\n  @Test\n  public void nextQuotedValue_throwsOnUnterminatedString() throws Throwable {\n    // Setup buffer without closing quote\n    setField(\"buffer\", new char[] {'h', 'e', 'l', 'l', 'o'});\n    setField(\"pos\", 0);\n    setField(\"limit\", 5);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    // Mock fillBuffer to return false to simulate EOF\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(false).when(spyReader).fillBuffer(1);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      nextQuotedValueMethod.invoke(spyReader, '\"');\n    });\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertTrue(thrown.getCause().getMessage().contains(\"Unterminated string\"));\n  }\n\n  @Test\n  public void nextQuotedValue_appendsMultipleSegments() throws Throwable {\n    // Setup buffer with partial string and fillBuffer to provide more chars\n    // First buffer: \"hel\\\n    // Second buffer after fillBuffer: lo\"\n    char[] firstBuffer = new char[] {'h', 'e', 'l', '\\\\'};\n    char[] secondBuffer = new char[] {'n', 'l', 'o', '\"'};\n    setField(\"buffer\", firstBuffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 4);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    JsonReader spyReader = spy(jsonReader);\n    // readEscapeCharacter returns '\\n' when called\n    doReturn('\\n').when(spyReader).readEscapeCharacter();\n\n    // fillBuffer will update buffer and limit and return true once, then false\n    doAnswer(invocation -> {\n      setField(spyReader, \"buffer\", secondBuffer);\n      setField(spyReader, \"pos\", 0);\n      setField(spyReader, \"limit\", 4);\n      return true;\n    }).doReturn(false).when(spyReader).fillBuffer(1);\n\n    String result = (String) nextQuotedValueMethod.invoke(spyReader, '\"');\n    assertEquals(\"hel\\nlo\", result);\n  }\n\n  // Helper methods for reflection field access\n  private void setField(String fieldName, Object value) throws Exception {\n    setField(jsonReader, fieldName, value);\n  }\n\n  private void setField(Object obj, String fieldName, Object value) throws Exception {\n    var field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(obj, value);\n  }\n\n  private <T> T getField(String fieldName) throws Exception {\n    return getField(jsonReader, fieldName);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object obj, String fieldName) throws Exception {\n    var field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(obj);\n  }\n\n  private String invokeNextQuotedValue(char quote) throws Throwable {\n    try {\n      return (String) nextQuotedValueMethod.invoke(jsonReader, quote);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886092,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1334,
+    "prompt_tokens": 1351,
+    "total_tokens": 2685,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 33.68
+  }
+}

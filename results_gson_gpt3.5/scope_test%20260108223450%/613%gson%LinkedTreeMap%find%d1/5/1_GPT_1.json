@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlO8GbMswcUdISTBCNF0Qryh63jw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Comparator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void find_existingKey_returnsNode() throws Exception {\n    // Put an entry to create root node\n    map.put(\"key1\", \"value1\");\n\n    // Use reflection to invoke find with create = false\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    Object node = findMethod.invoke(map, \"key1\", false);\n    assertNotNull(node);\n\n    // Check that the node's key is \"key1\"\n    Field keyField = node.getClass().getDeclaredField(\"key\");\n    keyField.setAccessible(true);\n    Object keyValue = keyField.get(node);\n    assertEquals(\"key1\", keyValue);\n  }\n\n  @Test\n  void find_nonExistingKey_createFalse_returnsNull() throws Exception {\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    Object node = findMethod.invoke(map, \"nonexistent\", false);\n    assertNull(node);\n  }\n\n  @Test\n  void find_nonExistingKey_createTrue_createsNode() throws Exception {\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    Object node = findMethod.invoke(map, \"newKey\", true);\n    assertNotNull(node);\n\n    // Confirm size incremented\n    assertEquals(1, map.size());\n\n    // Confirm root key is newKey\n    Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n    rootField.setAccessible(true);\n    Object rootNode = rootField.get(map);\n    Field keyField = rootNode.getClass().getDeclaredField(\"key\");\n    keyField.setAccessible(true);\n    Object rootKey = keyField.get(rootNode);\n    assertEquals(\"newKey\", rootKey);\n  }\n\n  @Test\n  void find_createTrue_nonComparableKeyWithoutNaturalOrder_throwsClassCastException() throws Exception {\n    // Create LinkedTreeMap with NATURAL_ORDER comparator and allowNullValues false\n    LinkedTreeMap<Object, Object> customMap = new LinkedTreeMap<>(null, false);\n\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    Object nonComparableKey = new Object();\n\n    ClassCastException thrown = assertThrows(ClassCastException.class, () -> {\n      findMethod.invoke(customMap, nonComparableKey, true);\n    });\n\n    // InvocationTargetException wraps the actual exception, unwrap it\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof ClassCastException);\n    assertTrue(cause.getMessage().contains(\"is not Comparable\"));\n  }\n\n  @Test\n  void find_createTrue_insertsLeftAndRightChildAndRebalances() throws Exception {\n    // Insert root key\n    map.put(\"m\", \"root\");\n\n    // Insert smaller key, should go to left\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n    Object leftNode = findMethod.invoke(map, \"c\", true);\n    assertNotNull(leftNode);\n\n    // Insert larger key, should go to right\n    Object rightNode = findMethod.invoke(map, \"z\", true);\n    assertNotNull(rightNode);\n\n    // Verify root's left and right children keys\n    Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n    rootField.setAccessible(true);\n    Object rootNode = rootField.get(map);\n\n    Field leftField = rootNode.getClass().getDeclaredField(\"left\");\n    Field rightField = rootNode.getClass().getDeclaredField(\"right\");\n    leftField.setAccessible(true);\n    rightField.setAccessible(true);\n\n    Object leftChild = leftField.get(rootNode);\n    Object rightChild = rightField.get(rootNode);\n\n    Field keyField = rootNode.getClass().getDeclaredField(\"key\");\n    keyField.setAccessible(true);\n\n    Object leftKey = keyField.get(leftChild);\n    Object rightKey = keyField.get(rightChild);\n\n    assertEquals(\"c\", leftKey);\n    assertEquals(\"z\", rightKey);\n\n    // Size should be 3\n    assertEquals(3, map.size());\n  }\n\n  @Test\n  void find_withCustomComparator_usesComparatorCompare() throws Exception {\n    Comparator<String> comp = mock(Comparator.class);\n    when(comp.compare(any(), any())).thenAnswer(invocation -> {\n      String a = invocation.getArgument(0);\n      String b = invocation.getArgument(1);\n      return a.compareTo(b);\n    });\n\n    LinkedTreeMap<String, String> customMap = new LinkedTreeMap<>(comp, false);\n\n    // Insert key \"b\" with put to create root\n    customMap.put(\"b\", \"val\");\n\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    // Invoke find for existing key\n    Object node = findMethod.invoke(customMap, \"b\", false);\n    assertNotNull(node);\n\n    // Verify comparator.compare called at least once\n    verify(comp, atLeastOnce()).compare(any(), any());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882892,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1192,
+    "prompt_tokens": 1133,
+    "total_tokens": 2325,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.1
+  }
+}

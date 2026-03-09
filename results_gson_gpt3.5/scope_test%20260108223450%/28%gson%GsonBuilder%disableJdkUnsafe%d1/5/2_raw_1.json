@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass GsonBuilderTest {\n\n  @Test\n  void testDisableJdkUnsafe() throws Exception {\n    GsonBuilder gsonBuilder = new GsonBuilder();\n\n    // Use reflection to check initial value of useJdkUnsafe\n    Field useJdkUnsafeField = GsonBuilder.class.getDeclaredField(\"useJdkUnsafe\");\n    useJdkUnsafeField.setAccessible(true);\n    boolean initialValue = useJdkUnsafeField.getBoolean(gsonBuilder);\n\n    // Call disableJdkUnsafe and assert returned instance is the same\n    GsonBuilder returned = gsonBuilder.disableJdkUnsafe();\n    assertSame(gsonBuilder, returned);\n\n    // Assert useJdkUnsafe is now false\n    boolean updatedValue = useJdkUnsafeField.getBoolean(gsonBuilder);\n    assertFalse(updatedValue);\n\n    // If initial value was already false, it should remain false\n    if (!initialValue) {\n      assertFalse(updatedValue);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1067,
+  "completion_tokens": 222,
+  "total_tokens": 1289,
+  "llm_elapsed_time_seconds": 4.95
+}

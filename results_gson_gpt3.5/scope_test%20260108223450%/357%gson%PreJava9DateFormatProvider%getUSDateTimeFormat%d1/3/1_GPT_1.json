@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlwnE9XkbkIqznPo3wWdcsQlaHDP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\n\nimport org.junit.jupiter.api.Test;\n\nclass PreJava9DateFormatProviderTest {\n\n  @Test\n  void testGetUSDateTimeFormat_validStyles() {\n    for (int dateStyle = 0; dateStyle <= 3; dateStyle++) {\n      for (int timeStyle = 0; timeStyle <= 3; timeStyle++) {\n        DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(dateStyle, timeStyle);\n        assertNotNull(df);\n        assertTrue(df instanceof SimpleDateFormat);\n        SimpleDateFormat sdf = (SimpleDateFormat) df;\n        assertEquals(Locale.US, sdf.getDateFormatSymbols().getLocale());\n        String pattern = invokePrivateGetDatePartOfDateTimePattern(dateStyle) + \" \" + invokePrivateGetTimePartOfDateTimePattern(timeStyle);\n        assertEquals(pattern, sdf.toPattern());\n      }\n    }\n  }\n\n  @Test\n  void testGetUSDateTimeFormat_invalidStyles() {\n    // Test negative styles and styles > 3\n    int[] invalidStyles = {-1, 4, 10, 100};\n    for (int dateStyle : invalidStyles) {\n      for (int timeStyle : invalidStyles) {\n        DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(dateStyle, timeStyle);\n        assertNotNull(df);\n        assertTrue(df instanceof SimpleDateFormat);\n        SimpleDateFormat sdf = (SimpleDateFormat) df;\n        assertEquals(Locale.US, sdf.getDateFormatSymbols().getLocale());\n        String pattern = invokePrivateGetDatePartOfDateTimePattern(dateStyle) + \" \" + invokePrivateGetTimePartOfDateTimePattern(timeStyle);\n        assertEquals(pattern, sdf.toPattern());\n      }\n    }\n  }\n\n  private String invokePrivateGetDatePartOfDateTimePattern(int dateStyle) {\n    try {\n      Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDatePartOfDateTimePattern\", int.class);\n      method.setAccessible(true);\n      return (String) method.invoke(null, dateStyle);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Failed to invoke private method getDatePartOfDateTimePattern: \" + e.getMessage());\n      return null;\n    }\n  }\n\n  private String invokePrivateGetTimePartOfDateTimePattern(int timeStyle) {\n    try {\n      Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getTimePartOfDateTimePattern\", int.class);\n      method.setAccessible(true);\n      return (String) method.invoke(null, timeStyle);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Failed to invoke private method getTimePartOfDateTimePattern: \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885041,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 641,
+    "prompt_tokens": 301,
+    "total_tokens": 942,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.69
+  }
+}

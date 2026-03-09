@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm8q71xEzNdmb1KviB4c6q0UNo5h",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.JsonParseException;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass JsonParserTest {\n\n  @Test\n  void parseReader_returnsParsedJsonElement_andResetsLenient() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n    JsonElement expectedElement = mock(JsonElement.class);\n\n    when(reader.isLenient()).thenReturn(false);\n\n    try (MockedStatic<Streams> streamsStatic = Mockito.mockStatic(Streams.class)) {\n      streamsStatic.when(() -> Streams.parse(reader)).thenReturn(expectedElement);\n\n      JsonElement result = JsonParser.parseReader(reader);\n\n      assertSame(expectedElement, result);\n\n      InOrder inOrder = inOrder(reader);\n      inOrder.verify(reader).isLenient();\n      inOrder.verify(reader).setLenient(true);\n      inOrder.verify(reader).setLenient(false);\n\n      streamsStatic.verify(() -> Streams.parse(reader));\n    }\n  }\n\n  @Test\n  void parseReader_stackOverflowError_throwsJsonParseException() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n\n    when(reader.isLenient()).thenReturn(true);\n\n    try (MockedStatic<Streams> streamsStatic = Mockito.mockStatic(Streams.class)) {\n      streamsStatic.when(() -> Streams.parse(reader)).thenThrow(new StackOverflowError(\"stack overflow\"));\n\n      JsonParseException thrown = assertThrows(JsonParseException.class, () -> JsonParser.parseReader(reader));\n      assertTrue(thrown.getMessage().contains(\"Failed parsing JSON source\"));\n      assertNotNull(thrown.getCause());\n      assertTrue(thrown.getCause() instanceof StackOverflowError);\n\n      InOrder inOrder = inOrder(reader);\n      inOrder.verify(reader).isLenient();\n      inOrder.verify(reader).setLenient(true);\n      inOrder.verify(reader).setLenient(true);\n    }\n  }\n\n  @Test\n  void parseReader_outOfMemoryError_throwsJsonParseException() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n\n    when(reader.isLenient()).thenReturn(true);\n\n    try (MockedStatic<Streams> streamsStatic = Mockito.mockStatic(Streams.class)) {\n      streamsStatic.when(() -> Streams.parse(reader)).thenThrow(new OutOfMemoryError(\"out of memory\"));\n\n      JsonParseException thrown = assertThrows(JsonParseException.class, () -> JsonParser.parseReader(reader));\n      assertTrue(thrown.getMessage().contains(\"Failed parsing JSON source\"));\n      assertNotNull(thrown.getCause());\n      assertTrue(thrown.getCause() instanceof OutOfMemoryError);\n\n      InOrder inOrder = inOrder(reader);\n      inOrder.verify(reader).isLenient();\n      inOrder.verify(reader).setLenient(true);\n      inOrder.verify(reader).setLenient(true);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885788,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 616,
+    "prompt_tokens": 1773,
+    "total_tokens": 2389,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.84
+  }
+}

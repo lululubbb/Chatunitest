@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmgVY8zYsZbJxyCERsqw3w2hgAUO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void setUp() {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesReflectionStreaming_validJson() throws Exception {\n    // Prepare JSON string with all fields of BagOfPrimitives\n    String json = \"{\\\"longValue\\\":1234567890123,\\\"intValue\\\":42,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"test\\\"}\";\n    // Use reflection to set private field 'json'\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, json);\n\n    // Run with reps=1, should parse without exceptions\n    benchmark.timeBagOfPrimitivesReflectionStreaming(1);\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesReflectionStreaming_unexpectedFieldType_throws() throws Exception {\n    // Prepare JSON with a field that does not match expected types\n    String json = \"{\\\"longValue\\\":123,\\\"intValue\\\":42,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"test\\\",\\\"unknownField\\\":{}}\";\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, json);\n\n    // We expect RuntimeException due to unexpected field type\n    assertThrows(RuntimeException.class, () -> benchmark.timeBagOfPrimitivesReflectionStreaming(1));\n  }\n\n  @Test\n  void testTimeBagOfPrimitivesReflectionStreaming_multipleReps() throws Exception {\n    String json = \"{\\\"longValue\\\":1,\\\"intValue\\\":2,\\\"booleanValue\\\":false,\\\"stringValue\\\":\\\"abc\\\"}\";\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, json);\n\n    // Run with multiple repetitions to cover loop\n    benchmark.timeBagOfPrimitivesReflectionStreaming(5);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887875,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 490,
+    "prompt_tokens": 517,
+    "total_tokens": 1007,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.23
+  }
+}

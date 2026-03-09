@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatIsLineBreakTest {\n\n    private static Method isLineBreakMethod;\n\n    @BeforeAll\n    static void setup() throws Exception {\n        // The method takes primitive char, not Character\n        isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakMethod.setAccessible(true);\n    }\n\n    @Test\n    void testIsLineBreakWithLF() throws Exception {\n        // Pass primitive char directly\n        boolean result = (boolean) isLineBreakMethod.invoke(null, '\\n');\n        assertTrue(result, \"LF should be recognized as a line break\");\n    }\n\n    @Test\n    void testIsLineBreakWithCR() throws Exception {\n        boolean result = (boolean) isLineBreakMethod.invoke(null, '\\r');\n        assertTrue(result, \"CR should be recognized as a line break\");\n    }\n\n    @Test\n    void testIsLineBreakWithOtherChars() throws Exception {\n        char[] nonLineBreakChars = { 'a', ' ', ',', '\\t', '\\\\', '\\\"', '|' };\n        for (char c : nonLineBreakChars) {\n            boolean result = (boolean) isLineBreakMethod.invoke(null, c);\n            assertFalse(result, \"Character '\" + c + \"' should NOT be recognized as a line break\");\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_14_b/scope_test%20260106145250%/1%Csv_14_b%CSVFormat%isLineBreak%d1/3/runtemp/Csv_14_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1917,
+  "completion_tokens": 316,
+  "total_tokens": 2233,
+  "llm_elapsed_time_seconds": 4.79
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmzIF6QdO97zn2s2iRR8hkawDNyT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapRemoveTest {\n\n  private LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    // Use the default constructor which uses natural ordering and allowNullValues false\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void remove_existingKey_removesAndReturnsValue() {\n    map.put(\"key1\", \"value1\");\n    map.put(\"key2\", \"value2\");\n\n    String removed = map.remove(\"key1\");\n\n    assertEquals(\"value1\", removed);\n    assertFalse(map.containsKey(\"key1\"));\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_nonExistingKey_returnsNull() {\n    map.put(\"key1\", \"value1\");\n\n    String removed = map.remove(\"nonexistent\");\n\n    assertNull(removed);\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_nullKey_whenAllowed_removesEntry() {\n    LinkedTreeMap<String, String> nullAllowedMap = new LinkedTreeMap<>(null, true);\n    nullAllowedMap.put(null, \"nullValue\");\n    assertTrue(nullAllowedMap.containsKey(null));\n\n    String removed = nullAllowedMap.remove(null);\n\n    assertEquals(\"nullValue\", removed);\n    assertFalse(nullAllowedMap.containsKey(null));\n    assertEquals(0, nullAllowedMap.size());\n  }\n\n  @Test\n  void remove_nullKey_whenNotAllowed_returnsNull() {\n    map.put(\"key1\", \"value1\");\n\n    String removed = map.remove(null);\n\n    assertNull(removed);\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_internalNodeRemoval_behavior() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Insert multiple keys to create a tree structure\n    map.put(\"b\", \"2\");\n    map.put(\"a\", \"1\");\n    map.put(\"c\", \"3\");\n\n    // Access private method removeInternalByKey via reflection\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n\n    // Remove existing key \"b\"\n    Object node = removeInternalByKey.invoke(map, \"b\");\n    assertNotNull(node);\n\n    // Remove non-existing key returns null\n    Object nullNode = removeInternalByKey.invoke(map, \"nonexistent\");\n    assertNull(nullNode);\n  }\n\n  @Test\n  void removeInternalByKey_removesRootNode() throws Exception {\n    map.put(\"m\", \"middle\");\n    map.put(\"a\", \"left\");\n    map.put(\"z\", \"right\");\n\n    // Remove root node \"m\"\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n\n    Object removedNode = removeInternalByKey.invoke(map, \"m\");\n    assertNotNull(removedNode);\n    assertFalse(map.containsKey(\"m\"));\n  }\n\n  @Test\n  void removeInternalByKey_updatesSizeAndModCount() throws Exception {\n    map.put(\"x\", \"xval\");\n    int initialSize = map.size();\n    int initialModCount = getModCount(map);\n\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n\n    Object removedNode = removeInternalByKey.invoke(map, \"x\");\n    assertNotNull(removedNode);\n    assertEquals(initialSize - 1, map.size());\n    assertEquals(initialModCount + 1, getModCount(map));\n  }\n\n  private int getModCount(LinkedTreeMap<?, ?> map) throws NoSuchFieldException, IllegalAccessException {\n    var field = LinkedTreeMap.class.getDeclaredField(\"modCount\");\n    field.setAccessible(true);\n    return field.getInt(map);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889040,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 866,
+    "prompt_tokens": 1632,
+    "total_tokens": 2498,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.6
+  }
+}

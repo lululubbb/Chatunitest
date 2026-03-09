@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmghek3Skb5XlMSqG1JlybgKXr7j",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a dummy JsonElement for constructor (using JsonNull)\n    reader = new JsonTreeReader(JsonNull.INSTANCE);\n  }\n\n  @Test\n  public void testPromoteNameToValue_success() throws Exception {\n    // Arrange\n    // Mock an Iterator<Map.Entry<?, ?>> with one entry\n    @SuppressWarnings(\"unchecked\")\n    Iterator<Map.Entry<Object, Object>> mockIterator = mock(Iterator.class);\n    @SuppressWarnings(\"unchecked\")\n    Map.Entry<Object, Object> mockEntry = mock(Map.Entry.class);\n\n    when(mockEntry.getKey()).thenReturn(\"mockKey\");\n    when(mockEntry.getValue()).thenReturn(new JsonPrimitive(\"mockValue\"));\n    when(mockIterator.next()).thenReturn(mockEntry);\n\n    // Use reflection to set the private stack field with the mockIterator at top\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(reader);\n    stack[0] = mockIterator;\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(reader, 1);\n\n    // We cannot subclass final class JsonTreeReader or override private methods.\n    // Instead, we invoke promoteNameToValue via reflection directly on the reader.\n\n    // Act\n    Method promoteNameToValue = JsonTreeReader.class.getDeclaredMethod(\"promoteNameToValue\");\n    promoteNameToValue.setAccessible(true);\n    promoteNameToValue.invoke(reader);\n\n    // Assert\n    int stackSizeAfter = stackSizeField.getInt(reader);\n    assertEquals(3, stackSizeAfter);\n\n    Object[] stackAfter = (Object[]) stackField.get(reader);\n\n    Object top = stackAfter[stackSizeAfter - 1];\n    assertTrue(top instanceof JsonPrimitive);\n    assertEquals(\"mockKey\", ((JsonPrimitive) top).getAsString());\n\n    Object second = stackAfter[stackSizeAfter - 2];\n    assertTrue(second instanceof JsonPrimitive);\n    assertEquals(\"mockValue\", ((JsonPrimitive) second).getAsString());\n\n    assertSame(mockIterator, stackAfter[0]);\n\n    verify(mockIterator).next();\n  }\n\n  @Test\n  public void testPromoteNameToValue_expectThrows() throws Exception {\n    // Since expect is private and final class cannot be subclassed,\n    // we simulate failure by setting stack to an invalid state that causes expect to throw.\n\n    // Arrange\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(reader);\n    // Put something invalid at top to cause expect(JsonToken.NAME) to fail\n    stack[0] = \"invalid\"; // Not an Iterator\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(reader, 1);\n\n    Method promoteNameToValue = JsonTreeReader.class.getDeclaredMethod(\"promoteNameToValue\");\n    promoteNameToValue.setAccessible(true);\n\n    // Act & Assert\n    IOException thrown = assertThrows(IOException.class, () -> promoteNameToValue.invoke(reader));\n    // The IOException will be wrapped in InvocationTargetException, so unwrap:\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IOException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887887,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 827,
+    "prompt_tokens": 2071,
+    "total_tokens": 2898,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.81
+  }
+}

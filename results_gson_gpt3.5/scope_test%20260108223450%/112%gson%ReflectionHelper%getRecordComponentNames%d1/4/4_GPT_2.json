@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmYRbJxmUrWfyJsygHLbP34S7czW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  // Create a helper class with the same method signature as ReflectionHelper.RecordHelper\n  private static class DummyRecordHelper {\n    public String[] getRecordComponentNames(Class<?> raw) {\n      if (raw == null) {\n        throw new NullPointerException();\n      }\n      if (raw == String.class) {\n        return new String[] { \"name\", \"value\" };\n      }\n      return new String[0];\n    }\n  }\n\n  @BeforeAll\n  static void setUp() throws Exception {\n    // Use reflection to set the private static final RECORD_HELPER field in ReflectionHelper\n    Field field = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    field.setAccessible(true);\n\n    // Remove final modifier if needed\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    // Set the field to an instance of DummyRecordHelper\n    field.set(null, new DummyRecordHelper());\n  }\n\n  @Test\n  void getRecordComponentNames_nullClass_throwsNPE() {\n    assertThrows(NullPointerException.class, () -> ReflectionHelper.getRecordComponentNames(null));\n  }\n\n  @Test\n  void getRecordComponentNames_knownClass_returnsExpectedNames() {\n    String[] names = ReflectionHelper.getRecordComponentNames(String.class);\n    assertArrayEquals(new String[] { \"name\", \"value\" }, names);\n  }\n\n  @Test\n  void getRecordComponentNames_unknownClass_returnsEmptyArray() {\n    String[] names = ReflectionHelper.getRecordComponentNames(Integer.class);\n    assertNotNull(names);\n    assertEquals(0, names.length);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887375,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 403,
+    "prompt_tokens": 880,
+    "total_tokens": 1283,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.39
+  }
+}

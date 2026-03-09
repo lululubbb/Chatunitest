@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAGTxVpKtJtAnzzCTi8y2buTpbQM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects() throws IOException {\n        Iterable<Object> values = Arrays.asList(\"one\", \"two\", \"three\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(3)).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingObjectArray() throws IOException {\n        Object[] record = new Object[] { \"a\", \"b\" };\n        Iterable<Object> values = Collections.singletonList(record);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(1)).printRecord(record);\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingIterable() throws IOException {\n        Iterable<String> innerIterable = Arrays.asList(\"x\", \"y\");\n        Iterable<Object> values = Collections.singletonList(innerIterable);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(1)).printRecord(innerIterable);\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingOtherObject() throws IOException {\n        Iterable<Object> values = Collections.singletonList(123);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(1)).printRecord((Object) 123);\n    }\n\n    @Test\n    void testPrintRecords_withEmptyIterable() throws IOException {\n        Iterable<Object> values = Collections.emptyList();\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978517,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 545,
+    "prompt_tokens": 1549,
+    "total_tokens": 2094,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.45
+  }
+}

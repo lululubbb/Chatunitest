@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw96IwUcZmRWn026pEREMOi9zB3ez",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    enum TestEnum {\n        VALUE1, VALUE2\n    }\n\n    enum OtherEnum {\n        OTHER\n    }\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"VALUE1\", 0);\n        mapping.put(\"VALUE2\", 1);\n        values = new String[] { \"first\", \"second\" };\n        csvRecord = new CSVRecord(values, mapping, \"comment\", 10L);\n    }\n\n    @Test\n    void testGet_enum_existing() {\n        // VALUE1 maps to index 0, should return \"first\"\n        String result = csvRecord.get(TestEnum.VALUE1);\n        assertEquals(\"first\", result);\n    }\n\n    @Test\n    void testGet_enum_nonExisting() {\n        // Enum not in mapping, should return null\n        String result = csvRecord.get(OtherEnum.OTHER);\n        assertNull(result);\n    }\n\n    @Test\n    void testGet_enum_nullEnumToString() throws Exception {\n        // Create a mock Enum that returns null for toString()\n        Enum<?> mockEnum = mock(Enum.class);\n        when(mockEnum.toString()).thenReturn(null);\n\n        // Use reflection to call private get(String) method to verify behavior\n        Method getStringMethod = CSVRecord.class.getDeclaredMethod(\"get\", String.class);\n        getStringMethod.setAccessible(true);\n\n        // The public get(Enum<?>) calls get(null), which should return null\n        String result = csvRecord.get(mockEnum);\n        assertNull(result);\n\n        // Also directly invoke private get(String) with null to verify no exception\n        String directResult = (String) getStringMethod.invoke(csvRecord, (Object) null);\n        assertNull(directResult);\n    }\n\n    @Test\n    void testGet_enum_toStringReturnsEmptyString() {\n        Enum<?> mockEnum = mock(Enum.class);\n        when(mockEnum.toString()).thenReturn(\"\");\n        // \"\" not in mapping, should return null\n        String result = csvRecord.get(mockEnum);\n        assertNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974042,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 506,
+    "prompt_tokens": 1036,
+    "total_tokens": 1542,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.6
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmsuFOZXIBYYI8ldEzvuca73Mx54",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void containsKey_existingKey_returnsTrue() {\n    map.put(\"key1\", \"value1\");\n    assertTrue(map.containsKey(\"key1\"));\n  }\n\n  @Test\n  void containsKey_nonExistingKey_returnsFalse() {\n    map.put(\"key1\", \"value1\");\n    assertFalse(map.containsKey(\"key2\"));\n  }\n\n  @Test\n  void containsKey_nullKeyWhenAllowed_returnsTrue() {\n    LinkedTreeMap<String, String> mapAllowNull = new LinkedTreeMap<>(null, true);\n    // Use reflection to access the private 'allowNullValues' field and set it to true if needed\n    // But constructor already sets allowNullValues, so just put null key should work\n    mapAllowNull.put(null, \"nullValue\");\n    assertTrue(mapAllowNull.containsKey(null));\n  }\n\n  @Test\n  void containsKey_nullKeyWhenNotAllowed_returnsFalse() {\n    assertFalse(map.containsKey(null));\n  }\n\n  @Test\n  void containsKey_callsFindByObjectUsingReflection() throws Exception {\n    map.put(\"key1\", \"value1\");\n\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    Object node = findByObject.invoke(map, \"key1\");\n    assertNotNull(node);\n\n    Object nodeNull = findByObject.invoke(map, \"nonexistent\");\n    assertNull(nodeNull);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888644,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 388,
+    "prompt_tokens": 1389,
+    "total_tokens": 1777,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.09
+  }
+}

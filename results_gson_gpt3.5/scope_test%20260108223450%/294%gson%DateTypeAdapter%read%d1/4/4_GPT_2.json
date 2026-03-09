@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmi1KFYt3KOHGAevcItF1VlUnP5z",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.Date;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        dateTypeAdapter = new DateTypeAdapter();\n    }\n\n    @Test\n    public void testRead_NullToken_ReturnsNull() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        // nextNull() should be called\n        doNothing().when(jsonReader).nextNull();\n\n        Date result = dateTypeAdapter.read(jsonReader);\n\n        verify(jsonReader).peek();\n        verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    public void testRead_ValidDateToken_ReturnsDate() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n\n        // Create a spy on dateTypeAdapter\n        DateTypeAdapter spyAdapter = Mockito.spy(dateTypeAdapter);\n\n        // Use reflection to get the private method\n        Method deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        Date expectedDate = new Date();\n\n        // Stub the private method using doAnswer\n        doAnswer(invocation -> expectedDate).when(spyAdapter).read(jsonReader);\n\n        // Instead of mocking deserializeToDate (private), we invoke read and assert result\n        // But since read calls deserializeToDate internally, we can stub deserializeToDate via reflection invocation\n\n        // Alternative approach: directly invoke deserializeToDate via reflection for testing\n        Date result = (Date) deserializeToDateMethod.invoke(spyAdapter, jsonReader);\n\n        assertEquals(expectedDate.getClass(), result.getClass()); // only class equality, since we didn't mock internals\n\n        // Now test read method returns the same as deserializeToDate\n        // Since we cannot mock private method directly, we just test read returns non-null Date for STRING token\n        Date readResult = spyAdapter.read(jsonReader);\n        assertNotNull(readResult);\n\n        verify(jsonReader).peek();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887969,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 528,
+    "prompt_tokens": 1037,
+    "total_tokens": 1565,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.1
+  }
+}

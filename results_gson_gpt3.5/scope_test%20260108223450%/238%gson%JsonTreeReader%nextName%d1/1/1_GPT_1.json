@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBEByem4XGTKMxsJbWajXkazbuu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\nimport java.util.Map.Entry;\n\nclass JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a JsonObject with one entry for testing\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.addProperty(\"key\", \"value\");\n    jsonTreeReader = new JsonTreeReader(jsonObject);\n\n    // Use reflection to push the iterator of the entry set onto the stack\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n\n    Iterator<Map.Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator();\n\n    stack[0] = iterator;\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    // Also set pathNames and pathIndices arrays for completeness\n    Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n\n    // Initialize pathNames and pathIndices\n    pathNames[0] = null;\n    pathIndices[0] = 0;\n  }\n\n  @Test\n  void nextName_shouldReturnKeyAndPushValue_whenSkipNameFalse() throws Exception {\n    Method nextNameMethod = JsonTreeReader.class.getDeclaredMethod(\"nextName\", boolean.class);\n    nextNameMethod.setAccessible(true);\n\n    String result = (String) nextNameMethod.invoke(jsonTreeReader, false);\n\n    assertEquals(\"key\", result);\n\n    // Verify that pathNames[stackSize - 1] is set to \"key\"\n    Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n\n    assertEquals(\"key\", pathNames[stackSize - 1]);\n\n    // Verify that the stack top is now the value of the entry (\"value\" JsonPrimitive)\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n\n    Object top = stack[stackSize - 1];\n    assertNotNull(top);\n    assertTrue(top instanceof com.google.gson.JsonPrimitive);\n    assertEquals(\"value\", ((com.google.gson.JsonPrimitive) top).getAsString());\n  }\n\n  @Test\n  void nextName_shouldReturnSkippedAndPushValue_whenSkipNameTrue() throws Exception {\n    Method nextNameMethod = JsonTreeReader.class.getDeclaredMethod(\"nextName\", boolean.class);\n    nextNameMethod.setAccessible(true);\n\n    String result = (String) nextNameMethod.invoke(jsonTreeReader, true);\n\n    assertEquals(\"key\", result);\n\n    // Verify that pathNames[stackSize - 1] is set to \"<skipped>\"\n    Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n\n    assertEquals(\"<skipped>\", pathNames[stackSize - 1]);\n\n    // Verify that the stack top is now the value of the entry (\"value\" JsonPrimitive)\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n\n    Object top = stack[stackSize - 1];\n    assertNotNull(top);\n    assertTrue(top instanceof com.google.gson.JsonPrimitive);\n    assertEquals(\"value\", ((com.google.gson.JsonPrimitive) top).getAsString());\n  }\n\n  @Test\n  void nextName_shouldThrowIOException_whenExpectFails() throws Exception {\n    // We need to cause expect(JsonToken.NAME) to throw IOException.\n    // For that, we must set the stack top to an object that causes peek() to return something other than NAME.\n    // We'll push a JsonArray so peek() won't return NAME.\n\n    // Create a JsonArray and push its iterator on stack\n    com.google.gson.JsonArray jsonArray = new com.google.gson.JsonArray();\n    jsonArray.add(\"element\");\n    Iterator<?> iterator = jsonArray.iterator();\n\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n\n    stack[0] = iterator;\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    Method nextNameMethod = JsonTreeReader.class.getDeclaredMethod(\"nextName\", boolean.class);\n    nextNameMethod.setAccessible(true);\n\n    IOException thrown = assertThrows(IOException.class, () -> nextNameMethod.invoke(jsonTreeReader, false));\n    // Because reflection wraps exceptions in InvocationTargetException, unwrap:\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IOException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889780,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1297,
+    "prompt_tokens": 622,
+    "total_tokens": 1919,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.77
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void testIsEmpty_whenElementsListIsEmpty_shouldReturnTrue() throws Exception {\n    // Use reflection to ensure elements list is empty\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    elements.clear();\n\n    assertTrue(jsonArray.isEmpty());\n  }\n\n  @Test\n  public void testIsEmpty_whenElementsListHasElements_shouldReturnFalse() throws Exception {\n    // Use reflection to add a mock element to elements list\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n\n    JsonElement mockElement = new JsonPrimitive(\"test\");\n    elements.add(mockElement);\n\n    assertFalse(jsonArray.isEmpty());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 480,
+  "completion_tokens": 287,
+  "total_tokens": 767,
+  "llm_elapsed_time_seconds": 5.99
+}

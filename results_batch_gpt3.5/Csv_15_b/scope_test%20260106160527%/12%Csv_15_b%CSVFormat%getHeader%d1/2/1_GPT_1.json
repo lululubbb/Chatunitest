@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwpS9s3viP96oliBwFBmiwwna9b0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testGetHeader_WhenHeaderIsNull() throws Exception {\n        // Create CSVFormat instance with null header using reflection\n        CSVFormat format = createCSVFormatWithHeader(null);\n        String[] header = format.getHeader();\n        assertNull(header, \"Header should be null when header field is null\");\n    }\n\n    @Test\n    public void testGetHeader_WhenHeaderIsEmptyArray() throws Exception {\n        String[] headerArray = new String[0];\n        CSVFormat format = createCSVFormatWithHeader(headerArray);\n        String[] header = format.getHeader();\n        assertNotNull(header, \"Header should not be null when header field is empty array\");\n        assertArrayEquals(headerArray, header, \"Returned header should match the original header array\");\n        assertNotSame(headerArray, header, \"Returned header should be a clone, not the same instance\");\n    }\n\n    @Test\n    public void testGetHeader_WhenHeaderHasValues() throws Exception {\n        String[] headerArray = new String[] {\"col1\", \"col2\", \"col3\"};\n        CSVFormat format = createCSVFormatWithHeader(headerArray);\n        String[] header = format.getHeader();\n        assertNotNull(header, \"Header should not be null when header field has values\");\n        assertArrayEquals(headerArray, header, \"Returned header should match the original header array\");\n        assertNotSame(headerArray, header, \"Returned header should be a clone, not the same instance\");\n\n        // Modify returned array and verify original array is not affected\n        header[0] = \"modified\";\n        String[] headerAfterModification = getHeaderField(format);\n        assertArrayEquals(headerArray, headerAfterModification, \"Original header array should remain unchanged\");\n    }\n\n    // Helper method to create CSVFormat instance with specified header using reflection\n    private CSVFormat createCSVFormatWithHeader(String[] header) throws Exception {\n        // Use DEFAULT as base and then set header field via reflection\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(format, header);\n\n        return format;\n    }\n\n    // Helper method to get header field value via reflection\n    private String[] getHeaderField(CSVFormat format) throws Exception {\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        return (String[]) headerField.get(format);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688542,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 588,
+    "prompt_tokens": 1787,
+    "total_tokens": 2375,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.89
+  }
+}

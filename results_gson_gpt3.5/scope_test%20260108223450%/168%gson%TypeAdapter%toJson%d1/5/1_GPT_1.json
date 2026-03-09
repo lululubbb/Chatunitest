@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5jC3qLnvtJXPnPHkeITnDeJrAc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass TypeAdapterTest {\n\n    private TypeAdapter<String> typeAdapter;\n    private JsonWriter jsonWriterMock;\n    private Writer writer;\n\n    @BeforeEach\n    void setUp() {\n        writer = new StringWriter();\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                // For testing, write the value as JSON string or null\n                if (value == null) {\n                    out.nullValue();\n                } else {\n                    out.value(value);\n                }\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null; // Not used in this test\n            }\n        };\n    }\n\n    @Test\n    void toJson_writesValueToWriter() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        String testValue = \"testString\";\n\n        typeAdapter.toJson(stringWriter, testValue);\n\n        String json = stringWriter.toString();\n        assertEquals(\"\\\"testString\\\"\", json);\n    }\n\n    @Test\n    void toJson_writesNullValueToWriter() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n\n        typeAdapter.toJson(stringWriter, null);\n\n        String json = stringWriter.toString();\n        assertEquals(\"null\", json);\n    }\n\n    @Test\n    void toJson_throwsIOExceptionFromWrite() {\n        TypeAdapter<String> throwingAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                throw new IOException(\"Write error\");\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null;\n            }\n        };\n\n        StringWriter stringWriter = new StringWriter();\n\n        IOException thrown = assertThrows(IOException.class, () -> throwingAdapter.toJson(stringWriter, \"value\"));\n        assertEquals(\"Write error\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885595,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 467,
+    "prompt_tokens": 348,
+    "total_tokens": 815,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.2
+  }
+}

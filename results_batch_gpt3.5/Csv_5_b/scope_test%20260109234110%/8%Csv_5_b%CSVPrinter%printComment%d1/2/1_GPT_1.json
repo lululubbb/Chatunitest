@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8wzV0PRmQVHl73l4yeWn057vEGy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable outMock;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        outMock = mock(Appendable.class);\n        formatMock = mock(CSVFormat.class);\n        printer = new CSVPrinter(outMock, formatMock);\n    }\n\n    @Test\n    void testPrintComment_CommentingDisabled() throws IOException {\n        when(formatMock.isCommentingEnabled()).thenReturn(false);\n\n        printer.printComment(\"any comment\");\n\n        verify(formatMock).isCommentingEnabled();\n        verifyNoMoreInteractions(formatMock);\n        verifyNoInteractions(outMock);\n    }\n\n    @Test\n    void testPrintComment_NewRecordTrue_SimpleComment() throws IOException {\n        when(formatMock.isCommentingEnabled()).thenReturn(true);\n        when(formatMock.getCommentStart()).thenReturn('#');\n\n        // newRecord is true by default, so println() should NOT be called before\n        printer.printComment(\"abc\");\n\n        InOrder inOrder = inOrder(outMock);\n        // append comment start char\n        inOrder.verify(outMock).append('#');\n        // append space\n        inOrder.verify(outMock).append(' ');\n\n        // append chars 'a','b','c'\n        inOrder.verify(outMock).append('a');\n        inOrder.verify(outMock).append('b');\n        inOrder.verify(outMock).append('c');\n\n        // final println() call triggers out.append('\\n') or similar, but println() is public void method with unknown impl.\n        // We cannot verify println() calls on 'printer' because it does not return anything or call out directly.\n        // But we can verify that println() calls out.append with newline chars, if we spy on printer or use reflection.\n        // Instead, just verify no more interactions on outMock after the above calls except println() calls.\n\n        verify(formatMock).isCommentingEnabled();\n        verify(formatMock, times(1)).getCommentStart();\n        verifyNoMoreInteractions(formatMock);\n    }\n\n    @Test\n    void testPrintComment_NewRecordFalse_CallsPrintlnBefore() throws Exception {\n        when(formatMock.isCommentingEnabled()).thenReturn(true);\n        when(formatMock.getCommentStart()).thenReturn('#');\n\n        // set private field newRecord to false via reflection\n        Field newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.setBoolean(printer, false);\n\n        // spy on printer to verify println() call\n        CSVPrinter spyPrinter = spy(printer);\n\n        // call printComment on spy\n        spyPrinter.printComment(\"x\");\n\n        // verify println() called once before printing comment start\n        InOrder inOrder = inOrder(spyPrinter, outMock);\n        inOrder.verify(spyPrinter).println();\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n        inOrder.verify(outMock).append('x');\n        inOrder.verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintComment_CommentWithCRLF() throws IOException {\n        when(formatMock.isCommentingEnabled()).thenReturn(true);\n        when(formatMock.getCommentStart()).thenReturn('#');\n\n        String comment = \"a\\r\\nb\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n\n        // 'a'\n        inOrder.verify(outMock).append('a');\n        // CR + LF triggers println() and append comment start + space again\n        inOrder.verify(outMock).append('\\n'); // println() assumed to append newline\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n        // 'b'\n        inOrder.verify(outMock).append('b');\n        // final println()\n        inOrder.verify(outMock).append('\\n');\n    }\n\n    @Test\n    void testPrintComment_CommentWithCRWithoutLF() throws IOException {\n        when(formatMock.isCommentingEnabled()).thenReturn(true);\n        when(formatMock.getCommentStart()).thenReturn('#');\n\n        String comment = \"a\\rb\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n\n        // 'a'\n        inOrder.verify(outMock).append('a');\n        // CR without LF triggers println() and append comment start + space again\n        inOrder.verify(outMock).append('\\n');\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n        // 'b'\n        inOrder.verify(outMock).append('b');\n        // final println()\n        inOrder.verify(outMock).append('\\n');\n    }\n\n    @Test\n    void testPrintComment_CommentWithLF() throws IOException {\n        when(formatMock.isCommentingEnabled()).thenReturn(true);\n        when(formatMock.getCommentStart()).thenReturn('#');\n\n        String comment = \"a\\nb\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n\n        // 'a'\n        inOrder.verify(outMock).append('a');\n        // LF triggers println() and append comment start + space again\n        inOrder.verify(outMock).append('\\n');\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n        // 'b'\n        inOrder.verify(outMock).append('b');\n        // final println()\n        inOrder.verify(outMock).append('\\n');\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973465,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1262,
+    "prompt_tokens": 583,
+    "total_tokens": 1845,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.81
+  }
+}

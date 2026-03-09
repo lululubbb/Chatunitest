@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmDCy3FMvGsQK1TaR87W5XcT0g7R",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.util.Map;\nimport java.util.Properties;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetMapKeyAndValueTypes_withProperties_returnsStringString() {\n    Type[] result = $Gson$Types.getMapKeyAndValueTypes(Properties.class, Properties.class);\n    assertNotNull(result);\n    assertEquals(2, result.length);\n    assertEquals(String.class, result[0]);\n    assertEquals(String.class, result[1]);\n  }\n\n  @Test\n  void testGetMapKeyAndValueTypes_withParameterizedMapType_returnsActualTypeArguments() throws Exception {\n    // Prepare a ParameterizedType mock to be returned by reflection on private method\n    ParameterizedType parameterizedType = mock(ParameterizedType.class);\n    Type keyType = String.class;\n    Type valueType = Integer.class;\n    when(parameterizedType.getActualTypeArguments()).thenReturn(new Type[] { keyType, valueType });\n\n    // Use reflection to access private static method getSupertype\n    java.lang.reflect.Method getSupertypeMethod = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n    getSupertypeMethod.setAccessible(true);\n\n    try (MockedStatic<$Gson$Types> mockedStatic = Mockito.mockStatic($Gson$Types.class, Mockito.CALLS_REAL_METHODS)) {\n      // Mock getSupertype by delegating to a lambda that returns our parameterizedType when called with Map.class\n      mockedStatic.when(() -> getSupertypeMethod.invoke(null, any(), any(), eq(Map.class)))\n          .thenReturn(parameterizedType);\n\n      // Since mocking invoke() directly is complex, instead mock getMapKeyAndValueTypes to use reflection internally\n      // So we mock getMapKeyAndValueTypes to call real method but internally getSupertype returns parameterizedType\n      mockedStatic.when(() -> $Gson$Types.getMapKeyAndValueTypes(any(), any())).thenCallRealMethod();\n\n      Type[] result = $Gson$Types.getMapKeyAndValueTypes(Object.class, Object.class);\n\n      assertNotNull(result);\n      assertEquals(2, result.length);\n      assertEquals(keyType, result[0]);\n      assertEquals(valueType, result[1]);\n    }\n  }\n\n  @Test\n  void testGetMapKeyAndValueTypes_withNonParameterizedMapType_returnsObjectObject() throws Exception {\n    // Use reflection to access private static method getSupertype\n    java.lang.reflect.Method getSupertypeMethod = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n    getSupertypeMethod.setAccessible(true);\n\n    try (MockedStatic<$Gson$Types> mockedStatic = Mockito.mockStatic($Gson$Types.class, Mockito.CALLS_REAL_METHODS)) {\n      // Mock getSupertype to return a non-ParameterizedType (e.g. Class)\n      mockedStatic.when(() -> getSupertypeMethod.invoke(null, any(), any(), eq(Map.class)))\n          .thenReturn((Type) Map.class);\n\n      mockedStatic.when(() -> $Gson$Types.getMapKeyAndValueTypes(any(), any())).thenCallRealMethod();\n\n      Type[] result = $Gson$Types.getMapKeyAndValueTypes(Object.class, Object.class);\n\n      assertNotNull(result);\n      assertEquals(2, result.length);\n      assertEquals(Object.class, result[0]);\n      assertEquals(Object.class, result[1]);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886058,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 778,
+    "prompt_tokens": 1517,
+    "total_tokens": 2295,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.07
+  }
+}

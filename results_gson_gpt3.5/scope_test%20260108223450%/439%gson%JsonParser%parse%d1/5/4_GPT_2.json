@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnK8alWC8mbWQdmtormFTDNOJFvK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonParserTest {\n\n  private JsonParser jsonParser;\n\n  @BeforeEach\n  public void setUp() {\n    jsonParser = new JsonParser();\n  }\n\n  @Test\n  public void testParse_withValidJson_callsParseString() throws Throwable {\n    // Arrange\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      JsonElement expectedElement = mock(JsonElement.class);\n      mockedStatic.when(() -> JsonParser.parseString(json)).thenReturn(expectedElement);\n\n      // Act\n      JsonElement result = jsonParser.parse(json);\n\n      // Assert\n      assertSame(expectedElement, result);\n      mockedStatic.verify(() -> JsonParser.parseString(json));\n    }\n  }\n\n  @Test\n  public void testParse_withNullString_throwsException() {\n    String json = null;\n    // parseString should throw NullPointerException or JsonSyntaxException\n    assertThrows(NullPointerException.class, () -> jsonParser.parse(json));\n  }\n\n  @Test\n  public void testParse_withEmptyString_callsParseString() throws Throwable {\n    String json = \"\";\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      JsonElement expectedElement = mock(JsonElement.class);\n      mockedStatic.when(() -> JsonParser.parseString(json)).thenReturn(expectedElement);\n\n      JsonElement result = jsonParser.parse(json);\n\n      assertSame(expectedElement, result);\n      mockedStatic.verify(() -> JsonParser.parseString(json));\n    }\n  }\n\n  @Test\n  public void testParseString_withInvalidJson_throwsJsonSyntaxException() {\n    String invalidJson = \"{invalid json}\";\n    assertThrows(JsonSyntaxException.class, () -> JsonParser.parseString(invalidJson));\n  }\n\n  @Test\n  public void testParseReader_withValidReader_returnsJsonElement() throws IOException {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n\n    JsonElement element = JsonParser.parseReader(reader);\n\n    assertNotNull(element);\n  }\n\n  @Test\n  public void testParseReader_withMalformedJson_throwsJsonSyntaxException() {\n    String invalidJson = \"{invalid json}\";\n    Reader reader = new StringReader(invalidJson);\n\n    assertThrows(JsonSyntaxException.class, () -> JsonParser.parseReader(reader));\n  }\n\n  @Test\n  public void testParseReader_withNullReader_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> JsonParser.parseReader((Reader) null));\n  }\n\n  @Test\n  public void testParseReader_withJsonReader_invokesStreamsParse() throws IOException {\n    JsonReader jsonReader = mock(JsonReader.class);\n    try (MockedStatic<Streams> mockedStreams = Mockito.mockStatic(Streams.class)) {\n      JsonElement expectedElement = mock(JsonElement.class);\n      mockedStreams.when(() -> Streams.parse(jsonReader)).thenReturn(expectedElement);\n\n      JsonElement result = JsonParser.parseReader(jsonReader);\n\n      assertSame(expectedElement, result);\n      mockedStreams.verify(() -> Streams.parse(jsonReader));\n    }\n  }\n\n  @Test\n  public void testParseReader_withJsonReader_throwsJsonSyntaxException_onMalformedJson() {\n    JsonReader jsonReader = mock(JsonReader.class);\n    try (MockedStatic<Streams> mockedStreams = Mockito.mockStatic(Streams.class)) {\n      // Use unchecked exception for Mockito mocking\n      mockedStreams.when(() -> Streams.parse(jsonReader)).thenThrow(new RuntimeException(new MalformedJsonException(\"malformed\")));\n\n      assertThrows(JsonSyntaxException.class, () -> JsonParser.parseReader(jsonReader));\n    }\n  }\n\n  @Test\n  public void testParseReader_withJsonReader_throwsJsonSyntaxException_onIOException() {\n    JsonReader jsonReader = mock(JsonReader.class);\n    try (MockedStatic<Streams> mockedStreams = Mockito.mockStatic(Streams.class)) {\n      // Use unchecked exception for Mockito mocking\n      mockedStreams.when(() -> Streams.parse(jsonReader)).thenThrow(new RuntimeException(new IOException(\"io error\")));\n\n      assertThrows(JsonSyntaxException.class, () -> JsonParser.parseReader(jsonReader));\n    }\n  }\n\n  @Test\n  public void testDeprecatedParseReader_invokesParseReader() throws Throwable {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n    JsonParser parser = new JsonParser();\n\n    JsonElement expectedElement = mock(JsonElement.class);\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      mockedStatic.when(() -> JsonParser.parseReader(reader)).thenReturn(expectedElement);\n\n      Method parseMethod = JsonParser.class.getDeclaredMethod(\"parse\", Reader.class);\n      parseMethod.setAccessible(true);\n      JsonElement result = (JsonElement) parseMethod.invoke(parser, reader);\n\n      assertSame(expectedElement, result);\n      mockedStatic.verify(() -> JsonParser.parseReader(reader));\n    }\n  }\n\n  @Test\n  public void testDeprecatedParseJsonReader_invokesParseReader() throws Throwable {\n    JsonReader jsonReader = mock(JsonReader.class);\n    JsonParser parser = new JsonParser();\n\n    JsonElement expectedElement = mock(JsonElement.class);\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      mockedStatic.when(() -> JsonParser.parseReader(jsonReader)).thenReturn(expectedElement);\n\n      Method parseMethod = JsonParser.class.getDeclaredMethod(\"parse\", JsonReader.class);\n      parseMethod.setAccessible(true);\n      JsonElement result = (JsonElement) parseMethod.invoke(parser, jsonReader);\n\n      assertSame(expectedElement, result);\n      mockedStatic.verify(() -> JsonParser.parseReader(jsonReader));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890332,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1276,
+    "prompt_tokens": 2218,
+    "total_tokens": 3494,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.92
+  }
+}

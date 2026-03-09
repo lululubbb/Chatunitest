@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private String[] values;\n    private Map<String, Integer> mapping;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        values = new String[] { \"val0\", \"val1\", \"val2\" };\n        mapping = Collections.emptyMap();\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n    }\n\n    @Test\n    void testGetByIndexValid() {\n        assertEquals(\"val0\", csvRecord.get(0));\n        assertEquals(\"val1\", csvRecord.get(1));\n        assertEquals(\"val2\", csvRecord.get(2));\n    }\n\n    @Test\n    void testGetByIndexOutOfBoundsLow() {\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> csvRecord.get(-1));\n    }\n\n    @Test\n    void testGetByIndexOutOfBoundsHigh() {\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> csvRecord.get(values.length));\n    }\n\n    @Test\n    void testGetUsingReflection() throws Exception {\n        Method method = CSVRecord.class.getDeclaredMethod(\"get\", int.class);\n        method.setAccessible(true);\n        Object result = method.invoke(csvRecord, 1);\n        assertEquals(\"val1\", result);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_2_b/scope_test%20260106100206%/2%Csv_2_b%CSVRecord%get%d1/2/runtemp/Csv_2_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 742,
+  "completion_tokens": 330,
+  "total_tokens": 1072,
+  "llm_elapsed_time_seconds": 4.3
+}

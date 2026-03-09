@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Map;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGet_existingMember_returnsValue() throws Exception {\n    // Prepare a JsonElement mock to be returned\n    JsonElement element = mock(JsonElement.class);\n\n    // Use reflection to access the private 'members' field\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    // Put a key-value pair in the members map\n    members.put(\"key1\", element);\n\n    // Call the focal method\n    JsonElement result = jsonObject.get(\"key1\");\n\n    // Verify the returned element is the same as the one put in the map\n    assertSame(element, result);\n  }\n\n  @Test\n  public void testGet_nonExistingMember_returnsNull() {\n    // The members map is empty, so get should return null for any key\n    JsonElement result = jsonObject.get(\"nonExistingKey\");\n    assertNull(result);\n  }\n\n  @Test\n  public void testGet_nullKey_returnsNull() {\n    // The members map should return null if key is null\n    JsonElement result = jsonObject.get(null);\n    assertNull(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 391,
+  "completion_tokens": 359,
+  "total_tokens": 750,
+  "llm_elapsed_time_seconds": 9.68,
+  "repair_elapsed_time_seconds": 19.87,
+  "round_total_time_seconds": 19.87
+}

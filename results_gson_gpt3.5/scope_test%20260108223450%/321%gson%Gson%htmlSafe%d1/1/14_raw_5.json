@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass GsonHtmlSafeTest {\n\n  @Test\n  void testHtmlSafeTrue() throws Exception {\n    Gson gson = createGsonWithHtmlSafe(true);\n    assertTrue(gson.htmlSafe());\n  }\n\n  @Test\n  void testHtmlSafeFalse() throws Exception {\n    Gson gson = createGsonWithHtmlSafe(false);\n    assertFalse(gson.htmlSafe());\n  }\n\n  private Gson createGsonWithHtmlSafe(boolean value) throws Exception {\n    // Create Gson instance using GsonBuilder with htmlSafe config\n    Gson gson = new GsonBuilder().setHtmlSafe(value).create();\n\n    // Use reflection to verify and forcibly set the private final 'htmlSafe' field if needed\n    Field htmlSafeField = Gson.class.getDeclaredField(\"htmlSafe\");\n    htmlSafeField.setAccessible(true);\n\n    // Remove final modifier from the field if still necessary\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(htmlSafeField, htmlSafeField.getModifiers() & ~Modifier.FINAL);\n\n    htmlSafeField.set(gson, value);\n\n    return gson;\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/321%gson%Gson%htmlSafe%d1/1/temp/Gson_321_1Test.java:28: 错误: 找不到符号\n    Gson gson = new GsonBuilder().setHtmlSafe(value).create();\n                                 ^\n  符号:   方法 setHtmlSafe(boolean)\n  位置: 类 GsonBuilder\n1 个错误\n",
+  "prompt_tokens": 2749,
+  "completion_tokens": 273,
+  "total_tokens": 3022,
+  "llm_elapsed_time_seconds": 4.58
+}

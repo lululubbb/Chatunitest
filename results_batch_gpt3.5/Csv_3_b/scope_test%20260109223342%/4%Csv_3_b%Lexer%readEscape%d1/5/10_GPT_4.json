@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7tfp2Of5kp8Dr6RXtNPjSZLesQU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.BACKSPACE;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.END_OF_STREAM;\nimport static org.apache.commons.csv.Constants.FF;\nimport static org.apache.commons.csv.Constants.LF;\nimport static org.apache.commons.csv.Constants.TAB;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass LexerReadEscapeTest {\n\n    Lexer lexer;\n    ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() {\n        inMock = mock(ExtendedBufferedReader.class);\n        // Creating anonymous subclass because Lexer is abstract\n        lexer = new Lexer(CSVFormat.DEFAULT, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    private int invokeReadEscape() throws Exception {\n        Method method = Lexer.class.getDeclaredMethod(\"readEscape\");\n        method.setAccessible(true);\n        return (int) method.invoke(lexer);\n    }\n\n    @Test\n    void testReadEscape_r() throws Exception {\n        when(inMock.read()).thenReturn((int) 'r');\n        assertEquals(CR, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_n() throws Exception {\n        when(inMock.read()).thenReturn((int) 'n');\n        assertEquals(LF, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_t() throws Exception {\n        when(inMock.read()).thenReturn((int) 't');\n        assertEquals(TAB, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_b() throws Exception {\n        when(inMock.read()).thenReturn((int) 'b');\n        assertEquals(BACKSPACE, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_f() throws Exception {\n        when(inMock.read()).thenReturn((int) 'f');\n        assertEquals(FF, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_CR() throws Exception {\n        when(inMock.read()).thenReturn((int) CR);\n        assertEquals(CR, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_LF() throws Exception {\n        when(inMock.read()).thenReturn((int) LF);\n        assertEquals(LF, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_FF() throws Exception {\n        when(inMock.read()).thenReturn((int) FF);\n        assertEquals(FF, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_TAB() throws Exception {\n        when(inMock.read()).thenReturn((int) TAB);\n        assertEquals(TAB, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_BACKSPACE() throws Exception {\n        when(inMock.read()).thenReturn((int) BACKSPACE);\n        assertEquals(BACKSPACE, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_defaultChar() throws Exception {\n        int c = 'x';\n        when(inMock.read()).thenReturn(c);\n        assertEquals(c, invokeReadEscape());\n    }\n\n    @Test\n    void testReadEscape_endOfStreamThrows() throws Exception {\n        when(inMock.read()).thenReturn(END_OF_STREAM);\n        IOException thrown = assertThrows(IOException.class, this::invokeReadEscape);\n        assertEquals(\"EOF whilst processing escape sequence\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969415,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 745,
+    "prompt_tokens": 2158,
+    "total_tokens": 2903,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.0
+  }
+}

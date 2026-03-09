@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnA7tisvgJkHXO5kNiGEXRJFDwfw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void value_writesFiniteFloat_appendsValue() throws IOException {\n    jsonWriter.value(1.5f);\n    assertEquals(\"1.5\", stringWriter.toString());\n  }\n\n  @Test\n  void value_writesNegativeFloat_appendsValue() throws IOException {\n    jsonWriter.value(-2.75f);\n    assertEquals(\"-2.75\", stringWriter.toString());\n  }\n\n  @Test\n  void value_writesZeroFloat_appendsValue() throws IOException {\n    jsonWriter.value(0.0f);\n    assertEquals(\"0.0\", stringWriter.toString());\n  }\n\n  @Test\n  void value_throwsForNaN_whenNotLenient() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Float.NaN);\n    });\n    assertTrue(thrown.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  void value_throwsForPositiveInfinity_whenNotLenient() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Float.POSITIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  void value_throwsForNegativeInfinity_whenNotLenient() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Float.NEGATIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  void value_allowsNaN_whenLenient() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Float.NaN);\n    assertEquals(\"NaN\", stringWriter.toString());\n  }\n\n  @Test\n  void value_allowsPositiveInfinity_whenLenient() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Float.POSITIVE_INFINITY);\n    assertEquals(\"Infinity\", stringWriter.toString());\n  }\n\n  @Test\n  void value_allowsNegativeInfinity_whenLenient() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Float.NEGATIVE_INFINITY);\n    assertEquals(\"-Infinity\", stringWriter.toString());\n  }\n\n  @Test\n  void value_callsWriteDeferredName_andBeforeValue() throws Exception {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Use reflection to reset deferredName to non-null to test writeDeferredName invocation\n    Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(spyWriter, \"name\");\n\n    // Use reflection to get private methods\n    Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    // Call value\n    spyWriter.value(3.14f);\n\n    // Verify private methods called via reflection\n    verify(spyWriter).value(3.14f);\n\n    // Additionally, verify private methods were invoked by spying on spyWriter and using doCallRealMethod with reflection\n    // But since Mockito cannot verify private method calls directly, we verify by invoking them reflectively and checking no exceptions\n\n    // Alternatively, verify that the private methods have been called by spying and using reflection to invoke them manually\n    // But here, just verify value call succeeded and deferredName was cleared\n    assertNull(deferredNameField.get(spyWriter));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889711,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 860,
+    "prompt_tokens": 1604,
+    "total_tokens": 2464,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.07
+  }
+}

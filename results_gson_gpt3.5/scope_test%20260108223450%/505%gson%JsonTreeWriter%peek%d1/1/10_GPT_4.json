@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWkQtNX8blFQcfOQrfm66ZM4dFY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nclass JsonTreeWriterPeekTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n    private Method peekMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        jsonTreeWriter = new JsonTreeWriter();\n        peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n    }\n\n    @Test\n    void peek_shouldReturnTopElement_whenStackHasElements() throws Exception {\n        // Arrange\n        JsonPrimitive element1 = new JsonPrimitive(\"first\");\n        JsonPrimitive element2 = new JsonPrimitive(\"second\");\n\n        // Use reflection to access private field 'stack'\n        var stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.add(element1);\n        stack.add(element2);\n\n        // Act\n        JsonElement result = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n\n        // Assert\n        assertSame(element2, result);\n    }\n\n    @Test\n    void peek_shouldThrowIndexOutOfBoundsException_whenStackIsEmpty() {\n        // stack is empty by default on new JsonTreeWriter instance\n\n        // Act & Assert\n        InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> {\n            peekMethod.invoke(jsonTreeWriter);\n        });\n        // The cause should be IndexOutOfBoundsException\n        assertTrue(exception.getCause() instanceof IndexOutOfBoundsException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883426,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 387,
+    "prompt_tokens": 2718,
+    "total_tokens": 3105,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.86
+  }
+}

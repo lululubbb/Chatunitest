@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void registerTypeAdapterFactory_shouldAddFactoryToFactoriesList_andReturnThis() throws Exception {\n    // Arrange\n    TypeAdapterFactory mockFactory = mock(TypeAdapterFactory.class);\n    // Access private field 'factories' before registering\n    Field factoriesField = GsonBuilder.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<TypeAdapterFactory> factoriesBefore = (List<TypeAdapterFactory>) factoriesField.get(gsonBuilder);\n    int initialSize = factoriesBefore.size();\n\n    // Act\n    GsonBuilder returned = gsonBuilder.registerTypeAdapterFactory(mockFactory);\n\n    // Assert\n    assertSame(gsonBuilder, returned, \"registerTypeAdapterFactory should return this\");\n    @SuppressWarnings(\"unchecked\")\n    List<TypeAdapterFactory> factoriesAfter = (List<TypeAdapterFactory>) factoriesField.get(gsonBuilder);\n    assertEquals(initialSize + 1, factoriesAfter.size(), \"Factories list size should increase by 1\");\n    assertTrue(factoriesAfter.contains(mockFactory), \"Factories list should contain the registered factory\");\n  }\n\n  @Test\n  void registerTypeAdapterFactory_shouldThrowNullPointerException_whenFactoryIsNull() {\n    assertThrows(NullPointerException.class, () -> gsonBuilder.registerTypeAdapterFactory(null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1070,
+  "completion_tokens": 352,
+  "total_tokens": 1422,
+  "llm_elapsed_time_seconds": 4.91
+}

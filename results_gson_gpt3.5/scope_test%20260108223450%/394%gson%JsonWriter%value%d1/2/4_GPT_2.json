@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlnwGRGTi4vvnzwRzdRZREx2SlOx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\npublic class JsonWriter_value_Test {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void value_writesLongValue_correctly() throws Exception {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Use reflection to stub private methods writeDeferredName and beforeValue to do nothing\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    doAnswer(invocation -> {\n      writeDeferredName.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).writeDeferredName();\n\n    doAnswer(invocation -> {\n      beforeValue.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).beforeValue();\n\n    // Instead of mocking private methods directly (which is not possible), \n    // we can spy and suppress their effect by overriding them with reflection.\n    // But since they are private, Mockito cannot mock them directly.\n    // So we invoke the real private methods via reflection inside doAnswer.\n\n    // Actually, since private methods cannot be stubbed by Mockito, \n    // we just call the real method (which is fine since they do not write output).\n\n    JsonWriter returned = spyWriter.value(123456789L);\n\n    assertSame(spyWriter, returned);\n    assertEquals(\"123456789\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_invokesPrivateWriteDeferredName_andBeforeValue() throws Throwable {\n    // Use reflection to invoke private methods to ensure they exist and callable\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    // invoke private methods without error\n    writeDeferredName.invoke(jsonWriter);\n    beforeValue.invoke(jsonWriter);\n  }\n\n  @Test\n  public void value_withNegativeLong_writesCorrectString() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Call real private methods because we cannot mock them\n    // So just call value normally\n    spyWriter.value(-9876543210L);\n\n    assertEquals(\"-9876543210\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_withZero_writesZero() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    spyWriter.value(0L);\n\n    assertEquals(\"0\", stringWriter.toString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884492,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 635,
+    "prompt_tokens": 1982,
+    "total_tokens": 2617,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.3
+  }
+}

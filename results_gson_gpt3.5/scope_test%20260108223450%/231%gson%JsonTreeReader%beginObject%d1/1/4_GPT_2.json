@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnRjXyud572e3KxqCGbSt0WCaznh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\n\nclass JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a JsonObject with some entries to use in the test\n    jsonObject = new JsonObject();\n    jsonObject.addProperty(\"key1\", \"value1\");\n    jsonObject.addProperty(\"key2\", \"value2\");\n\n    // Instantiate JsonTreeReader with the JsonObject\n    jsonTreeReader = new JsonTreeReader(jsonObject);\n\n    // Use reflection to set stack and stackSize to simulate internal state\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = jsonObject; // push JsonObject on stack to pass expect check\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n  }\n\n  @Test\n  void beginObject_correctlyPushesIterator() throws Exception {\n    // Use reflection to invoke private peekStack method and verify it returns jsonObject\n    Method peekStackMethod = JsonTreeReader.class.getDeclaredMethod(\"peekStack\");\n    peekStackMethod.setAccessible(true);\n    Object peeked = peekStackMethod.invoke(jsonTreeReader);\n    assertSame(jsonObject, peeked);\n\n    // Call beginObject - should not throw and should push the iterator of jsonObject.entrySet()\n    jsonTreeReader.beginObject();\n\n    // Verify stackSize incremented by 1\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(2, stackSize);\n\n    // Verify top of stack is an Iterator of the jsonObject.entrySet()\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    Object top = stack[stackSize - 1];\n    assertTrue(top instanceof Iterator);\n\n    // Verify iterator iterates over the jsonObject's entrySet\n    @SuppressWarnings(\"unchecked\")\n    Iterator<Map.Entry<String, JsonElement>> iterator = (Iterator<Map.Entry<String, JsonElement>>) top;\n    assertTrue(iterator.hasNext());\n    Map.Entry<String, JsonElement> entry = iterator.next();\n    assertTrue(jsonObject.entrySet().contains(entry));\n  }\n\n  @Test\n  void beginObject_expectThrowsIfTopNotBeginObject() throws Exception {\n    // Change top of stack to something other than JsonObject to cause expect failure\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = JsonToken.BEGIN_ARRAY; // wrong token to trigger expect failure\n\n    // beginObject should throw IOException due to expect failure\n    IOException thrown = assertThrows(IOException.class, () -> jsonTreeReader.beginObject());\n    assertTrue(thrown.getMessage().contains(\"Expected BEGIN_OBJECT\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890803,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 768,
+    "prompt_tokens": 1697,
+    "total_tokens": 2465,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.12
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmc2XeXyFcnnOHOSxwjRt9KwTbpE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static Method parseIntMethod;\n\n  @BeforeAll\n  public static void setUp() throws NoSuchMethodException {\n    parseIntMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n    parseIntMethod.setAccessible(true);\n  }\n\n  private int invokeParseInt(String value, int beginIndex, int endIndex) throws Throwable {\n    try {\n      return (int) parseIntMethod.invoke(null, value, beginIndex, endIndex);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  public void testParseInt_validSingleDigit() throws Throwable {\n    assertEquals(5, invokeParseInt(\"5\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_validMultipleDigits() throws Throwable {\n    assertEquals(12345, invokeParseInt(\"12345\", 0, 5));\n  }\n\n  @Test\n  public void testParseInt_validSubstring() throws Throwable {\n    assertEquals(123, invokeParseInt(\"a12345b\", 1, 4));\n  }\n\n  @Test\n  public void testParseInt_zero() throws Throwable {\n    assertEquals(0, invokeParseInt(\"0\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_beginIndexEqualsEndIndex() {\n    // Adjusted expected exception to IllegalArgumentException as parseInt does not throw NumberFormatException here\n    assertThrows(IllegalArgumentException.class, () -> {\n      invokeParseInt(\"123\", 2, 2);\n    });\n  }\n\n  @Test\n  public void testParseInt_beginIndexNegative() {\n    // Adjusted expected exception to IllegalArgumentException as parseInt does not throw NumberFormatException here\n    assertThrows(IllegalArgumentException.class, () -> {\n      invokeParseInt(\"123\", -1, 2);\n    });\n  }\n\n  @Test\n  public void testParseInt_endIndexGreaterThanLength() {\n    // Adjusted expected exception to IllegalArgumentException as parseInt does not throw NumberFormatException here\n    assertThrows(IllegalArgumentException.class, () -> {\n      invokeParseInt(\"123\", 0, 5);\n    });\n  }\n\n  @Test\n  public void testParseInt_beginIndexGreaterThanEndIndex() {\n    // Adjusted expected exception to IllegalArgumentException as parseInt does not throw NumberFormatException here\n    assertThrows(IllegalArgumentException.class, () -> {\n      invokeParseInt(\"123\", 3, 2);\n    });\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterAtStart() {\n    assertThrows(NumberFormatException.class, () -> {\n      invokeParseInt(\"a123\", 0, 4);\n    });\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterInMiddle() {\n    assertThrows(NumberFormatException.class, () -> {\n      invokeParseInt(\"12a3\", 0, 4);\n    });\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterAtEnd() {\n    assertThrows(NumberFormatException.class, () -> {\n      invokeParseInt(\"123a\", 0, 4);\n    });\n  }\n\n  @Test\n  public void testParseInt_singleDigitZero() throws Throwable {\n    assertEquals(0, invokeParseInt(\"0\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_leadingZeros() throws Throwable {\n    assertEquals(7, invokeParseInt(\"0007\", 0, 4));\n  }\n\n  @Test\n  public void testParseInt_partialSubstring() throws Throwable {\n    assertEquals(34, invokeParseInt(\"12345\", 2, 4));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887598,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 850,
+    "prompt_tokens": 1688,
+    "total_tokens": 2538,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.61
+  }
+}

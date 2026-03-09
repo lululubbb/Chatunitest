@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuQsbMVkQzlpxBHszpIAm04h8eFg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private Method toStringArrayMethod;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Using DEFAULT instance for testing\n        csvFormat = CSVFormat.DEFAULT;\n        // Access private method toStringArray with correct parameter type\n        toStringArrayMethod = CSVFormat.class.getDeclaredMethod(\"toStringArray\", Object[].class);\n        toStringArrayMethod.setAccessible(true);\n    }\n\n    @Test\n    void testToStringArray_NullInput() throws Exception {\n        // When invoking a method with varargs or array as parameter via reflection,\n        // wrap the argument in an Object[] to avoid varargs ambiguity\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, (Object) null);\n        assertNull(result, \"Expected null when input is null\");\n    }\n\n    @Test\n    void testToStringArray_EmptyArray() throws Exception {\n        Object[] input = new Object[0];\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, (Object) input);\n        assertNotNull(result, \"Result should not be null\");\n        assertEquals(0, result.length, \"Result length should be zero\");\n    }\n\n    @Test\n    void testToStringArray_ArrayWithNulls() throws Exception {\n        Object[] input = new Object[]{null, \"test\", null};\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, (Object) input);\n        assertNotNull(result);\n        assertEquals(3, result.length);\n        assertNull(result[0], \"First element should be null\");\n        assertEquals(\"test\", result[1], \"Second element should be 'test'\");\n        assertNull(result[2], \"Third element should be null\");\n    }\n\n    @Test\n    void testToStringArray_ArrayWithVariousObjects() throws Exception {\n        Object[] input = new Object[]{123, 45.67, true, 'c', new StringBuilder(\"sb\")};\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, (Object) input);\n        assertNotNull(result);\n        assertEquals(input.length, result.length);\n        assertEquals(\"123\", result[0]);\n        assertEquals(\"45.67\", result[1]);\n        assertEquals(\"true\", result[2]);\n        assertEquals(\"c\", result[3]);\n        assertEquals(\"sb\", result[4]);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679330,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 550,
+    "prompt_tokens": 1786,
+    "total_tokens": 2336,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.08
+  }
+}

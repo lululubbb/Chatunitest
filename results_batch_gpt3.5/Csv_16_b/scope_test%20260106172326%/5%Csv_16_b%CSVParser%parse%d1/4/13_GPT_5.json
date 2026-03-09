@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxp2SvkowfTkfGMjh2cMbXRe3kuC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    @Test\n    void parse_NullString_ThrowsNullPointerException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((String) null, format);\n        });\n        assertEquals(\"string\", exception.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        String input = \"a,b,c\";\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(input, null);\n        });\n        assertEquals(\"format\", exception.getMessage());\n    }\n\n    @Test\n    void parse_ValidStringAndFormat_ReturnsCSVParserInstance() throws IOException {\n        String input = \"a,b,c\\n1,2,3\";\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVParser parser = CSVParser.parse(input, format);\n\n        assertNotNull(parser);\n        assertFalse(parser.isClosed());\n        assertEquals(format, getFormatFromParser(parser));\n    }\n\n    private CSVFormat getFormatFromParser(CSVParser parser) {\n        try {\n            java.lang.reflect.Field formatField = CSVParser.class.getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            return (CSVFormat) formatField.get(parser);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Could not access format field via reflection\");\n            return null;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692360,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 340,
+    "prompt_tokens": 1030,
+    "total_tokens": 1370,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.25
+  }
+}

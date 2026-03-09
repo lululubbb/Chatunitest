@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlZ9aae4XIohtHXjQC0OHkNpp3xs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void value_withTrueBoolean_writesTrue() throws IOException {\n    JsonWriter result = jsonWriter.value(true);\n    assertSame(jsonWriter, result);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_withFalseBoolean_writesFalse() throws IOException {\n    JsonWriter result = jsonWriter.value(false);\n    assertSame(jsonWriter, result);\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_withNullBoolean_callsNullValue() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    doReturn(spyWriter).when(spyWriter).nullValue();\n\n    JsonWriter result = spyWriter.value((Boolean) null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  public void writeDeferredName_and_beforeValue_areCalled_beforeWriting() throws Exception {\n    // Create subclass to expose private fields and methods safely\n    class JsonWriterForTest extends JsonWriter {\n      boolean writeDeferredNameCalled = false;\n      boolean beforeValueCalled = false;\n\n      JsonWriterForTest(StringWriter out) {\n        super(out);\n      }\n\n      // Use reflection to access private deferredName field\n      void setDeferredName(String name) throws Exception {\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(this, name);\n      }\n\n      // Use reflection to access private stack and stackSize fields\n      void setStackState(int[] stack, int stackSize) throws Exception {\n        Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(this, stack);\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(this, stackSize);\n      }\n\n      @Override\n      public JsonWriter value(boolean value) throws IOException {\n        try {\n          // Call writeDeferredName via reflection and mark flag\n          Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n          deferredNameField.setAccessible(true);\n          Object deferredNameValue = deferredNameField.get(this);\n          if (deferredNameValue != null) {\n            writeDeferredNameCalled = true;\n            Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n            writeDeferredNameMethod.setAccessible(true);\n            writeDeferredNameMethod.invoke(this);\n          }\n\n          // Call beforeValue via reflection and mark flag\n          beforeValueCalled = true;\n          Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n          beforeValueMethod.setAccessible(true);\n          beforeValueMethod.invoke(this);\n\n          // Write the boolean value\n          Field outField = JsonWriter.class.getDeclaredField(\"out\");\n          outField.setAccessible(true);\n          ((java.io.Writer) outField.get(this)).write(value ? \"true\" : \"false\");\n          return this;\n        } catch (Exception e) {\n          throw new IOException(e);\n        }\n      }\n    }\n\n    JsonWriterForTest testWriter = new JsonWriterForTest(stringWriter);\n\n    // Prepare stack and deferredName to avoid exceptions and trigger writeDeferredName\n    int[] stack = new int[32];\n    stack[0] = 3; // NONEMPTY_OBJECT to avoid nesting problem and allow writeDeferredName\n    testWriter.setStackState(stack, 1);\n    testWriter.setDeferredName(\"myName\");\n\n    testWriter.value(true);\n\n    assertTrue(testWriter.writeDeferredNameCalled, \"writeDeferredName was not called\");\n    assertTrue(testWriter.beforeValueCalled, \"beforeValue was not called\");\n  }\n\n  @Test\n  public void beforeValue_privateMethod_invocation() throws Exception {\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(jsonWriter);\n    stack[0] = 1; // NONEMPTY_DOCUMENT to avoid nesting problem\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, 1);\n\n    beforeValueMethod.invoke(jsonWriter);\n  }\n\n  @Test\n  public void writeDeferredName_privateMethod_invocation() throws Exception {\n    Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(jsonWriter, \"name\");\n\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(jsonWriter);\n    stack[0] = 3; // NONEMPTY_OBJECT to avoid nesting problem and allow writeDeferredName\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, 1);\n\n    writeDeferredNameMethod.invoke(jsonWriter);\n\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"name\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883575,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1243,
+    "prompt_tokens": 2689,
+    "total_tokens": 3932,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.55
+  }
+}

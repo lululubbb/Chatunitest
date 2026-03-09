@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmvr2JcKDDuSm57e9yLssb5klFdm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  @Test\n  void testGetRuntimeTypeIfMoreSpecific_withValueNull_returnsOriginalType() throws Exception {\n    Type originalType = String.class;\n    Object value = null;\n\n    Method method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(null, originalType, value);\n\n    assertSame(originalType, result);\n  }\n\n  @Test\n  void testGetRuntimeTypeIfMoreSpecific_withTypeClassAndValueNotNull_returnsValueClass() throws Exception {\n    Type originalType = CharSequence.class; // Class<?>\n    String value = \"test\";\n\n    Method method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(null, originalType, value);\n\n    assertEquals(value.getClass(), result);\n  }\n\n  @Test\n  void testGetRuntimeTypeIfMoreSpecific_withTypeTypeVariableAndValueNotNull_returnsValueClass() throws Exception {\n    // Create a dummy TypeVariable instance by reflection from a generic class\n    class GenericClass<T> {\n      T field;\n    }\n    TypeVariable<?> typeVariable = GenericClass.class.getDeclaredField(\"field\").getGenericType();\n\n    Integer value = 123;\n\n    Method method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(null, typeVariable, value);\n\n    assertEquals(value.getClass(), result);\n  }\n\n  @Test\n  void testGetRuntimeTypeIfMoreSpecific_withTypeNotClassOrTypeVariableAndValueNotNull_returnsOriginalType() throws Exception {\n    // Use a generic array type to simulate a Type that is not Class or TypeVariable\n    Type originalType = new Type() {\n      @Override\n      public String getTypeName() {\n        return \"dummy\";\n      }\n    };\n    Object value = \"value\";\n\n    Method method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(null, originalType, value);\n\n    assertSame(originalType, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888827,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 566,
+    "prompt_tokens": 355,
+    "total_tokens": 921,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.39
+  }
+}

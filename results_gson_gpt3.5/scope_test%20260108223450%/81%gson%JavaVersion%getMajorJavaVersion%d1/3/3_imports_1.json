@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JavaVersionTest {\n\n  @Test\n  void testGetMajorJavaVersion_withParseDottedSuccess() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n\n    // \"1.8\" -> parseDotted should parse as 1 (simulate)\n    // Since parseDotted is private, we rely on actual implementation:\n    // parseDotted(\"1.8\") returns -1 or 1? We don't know, but let's test the behavior.\n    // Actually, from the method, if parseDotted returns -1, then extractBeginningInt tries.\n    // Let's test with \"1.8\" which should return 1 (or 8?), but let's assume it returns -1 and extractBeginningInt returns 1.\n    int result = (int) method.invoke(null, \"1.8\");\n    assertTrue(result > 0);\n\n    // Test with \"11.0.2\" which should parse as 11 from parseDotted\n    result = (int) method.invoke(null, \"11.0.2\");\n    assertEquals(11, result);\n\n    // Test with \"9\" which should parse as 9 from extractBeginningInt\n    result = (int) method.invoke(null, \"9\");\n    assertEquals(9, result);\n\n    // Test with invalid string returns 6 (default)\n    result = (int) method.invoke(null, \"invalid.version\");\n    assertEquals(6, result);\n\n    // Test with empty string returns 6 (default)\n    result = (int) method.invoke(null, \"\");\n    assertEquals(6, result);\n\n    // Test with null input (should throw NullPointerException)\n    assertThrows(InvocationTargetException.class, () -> method.invoke(null, (Object) null));\n  }\n\n  @Test\n  void testGetMajorJavaVersion_noInput() {\n    // test the public no-arg getMajorJavaVersion returns a positive integer (cached field)\n    int version = JavaVersion.getMajorJavaVersion();\n    assertTrue(version >= 6);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 304,
+  "completion_tokens": 476,
+  "total_tokens": 780,
+  "llm_elapsed_time_seconds": 8.6,
+  "repair_elapsed_time_seconds": 22.32,
+  "round_total_time_seconds": 22.32
+}

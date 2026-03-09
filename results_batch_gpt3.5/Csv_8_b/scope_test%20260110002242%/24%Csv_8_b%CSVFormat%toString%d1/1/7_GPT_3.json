@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9lzN6rkxqTSjiw56tpVdrYU8GrX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    private CSVFormat createCSVFormat(char delimiter, Character quoteChar, Quote quotePolicy, Character commentStart,\n                                      Character escape, boolean ignoreSurroundingSpaces, boolean ignoreEmptyLines,\n                                      String recordSeparator, String nullString, String[] header, boolean skipHeaderRecord) throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(delimiter, quoteChar, quotePolicy, commentStart,\n                escape, ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header, skipHeaderRecord);\n    }\n\n    @Test\n    void testToString_AllFieldsSet() throws Exception {\n        String[] header = new String[]{\"col1\", \"col2\"};\n        CSVFormat format = createCSVFormat(\n                ';',                    // delimiter\n                '\"',                    // quoteChar\n                Quote.MINIMAL,          // quotePolicy (mock or real enum)\n                '#',                    // commentStart\n                '\\\\',                   // escape\n                true,                   // ignoreSurroundingSpaces\n                true,                   // ignoreEmptyLines\n                \"\\n\",                   // recordSeparator\n                \"NULL\",                 // nullString\n                header,                 // header\n                true                    // skipHeaderRecord\n        );\n\n        String toStringResult = format.toString();\n\n        assertTrue(toStringResult.contains(\"Delimiter=<;>\"));\n        assertTrue(toStringResult.contains(\"Escape=<\\\\>\"));\n        assertTrue(toStringResult.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(toStringResult.contains(\"CommentStart=<#>\"));\n        assertTrue(toStringResult.contains(\"NullString=<NULL>\"));\n        assertTrue(toStringResult.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(toStringResult.contains(\"EmptyLines:ignored\"));\n        assertTrue(toStringResult.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(toStringResult.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(toStringResult.contains(\"Header:\" + Arrays.toString(header)));\n    }\n\n    @Test\n    void testToString_NoOptionalFields() throws Exception {\n        CSVFormat format = createCSVFormat(\n                ',',                    // delimiter\n                null,                   // quoteChar\n                null,                   // quotePolicy\n                null,                   // commentStart\n                null,                   // escape\n                false,                  // ignoreSurroundingSpaces\n                false,                  // ignoreEmptyLines\n                null,                   // recordSeparator\n                null,                   // nullString\n                null,                   // header\n                false                   // skipHeaderRecord\n        );\n\n        String toStringResult = format.toString();\n\n        assertTrue(toStringResult.contains(\"Delimiter=<,>\"));\n        assertFalse(toStringResult.contains(\"Escape=<\"));\n        assertFalse(toStringResult.contains(\"QuoteChar=<\"));\n        assertFalse(toStringResult.contains(\"CommentStart=<\"));\n        assertFalse(toStringResult.contains(\"NullString=<\"));\n        assertFalse(toStringResult.contains(\"RecordSeparator=<\"));\n        assertFalse(toStringResult.contains(\"EmptyLines:ignored\"));\n        assertFalse(toStringResult.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(toStringResult.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toStringResult.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_PartialFields() throws Exception {\n        CSVFormat format = createCSVFormat(\n                '\\t',                   // delimiter\n                '\"',                    // quoteChar\n                null,                   // quotePolicy\n                null,                   // commentStart\n                null,                   // escape\n                false,                  // ignoreSurroundingSpaces\n                true,                   // ignoreEmptyLines\n                \"\\r\\n\",                 // recordSeparator\n                null,                   // nullString\n                null,                   // header\n                false                   // skipHeaderRecord\n        );\n\n        String toStringResult = format.toString();\n\n        assertTrue(toStringResult.contains(\"Delimiter=<\\t>\"));\n        assertFalse(toStringResult.contains(\"Escape=<\"));\n        assertTrue(toStringResult.contains(\"QuoteChar=<\\\">\"));\n        assertFalse(toStringResult.contains(\"CommentStart=<\"));\n        assertFalse(toStringResult.contains(\"NullString=<\"));\n        assertTrue(toStringResult.contains(\"RecordSeparator=<\\r\\n>\"));\n        assertTrue(toStringResult.contains(\"EmptyLines:ignored\"));\n        assertFalse(toStringResult.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(toStringResult.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toStringResult.contains(\"Header:\"));\n    }\n\n    @Test\n    void testPrivateIsLineBreakChar() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n\n        assertTrue((boolean) method.invoke(null, '\\n'));\n        assertTrue((boolean) method.invoke(null, '\\r'));\n        assertFalse((boolean) method.invoke(null, 'a'));\n    }\n\n    @Test\n    void testPrivateIsLineBreakCharacter() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        method.setAccessible(true);\n\n        assertTrue((boolean) method.invoke(null, '\\n'));\n        assertTrue((boolean) method.invoke(null, '\\r'));\n        assertFalse((boolean) method.invoke(null, 'z'));\n        assertFalse((boolean) method.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976627,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1191,
+    "prompt_tokens": 2393,
+    "total_tokens": 3584,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.71
+  }
+}

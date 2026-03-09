@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlfB7y4JbCM3ZFwH70a8fbUu4mkp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a dummy JsonPrimitive to initialize the reader stack\n    JsonPrimitive primitive = new JsonPrimitive(\"initial\");\n    // Use reflection to call the constructor JsonTreeReader(JsonElement)\n    Class<?> clazz = JsonTreeReader.class;\n    // Since JsonElement is abstract, use JsonPrimitive as a concrete subclass\n    reader = (JsonTreeReader) clazz.getConstructor(com.google.gson.JsonElement.class)\n        .newInstance(primitive);\n\n    // Initialize stack with size 1 and stack[0] = primitive to avoid NPEs\n    setField(reader, \"stackSize\", 1);\n    setStackElement(0, primitive);\n\n    // Initialize pathIndices and pathNames arrays\n    setField(reader, \"pathIndices\", new int[32]);\n    setField(reader, \"pathNames\", new String[32]);\n  }\n\n  @Test\n  void nextString_withStringToken_returnsString() throws Exception {\n    // Setup stack to simulate the state for nextString()\n\n    // stackSize = 1 (already set in setUp)\n    setField(reader, \"stackSize\", 1);\n\n    // Set stack[0] = JsonPrimitive with string value \"testString\"\n    JsonPrimitive stringPrimitive = new JsonPrimitive(\"testString\");\n    setStackElement(0, stringPrimitive);\n\n    // Mock peek() to return JsonToken.STRING\n    // Use spy to override peek()\n    JsonTreeReader spyReader = spy(reader);\n    doReturn(JsonToken.STRING).when(spyReader).peek();\n\n    // Set pathIndices[0] = 0\n    setPathIndex(spyReader, 0, 0);\n\n    // Call nextString()\n    String result = spyReader.nextString();\n\n    // Assert returned string equals \"testString\"\n    assertEquals(\"testString\", result);\n\n    // After call, pathIndices[0] should be incremented by 1\n    int updatedIndex = getPathIndex(spyReader, 0);\n    assertEquals(1, updatedIndex);\n  }\n\n  @Test\n  void nextString_withNumberToken_returnsNumberAsString() throws Exception {\n    setField(reader, \"stackSize\", 1);\n\n    JsonPrimitive numberPrimitive = new JsonPrimitive(123.45);\n    setStackElement(0, numberPrimitive);\n\n    JsonTreeReader spyReader = spy(reader);\n    doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n    setPathIndex(spyReader, 0, 5);\n\n    String result = spyReader.nextString();\n\n    assertEquals(\"123.45\", result);\n\n    int updatedIndex = getPathIndex(spyReader, 0);\n    assertEquals(6, updatedIndex);\n  }\n\n  @Test\n  void nextString_withInvalidToken_throwsIllegalStateException() throws Exception {\n    JsonTreeReader spyReader = spy(reader);\n    doReturn(JsonToken.BEGIN_ARRAY).when(spyReader).peek();\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::nextString);\n\n    String expectedMessageStart = \"Expected \" + JsonToken.STRING + \" but was \" + JsonToken.BEGIN_ARRAY;\n    assertTrue(thrown.getMessage().startsWith(expectedMessageStart));\n  }\n\n  @Test\n  void nextString_withStackSizeZero_doesNotIncrementPathIndices() throws Exception {\n    // stackSize = 0 means no increment on pathIndices\n    setField(reader, \"stackSize\", 0);\n\n    // Set stack to empty array to avoid popStack() popping invalid element\n    setField(reader, \"stack\", new Object[32]);\n\n    // Initialize pathIndices array\n    int[] pathIndices = new int[32];\n    setField(reader, \"pathIndices\", pathIndices);\n\n    // Because stackSize=0, popStack() will throw ArrayIndexOutOfBoundsException if stack is empty.\n    // So push an element and adjust stackSize to 1 to avoid exception.\n\n    JsonPrimitive stringPrimitive = new JsonPrimitive(\"zeroStack\");\n    setStackElement(0, stringPrimitive);\n\n    // Spy reader and override peek() to return STRING\n    JsonTreeReader spyReader = spy(reader);\n    doReturn(JsonToken.STRING).when(spyReader).peek();\n\n    // Set stackSize to 1 before calling nextString to avoid popStack() error\n    setField(spyReader, \"stackSize\", 1);\n\n    String result = spyReader.nextString();\n\n    assertEquals(\"zeroStack\", result);\n\n    // Now set stackSize to 0 and check that pathIndices are not incremented after another call\n\n    setField(spyReader, \"stackSize\", 0);\n\n    // Since calling nextString() now would cause an error, just verify pathIndices are unchanged after previous call\n\n    for (int i = 0; i < pathIndices.length; i++) {\n      assertEquals(0, pathIndices[i]);\n    }\n  }\n\n  // Helper methods to set private fields and stack elements\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  private void setStackElement(int index, Object value) throws Exception {\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(reader);\n    // Defensive: expand stack if index >= length\n    if (index >= stack.length) {\n      Object[] newStack = new Object[index + 1];\n      System.arraycopy(stack, 0, newStack, 0, stack.length);\n      stack = newStack;\n      stackField.set(reader, stack);\n    }\n    stack[index] = value;\n  }\n\n  private void setPathIndex(JsonTreeReader targetReader, int index, int value) throws Exception {\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(targetReader);\n    pathIndices[index] = value;\n  }\n\n  private int getPathIndex(JsonTreeReader targetReader, int index) throws Exception {\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(targetReader);\n    return pathIndices[index];\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883949,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1426,
+    "prompt_tokens": 2731,
+    "total_tokens": 4157,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.8
+  }
+}

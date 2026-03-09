@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAEWQsJ77cX0Xyd3l3blhghmezFP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void printComment_commentingDisabled_noOutput() throws IOException {\n        when(format.isCommentingEnabled()).thenReturn(false);\n\n        printer.printComment(\"any comment\");\n\n        verifyNoInteractions(out);\n    }\n\n    @Test\n    void printComment_newRecordTrue_simpleComment() throws Exception {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, true);\n\n        printer.printComment(\"abc\");\n\n        InOrder inOrder = inOrder(out);\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('a');\n        inOrder.verify(out).append('b');\n        inOrder.verify(out).append('c');\n        inOrder.verify(out).append('\\n');\n    }\n\n    @Test\n    void printComment_newRecordFalse_invokesPrintlnBefore() throws Exception {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, false);\n\n        // We spy on printer to verify println() call\n        CSVPrinter spyPrinter = spy(printer);\n        doNothing().when(spyPrinter).println();\n\n        spyPrinter.printComment(\"abc\");\n\n        InOrder inOrder = inOrder(spyPrinter, out);\n        inOrder.verify(spyPrinter).println();\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('a');\n        inOrder.verify(out).append('b');\n        inOrder.verify(out).append('c');\n        inOrder.verify(spyPrinter).println();\n    }\n\n    @Test\n    void printComment_commentWithCRLF() throws IOException {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, true);\n\n        String comment = \"line1\\r\\nline2\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(out);\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('1');\n        inOrder.verify(out).append('\\n');\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('2');\n        inOrder.verify(out).append('\\n');\n    }\n\n    @Test\n    void printComment_commentWithCROnly() throws IOException {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, true);\n\n        String comment = \"line1\\rline2\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(out);\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('1');\n        inOrder.verify(out).append('\\n');\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('2');\n        inOrder.verify(out).append('\\n');\n    }\n\n    @Test\n    void printComment_commentWithLFOnly() throws IOException {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, true);\n\n        String comment = \"line1\\nline2\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(out);\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('1');\n        inOrder.verify(out).append('\\n');\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('l');\n        inOrder.verify(out).append('i');\n        inOrder.verify(out).append('n');\n        inOrder.verify(out).append('e');\n        inOrder.verify(out).append('2');\n        inOrder.verify(out).append('\\n');\n    }\n\n    @Test\n    void printComment_emptyComment() throws IOException {\n        when(format.isCommentingEnabled()).thenReturn(true);\n        when(format.getCommentStart()).thenReturn('#');\n\n        setNewRecord(printer, true);\n\n        printer.printComment(\"\");\n\n        InOrder inOrder = inOrder(out);\n        inOrder.verify(out).append('#');\n        inOrder.verify(out).append(' ');\n        inOrder.verify(out).append('\\n');\n    }\n\n    private void setNewRecord(CSVPrinter printer, boolean value) throws Exception {\n        Field newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978396,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1320,
+    "prompt_tokens": 583,
+    "total_tokens": 1903,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.37
+  }
+}

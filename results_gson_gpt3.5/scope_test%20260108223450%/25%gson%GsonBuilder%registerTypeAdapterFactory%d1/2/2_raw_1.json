@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.GsonBuilder;\nimport com.google.gson.TypeAdapterFactory;\nimport java.lang.reflect.Field;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void registerTypeAdapterFactory_NullFactory_ThrowsNullPointerException() {\n    NullPointerException exception = assertThrows(NullPointerException.class,\n        () -> gsonBuilder.registerTypeAdapterFactory(null));\n    assertNotNull(exception);\n  }\n\n  @Test\n  void registerTypeAdapterFactory_ValidFactory_AddsFactoryAndReturnsThis() throws Exception {\n    TypeAdapterFactory factory = mock(TypeAdapterFactory.class);\n\n    GsonBuilder returned = gsonBuilder.registerTypeAdapterFactory(factory);\n\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to access the private 'factories' field and verify the factory was added\n    Field factoriesField = GsonBuilder.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<TypeAdapterFactory> factories = (List<TypeAdapterFactory>) factoriesField.get(gsonBuilder);\n\n    assertTrue(factories.contains(factory));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1070,
+  "completion_tokens": 285,
+  "total_tokens": 1355,
+  "llm_elapsed_time_seconds": 4.1
+}

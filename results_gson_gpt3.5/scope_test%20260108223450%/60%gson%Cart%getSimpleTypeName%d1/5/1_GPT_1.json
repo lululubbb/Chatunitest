@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlpUdE9NqW4mwbiiq4jNV5rv6roD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android.model;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.WildcardType;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.List;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CartTest {\n\n  @Test\n  void testGetSimpleTypeName_null() {\n    assertEquals(\"null\", Cart.getSimpleTypeName(null));\n  }\n\n  @Test\n  void testGetSimpleTypeName_Class() {\n    assertEquals(\"String\", Cart.getSimpleTypeName(String.class));\n    assertEquals(\"Integer\", Cart.getSimpleTypeName(Integer.class));\n    assertEquals(\"Cart\", Cart.getSimpleTypeName(Cart.class));\n  }\n\n  @Test\n  void testGetSimpleTypeName_ParameterizedType() throws NoSuchFieldException, SecurityException {\n    // Using field with parameterized type: lineItems -> List<LineItem>\n    Field lineItemsField = Cart.class.getDeclaredField(\"lineItems\");\n    Type type = lineItemsField.getGenericType();\n    String expected = \"List<LineItem>\";\n    assertEquals(expected, Cart.getSimpleTypeName(type));\n  }\n\n  @Test\n  void testGetSimpleTypeName_ParameterizedType_MultiArg() throws NoSuchFieldException, SecurityException {\n    // Create a ParameterizedType instance for Map<String, Integer> via reflection proxy\n    ParameterizedType mapType = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, Integer.class};\n      }\n\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n    String expected = \"Map<String,Integer>\";\n    assertEquals(expected, Cart.getSimpleTypeName(mapType));\n  }\n\n  @Test\n  void testGetSimpleTypeName_WildcardType() throws Exception {\n    // Create a WildcardType instance with no bounds\n    WildcardType wildcardType = new WildcardType() {\n      @Override\n      public Type[] getUpperBounds() {\n        return new Type[] {Object.class};\n      }\n\n      @Override\n      public Type[] getLowerBounds() {\n        return new Type[0];\n      }\n    };\n    assertEquals(\"?\", Cart.getSimpleTypeName(wildcardType));\n  }\n\n  @Test\n  void testGetSimpleTypeName_OtherType() {\n    // Create a custom Type implementation returning toString\n    Type customType = new Type() {\n      @Override\n      public String toString() {\n        return \"customTypeToString\";\n      }\n    };\n    assertEquals(\"customTypeToString\", Cart.getSimpleTypeName(customType));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884588,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 604,
+    "prompt_tokens": 468,
+    "total_tokens": 1072,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.74
+  }
+}

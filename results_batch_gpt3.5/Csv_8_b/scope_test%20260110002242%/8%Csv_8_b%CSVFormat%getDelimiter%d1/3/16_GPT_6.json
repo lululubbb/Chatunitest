@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9aV866vanD0OqFxRKKGDnSKrQRl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetDelimiter_Default() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertEquals(',', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_RFC4180() {\n        CSVFormat format = CSVFormat.RFC4180;\n        assertEquals(',', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_EXCEL() {\n        CSVFormat format = CSVFormat.EXCEL;\n        assertEquals(',', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_TDF() {\n        CSVFormat format = CSVFormat.TDF;\n        assertEquals('\\t', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_MYSQL() {\n        CSVFormat format = CSVFormat.MYSQL;\n        assertEquals('\\t', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_NewFormat() {\n        CSVFormat format = CSVFormat.newFormat(';');\n        assertEquals(';', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_WithDelimiter() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter('|');\n        assertEquals('|', format.getDelimiter());\n    }\n\n    @Test\n    void testGetDelimiter_Reflection_PrivateField() throws Exception {\n        // Get the nested Quote enum class from CSVFormat\n        Class<?> quoteClass = null;\n        for (Class<?> innerClass : CSVFormat.class.getDeclaredClasses()) {\n            if (\"Quote\".equals(innerClass.getSimpleName())) {\n                quoteClass = innerClass;\n                break;\n            }\n        }\n\n        Constructor<?> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class,\n                Character.class,\n                quoteClass,\n                Character.class,\n                Character.class,\n                boolean.class,\n                boolean.class,\n                String.class,\n                String.class,\n                String[].class,\n                boolean.class\n        );\n        constructor.setAccessible(true);\n\n        // For the 'header' parameter (String[]), pass an empty array instead of null to avoid NPE\n        String[] header = new String[0];\n\n        // For the quotePolicy parameter, pass null or the enum constant if needed\n        Object quotePolicy = null;\n\n        CSVFormat instance = (CSVFormat) constructor.newInstance(\n                ';',\n                null,\n                quotePolicy,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                header,\n                false\n        );\n\n        Method method = CSVFormat.class.getDeclaredMethod(\"getDelimiter\");\n        method.setAccessible(true);\n        char delimiter = (char) method.invoke(instance);\n\n        assertEquals(';', delimiter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975915,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 580,
+    "prompt_tokens": 1555,
+    "total_tokens": 2135,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.24
+  }
+}

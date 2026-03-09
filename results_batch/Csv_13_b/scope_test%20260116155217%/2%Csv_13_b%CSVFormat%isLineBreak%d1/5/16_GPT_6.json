@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYymAql7lOEWB7XOpeFn06MyFfF9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private static Method isLineBreakCharMethod;\n    private static Method isLineBreakCharacterMethod;\n\n    @BeforeAll\n    static void setUp() throws NoSuchMethodException {\n        isLineBreakCharMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakCharMethod.setAccessible(true);\n        isLineBreakCharacterMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakCharacterMethod.setAccessible(true);\n    }\n\n    @Test\n    void testIsLineBreakChar() throws InvocationTargetException, IllegalAccessException {\n        // Test line break characters that should return true\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\r'));\n\n        // Test characters that should return false\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, 'a'));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, ','));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, ' '));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, '\\t'));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, (char) 0));\n    }\n\n    @Test\n    void testIsLineBreakCharacter() throws InvocationTargetException, IllegalAccessException {\n        // Test null input returns false\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, (Object) null));\n\n        // Test Character objects wrapping line break chars return true\n        assertTrue((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf('\\n')));\n        assertTrue((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf('\\r')));\n\n        // Test Character objects wrapping non-line break chars return false\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf('a')));\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf(',')));\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf(' ')));\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf('\\t')));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550176,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 514,
+    "prompt_tokens": 1722,
+    "total_tokens": 2236,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.34
+  }
+}

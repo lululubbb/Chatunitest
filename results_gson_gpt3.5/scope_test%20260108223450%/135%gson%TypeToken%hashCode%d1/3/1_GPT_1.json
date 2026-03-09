@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnSmcYWVNXsBUDSBFN92rlRUVODi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Type;\n\nclass TypeTokenHashCodeTest {\n\n  @Test\n  void testHashCode_consistencyAndValue() {\n    // Create a TypeToken for String class using the public static get method\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    int hashCode1 = stringTypeToken.hashCode();\n    int hashCode2 = stringTypeToken.hashCode();\n\n    // hashCode should be consistent on multiple calls\n    assertEquals(hashCode1, hashCode2);\n\n    // hashCode should equal the stored hashCode field (via reflection)\n    int fieldHashCode = 0;\n    try {\n      var field = TypeToken.class.getDeclaredField(\"hashCode\");\n      field.setAccessible(true);\n      fieldHashCode = (int) field.get(stringTypeToken);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed to access hashCode field: \" + e.getMessage());\n    }\n    assertEquals(fieldHashCode, hashCode1);\n  }\n\n  @Test\n  void testHashCode_differentTypesProduceDifferentHashCodes() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    TypeToken<Integer> integerTypeToken = TypeToken.get(Integer.class);\n\n    int hashCodeString = stringTypeToken.hashCode();\n    int hashCodeInteger = integerTypeToken.hashCode();\n\n    assertNotEquals(hashCodeString, hashCodeInteger);\n  }\n\n  @Test\n  void testHashCode_sameTypeTokensProduceSameHashCode() {\n    TypeToken<String> tt1 = TypeToken.get(String.class);\n    TypeToken<String> tt2 = TypeToken.get(String.class);\n\n    assertEquals(tt1.hashCode(), tt2.hashCode());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890868,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 387,
+    "prompt_tokens": 500,
+    "total_tokens": 887,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.58
+  }
+}

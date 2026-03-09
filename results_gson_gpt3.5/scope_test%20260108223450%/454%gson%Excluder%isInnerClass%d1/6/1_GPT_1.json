@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJvSILmMxxJJg3HNtHyUwd0xUXZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  @Test\n  void testIsInnerClass_withMemberStaticClass() throws Exception {\n    class Outer {\n      static class StaticInner {}\n    }\n    Excluder excluder = new Excluder();\n    Class<?> clazz = Outer.StaticInner.class;\n\n    // Using reflection to invoke private method\n    boolean result = (boolean) Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class)\n        .invoke(excluder, clazz);\n    // Static inner class isMemberClass() == true but isStatic == true, so false expected\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withMemberNonStaticClass() throws Exception {\n    class Outer {\n      class Inner {}\n    }\n    Excluder excluder = new Excluder();\n    Class<?> clazz = Outer.Inner.class;\n\n    boolean result = (boolean) Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class)\n        .invoke(excluder, clazz);\n    // Non-static inner class is member class and not static -> true expected\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonMemberClass() throws Exception {\n    class LocalClass {}\n    Excluder excluder = new Excluder();\n    Class<?> clazz = LocalClass.class;\n\n    boolean result = (boolean) Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class)\n        .invoke(excluder, clazz);\n    // LocalClass is not a member class, so false expected\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withAnonymousClass() throws Exception {\n    Excluder excluder = new Excluder();\n    Object anonymous = new Object() {};\n    Class<?> clazz = anonymous.getClass();\n\n    boolean result = (boolean) Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class)\n        .invoke(excluder, clazz);\n    // Anonymous classes are not member classes, so false expected\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890319,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 473,
+    "prompt_tokens": 593,
+    "total_tokens": 1066,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.48
+  }
+}

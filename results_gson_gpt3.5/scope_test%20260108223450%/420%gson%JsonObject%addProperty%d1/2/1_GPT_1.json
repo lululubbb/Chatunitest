@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmuDNO3q1ngM1yGa6uZuda85FyIE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = spy(new JsonObject());\n  }\n\n  @Test\n  public void testAddProperty_withBooleanTrue() throws Exception {\n    jsonObject.addProperty(\"keyTrue\", true);\n\n    ArgumentCaptor<String> propertyCaptor = ArgumentCaptor.forClass(String.class);\n    ArgumentCaptor<JsonElement> elementCaptor = ArgumentCaptor.forClass(JsonElement.class);\n    verify(jsonObject).add(propertyCaptor.capture(), elementCaptor.capture());\n\n    assertEquals(\"keyTrue\", propertyCaptor.getValue());\n    JsonElement element = elementCaptor.getValue();\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(true, ((JsonPrimitive) element).getAsBoolean());\n  }\n\n  @Test\n  public void testAddProperty_withBooleanFalse() throws Exception {\n    jsonObject.addProperty(\"keyFalse\", false);\n\n    ArgumentCaptor<String> propertyCaptor = ArgumentCaptor.forClass(String.class);\n    ArgumentCaptor<JsonElement> elementCaptor = ArgumentCaptor.forClass(JsonElement.class);\n    verify(jsonObject).add(propertyCaptor.capture(), elementCaptor.capture());\n\n    assertEquals(\"keyFalse\", propertyCaptor.getValue());\n    JsonElement element = elementCaptor.getValue();\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(false, ((JsonPrimitive) element).getAsBoolean());\n  }\n\n  @Test\n  public void testAddProperty_withBooleanNull() throws Exception {\n    jsonObject.addProperty(\"keyNull\", (Boolean) null);\n\n    ArgumentCaptor<String> propertyCaptor = ArgumentCaptor.forClass(String.class);\n    ArgumentCaptor<JsonElement> elementCaptor = ArgumentCaptor.forClass(JsonElement.class);\n    verify(jsonObject).add(propertyCaptor.capture(), elementCaptor.capture());\n\n    assertEquals(\"keyNull\", propertyCaptor.getValue());\n    JsonElement element = elementCaptor.getValue();\n    assertSame(JsonNull.INSTANCE, element);\n  }\n\n  @Test\n  public void testAddMethodAddsToMembersMap() throws Exception {\n    // Use reflection to get the private members field\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    // Call private add method via reflection\n    Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n    addMethod.setAccessible(true);\n    addMethod.invoke(jsonObject, \"reflectedKey\", primitive);\n\n    assertTrue(members.containsKey(\"reflectedKey\"));\n    assertEquals(primitive, members.get(\"reflectedKey\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888725,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 636,
+    "prompt_tokens": 402,
+    "total_tokens": 1038,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.15
+  }
+}

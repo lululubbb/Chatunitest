@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testIsBoolean_withBooleanTrue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    assertTrue(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withBooleanFalse() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(false);\n    assertTrue(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withNonBooleanInteger() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(123);\n    assertFalse(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withNonBooleanString() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"true\");\n    assertFalse(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withNonBooleanCharacter() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive('a');\n    assertFalse(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withPrivateValueBoolean() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"not boolean\");\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(primitive, Boolean.TRUE);\n    assertTrue(primitive.isBoolean());\n  }\n\n  @Test\n  public void testIsBoolean_withPrivateValueNonBoolean() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(primitive, 1);\n    assertFalse(primitive.isBoolean());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 408,
+  "completion_tokens": 370,
+  "total_tokens": 778,
+  "llm_elapsed_time_seconds": 6.53,
+  "repair_elapsed_time_seconds": 12.95,
+  "round_total_time_seconds": 12.95
+}

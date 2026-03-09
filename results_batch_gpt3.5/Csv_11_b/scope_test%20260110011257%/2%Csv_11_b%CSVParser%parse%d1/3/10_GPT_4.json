@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAM9rHRy0gMlLwe8tphKqIREKu2r",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    @Test\n    void testParse_withValidStringAndFormat_returnsParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        String input = \"a,b,c\\n1,2,3\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader();\n\n        CSVParser parser = CSVParser.parse(input, format);\n\n        assertNotNull(parser);\n\n        // Access private field 'format' via reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat parserFormat = (CSVFormat) formatField.get(parser);\n        assertEquals(format, parserFormat);\n\n        assertFalse(parser.isClosed());\n        assertNotNull(parser.getHeaderMap());\n        assertEquals(3, parser.getHeaderMap().size());\n    }\n\n    @Test\n    void testParse_withNullString_throwsException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(null, format);\n        });\n        assertEquals(\"string\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsException() {\n        String input = \"a,b,c\\n1,2,3\";\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(input, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_privateConstructorInvocation() throws Exception {\n        String input = \"header1,header2\\nvalue1,value2\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader();\n\n        // Use reflection to invoke public constructor (Reader, CSVFormat)\n        Constructor<CSVParser> constructor = CSVParser.class.getConstructor(java.io.Reader.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        CSVParser parser = constructor.newInstance(new StringReader(input), format);\n\n        assertNotNull(parser);\n\n        // Access private field 'format' via reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat parserFormat = (CSVFormat) formatField.get(parser);\n        assertEquals(format, parserFormat);\n\n        assertFalse(parser.isClosed());\n        assertNotNull(parser.getHeaderMap());\n        assertEquals(2, parser.getHeaderMap().size());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978869,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 539,
+    "prompt_tokens": 1114,
+    "total_tokens": 1653,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.8
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSerializeSpecialFloatingPointValues_setsFlagTrueAndReturnsThis() throws Exception {\n    // Initially the field should be false or default value\n    Field field = GsonBuilder.class.getDeclaredField(\"serializeSpecialFloatingPointValues\");\n    field.setAccessible(true);\n    boolean initialValue = field.getBoolean(gsonBuilder);\n\n    // Call the focal method\n    GsonBuilder returned = gsonBuilder.serializeSpecialFloatingPointValues();\n\n    // Verify the method returns the same instance\n    assertSame(gsonBuilder, returned);\n\n    // Verify the field is set to true\n    boolean updatedValue = field.getBoolean(gsonBuilder);\n    assertTrue(updatedValue);\n\n    // If default was true, it remains true; if default was false, it changed to true\n    assertTrue(initialValue || !initialValue && updatedValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1069,
+  "completion_tokens": 254,
+  "total_tokens": 1323,
+  "llm_elapsed_time_seconds": 4.62
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrA2C8DI0Hp8yWFYQFKkr640mZW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n    private StringWriter stringWriter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testEndArray_afterBeginArray() throws IOException {\n        jsonWriter.beginArray();\n        JsonWriter returned = jsonWriter.endArray();\n        assertSame(jsonWriter, returned);\n        assertEquals(\"[]\", stringWriter.toString());\n    }\n\n    @Test\n    public void testEndArray_closeMethodInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException, NoSuchFieldException {\n        // Use reflection to invoke private close method with parameters matching endArray call\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Setup stack to simulate inside an array\n        // private fields stack and stackSize need to be set via reflection\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n\n        // Set stackSize to 1 and stack[0] to EMPTY_ARRAY (1) to cover close method branch\n        stackSizeField.setInt(jsonWriter, 1);\n        int[] stackArray = (int[]) stackField.get(jsonWriter);\n        stackArray[0] = 1; // EMPTY_ARRAY\n        Object resultEmpty = closeMethod.invoke(jsonWriter, 1, 2, ']');\n        assertSame(jsonWriter, resultEmpty);\n\n        stackArray[0] = 2; // NONEMPTY_ARRAY\n        Object resultNonEmpty = closeMethod.invoke(jsonWriter, 1, 2, ']');\n        assertSame(jsonWriter, resultNonEmpty);\n    }\n\n    @Test\n    public void testEndArray_withoutBeginArray_throwsException() throws Exception {\n        // The close method should throw IllegalStateException if stack is empty or top is not array\n        // Use reflection to clear stackSize to 0 to simulate error\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 0);\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> jsonWriter.endArray());\n        assertTrue(thrown.getMessage().contains(\"Nesting problem\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884692,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 605,
+    "prompt_tokens": 1972,
+    "total_tokens": 2577,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.13
+  }
+}

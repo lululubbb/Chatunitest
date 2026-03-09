@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmuwXAW9dpAM9RACVJghzU9S3INY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\npublic class GsonFromJsonTest {\n\n    private Gson gson;\n\n    @BeforeEach\n    public void setUp() {\n        gson = new Gson();\n    }\n\n    @Test\n    public void testFromJson_ValidJson_PrimitiveType() throws Exception {\n        String json = \"123\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        Type type = Integer.class;\n\n        Integer result = gson.fromJson(reader, type);\n\n        assertEquals(123, result);\n    }\n\n    @Test\n    public void testFromJson_ValidJson_CustomType() throws Exception {\n        String json = \"{\\\"name\\\":\\\"test\\\",\\\"age\\\":10}\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        Type type = Person.class;\n\n        Person result = gson.fromJson(reader, type);\n\n        assertNotNull(result);\n        assertEquals(\"test\", result.name);\n        assertEquals(10, result.age);\n    }\n\n    @Test\n    public void testFromJson_EmptyJson_ThrowsJsonSyntaxException() throws Exception {\n        String json = \"\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        Type type = Object.class;\n\n        assertThrows(JsonSyntaxException.class, () -> {\n            gson.fromJson(reader, type);\n        });\n    }\n\n    @Test\n    public void testFromJson_JsonIOException_Propagated() throws Exception {\n        JsonReader reader = mock(JsonReader.class);\n        Type type = Object.class;\n\n        when(reader.peek()).thenThrow(new IOException(\"io error\"));\n\n        assertThrows(JsonIOException.class, () -> {\n            gson.fromJson(reader, type);\n        });\n    }\n\n    @Test\n    public void testFromJson_JsonSyntaxException_Propagated() throws Exception {\n        JsonReader reader = mock(JsonReader.class);\n        Type type = Object.class;\n\n        when(reader.peek()).thenThrow(new MalformedJsonException(\"malformed\"));\n\n        assertThrows(JsonSyntaxException.class, () -> {\n            gson.fromJson(reader, type);\n        });\n    }\n\n    @Test\n    public void testFromJson_NullReader_ThrowsNullPointerException() {\n        Type type = Object.class;\n        assertThrows(NullPointerException.class, () -> {\n            gson.fromJson((JsonReader) null, type);\n        });\n    }\n\n    @Test\n    public void testFromJson_UsesThreadLocalCache() throws Exception {\n        // Use reflection to get threadLocalAdapterResults field and ensure it is used\n        Field threadLocalAdapterResultsField = Gson.class.getDeclaredField(\"threadLocalAdapterResults\");\n        threadLocalAdapterResultsField.setAccessible(true);\n\n        ThreadLocal<?> threadLocalAdapterResults = (ThreadLocal<?>) threadLocalAdapterResultsField.get(gson);\n        assertNotNull(threadLocalAdapterResults);\n\n        String json = \"true\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        Type type = Boolean.class;\n\n        Boolean result = gson.fromJson(reader, type);\n        assertTrue(result);\n    }\n\n    // Helper class for testing custom object deserialization\n    static class Person {\n        String name;\n        int age;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888770,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 748,
+    "prompt_tokens": 1604,
+    "total_tokens": 2352,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 15.68
+  }
+}

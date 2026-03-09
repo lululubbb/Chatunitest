@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn3S7qMBPlk883jGySaKPhme0NSI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.*;\nimport org.junit.jupiter.api.Test;\n\nclass TypeToken_getTypeTokenTypeArgument_Test {\n\n  @Test\n  void test_getTypeTokenTypeArgument_directSubclassParameterized() throws Exception {\n    class StringTypeToken extends TypeToken<String> {}\n    TypeToken<String> token = new StringTypeToken();\n\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    Type result = (Type) method.invoke(token);\n\n    // The result should be canonicalized String.class type\n    assertEquals(String.class, result);\n  }\n\n  @Test\n  void test_getTypeTokenTypeArgument_rawTypeToken_throws() throws Exception {\n    // Create a raw TypeToken subclass with no type argument\n    @SuppressWarnings({\"rawtypes\", \"unchecked\"})\n    class RawToken extends TypeToken {}\n    RawToken raw = new RawToken();\n\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(raw);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n    assertTrue(thrown.getCause().getMessage().contains(\"TypeToken must be created with a type argument\"));\n  }\n\n  @Test\n  void test_getTypeTokenTypeArgument_subclassOfSubclass_throws() throws Exception {\n    // Create direct subclass with type argument\n    class DirectToken<T> extends TypeToken<T> {}\n    // Create subclass of subclass with type argument\n    class SubToken<T> extends DirectToken<T> {}\n\n    SubToken<String> subToken = new SubToken<>();\n\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(subToken);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n    assertTrue(thrown.getCause().getMessage().contains(\"Must only create direct subclasses of TypeToken\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889298,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 448,
+    "prompt_tokens": 2747,
+    "total_tokens": 3195,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.62
+  }
+}

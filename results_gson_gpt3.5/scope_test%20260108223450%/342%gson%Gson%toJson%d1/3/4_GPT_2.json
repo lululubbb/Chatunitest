@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmBYpvN7RgeVRgrdNuDJF0Gx5kv7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n  private JsonWriter writer;\n  private JsonElement jsonElement;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n    writer = mock(JsonWriter.class);\n    jsonElement = mock(JsonElement.class);\n  }\n\n  @Test\n  void toJson_shouldSetAndResetWriterPropertiesAndCallStreamsWrite() throws Exception {\n    // Arrange\n    when(writer.isLenient()).thenReturn(false);\n    when(writer.isHtmlSafe()).thenReturn(true);\n    when(writer.getSerializeNulls()).thenReturn(false);\n\n    // Act\n    gson.toJson(jsonElement, writer);\n\n    // Assert\n    InOrder inOrder = inOrder(writer);\n    // Verify writer properties set to expected values before Streams.write\n    inOrder.verify(writer).isLenient();\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).isHtmlSafe();\n    inOrder.verify(writer).setHtmlSafe(gson.htmlSafe());\n    inOrder.verify(writer).getSerializeNulls();\n    inOrder.verify(writer).setSerializeNulls(gson.serializeNulls());\n\n    // Streams.write called internally, cannot verify directly, but no exception thrown\n\n    // Verify writer properties reset to original values in finally block\n    inOrder.verify(writer).setLenient(false);\n    inOrder.verify(writer).setHtmlSafe(true);\n    inOrder.verify(writer).setSerializeNulls(false);\n  }\n\n  @Test\n  void toJson_shouldThrowJsonIOExceptionWhenIOExceptionOccurs() throws Exception {\n    // Arrange\n    when(writer.isLenient()).thenReturn(false);\n    when(writer.isHtmlSafe()).thenReturn(true);\n    when(writer.getSerializeNulls()).thenReturn(false);\n\n    doThrow(new IOException(\"IO error\")).when(writer).setLenient(anyBoolean());\n\n    // Act & Assert\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> {\n      gson.toJson(jsonElement, writer);\n    });\n    assertEquals(\"java.io.IOException: IO error\", thrown.getCause().toString());\n  }\n\n  @Test\n  void toJson_shouldWrapAssertionErrorWithVersionInfo() throws Exception {\n    // Arrange\n    when(writer.isLenient()).thenReturn(false);\n    when(writer.isHtmlSafe()).thenReturn(true);\n    when(writer.getSerializeNulls()).thenReturn(false);\n\n    doThrow(new AssertionError(\"assertion failed\")).when(writer).setLenient(anyBoolean());\n\n    // Act & Assert\n    AssertionError thrown = assertThrows(AssertionError.class, () -> {\n      gson.toJson(jsonElement, writer);\n    });\n    assertTrue(thrown.getMessage().contains(\"AssertionError (GSON \" + Gson.class.getPackage().getImplementationVersion() + \"): assertion failed\"));\n    assertTrue(thrown.getCause() instanceof AssertionError);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885956,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 657,
+    "prompt_tokens": 2312,
+    "total_tokens": 2969,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.86
+  }
+}

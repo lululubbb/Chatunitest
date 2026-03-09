@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZHUAnDyhjxpcqu733UOTR8UyILO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testToString_Defaults() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String toString = format.toString();\n\n        assertTrue(toString.contains(\"Delimiter=<,>\"));\n        assertTrue(toString.contains(\"Escape=<\\\\>\") || !format.isEscapeCharacterSet());\n        assertTrue(toString.contains(\"QuoteChar=<\\\">\") || !format.isQuoteCharacterSet());\n        assertTrue(toString.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toString.contains(\"CommentStart=<\"));\n        assertFalse(toString.contains(\"NullString=<\"));\n        assertTrue(toString.contains(\"RecordSeparator=<\\r\\n>\"));\n        assertTrue(toString.contains(\"EmptyLines:ignored\") == format.getIgnoreEmptyLines());\n        assertTrue(toString.contains(\"SurroundingSpaces:ignored\") == format.getIgnoreSurroundingSpaces());\n        assertTrue(toString.contains(\"IgnoreHeaderCase:ignored\") == format.getIgnoreHeaderCase());\n        assertFalse(toString.contains(\"HeaderComments:\"));\n        assertFalse(toString.contains(\"Header:\"));\n    }\n\n    @Test\n    public void testToString_AllFieldsSet() throws Exception {\n        String[] header = new String[] {\"col1\", \"col2\"};\n        String[] headerComments = new String[] {\"comment1\", \"comment2\"};\n\n        // Start from DEFAULT and set fields via reflection since constructor is private\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        setField(format, \"delimiter\", ';');\n        setField(format, \"quoteCharacter\", '\\\"');\n        setField(format, \"quoteMode\", QuoteMode.ALL);\n        setField(format, \"commentMarker\", '#');\n        setField(format, \"escapeCharacter\", '\\\\');\n        setField(format, \"ignoreSurroundingSpaces\", true);\n        setField(format, \"ignoreEmptyLines\", false);\n        setField(format, \"recordSeparator\", \"\\n\");\n        setField(format, \"nullString\", \"NULL\");\n        setField(format, \"headerComments\", headerComments);\n        setField(format, \"header\", header);\n        setField(format, \"skipHeaderRecord\", true);\n        setField(format, \"allowMissingColumnNames\", false);\n        setField(format, \"ignoreHeaderCase\", false);\n\n        String toString = format.toString();\n\n        assertTrue(toString.contains(\"Delimiter=<;>\"));\n        assertTrue(toString.contains(\"Escape=<\\\\>\"));\n        assertTrue(toString.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(toString.contains(\"CommentStart=<#>\"));\n        assertTrue(toString.contains(\"NullString=<NULL>\"));\n        assertTrue(toString.contains(\"RecordSeparator=<\\n>\"));\n        assertFalse(toString.contains(\"EmptyLines:ignored\"));\n        assertTrue(toString.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(toString.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(toString.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(toString.contains(\"HeaderComments:[comment1, comment2]\"));\n        assertTrue(toString.contains(\"Header:[col1, col2]\"));\n    }\n\n    @Test\n    public void testToString_NoOptionalFields() throws Exception {\n        // Start from DEFAULT and set fields via reflection since constructor is private\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        setField(format, \"delimiter\", '|');\n        setField(format, \"quoteCharacter\", null);\n        setField(format, \"quoteMode\", null);\n        setField(format, \"commentMarker\", null);\n        setField(format, \"escapeCharacter\", null);\n        setField(format, \"ignoreSurroundingSpaces\", false);\n        setField(format, \"ignoreEmptyLines\", false);\n        setField(format, \"recordSeparator\", null);\n        setField(format, \"nullString\", null);\n        setField(format, \"headerComments\", null);\n        setField(format, \"header\", null);\n        setField(format, \"skipHeaderRecord\", false);\n        setField(format, \"allowMissingColumnNames\", false);\n        setField(format, \"ignoreHeaderCase\", false);\n\n        String toString = format.toString();\n\n        assertTrue(toString.contains(\"Delimiter=<|>\"));\n        assertFalse(toString.contains(\"Escape=<\"));\n        assertFalse(toString.contains(\"QuoteChar=<\"));\n        assertFalse(toString.contains(\"CommentStart=<\"));\n        assertFalse(toString.contains(\"NullString=<\"));\n        assertFalse(toString.contains(\"RecordSeparator=<\"));\n        assertFalse(toString.contains(\"EmptyLines:ignored\"));\n        assertFalse(toString.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(toString.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(toString.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toString.contains(\"HeaderComments:\"));\n        assertFalse(toString.contains(\"Header:\"));\n    }\n\n    private static void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551336,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1065,
+    "prompt_tokens": 2504,
+    "total_tokens": 3569,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.71
+  }
+}

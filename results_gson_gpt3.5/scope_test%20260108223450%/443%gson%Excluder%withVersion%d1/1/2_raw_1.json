@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  public void testWithVersion() {\n    Excluder original = new Excluder();\n    double versionValue = 1.5;\n\n    Excluder result = original.withVersion(versionValue);\n\n    assertNotNull(result);\n    assertNotSame(original, result);\n\n    // Use reflection to verify private field 'version'\n    double versionInResult = getVersionField(result);\n    assertEquals(versionValue, versionInResult);\n\n    // Verify original instance version remains unchanged (default -1.0)\n    double versionInOriginal = getVersionField(original);\n    assertEquals(-1.0d, versionInOriginal);\n  }\n\n  private double getVersionField(Excluder excluder) {\n    try {\n      Field versionField = Excluder.class.getDeclaredField(\"version\");\n      versionField.setAccessible(true);\n      return versionField.getDouble(excluder);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 599,
+  "completion_tokens": 261,
+  "total_tokens": 860,
+  "llm_elapsed_time_seconds": 5.24
+}

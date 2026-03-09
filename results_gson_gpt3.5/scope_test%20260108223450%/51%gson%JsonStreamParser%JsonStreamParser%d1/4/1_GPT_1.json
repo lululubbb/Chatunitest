@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlqMvuiNjG7MM85ESbYBZwr2ceUg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.NoSuchElementException;\n\npublic class JsonStreamParserTest {\n\n  private JsonReader mockJsonReader;\n\n  @BeforeEach\n  void setup() {\n    mockJsonReader = mock(JsonReader.class);\n  }\n\n  @Test\n  void testConstructor_withReader_setsLenientTrue() throws Exception {\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n    JsonStreamParser parser = new JsonStreamParser(reader);\n\n    // Using reflection to verify private final fields\n    var parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader innerReader = (JsonReader) parserField.get(parser);\n\n    assertNotNull(innerReader);\n    // JsonReader#setLenient is void, so no direct way to verify except by behavior\n  }\n\n  @Test\n  void testConstructor_withString_invokesReaderConstructor() throws Exception {\n    String json = \"{\\\"a\\\":1}\";\n    // Use reflection to get the constructor JsonStreamParser(String)\n    Constructor<JsonStreamParser> ctor = JsonStreamParser.class.getDeclaredConstructor(String.class);\n    ctor.setAccessible(true);\n    JsonStreamParser parser = ctor.newInstance(json);\n\n    assertNotNull(parser);\n  }\n\n  @Test\n  void testHasNext_trueWhenNextTokenIsNotEndDocument() throws IOException {\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n        })) {\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n      assertTrue(parser.hasNext());\n    }\n  }\n\n  @Test\n  void testHasNext_falseWhenNextTokenIsEndDocument() throws IOException {\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenReturn(JsonToken.END_DOCUMENT);\n        })) {\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n      assertFalse(parser.hasNext());\n    }\n  }\n\n  @Test\n  void testHasNext_throwsRuntimeExceptionOnIOException() throws IOException {\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenThrow(new IOException(\"IO error\"));\n        })) {\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n      RuntimeException thrown = assertThrows(RuntimeException.class, parser::hasNext);\n      assertTrue(thrown.getCause() instanceof IOException);\n    }\n  }\n\n  @Test\n  void testNext_returnsJsonElement() throws IOException {\n    JsonElement expectedElement = mock(JsonElement.class);\n\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n          // Streams.parse(JsonReader) is static and final, cannot mock easily.\n          // So test next() behavior indirectly by invoking real method on real parser.\n        })) {\n      String json = \"{\\\"key\\\":\\\"value\\\"}\";\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(json));\n      JsonElement element = parser.next();\n      assertNotNull(element);\n    }\n  }\n\n  @Test\n  void testNext_throwsNoSuchElementExceptionWhenNoNext() throws IOException {\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenReturn(JsonToken.END_DOCUMENT);\n        })) {\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n      assertThrows(NoSuchElementException.class, parser::next);\n    }\n  }\n\n  @Test\n  void testNext_throwsRuntimeExceptionOnMalformedJsonException() throws IOException {\n    try (MockedConstruction<JsonReader> ignored = mockConstruction(JsonReader.class,\n        (mock, context) -> {\n          when(mock.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n          doThrow(new MalformedJsonException(\"malformed\")).when(mock).peek();\n        })) {\n      JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n      // Because peek throws MalformedJsonException, next will throw RuntimeException\n      RuntimeException thrown = assertThrows(RuntimeException.class, parser::next);\n      assertTrue(thrown.getCause() instanceof MalformedJsonException);\n    }\n  }\n\n  @Test\n  void testRemove_throwsUnsupportedOperationException() {\n    JsonStreamParser parser = new JsonStreamParser(new StringReader(\"{}\"));\n    assertThrows(UnsupportedOperationException.class, parser::remove);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884642,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1053,
+    "prompt_tokens": 301,
+    "total_tokens": 1354,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.43
+  }
+}

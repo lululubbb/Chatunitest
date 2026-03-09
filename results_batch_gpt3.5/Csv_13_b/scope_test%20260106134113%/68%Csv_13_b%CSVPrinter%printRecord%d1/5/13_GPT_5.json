@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuFl5IzerpLllLW10gBWzsCnGZDP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException {\n        // Given values of different types including null\n        Object[] values = { \"hello\", 123, null, 45.67 };\n\n        // Spy on printer to verify print(Object) calls\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        // When\n        spyPrinter.printRecord(values);\n\n        // Then\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withEmptyValues() throws IOException {\n        Object[] values = new Object[0];\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNullArray() {\n        assertThrows(NullPointerException.class, () -> printer.printRecord((Object[]) null));\n    }\n\n    @Test\n    void testPrivatePrintAndEscape() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        Appendable spyOut = spy(new StringBuilder());\n        CSVPrinter localPrinter = new CSVPrinter(spyOut, format);\n\n        method.invoke(localPrinter, \"test\", 0, 4);\n\n        verify(spyOut, atLeastOnce()).append(anyChar());\n    }\n\n    @Test\n    void testPrivatePrintAndQuote() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        Appendable spyOut = spy(new StringBuilder());\n        CSVPrinter localPrinter = new CSVPrinter(spyOut, format);\n\n        method.invoke(localPrinter, \"obj\", \"quote\", 0, 5);\n\n        verify(spyOut, atLeastOnce()).append(anyChar());\n    }\n\n    @Test\n    void testPrivatePrint() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        Appendable spyOut = spy(new StringBuilder());\n        CSVPrinter localPrinter = new CSVPrinter(spyOut, format);\n\n        method.invoke(localPrinter, \"obj\", \"value\", 0, 5);\n\n        verify(spyOut, atLeastOnce()).append(anyChar());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678641,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 698,
+    "prompt_tokens": 1199,
+    "total_tokens": 1897,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.11
+  }
+}

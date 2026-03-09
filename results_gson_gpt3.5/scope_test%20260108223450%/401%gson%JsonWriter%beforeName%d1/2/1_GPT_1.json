@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwYy16tbyNdNv0cTbjdptcQwmGQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static com.google.gson.stream.JsonScope.DANGLING_NAME;\nimport static com.google.gson.stream.JsonScope.EMPTY_OBJECT;\nimport static com.google.gson.stream.JsonScope.NONEMPTY_OBJECT;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass JsonWriterBeforeNameTest {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  void beforeName_writesCommaWhenNonEmptyObject() throws Throwable {\n    // Arrange: set stack so peek() returns NONEMPTY_OBJECT\n    setStackTop(NONEMPTY_OBJECT);\n\n    // Act\n    invokeBeforeName();\n\n    // Assert: verify comma written, newline called, and top replaced with DANGLING_NAME\n    verify(mockWriter).write(',');\n    assertStackTop(DANGLING_NAME);\n  }\n\n  @Test\n  void beforeName_noCommaWhenEmptyObject() throws Throwable {\n    // Arrange: set stack so peek() returns EMPTY_OBJECT\n    setStackTop(EMPTY_OBJECT);\n\n    // Act\n    invokeBeforeName();\n\n    // Assert: verify no comma written, newline called, and top replaced with DANGLING_NAME\n    verify(mockWriter, never()).write(',');\n    assertStackTop(DANGLING_NAME);\n  }\n\n  @Test\n  void beforeName_throwsIllegalStateExceptionWhenNotObjectContext() {\n    // Arrange: set stack so peek() returns something else (e.g. EMPTY_ARRAY)\n    setStackTop(JsonScope.EMPTY_ARRAY);\n\n    // Act & Assert\n    IllegalStateException ex = assertThrows(IllegalStateException.class, this::invokeBeforeName);\n    assertEquals(\"Nesting problem.\", ex.getMessage());\n  }\n\n  // Helper to set the top of the stack (stackSize=1)\n  private void setStackTop(int context) {\n    try {\n      var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n      stackField.setAccessible(true);\n      int[] stack = new int[32];\n      stack[0] = context;\n      stackField.set(jsonWriter, stack);\n\n      var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n      stackSizeField.setAccessible(true);\n      stackSizeField.setInt(jsonWriter, 1);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to assert the top of the stack value\n  private void assertStackTop(int expected) {\n    try {\n      var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n      stackField.setAccessible(true);\n      int[] stack = (int[]) stackField.get(jsonWriter);\n\n      var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n      stackSizeField.setAccessible(true);\n      int stackSize = stackSizeField.getInt(jsonWriter);\n\n      assertTrue(stackSize > 0);\n      assertEquals(expected, stack[stackSize - 1]);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to invoke private beforeName method via reflection\n  private void invokeBeforeName() throws Throwable {\n    try {\n      Method beforeName = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n      beforeName.setAccessible(true);\n      beforeName.invoke(jsonWriter);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888870,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 769,
+    "prompt_tokens": 783,
+    "total_tokens": 1552,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.72
+  }
+}

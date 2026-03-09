@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuFF7bf9Pieqdt6vbN0SowpofReA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException {\n        printer.printRecord(\"value1\", 123, null, true);\n\n        String expected = out.toString();\n        assertNotNull(expected);\n    }\n\n    @Test\n    void testPrintRecord_withNoValues() throws IOException {\n        printer.printRecord();\n\n        String expected = out.toString();\n        assertNotNull(expected);\n    }\n\n    @Test\n    void testPrintRecord_reflectiveInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method printRecordMethod = CSVPrinter.class.getDeclaredMethod(\"printRecord\", Object[].class);\n        printRecordMethod.setAccessible(true);\n\n        // Pass the Object[] wrapped in Object[] to match varargs signature\n        Object[] args = new Object[] { new Object[] { \"a\", \"b\" } };\n        try {\n            printRecordMethod.invoke(printer, (Object) args[0]);\n        } catch (InvocationTargetException e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        String result = out.toString();\n        assertNotNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678609,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 378,
+    "prompt_tokens": 874,
+    "total_tokens": 1252,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.46
+  }
+}

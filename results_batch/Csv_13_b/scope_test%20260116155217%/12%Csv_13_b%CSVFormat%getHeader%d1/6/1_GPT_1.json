@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOyIH5ETh1E6ftGqHAFomMAWvXV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        CSVFormat csvFormat = createCSVFormatWithHeader(null);\n        String[] header = csvFormat.getHeader();\n        assertNull(header);\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNotNull() throws Exception {\n        String[] originalHeader = new String[] {\"col1\", \"col2\", \"col3\"};\n        CSVFormat csvFormat = createCSVFormatWithHeader(originalHeader);\n\n        String[] header = csvFormat.getHeader();\n\n        assertNotNull(header);\n        assertArrayEquals(originalHeader, header);\n\n        // Verify defensive copy: modifying returned array does not affect internal header\n        header[0] = \"changed\";\n        String[] headerAfterChange = csvFormat.getHeader();\n        assertArrayEquals(originalHeader, headerAfterChange);\n    }\n\n    private CSVFormat createCSVFormatWithHeader(String[] header) throws Exception {\n        // Using reflection to create instance with header field set\n        // The constructor is private, so we create DEFAULT and then set header field via reflection\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(csvFormat, header);\n\n        return csvFormat;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551800,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 310,
+    "prompt_tokens": 1139,
+    "total_tokens": 1449,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.37
+  }
+}

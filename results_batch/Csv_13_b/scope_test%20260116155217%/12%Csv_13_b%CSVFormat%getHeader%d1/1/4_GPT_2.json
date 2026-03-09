@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOy2f7C4SavV2jXKoNGLVCzi5CH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        // Create a new CSVFormat instance with header set to null using withHeader\n        CSVFormat format = CSVFormat.DEFAULT.withHeader((String[]) null);\n\n        String[] result = format.getHeader();\n        assertNull(result, \"Expected getHeader() to return null when header is null\");\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNonNull() throws Exception {\n        String[] headerValue = new String[]{\"col1\", \"col2\", \"col3\"};\n        // Create a new CSVFormat instance with the header set to headerValue using withHeader\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(headerValue);\n\n        String[] result = format.getHeader();\n        assertNotNull(result, \"Expected getHeader() to return a non-null array when header is set\");\n        assertArrayEquals(headerValue, result, \"Expected returned header array to equal the set header\");\n        assertNotSame(headerValue, result, \"Expected returned header to be a clone, not the original array\");\n\n        // Modify returned array and verify original is not changed (defensive copy)\n        result[0] = \"modified\";\n\n        // Use reflection to get the private header field from the format instance\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] originalAfterModification = (String[]) headerField.get(format);\n\n        assertEquals(\"col1\", originalAfterModification[0], \"Original header array should not be affected by modifications to the returned array\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551800,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 376,
+    "prompt_tokens": 1583,
+    "total_tokens": 1959,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.2
+  }
+}

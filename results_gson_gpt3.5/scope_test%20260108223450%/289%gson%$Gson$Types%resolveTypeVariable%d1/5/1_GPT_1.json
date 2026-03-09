@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbOjUMsZKZxRpNx10IopzNUx0q2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\n\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.internal.$Gson$Types;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nclass GsonTypesResolveTypeVariableTest {\n\n  @Test\n  void resolveTypeVariable_declaringClassNull_returnsUnknown() throws Exception {\n    // Arrange\n    TypeVariable<?> unknown = mock(TypeVariable.class);\n    // Mock declaringClassOf to return null via reflection\n    Method declaringClassOfMethod = $Gson$Types.class.getDeclaredMethod(\"declaringClassOf\", TypeVariable.class);\n    declaringClassOfMethod.setAccessible(true);\n    // Cannot mock static private method directly, so we create a spy of $Gson$Types and override via reflection is not possible.\n    // Instead, we create a subclass that shadows the method? Not possible because class is final.\n    // So we rely on actual behavior: create a TypeVariable whose declaring class is null - not possible.\n    // Alternative: create a TypeVariable with declaring class null by creating a proxy? Complex.\n    // So test fallback by creating a TypeVariable whose declaring class is null by mocking the method via reflection.\n    // We will invoke resolveTypeVariable via reflection and check result is unknown.\n\n    // Act\n    Method resolveTypeVariableMethod = $Gson$Types.class.getDeclaredMethod(\"resolveTypeVariable\", Type.class, Class.class, TypeVariable.class);\n    resolveTypeVariableMethod.setAccessible(true);\n    Object result = resolveTypeVariableMethod.invoke(null, Object.class, Object.class, unknown);\n\n    // Assert\n    assertSame(unknown, result);\n  }\n\n  @Test\n  void resolveTypeVariable_declaredByRawNotParameterized_returnsUnknown() throws Exception {\n    // Arrange\n    Class<?> declaredByRaw = DummyClass.class;\n    TypeVariable<?> unknown = DummyClass.class.getTypeParameters()[0];\n\n    // Act\n    Method resolveTypeVariableMethod = $Gson$Types.class.getDeclaredMethod(\"resolveTypeVariable\", Type.class, Class.class, TypeVariable.class);\n    resolveTypeVariableMethod.setAccessible(true);\n    Object result = resolveTypeVariableMethod.invoke(null, DummyClassParameterized.class, DummyClassParameterized.class, unknown);\n\n    // Assert\n    // Because DummyClassParameterized extends DummyClass<String> (ParameterizedType),\n    // declaredBy is ParameterizedType, so should resolve to actual type argument String.class\n    assertEquals(String.class, result);\n  }\n\n  @Test\n  void resolveTypeVariable_declaredByRawParameterized_returnsActualTypeArgument() throws Exception {\n    // Arrange\n    TypeVariable<?> unknown = DummyClass.class.getTypeParameters()[0];\n\n    // Act\n    Method resolveTypeVariableMethod = $Gson$Types.class.getDeclaredMethod(\"resolveTypeVariable\", Type.class, Class.class, TypeVariable.class);\n    resolveTypeVariableMethod.setAccessible(true);\n    Object result = resolveTypeVariableMethod.invoke(null, DummyClassParameterized.class, DummyClassParameterized.class, unknown);\n\n    // Assert\n    assertEquals(String.class, result);\n  }\n\n  // Helper classes for testing\n  static class DummyClass<T> {}\n\n  static class DummyClassParameterized extends DummyClass<String> {}\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887558,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 686,
+    "prompt_tokens": 716,
+    "total_tokens": 1402,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.6
+  }
+}

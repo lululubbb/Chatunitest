@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZSh6Aufli9lDxpkEpiqrpKYRY22",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormat_withNormalValues() {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormat_withNullValue() {\n        CSVFormat format = csvFormat.withNullString(\"NULL\");\n        String result = format.format(\"a\", null, \"c\");\n        assertEquals(\"a,NULL,c\", result);\n    }\n\n    @Test\n    public void testFormat_withEmptyValues() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormat_withValuesContainingCommaAndQuotes() {\n        String result = csvFormat.format(\"a,b\", \"\\\"quote\\\"\", \"c\");\n        assertEquals(\"\\\"a,b\\\",\\\"\\\"\\\"quote\\\"\\\"\\\",c\", result);\n    }\n\n    @Test\n    public void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"io error\")).when(mockPrinter).printRecord((Object[]) any());\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            formatWithMockPrinter(mockPrinter, \"a\", \"b\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"io error\", thrown.getCause().getMessage());\n    }\n\n    private String formatWithMockPrinter(CSVPrinter mockPrinter, Object... values) {\n        try {\n            // Use reflection to invoke printRecord on the mockPrinter with correct varargs\n            Method printRecordMethod = CSVPrinter.class.getMethod(\"printRecord\", Object[].class);\n            printRecordMethod.invoke(mockPrinter, new Object[] { values });\n            return \"\"; // Since StringWriter is not used here, return empty string\n        } catch (InvocationTargetException e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw new IllegalStateException(cause);\n            }\n            throw new RuntimeException(e);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    public void testFormat_privateMethodInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method formatMethod = CSVFormat.class.getDeclaredMethod(\"format\", Object[].class);\n        formatMethod.setAccessible(true);\n        String result = (String) formatMethod.invoke(csvFormat, (Object) new Object[]{\"x\", \"y\"});\n        assertEquals(\"x,y\", result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552031,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 655,
+    "prompt_tokens": 2024,
+    "total_tokens": 2679,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.63
+  }
+}

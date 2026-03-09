@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm03wHxCktaWThLR9xjyJ5rDfdJh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ArrayTypeAdapter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Array;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\npublic class ArrayTypeAdapterTest {\n\n  private JsonWriter jsonWriter;\n  private TypeAdapter<Object> componentTypeAdapter;\n  private ArrayTypeAdapter<Object> arrayTypeAdapter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = spy(new JsonWriter(stringWriter));\n    componentTypeAdapter = mock(TypeAdapter.class);\n    // Mock componentTypeAdapter.write to call real method to avoid swallowing calls\n    try {\n      doAnswer(invocation -> {\n        // simulate writing by forwarding to the real JsonWriter for strings and nulls\n        JsonWriter out = invocation.getArgument(0);\n        Object value = invocation.getArgument(1);\n        if (value == null) {\n          out.nullValue();\n        } else if (value instanceof String) {\n          out.value((String) value);\n        } else {\n          // fallback, do nothing\n        }\n        return null;\n      }).when(componentTypeAdapter).write(any(JsonWriter.class), any());\n    } catch (IOException e) {\n      throw new RuntimeException(e);\n    }\n    // Pass a non-null Gson instance to avoid NullPointerException in ArrayTypeAdapter\n    arrayTypeAdapter = new ArrayTypeAdapter<>(new Gson(), componentTypeAdapter, Object.class);\n  }\n\n  @Test\n  public void write_nullArray_shouldWriteNullValue() throws IOException {\n    arrayTypeAdapter.write(jsonWriter, null);\n    verify(jsonWriter).nullValue();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_emptyArray_shouldWriteBeginAndEndArray() throws IOException {\n    Object emptyArray = Array.newInstance(Object.class, 0);\n    arrayTypeAdapter.write(jsonWriter, emptyArray);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    inOrder.verify(jsonWriter).endArray();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_arrayWithElements_shouldWriteAllElements() throws IOException {\n    Object[] array = new Object[] {\"a\", \"b\", null};\n    arrayTypeAdapter.write(jsonWriter, array);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"a\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"b\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, null);\n    inOrder.verify(jsonWriter).endArray();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885243,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 619,
+    "prompt_tokens": 1557,
+    "total_tokens": 2176,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.66
+  }
+}

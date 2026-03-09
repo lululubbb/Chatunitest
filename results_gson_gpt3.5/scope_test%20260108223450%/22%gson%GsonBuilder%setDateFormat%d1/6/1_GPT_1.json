@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJjzjaONVRMOSH0cr60DGB6zY3i",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSetDateFormat_withStyle_setsDateStyleAndNullifiesPattern() throws Exception {\n    int style = DateFormat.SHORT;\n\n    GsonBuilder returned = gsonBuilder.setDateFormat(style);\n\n    assertSame(gsonBuilder, returned, \"setDateFormat should return the same GsonBuilder instance\");\n    // Access private fields using reflection\n    Field dateStyleField = GsonBuilder.class.getDeclaredField(\"dateStyle\");\n    dateStyleField.setAccessible(true);\n    int dateStyleValue = dateStyleField.getInt(gsonBuilder);\n    assertEquals(style, dateStyleValue, \"dateStyle field should be set to the given style\");\n\n    Field datePatternField = GsonBuilder.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n    Object datePatternValue = datePatternField.get(gsonBuilder);\n    assertNull(datePatternValue, \"datePattern field should be null after calling setDateFormat(int)\");\n  }\n\n  @Test\n  public void testSetDateFormat_reflectsInAddTypeAdaptersForDateInvocation() throws Exception {\n    // Use reflection to invoke private method addTypeAdaptersForDate to verify internal consistency\n    // First set dateStyle and datePattern fields manually\n    Field dateStyleField = GsonBuilder.class.getDeclaredField(\"dateStyle\");\n    dateStyleField.setAccessible(true);\n    Field datePatternField = GsonBuilder.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n\n    // Set dateStyle and datePattern to test values\n    int testStyle = DateFormat.MEDIUM;\n    String testPattern = \"yyyy-MM-dd\";\n    dateStyleField.setInt(gsonBuilder, testStyle);\n    datePatternField.set(gsonBuilder, testPattern);\n\n    // Prepare factories list field to pass to addTypeAdaptersForDate\n    Field factoriesField = GsonBuilder.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    java.util.List<TypeAdapterFactory> factories = (java.util.List<TypeAdapterFactory>) factoriesField.get(gsonBuilder);\n\n    // Clear factories list to isolate test\n    factories.clear();\n\n    Method addTypeAdaptersForDate = GsonBuilder.class.getDeclaredMethod(\"addTypeAdaptersForDate\", String.class, int.class, int.class, java.util.List.class);\n    addTypeAdaptersForDate.setAccessible(true);\n\n    // Invoke with null pattern and style 0 to cover branch\n    addTypeAdaptersForDate.invoke(gsonBuilder, null, 0, 0, factories);\n    // After invocation, factories list should have some entries (cannot assert exact content without internal class visibility)\n    assertFalse(factories.isEmpty(), \"factories list should not be empty after addTypeAdaptersForDate invocation\");\n\n    // Invoke with non-null pattern and styles to cover other branch\n    factories.clear();\n    addTypeAdaptersForDate.invoke(gsonBuilder, testPattern, testStyle, DateFormat.LONG, factories);\n    assertFalse(factories.isEmpty(), \"factories list should not be empty after addTypeAdaptersForDate invocation with pattern\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 728,
+    "prompt_tokens": 1071,
+    "total_tokens": 1799,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.8
+  }
+}

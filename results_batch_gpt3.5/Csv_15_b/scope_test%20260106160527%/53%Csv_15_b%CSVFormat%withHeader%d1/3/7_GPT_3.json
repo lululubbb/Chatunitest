@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwnBNzSdbeKTSi2yLJakhcgwL8PI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    private enum TestEnum {\n        VALUE1, VALUE2, VALUE3\n    }\n\n    @Test\n    public void testWithHeader_withNullEnum_returnsSameFormatWithNullHeader() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((Class<? extends Enum<?>>) null);\n        // Access getHeader method directly (it's public)\n        String[] header = result.getHeader();\n        assertNull(header);\n    }\n\n    @Test\n    public void testWithHeader_withEnum_returnsFormatWithHeaderNames() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(TestEnum.class);\n        // Access getHeader method directly (it's public)\n        String[] header = result.getHeader();\n        assertNotNull(header);\n        assertEquals(TestEnum.values().length, header.length);\n        for (int i = 0; i < TestEnum.values().length; i++) {\n            assertEquals(TestEnum.values()[i].name(), header[i]);\n        }\n    }\n\n    @Test\n    public void testWithHeader_invokesWithHeaderArray() throws Exception {\n        CSVFormat format = Mockito.spy(CSVFormat.DEFAULT);\n        // Use reflection to invoke withHeader(Class) on spy\n        Method withHeaderMethod = CSVFormat.class.getMethod(\"withHeader\", Class.class);\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(format, TestEnum.class);\n        // Verify that withHeader(String...) was called once with correct header names\n        Mockito.verify(format).withHeader(\"VALUE1\", \"VALUE2\", \"VALUE3\");\n        assertNotNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688401,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 380,
+    "prompt_tokens": 2309,
+    "total_tokens": 2689,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.84
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlTum2ZVIaAwKKgZxmXkRovK39O0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\nimport java.util.List;\nimport java.util.Arrays;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.DisplayName;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  @DisplayName(\"getFilterResult returns first non-INDECISIVE FilterResult\")\n  void testGetFilterResultReturnsFirstNonIndecisive() {\n    ReflectionAccessFilter filter1 = mock(ReflectionAccessFilter.class);\n    ReflectionAccessFilter filter2 = mock(ReflectionAccessFilter.class);\n    ReflectionAccessFilter filter3 = mock(ReflectionAccessFilter.class);\n\n    Class<?> testClass = String.class;\n\n    when(filter1.check(testClass)).thenReturn(FilterResult.INDECISIVE);\n    when(filter2.check(testClass)).thenReturn(FilterResult.valueOf(\"DENY\"));\n    when(filter3.check(testClass)).thenReturn(FilterResult.ALLOW);\n\n    List<ReflectionAccessFilter> filters = Arrays.asList(filter1, filter2, filter3);\n\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, testClass);\n\n    assertEquals(FilterResult.valueOf(\"DENY\"), result);\n\n    verify(filter1).check(testClass);\n    verify(filter2).check(testClass);\n    verify(filter3, never()).check(testClass);\n  }\n\n  @Test\n  @DisplayName(\"getFilterResult returns ALLOW if all filters return INDECISIVE\")\n  void testGetFilterResultReturnsAllowIfAllIndecisive() {\n    ReflectionAccessFilter filter1 = mock(ReflectionAccessFilter.class);\n    ReflectionAccessFilter filter2 = mock(ReflectionAccessFilter.class);\n\n    Class<?> testClass = Integer.class;\n\n    when(filter1.check(testClass)).thenReturn(FilterResult.INDECISIVE);\n    when(filter2.check(testClass)).thenReturn(FilterResult.INDECISIVE);\n\n    List<ReflectionAccessFilter> filters = Arrays.asList(filter1, filter2);\n\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, testClass);\n\n    assertEquals(FilterResult.ALLOW, result);\n\n    verify(filter1).check(testClass);\n    verify(filter2).check(testClass);\n  }\n\n  @Test\n  @DisplayName(\"getFilterResult returns ALLOW if filters list is empty\")\n  void testGetFilterResultReturnsAllowIfEmptyList() {\n    List<ReflectionAccessFilter> filters = List.of();\n\n    Class<?> testClass = Object.class;\n\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, testClass);\n\n    assertEquals(FilterResult.ALLOW, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883250,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 556,
+    "prompt_tokens": 1063,
+    "total_tokens": 1619,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.88
+  }
+}

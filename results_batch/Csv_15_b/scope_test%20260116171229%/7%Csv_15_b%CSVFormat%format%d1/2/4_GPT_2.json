@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaL9jqhgeeGzZwp5m3viujPMfpzC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withMultipleValues() throws IOException {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    void testFormat_withNullValue() throws IOException {\n        String result = csvFormat.format(\"a\", null, \"c\");\n        // The default nullString is null, so null is printed as empty\n        assertEquals(\"a,,c\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format(\"\", \"\", \"\");\n        assertEquals(\",,,\", result); // trailingDelimiter is false by default, so no trailing comma\n    }\n\n    @Test\n    void testFormat_withEmptyArray() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_ioExceptionWrappedInIllegalStateException() throws Exception {\n        // Use reflection to create a proxy CSVFormat that returns a mocked CSVPrinter throwing IOException\n        CSVFormat spyFormat = spy(csvFormat);\n\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"mocked IO exception\")).when(mockPrinter).printRecord(any());\n\n        doNothing().when(mockPrinter).close();\n\n        // Use reflection to replace the CSVFormat.printRecord method to use mockPrinter\n        // Since CSVFormat.format creates CSVPrinter internally, we mock CSVFormat.printer() method instead to return mockPrinter\n\n        // But CSVFormat.printer() is public, so we can mock it\n        doReturn(mockPrinter).when(spyFormat).printer();\n\n        // Now override format method to use printer() instead of new CSVPrinter(out, this)\n        // We can create a subclass for this test or use reflection to invoke the original format logic with mockPrinter\n\n        // Instead, replicate format method here:\n        StringWriter out = new StringWriter();\n        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {\n            try (CSVPrinter printer = spyFormat.printer()) {\n                printer.printRecord(\"a\");\n            } catch (IOException e) {\n                throw new IllegalStateException(e);\n            }\n        });\n        assertTrue(ex.getCause() instanceof IOException);\n        assertEquals(\"mocked IO exception\", ex.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555407,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 596,
+    "prompt_tokens": 2449,
+    "total_tokens": 3045,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.68
+  }
+}

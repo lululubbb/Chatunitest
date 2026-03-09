@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOqzLDMeQdZZ0jWbWwaqyEWeAS9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormatWithHeader;\n    private CSVFormat csvFormatWithoutHeader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create CSVFormat instance without header using reflection to set private fields\n        csvFormatWithoutHeader = CSVFormat.DEFAULT;\n\n        // Create CSVFormat instance with header using withHeader method\n        csvFormatWithHeader = CSVFormat.DEFAULT.withHeader(\"col1\", \"col2\", \"col3\");\n    }\n\n    @Test\n    public void testGetHeaderReturnsCloneNotSameArray() throws Exception {\n        String[] header1 = csvFormatWithHeader.getHeader();\n        String[] header2 = csvFormatWithHeader.getHeader();\n\n        assertNotNull(header1, \"Header should not be null\");\n        assertArrayEquals(new String[]{\"col1\", \"col2\", \"col3\"}, header1, \"Header content mismatch\");\n        assertNotSame(header1, header2, \"getHeader should return a clone, not the same array instance\");\n    }\n\n    @Test\n    public void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        // Reflectively set header field to null in csvFormatWithoutHeader instance\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(csvFormatWithoutHeader, null);\n\n        String[] header = csvFormatWithoutHeader.getHeader();\n        assertNull(header, \"Header should be null when internal header field is null\");\n    }\n\n    @Test\n    public void testGetHeaderReturnsCloneWhenHeaderSetViaReflection() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to set header field to a specific array\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] originalHeader = new String[]{\"a\", \"b\"};\n        headerField.set(format, originalHeader);\n\n        String[] returnedHeader = format.getHeader();\n        assertArrayEquals(originalHeader, returnedHeader, \"Returned header should match set header\");\n        assertNotSame(originalHeader, returnedHeader, \"Returned header should be a clone, not the same array\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551792,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 492,
+    "prompt_tokens": 1139,
+    "total_tokens": 1631,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.86
+  }
+}

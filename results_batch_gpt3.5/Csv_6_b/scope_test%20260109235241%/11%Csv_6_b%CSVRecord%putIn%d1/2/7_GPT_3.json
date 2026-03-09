@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9CBmGAB3WnNjqhx1nyMylKykZEH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Prepare mapping and values for CSVRecord constructor\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"A\", 0);\n        mapping.put(\"B\", 1);\n        mapping.put(\"C\", 2);\n\n        String[] values = new String[] { \"val0\", \"val1\", \"val2\" };\n\n        // Use constructor: CSVRecord(final String[] values, final Map<String, Integer> mapping,\n        // final String comment, final long recordNumber)\n        csvRecord = new CSVRecord(values, mapping, \"comment\", 123L);\n    }\n\n    @Test\n    public void testPutIn_withEmptyMap() throws Exception {\n        Map<String, String> map = new HashMap<>();\n\n        // Use reflection to access putIn method\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        // Check that the returned map is the same instance\n        assertSame(map, result);\n\n        // Check map content matches mapping keys and values array\n        assertEquals(3, map.size());\n        assertEquals(\"val0\", map.get(\"A\"));\n        assertEquals(\"val1\", map.get(\"B\"));\n        assertEquals(\"val2\", map.get(\"C\"));\n    }\n\n    @Test\n    public void testPutIn_withPrePopulatedMap() throws Exception {\n        Map<String, String> map = new HashMap<>();\n        map.put(\"X\", \"oldValue\");\n\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        // The original entry should remain, and new entries added\n        assertEquals(4, map.size());\n        assertEquals(\"oldValue\", map.get(\"X\"));\n        assertEquals(\"val0\", map.get(\"A\"));\n        assertEquals(\"val1\", map.get(\"B\"));\n        assertEquals(\"val2\", map.get(\"C\"));\n\n        // Returned map is the same instance\n        assertSame(map, result);\n    }\n\n    @Test\n    public void testPutIn_withEmptyMapping() throws Exception {\n        // Create CSVRecord with empty mapping\n        Map<String, Integer> emptyMapping = new HashMap<>();\n        String[] values = new String[] { \"v0\", \"v1\" };\n        CSVRecord record = new CSVRecord(values, emptyMapping, null, 0L);\n\n        Map<String, String> map = new HashMap<>();\n\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(record, map);\n\n        // Map should remain empty\n        assertTrue(map.isEmpty());\n        assertSame(map, result);\n    }\n\n    @Test\n    public void testPutIn_withMappingIndexOutOfBounds() throws Exception {\n        // Setup mapping with index out of bounds of values array\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"A\", 0);\n        mapping.put(\"B\", 5); // Out of bounds index\n\n        String[] values = new String[] { \"val0\", \"val1\" };\n\n        CSVRecord record = new CSVRecord(values, mapping, null, 0L);\n\n        Map<String, String> map = new HashMap<>();\n\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        Exception exception = assertThrows(java.lang.reflect.InvocationTargetException.class, () -> {\n            putInMethod.invoke(record, map);\n        });\n        Throwable cause = exception.getCause();\n        assertTrue(cause instanceof ArrayIndexOutOfBoundsException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974407,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 924,
+    "prompt_tokens": 1465,
+    "total_tokens": 2389,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.19
+  }
+}

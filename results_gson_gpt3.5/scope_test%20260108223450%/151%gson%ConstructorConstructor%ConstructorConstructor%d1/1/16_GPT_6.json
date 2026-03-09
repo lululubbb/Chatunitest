@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIQCLhxWLPUz8dcBLLQIg8AtyLQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.*;\n\nclass ConstructorConstructorTest {\n\n  private Map<Type, InstanceCreator<?>> instanceCreators;\n  private List<ReflectionAccessFilter> reflectionFilters;\n\n  @BeforeEach\n  void setUp() {\n    instanceCreators = new HashMap<>();\n    reflectionFilters = new ArrayList<>();\n  }\n\n  @Test\n  void constructor_assignsFields() {\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, true, reflectionFilters);\n    assertSame(instanceCreators, getField(cc, \"instanceCreators\"));\n    assertTrue((Boolean) getField(cc, \"useJdkUnsafe\"));\n    assertSame(reflectionFilters, getField(cc, \"reflectionFilters\"));\n  }\n\n  @Test\n  void checkInstantiable_publicConcreteClass_noException() throws Exception {\n    class PublicClass {}\n    String result = ConstructorConstructor.checkInstantiable(PublicClass.class);\n    assertNull(result);\n  }\n\n  @Test\n  void checkInstantiable_abstractClass_returnsError() {\n    abstract class AbstractClass {}\n    String result = ConstructorConstructor.checkInstantiable(AbstractClass.class);\n    assertTrue(result.contains(\"abstract\"));\n  }\n\n  @Test\n  void checkInstantiable_interface_returnsError() {\n    String result = ConstructorConstructor.checkInstantiable(Runnable.class);\n    assertTrue(result.contains(\"interface\"));\n  }\n\n  @Test\n  void checkInstantiable_nonStaticMemberClass_returnsError() {\n    class Outer {\n      class Inner {}\n    }\n    String result = ConstructorConstructor.checkInstantiable(Outer.Inner.class);\n    assertTrue(result.contains(\"non-static\"));\n  }\n\n  @Test\n  void get_returnsInstanceCreator() {\n    Type type = String.class;\n    InstanceCreator<String> creator = mock(InstanceCreator.class);\n    instanceCreators.put(type, creator);\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, false, reflectionFilters);\n    TypeToken<String> token = TypeToken.get(String.class);\n    ObjectConstructor<String> objectConstructor = cc.get(token);\n    assertNotNull(objectConstructor);\n    // Calling construct should delegate to instanceCreator\n    when(creator.createInstance(type)).thenReturn(\"created\");\n    assertEquals(\"created\", objectConstructor.construct());\n  }\n\n  @Test\n  void get_returnsDefaultConstructor_whenNoInstanceCreator() throws Exception {\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, false, reflectionFilters);\n    TypeToken<ArrayList> token = TypeToken.get(ArrayList.class);\n    ObjectConstructor<ArrayList> objectConstructor = cc.get(token);\n    assertNotNull(objectConstructor);\n    ArrayList list = objectConstructor.construct();\n    assertTrue(list.isEmpty());\n  }\n\n  @Test\n  void get_returnsSpecialCollectionConstructor_forEnumSet() {\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, false, reflectionFilters);\n    TypeToken<EnumSet> token = TypeToken.get(EnumSet.class);\n    ObjectConstructor<EnumSet> objectConstructor = cc.get(token);\n    assertNotNull(objectConstructor);\n    EnumSet<?> set = objectConstructor.construct();\n    assertTrue(set.isEmpty());\n  }\n\n  @Test\n  void get_unsafeAllocatorUsed_whenUseJdkUnsafeTrue() {\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, true, reflectionFilters);\n    TypeToken<NoDefaultConstructorClass> token = TypeToken.get(NoDefaultConstructorClass.class);\n    ObjectConstructor<NoDefaultConstructorClass> objectConstructor = cc.get(token);\n    assertNotNull(objectConstructor);\n    NoDefaultConstructorClass instance = objectConstructor.construct();\n    assertNotNull(instance);\n  }\n\n  @Test\n  void newDefaultConstructor_throwsJsonIOException_whenConstructorNotAccessible() throws Exception {\n    ConstructorConstructor cc = new ConstructorConstructor(instanceCreators, false, reflectionFilters);\n    Constructor<PrivateClass> cons = PrivateClass.class.getDeclaredConstructor();\n    cons.setAccessible(false);\n    ReflectionAccessFilter filter = mock(ReflectionAccessFilter.class);\n    // Use the enum constant via valueOf or values() since DENIED is not directly accessible\n    FilterResult deniedResult = null;\n    for (FilterResult fr : FilterResult.values()) {\n      if (fr.name().equals(\"DENIED\")) {\n        deniedResult = fr;\n        break;\n      }\n    }\n    assertNotNull(deniedResult, \"FilterResult.DENIED enum constant not found\");\n\n    // Use reflection to mock the correct method: checkAccessible(Constructor<?>)\n    when(filter.checkAccessible(cons)).thenReturn(deniedResult);\n    List<ReflectionAccessFilter> filters = Collections.singletonList(filter);\n    ConstructorConstructor ccWithFilter = new ConstructorConstructor(instanceCreators, false, filters);\n\n    // Use reflection to invoke private static newDefaultConstructor\n    ObjectConstructor<PrivateClass> oc = invokeNewDefaultConstructor(PrivateClass.class, deniedResult);\n    assertNotNull(oc);\n    PrivateClass instance = oc.construct();\n    assertNotNull(instance);\n  }\n\n  private static <T> ObjectConstructor<T> invokeNewDefaultConstructor(Class<? super T> rawType, FilterResult filterResult) throws Exception {\n    Method method = ConstructorConstructor.class.getDeclaredMethod(\"newDefaultConstructor\", Class.class, FilterResult.class);\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ObjectConstructor<T> oc = (ObjectConstructor<T>) method.invoke(null, rawType, filterResult);\n    return oc;\n  }\n\n  private Object getField(Object obj, String fieldName) {\n    try {\n      java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(obj);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  static class NoDefaultConstructorClass {\n    private NoDefaultConstructorClass() {\n      throw new RuntimeException(\"No default constructor\");\n    }\n  }\n\n  static class PrivateClass {\n    private PrivateClass() {}\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890226,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1282,
+    "prompt_tokens": 2005,
+    "total_tokens": 3287,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.08
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9mruMiBe9I13XsNvMamQLf3hUih",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testCSVFormatConstructor_validParameters() throws Exception {\n        // Using reflection to access private constructor\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        char delimiter = ';';\n        Character quoteChar = '\\\"';\n        Quote quotePolicy = null;\n        Character commentStart = '#';\n        Character escape = '\\\\';\n        boolean ignoreSurroundingSpaces = true;\n        boolean ignoreEmptyLines = false;\n        String recordSeparator = \"\\n\";\n        String nullString = \"NULL\";\n        String[] header = new String[] {\"a\", \"b\"};\n        boolean skipHeaderRecord = true;\n\n        CSVFormat format = constructor.newInstance(delimiter, quoteChar, quotePolicy, commentStart, escape,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header, skipHeaderRecord);\n\n        // Validate fields via reflection\n        Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        delimiterField.setAccessible(true);\n        assertEquals(delimiter, delimiterField.getChar(format));\n\n        Field quoteCharField = CSVFormat.class.getDeclaredField(\"quoteChar\");\n        quoteCharField.setAccessible(true);\n        assertEquals(quoteChar, quoteCharField.get(format));\n\n        Field quotePolicyField = CSVFormat.class.getDeclaredField(\"quotePolicy\");\n        quotePolicyField.setAccessible(true);\n        assertEquals(quotePolicy, quotePolicyField.get(format));\n\n        Field commentStartField = CSVFormat.class.getDeclaredField(\"commentStart\");\n        commentStartField.setAccessible(true);\n        assertEquals(commentStart, commentStartField.get(format));\n\n        Field escapeField = CSVFormat.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n        assertEquals(escape, escapeField.get(format));\n\n        Field ignoreSurroundingSpacesField = CSVFormat.class.getDeclaredField(\"ignoreSurroundingSpaces\");\n        ignoreSurroundingSpacesField.setAccessible(true);\n        assertEquals(ignoreSurroundingSpaces, ignoreSurroundingSpacesField.getBoolean(format));\n\n        Field ignoreEmptyLinesField = CSVFormat.class.getDeclaredField(\"ignoreEmptyLines\");\n        ignoreEmptyLinesField.setAccessible(true);\n        assertEquals(ignoreEmptyLines, ignoreEmptyLinesField.getBoolean(format));\n\n        Field recordSeparatorField = CSVFormat.class.getDeclaredField(\"recordSeparator\");\n        recordSeparatorField.setAccessible(true);\n        assertEquals(recordSeparator, recordSeparatorField.get(format));\n\n        Field nullStringField = CSVFormat.class.getDeclaredField(\"nullString\");\n        nullStringField.setAccessible(true);\n        assertEquals(nullString, nullStringField.get(format));\n\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] actualHeader = (String[]) headerField.get(format);\n        assertArrayEquals(header, actualHeader);\n\n        Field skipHeaderRecordField = CSVFormat.class.getDeclaredField(\"skipHeaderRecord\");\n        skipHeaderRecordField.setAccessible(true);\n        assertEquals(skipHeaderRecord, skipHeaderRecordField.getBoolean(format));\n    }\n\n    @Test\n    public void testCSVFormatConstructor_headerNull() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat format = constructor.newInstance(',', null, null, null, null,\n                false, true, \"\\r\\n\", null, (String[]) null, false);\n\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        assertNull(headerField.get(format));\n    }\n\n    @Test\n    public void testCSVFormatConstructor_delimiterLineBreak_throws() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        char[] lineBreaks = new char[] {'\\r', '\\n'};\n        for (char lb : lineBreaks) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                constructor.newInstance(lb, null, null, null, null,\n                        false, true, \"\\r\\n\", null, (String[]) null, false);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976681,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1017,
+    "prompt_tokens": 2138,
+    "total_tokens": 3155,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.79
+  }
+}

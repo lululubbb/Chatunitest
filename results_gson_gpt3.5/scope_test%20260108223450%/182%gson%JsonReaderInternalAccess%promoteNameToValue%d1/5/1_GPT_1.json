@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvljolrCJVByipBCWmK5cHzlHISsU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\nimport static org.mockito.Mockito.*;\n\nclass JsonReaderInternalAccessTest {\n\n    private JsonReaderInternalAccess jsonReaderInternalAccess;\n    private JsonReader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(JsonReader.class);\n        jsonReaderInternalAccess = new JsonReaderInternalAccess() {\n            @Override\n            public void promoteNameToValue(JsonReader reader) throws IOException {\n                // No implementation, abstract method must be overridden for testing\n            }\n        };\n        JsonReaderInternalAccess.INSTANCE = jsonReaderInternalAccess;\n    }\n\n    @Test\n    void testPromoteNameToValue_invocation() {\n        assertDoesNotThrow(() -> jsonReaderInternalAccess.promoteNameToValue(mockReader));\n        verifyNoInteractions(mockReader);\n    }\n\n    @Test\n    void testInvokePromoteNameToValueByReflection() throws Exception {\n        Method method = JsonReaderInternalAccess.class.getDeclaredMethod(\"promoteNameToValue\", JsonReader.class);\n        method.setAccessible(true);\n        assertDoesNotThrow(() -> method.invoke(jsonReaderInternalAccess, mockReader));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884236,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 287,
+    "prompt_tokens": 207,
+    "total_tokens": 494,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.75
+  }
+}

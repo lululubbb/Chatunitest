@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmX7q9R5QvFwhtpzJjmesQiSBgLA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonNull;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass GsonToJsonTest {\n\n    private Gson gson;\n\n    @BeforeEach\n    public void setUp() {\n        gson = new Gson();\n    }\n\n    @Test\n    public void testToJson_NullSource_ReturnsJsonNull() throws Exception {\n        // Using reflection to invoke public toJson(JsonElement) method\n        Method toJsonJsonElementMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class);\n        toJsonJsonElementMethod.setAccessible(true);\n\n        // When src is null, toJson should return toJson(JsonNull.INSTANCE)\n        String expected = (String) toJsonJsonElementMethod.invoke(gson, JsonNull.INSTANCE);\n        String actual = gson.toJson(null);\n\n        assertEquals(expected, actual);\n    }\n\n    @Test\n    public void testToJson_NonNullSource_ReturnsJsonString() {\n        String src = \"test string\";\n        String json = gson.toJson(src);\n        assertEquals(\"\\\"test string\\\"\", json);\n    }\n\n    @Test\n    public void testToJson_PrimitiveInteger() {\n        int src = 123;\n        String json = gson.toJson(src);\n        assertEquals(\"123\", json);\n    }\n\n    @Test\n    public void testToJson_ComplexObject() {\n        TestClass obj = new TestClass();\n        obj.id = 1;\n        obj.name = \"abc\";\n        String json = gson.toJson(obj);\n        assertTrue(json.contains(\"\\\"id\\\":1\"));\n        assertTrue(json.contains(\"\\\"name\\\":\\\"abc\\\"\"));\n    }\n\n    static class TestClass {\n        int id;\n        String name;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887293,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 381,
+    "prompt_tokens": 2776,
+    "total_tokens": 3157,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.64
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmMFI6KS5feXSxceteTvTkNDkiUs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.fail;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method syntaxErrorMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    Reader reader = new StringReader(\"\");\n    jsonReader = new JsonReader(reader);\n    syntaxErrorMethod = JsonReader.class.getDeclaredMethod(\"syntaxError\", String.class);\n    syntaxErrorMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testSyntaxError_throwsMalformedJsonExceptionWithMessageAndLocation() {\n    String message = \"Test error message\";\n\n    try {\n      syntaxErrorMethod.invoke(jsonReader, message);\n      fail(\"Expected InvocationTargetException wrapping MalformedJsonException\");\n    } catch (InvocationTargetException e) {\n      Throwable cause = e.getCause();\n      // The private syntaxError method throws MalformedJsonException which extends IOException\n      if (cause instanceof MalformedJsonException) {\n        MalformedJsonException ex = (MalformedJsonException) cause;\n        String expectedStart = message;\n        String actualMessage = ex.getMessage();\n        // The message should start with the given message and contain location string\n        assertEquals(true, actualMessage.startsWith(expectedStart));\n        // locationString() returns a non-null string appended to message, so message length > message param length\n        assertEquals(true, actualMessage.length() > message.length());\n      } else {\n        fail(\"Expected MalformedJsonException but got: \" + cause);\n      }\n    } catch (Exception e) {\n      fail(\"Unexpected exception: \" + e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886619,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 389,
+    "prompt_tokens": 1005,
+    "total_tokens": 1394,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.19
+  }
+}

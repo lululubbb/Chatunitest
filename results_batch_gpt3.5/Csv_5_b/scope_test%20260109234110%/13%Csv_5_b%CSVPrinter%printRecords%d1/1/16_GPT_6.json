@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8zoPOKkqNpF9Gg8zm0FWKG3SjKk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withMixedValues_callsCorrectPrintRecordMethods() throws IOException {\n        Object[] values = new Object[] {\n                new Object[] { \"a\", \"b\" },\n                java.util.Arrays.asList(\"c\", \"d\"),\n                \"singleValue\"\n        };\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        // Use doCallRealMethod to allow spying on printRecord methods\n        doCallRealMethod().when(spyPrinter).printRecord((Object[]) any());\n        doCallRealMethod().when(spyPrinter).printRecord((Iterable<?>) any());\n\n        // For printRecord(Object), disambiguate by using doAnswer with reflection\n        try {\n            Method printRecordSingle = CSVPrinter.class.getMethod(\"printRecord\", Object.class);\n            // If method exists, use it directly\n            doCallRealMethod().when(spyPrinter).printRecord(any());\n        } catch (NoSuchMethodException e) {\n            // Method does not exist, so intercept calls to printRecord(Object) via doAnswer\n            doAnswer(invocation -> {\n                Object arg = invocation.getArgument(0);\n                Method printRecordVarargs = CSVPrinter.class.getMethod(\"printRecord\", Object[].class);\n                return printRecordVarargs.invoke(spyPrinter, (Object) new Object[] { arg });\n            }).when(spyPrinter).printRecord(any());\n        }\n\n        spyPrinter.printRecords(values);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).printRecord((Object[]) values[0]);\n        inOrder.verify(spyPrinter).printRecord((Iterable<?>) values[1]);\n        inOrder.verify(spyPrinter).printRecord(values[2]);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintPrivatePrintObjectCharSequenceOffsetLen() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        String testString = \"hello world\";\n        method.invoke(printer, testString, testString, 0, testString.length());\n        // no exception means success\n    }\n\n    @Test\n    void testPrintPrivatePrintAndEscape() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        String testString = \"escape,test\";\n        method.invoke(printer, testString, 0, testString.length());\n        // no exception means success\n    }\n\n    @Test\n    void testPrintPrivatePrintAndQuote() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        String testString = \"quote\\\"test\";\n        method.invoke(printer, testString, testString, 0, testString.length());\n        // no exception means success\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973640,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 774,
+    "prompt_tokens": 1370,
+    "total_tokens": 2144,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.87
+  }
+}

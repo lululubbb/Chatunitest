@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXJk0Bxl6xzbOrHS2bwSFSWz49a",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void testGetAsLong_singleElement() {\n    // Prepare a JsonElement mock that returns a specific long value\n    JsonElement elementMock = mock(JsonElement.class);\n    when(elementMock.getAsLong()).thenReturn(123456789L);\n\n    // Use reflection to set the private 'elements' field with a single element\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(elementMock);\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    long result = jsonArray.getAsLong();\n    assertEquals(123456789L, result);\n    verify(elementMock, times(1)).getAsLong();\n  }\n\n  @Test\n  public void testGetAsLong_emptyArray_throwsException() {\n    // Ensure elements list is empty (default on new JsonArray)\n    Exception exception = assertThrows(IllegalStateException.class, () -> {\n      jsonArray.getAsLong();\n    });\n    String expectedMessage = \"Array must have size 1\";\n    assertTrue(exception.getMessage().contains(expectedMessage) || exception.getMessage().contains(\"empty\"));\n  }\n\n  @Test\n  public void testGetAsLong_multipleElements_throwsException() {\n    JsonElement firstElement = mock(JsonElement.class);\n    JsonElement secondElement = mock(JsonElement.class);\n\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(firstElement);\n      list.add(secondElement);\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n      jsonArray.getAsLong();\n    });\n    String expectedMessage = \"Array must have size 1\";\n    assertTrue(exception.getMessage().contains(expectedMessage));\n  }\n\n  @Test\n  public void testGetAsSingleElement_privateMethod() throws Exception {\n    // Prepare list with one element\n    JsonElement element = mock(JsonElement.class);\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(element);\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n    Object returned = getAsSingleElementMethod.invoke(jsonArray);\n    assertSame(element, returned);\n  }\n\n  @Test\n  public void testGetAsSingleElement_emptyArray_throwsException() throws Exception {\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n    Exception exception = assertThrows(Exception.class, () -> {\n      getAsSingleElementMethod.invoke(jsonArray);\n    });\n    // InvocationTargetException wraps the actual cause\n    Throwable cause = exception.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalStateException || cause.getMessage().contains(\"empty\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887305,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 818,
+    "prompt_tokens": 1926,
+    "total_tokens": 2744,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.21
+  }
+}

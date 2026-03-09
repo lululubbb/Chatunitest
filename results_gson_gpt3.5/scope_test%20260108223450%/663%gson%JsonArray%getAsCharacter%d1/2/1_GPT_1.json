@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmlUyPyqWkIyLSeR6qjvSvvVvDzu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement singleElementMock;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n    singleElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  void testGetAsCharacter_returnsCharacterFromSingleElement() {\n    // Use reflection to set the private 'elements' field with a list containing the mock\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(singleElementMock);\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Failed to set elements field via reflection: \" + e.getMessage());\n    }\n\n    when(singleElementMock.getAsCharacter()).thenReturn('x');\n\n    char result = jsonArray.getAsCharacter();\n\n    verify(singleElementMock).getAsCharacter();\n    assertEquals('x', result);\n  }\n\n  @Test\n  void testGetAsSingleElement_privateMethod_returnsOnlyElement() throws Exception {\n    // Prepare JsonArray with exactly one element\n    var element = mock(JsonElement.class);\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(element);\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Failed to set elements field via reflection: \" + e.getMessage());\n    }\n\n    // Access private method getAsSingleElement\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    JsonElement returned = (JsonElement) getAsSingleElementMethod.invoke(jsonArray);\n\n    assertSame(element, returned);\n  }\n\n  @Test\n  void testGetAsSingleElement_privateMethod_throwsWhenEmpty() throws Exception {\n    // elements empty list\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Failed to set elements field via reflection: \" + e.getMessage());\n    }\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    assertThrows(IllegalStateException.class, () -> getAsSingleElementMethod.invoke(jsonArray));\n  }\n\n  @Test\n  void testGetAsSingleElement_privateMethod_throwsWhenMultipleElements() throws Exception {\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(mock(JsonElement.class));\n      list.add(mock(JsonElement.class));\n      elementsField.set(jsonArray, list);\n    } catch (Exception e) {\n      fail(\"Failed to set elements field via reflection: \" + e.getMessage());\n    }\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    assertThrows(IllegalStateException.class, () -> getAsSingleElementMethod.invoke(jsonArray));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888184,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 757,
+    "prompt_tokens": 490,
+    "total_tokens": 1247,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.89
+  }
+}

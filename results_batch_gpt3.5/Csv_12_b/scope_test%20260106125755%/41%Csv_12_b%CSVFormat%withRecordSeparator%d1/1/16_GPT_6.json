@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutYNySFzQ8wpT1s5euLjKjlUgHxS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatWithRecordSeparatorTest {\n\n    private CSVFormat baseFormat;\n\n    @BeforeEach\n    void setUp() {\n        baseFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithRecordSeparator_char_validSeparators() {\n        // Test with common record separators\n        char[] separators = {'\\n', '\\r', '\\u2028', '\\u2029', '\\u0085', '|'};\n        for (char sep : separators) {\n            CSVFormat newFormat = baseFormat.withRecordSeparator(sep);\n            assertNotNull(newFormat);\n            assertEquals(String.valueOf(sep), newFormat.getRecordSeparator());\n            // Original format remains unchanged\n            assertEquals(CSVFormat.DEFAULT.getRecordSeparator(), baseFormat.getRecordSeparator());\n        }\n    }\n\n    @Test\n    void testWithRecordSeparator_char_emptyChar() {\n        // Use a whitespace char as separator\n        char sep = ' ';\n        CSVFormat newFormat = baseFormat.withRecordSeparator(sep);\n        assertNotNull(newFormat);\n        assertEquals(\" \", newFormat.getRecordSeparator());\n    }\n\n    @Test\n    void testWithRecordSeparator_char_nonPrintable() {\n        // Use a non-printable char\n        char sep = 0x1F;\n        CSVFormat newFormat = baseFormat.withRecordSeparator(sep);\n        assertNotNull(newFormat);\n        assertEquals(String.valueOf(sep), newFormat.getRecordSeparator());\n    }\n\n    @Test\n    void testWithRecordSeparator_invokesWithRecordSeparatorString() throws Exception {\n        // Use reflection to invoke public withRecordSeparator(String)\n        Method method = CSVFormat.class.getMethod(\"withRecordSeparator\", String.class);\n\n        String testSeparator = \"\\n\";\n        CSVFormat result = (CSVFormat) method.invoke(baseFormat, testSeparator);\n        assertNotNull(result);\n        assertEquals(testSeparator, result.getRecordSeparator());\n    }\n\n    @Test\n    void testWithRecordSeparator_char_andStringConsistency() throws Exception {\n        char sepChar = '\\n';\n        CSVFormat fromChar = baseFormat.withRecordSeparator(sepChar);\n\n        Method method = CSVFormat.class.getMethod(\"withRecordSeparator\", String.class);\n        CSVFormat fromString = (CSVFormat) method.invoke(baseFormat, String.valueOf(sepChar));\n\n        assertEquals(fromChar, fromString);\n        assertEquals(fromChar.getRecordSeparator(), fromString.getRecordSeparator());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675951,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 538,
+    "prompt_tokens": 1594,
+    "total_tokens": 2132,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.72
+  }
+}

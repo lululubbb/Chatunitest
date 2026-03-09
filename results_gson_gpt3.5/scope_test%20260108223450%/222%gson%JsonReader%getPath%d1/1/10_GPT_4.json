@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmVG73K1eYJPQNeptesKcNKHLRVr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    // Use a dummy Reader since getPath does not read from it directly\n    Reader dummyReader = new Reader() {\n      @Override\n      public int read(char[] cbuf, int off, int len) {\n        return -1; // EOF\n      }\n      @Override\n      public void close() {\n      }\n    };\n    jsonReader = new JsonReader(dummyReader);\n  }\n\n  @Test\n  public void testGetPath_default() throws Exception {\n    // By default stackSize = 0, so getPath(false) returns \"$\"\n    String path = jsonReader.getPath();\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_withArrayAndObject() throws Exception {\n    // Use reflection to set private fields stack, stackSize, pathNames, pathIndices\n    setPrivateField(jsonReader, \"stackSize\", 3);\n\n    int[] stack = new int[] {\n      getPrivateStaticIntField(JsonReader.class, \"PEEKED_BEGIN_ARRAY\"),\n      getPrivateStaticIntField(JsonReader.class, \"PEEKED_BEGIN_OBJECT\"),\n      getPrivateStaticIntField(JsonReader.class, \"PEEKED_BEGIN_ARRAY\")\n    };\n    setPrivateField(jsonReader, \"stack\", stack);\n\n    String[] pathNames = new String[32];\n    pathNames[0] = null;\n    pathNames[1] = \"name\";\n    pathNames[2] = null;\n    setPrivateField(jsonReader, \"pathNames\", pathNames);\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 0;\n    pathIndices[2] = 5;\n    setPrivateField(jsonReader, \"pathIndices\", pathIndices);\n\n    // Call private getPath(boolean) with false\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n\n    // Expected path: $[0].name[5]\n    assertEquals(\"$[0].name[5]\", path);\n  }\n\n  @Test\n  public void testGetPath_usePreviousPathTrue() throws Exception {\n    // Setup stackSize and stack to simulate previous path usage\n    setPrivateField(jsonReader, \"stackSize\", 2);\n\n    int[] stack = new int[] {\n      getPrivateStaticIntField(JsonReader.class, \"PEEKED_BEGIN_OBJECT\"),\n      getPrivateStaticIntField(JsonReader.class, \"PEEKED_BEGIN_ARRAY\")\n    };\n    setPrivateField(jsonReader, \"stack\", stack);\n\n    String[] pathNames = new String[32];\n    pathNames[0] = \"obj\";\n    pathNames[1] = null;\n    setPrivateField(jsonReader, \"pathNames\", pathNames);\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 7;\n    setPrivateField(jsonReader, \"pathIndices\", pathIndices);\n\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n    String path = (String) getPathMethod.invoke(jsonReader, true);\n\n    // Expected path: $['obj']\n    assertEquals(\"$['obj']\", path);\n  }\n\n  @Test\n  public void testGetPath_emptyStack() throws Exception {\n    // stackSize = 0 means path is just \"$\"\n    setPrivateField(jsonReader, \"stackSize\", 0);\n    Method getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$\", path);\n  }\n\n  private void setPrivateField(Object target, String fieldName, Object value) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  private int getPrivateStaticIntField(Class<?> clazz, String fieldName) {\n    try {\n      Field field = clazz.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.getInt(null);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887178,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1017,
+    "prompt_tokens": 2636,
+    "total_tokens": 3653,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.57
+  }
+}

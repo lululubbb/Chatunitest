@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmlu17VkITsYv2OGTswMJoP8htMy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.MalformedJsonException;\n\nimport java.io.EOFException;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Constructor;\n\nimport org.junit.jupiter.api.Test;\n\npublic class StreamsTest {\n\n  @Test\n  public void testPrivateConstructor() throws Exception {\n    Constructor<Streams> constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    Throwable thrown = assertThrows(Throwable.class, constructor::newInstance);\n    // The thrown is InvocationTargetException, whose cause is UnsupportedOperationException\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof UnsupportedOperationException);\n  }\n\n  @Test\n  public void testParse_withValidJsonElement() throws IOException {\n    JsonReader reader = new JsonReader(new StringReader(\"true\"));\n    JsonElement element = Streams.parse(reader);\n    assertNotNull(element);\n    assertTrue(element.isJsonPrimitive());\n    assertTrue(element.getAsBoolean());\n  }\n\n  @Test\n  public void testParse_withMalformedJsonException() throws IOException {\n    JsonReader reader = new JsonReader(new StringReader(\"malformed json\"));\n    assertThrows(JsonSyntaxException.class, () -> Streams.parse(reader));\n  }\n\n  @Test\n  public void testParse_withIOException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenThrow(new IOException(\"IO error\"));\n    assertThrows(JsonIOException.class, () -> Streams.parse(reader));\n  }\n\n  @Test\n  public void testParse_withEOFException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenThrow(new EOFException());\n    JsonElement element = Streams.parse(reader);\n    assertEquals(JsonNull.INSTANCE, element);\n  }\n\n  @Test\n  public void testWrite_withValidJsonElement() throws Throwable {\n    // Use a real JsonElement parsed from a valid JSON string instead of mock\n    JsonReader reader = new JsonReader(new StringReader(\"\\\"test\\\"\"));\n    JsonElement element = Streams.parse(reader);\n\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(stringWriter);\n\n    Streams.write(element, writer);\n    writer.flush();\n\n    assertEquals(\"\\\"test\\\"\", stringWriter.toString());\n  }\n\n  @Test\n  public void testWrite_withIOException() throws Throwable {\n    // Use a real JsonElement parsed from a valid JSON string instead of mock\n    JsonReader reader = new JsonReader(new StringReader(\"\\\"test\\\"\"));\n    JsonElement element = Streams.parse(reader);\n\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = spy(new JsonWriter(stringWriter));\n\n    // Throw IOException when writer.flush() is called to simulate IOException during write\n    doThrow(new IOException(\"write error\")).when(writer).flush();\n\n    JsonIOException ex = assertThrows(JsonIOException.class, () -> Streams.write(element, writer));\n    assertEquals(\"write error\", ex.getCause().getMessage());\n  }\n\n  @Test\n  public void testWriterForAppendable_withStringBuilder() throws IOException {\n    StringBuilder sb = new StringBuilder();\n    Writer writer = Streams.writerForAppendable(sb);\n    assertNotNull(writer);\n    writer.write(\"test\");\n    writer.flush();\n    assertEquals(\"test\", sb.toString());\n  }\n\n  @Test\n  public void testWriterForAppendable_withWriter() throws IOException {\n    StringWriter sw = new StringWriter();\n    Writer writer = Streams.writerForAppendable(sw);\n    assertSame(sw, writer);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888210,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 806,
+    "prompt_tokens": 1430,
+    "total_tokens": 2236,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.79
+  }
+}

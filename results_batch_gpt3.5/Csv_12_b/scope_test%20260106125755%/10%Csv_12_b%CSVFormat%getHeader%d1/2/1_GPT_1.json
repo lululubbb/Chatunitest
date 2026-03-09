@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutjMjiZp05RDbvdYco3vw59hFe75",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        CSVFormat format = createCSVFormatWithHeader(null);\n        String[] header = format.getHeader();\n        assertNull(header, \"Header should be null when internal header is null\");\n    }\n\n    @Test\n    void testGetHeaderReturnsClone() throws Exception {\n        String[] internalHeader = new String[] {\"A\", \"B\", \"C\"};\n        CSVFormat format = createCSVFormatWithHeader(internalHeader);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(internalHeader, returnedHeader, \"Returned header should equal internal header\");\n        assertNotSame(internalHeader, returnedHeader, \"Returned header should be a clone, not the same instance\");\n\n        // Modify returnedHeader and check internalHeader is not affected\n        returnedHeader[0] = \"X\";\n        String[] headerAfterModification = format.getHeader();\n        assertEquals(\"A\", headerAfterModification[0], \"Internal header should remain unchanged after modifying returned clone\");\n    }\n\n    private CSVFormat createCSVFormatWithHeader(String[] header) throws Exception {\n        // Create instance with default constructor values (using DEFAULT)\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to create a new CSVFormat instance with the header field set\n        // Because CSVFormat is final and fields are final, we create a subclass via reflection is not possible,\n        // so we create a new instance via reflection of the constructor.\n\n        // Find constructor with all parameters\n        var constructor = CSVFormat.class.getDeclaredConstructors()[0];\n        constructor.setAccessible(true);\n\n        // Prepare parameters for constructor\n        // Parameters order:\n        // (char delimiter, Character quoteChar, QuoteMode quoteMode, Character commentStart,\n        // Character escape, boolean ignoreSurroundingSpaces, boolean ignoreEmptyLines,\n        // String recordSeparator, String nullString, String[] header,\n        // boolean skipHeaderRecord, boolean allowMissingColumnNames)\n\n        Object[] params = new Object[] {\n            format.getDelimiter(),\n            format.getQuoteCharacter(),\n            format.getQuoteMode(),\n            format.getCommentMarker(),\n            format.getEscapeCharacter(),\n            format.getIgnoreSurroundingSpaces(),\n            format.getIgnoreEmptyLines(),\n            format.getRecordSeparator(),\n            format.getNullString(),\n            header,\n            format.getSkipHeaderRecord(),\n            format.getAllowMissingColumnNames()\n        };\n\n        return (CSVFormat) constructor.newInstance(params);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676632,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 561,
+    "prompt_tokens": 975,
+    "total_tokens": 1536,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.69
+  }
+}

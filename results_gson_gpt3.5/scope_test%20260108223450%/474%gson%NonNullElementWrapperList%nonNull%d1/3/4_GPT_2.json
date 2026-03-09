@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlU0o8bBxUIDfRhc931quWfwLp8j",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> list;\n  private Method nonNullMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n  }\n\n  @Test\n  void nonNull_withNonNullElement_returnsElement() throws InvocationTargetException, IllegalAccessException {\n    String element = \"test\";\n    Object result = nonNullMethod.invoke(list, element);\n    assertEquals(element, result);\n  }\n\n  @Test\n  void nonNull_withNullElement_throwsInvocationTargetException() {\n    InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> {\n      nonNullMethod.invoke(list, new Object[] { null });\n    });\n    // InvocationTargetException wraps the actual NullPointerException\n    assertTrue(exception.getCause() instanceof NullPointerException);\n    assertEquals(\"Element must be non-null\", exception.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883256,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 287,
+    "prompt_tokens": 789,
+    "total_tokens": 1076,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.45
+  }
+}

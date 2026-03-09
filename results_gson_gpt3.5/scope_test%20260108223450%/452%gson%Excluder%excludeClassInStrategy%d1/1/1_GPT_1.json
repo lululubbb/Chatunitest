@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5nh0XU986JrhhDjiPy99aZOIiA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n    private Excluder excluder;\n\n    @BeforeEach\n    void setUp() {\n        excluder = new Excluder();\n    }\n\n    @Test\n    void excludeClassInStrategy_noStrategies_returnsFalse() throws Exception {\n        // serializationStrategies and deserializationStrategies are empty by default\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean resultSerialize = (boolean) method.invoke(excluder, String.class, true);\n        boolean resultDeserialize = (boolean) method.invoke(excluder, String.class, false);\n\n        assertFalse(resultSerialize);\n        assertFalse(resultDeserialize);\n    }\n\n    @Test\n    void excludeClassInStrategy_serializationStrategySkipsClass_returnsTrue() throws Exception {\n        ExclusionStrategy mockStrategy = mock(ExclusionStrategy.class);\n        when(mockStrategy.shouldSkipClass(String.class)).thenReturn(true);\n\n        // set serializationStrategies to list with mockStrategy\n        setField(excluder, \"serializationStrategies\", Collections.singletonList(mockStrategy));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, String.class, true);\n\n        assertTrue(result);\n        verify(mockStrategy).shouldSkipClass(String.class);\n    }\n\n    @Test\n    void excludeClassInStrategy_serializationStrategyDoesNotSkipClass_returnsFalse() throws Exception {\n        ExclusionStrategy mockStrategy = mock(ExclusionStrategy.class);\n        when(mockStrategy.shouldSkipClass(String.class)).thenReturn(false);\n\n        setField(excluder, \"serializationStrategies\", Collections.singletonList(mockStrategy));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, String.class, true);\n\n        assertFalse(result);\n        verify(mockStrategy).shouldSkipClass(String.class);\n    }\n\n    @Test\n    void excludeClassInStrategy_deserializationStrategySkipsClass_returnsTrue() throws Exception {\n        ExclusionStrategy mockStrategy = mock(ExclusionStrategy.class);\n        when(mockStrategy.shouldSkipClass(Integer.class)).thenReturn(true);\n\n        setField(excluder, \"deserializationStrategies\", Collections.singletonList(mockStrategy));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, Integer.class, false);\n\n        assertTrue(result);\n        verify(mockStrategy).shouldSkipClass(Integer.class);\n    }\n\n    @Test\n    void excludeClassInStrategy_deserializationStrategyDoesNotSkipClass_returnsFalse() throws Exception {\n        ExclusionStrategy mockStrategy = mock(ExclusionStrategy.class);\n        when(mockStrategy.shouldSkipClass(Integer.class)).thenReturn(false);\n\n        setField(excluder, \"deserializationStrategies\", Collections.singletonList(mockStrategy));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, Integer.class, false);\n\n        assertFalse(result);\n        verify(mockStrategy).shouldSkipClass(Integer.class);\n    }\n\n    @Test\n    void excludeClassInStrategy_multipleStrategies_firstSkips_returnsTrue() throws Exception {\n        ExclusionStrategy skipStrategy = mock(ExclusionStrategy.class);\n        ExclusionStrategy noSkipStrategy = mock(ExclusionStrategy.class);\n\n        when(skipStrategy.shouldSkipClass(Double.class)).thenReturn(true);\n        when(noSkipStrategy.shouldSkipClass(Double.class)).thenReturn(false);\n\n        setField(excluder, \"serializationStrategies\", Arrays.asList(skipStrategy, noSkipStrategy));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, Double.class, true);\n\n        assertTrue(result);\n        verify(skipStrategy).shouldSkipClass(Double.class);\n        verify(noSkipStrategy, never()).shouldSkipClass(any());\n    }\n\n    @Test\n    void excludeClassInStrategy_multipleStrategies_noneSkip_returnsFalse() throws Exception {\n        ExclusionStrategy s1 = mock(ExclusionStrategy.class);\n        ExclusionStrategy s2 = mock(ExclusionStrategy.class);\n\n        when(s1.shouldSkipClass(Float.class)).thenReturn(false);\n        when(s2.shouldSkipClass(Float.class)).thenReturn(false);\n\n        setField(excluder, \"deserializationStrategies\", Arrays.asList(s1, s2));\n\n        Method method = Excluder.class.getDeclaredMethod(\"excludeClassInStrategy\", Class.class, boolean.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(excluder, Float.class, false);\n\n        assertFalse(result);\n        verify(s1).shouldSkipClass(Float.class);\n        verify(s2).shouldSkipClass(Float.class);\n    }\n\n    // helper method to set private fields via reflection\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = Excluder.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885599,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1178,
+    "prompt_tokens": 635,
+    "total_tokens": 1813,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.52
+  }
+}

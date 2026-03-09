@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJszroXb2RJJRMlbCcNIH1oCr0W",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.*;\nimport org.junit.jupiter.api.Test;\n\nclass GsonTypesGetRawTypeTest {\n\n  @Test\n  public void testGetRawType_withClass() {\n    Class<String> clazz = String.class;\n    Class<?> rawType = $Gson$Types.getRawType(clazz);\n    assertSame(String.class, rawType);\n  }\n\n  @Test\n  public void testGetRawType_withParameterizedType() throws Exception {\n    ParameterizedType parameterizedType = mock(ParameterizedType.class);\n    when(parameterizedType.getRawType()).thenReturn(String.class);\n\n    Class<?> rawType = $Gson$Types.getRawType(parameterizedType);\n\n    assertSame(String.class, rawType);\n    verify(parameterizedType).getRawType();\n  }\n\n  @Test\n  public void testGetRawType_withGenericArrayType() throws Exception {\n    GenericArrayType genericArrayType = mock(GenericArrayType.class);\n    Type componentType = String.class;\n    when(genericArrayType.getGenericComponentType()).thenReturn(componentType);\n\n    Class<?> rawType = $Gson$Types.getRawType(genericArrayType);\n\n    assertTrue(rawType.isArray());\n    assertSame(String.class, rawType.getComponentType());\n    verify(genericArrayType).getGenericComponentType();\n  }\n\n  @Test\n  public void testGetRawType_withTypeVariable() throws Exception {\n    TypeVariable<?> typeVariable = mock(TypeVariable.class);\n    when(typeVariable.getBounds()).thenReturn(new Type[] {Object.class});\n\n    // Since getRawType returns Object.class for any TypeVariable, verify this\n    Class<?> rawType = $Gson$Types.getRawType(typeVariable);\n\n    assertSame(Object.class, rawType);\n  }\n\n  @Test\n  public void testGetRawType_withWildcardType() throws Exception {\n    WildcardType wildcardType = mock(WildcardType.class);\n    Type[] upperBounds = new Type[] {String.class};\n    when(wildcardType.getUpperBounds()).thenReturn(upperBounds);\n\n    Class<?> rawType = $Gson$Types.getRawType(wildcardType);\n\n    assertSame(String.class, rawType);\n    verify(wildcardType).getUpperBounds();\n  }\n\n  @Test\n  public void testGetRawType_withWildcardType_assertBoundsLength() throws Exception {\n    WildcardType wildcardType = mock(WildcardType.class);\n    Type[] upperBounds = new Type[] {String.class};\n    when(wildcardType.getUpperBounds()).thenReturn(upperBounds);\n\n    Class<?> clazz = $Gson$Types.class;\n    Method getRawTypeMethod = clazz.getDeclaredMethod(\"getRawType\", Type.class);\n    getRawTypeMethod.setAccessible(true);\n    Class<?> rawType = (Class<?>) getRawTypeMethod.invoke(null, wildcardType);\n\n    assertSame(String.class, rawType);\n  }\n\n  @Test\n  public void testGetRawType_withInvalidType_throwsIllegalArgumentException() {\n    Type invalidType = new Type() {\n      @Override\n      public String toString() {\n        return \"InvalidType\";\n      }\n    };\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      $Gson$Types.getRawType(invalidType);\n    });\n\n    assertTrue(thrown.getMessage().contains(\"Expected a Class, ParameterizedType, or GenericArrayType\"));\n    assertTrue(thrown.getMessage().contains(\"InvalidType\"));\n    assertTrue(thrown.getMessage().contains(invalidType.getClass().getName()));\n  }\n\n  @Test\n  public void testGetRawType_withNullType_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      $Gson$Types.getRawType(null);\n    });\n\n    assertTrue(thrown.getMessage().contains(\"Expected a Class, ParameterizedType, or GenericArrayType\"));\n    assertTrue(thrown.getMessage().contains(\"null\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886472,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 857,
+    "prompt_tokens": 2779,
+    "total_tokens": 3636,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.86
+  }
+}

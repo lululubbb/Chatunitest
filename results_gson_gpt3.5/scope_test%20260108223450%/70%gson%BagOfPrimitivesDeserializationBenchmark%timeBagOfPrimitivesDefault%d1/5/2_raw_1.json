@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n  private Gson gsonMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n\n    gsonMock = Mockito.mock(Gson.class);\n\n    // Use reflection to set private gson field\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(benchmark, gsonMock);\n\n    // Use reflection to set private json field to some non-null String\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"some\\\":\\\"json\\\"}\");\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesDefault_zeroReps() {\n    benchmark.timeBagOfPrimitivesDefault(0);\n    // Verify no interactions with gson.fromJson if reps=0\n    verify(gsonMock, times(0)).fromJson(anyString(), eq(BagOfPrimitives.class));\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesDefault_multipleReps() {\n    int reps = 5;\n\n    benchmark.timeBagOfPrimitivesDefault(reps);\n\n    // Verify fromJson called reps times with correct arguments\n    verify(gsonMock, times(reps)).fromJson(\"{\\\"some\\\":\\\"json\\\"}\", BagOfPrimitives.class);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 914,
+  "completion_tokens": 362,
+  "total_tokens": 1276,
+  "llm_elapsed_time_seconds": 6.13
+}

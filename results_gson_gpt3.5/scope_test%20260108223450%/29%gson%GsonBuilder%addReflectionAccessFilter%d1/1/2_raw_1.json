@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.LinkedList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void addReflectionAccessFilter_nullFilter_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> gsonBuilder.addReflectionAccessFilter(null));\n  }\n\n  @Test\n  void addReflectionAccessFilter_validFilter_addedToReflectionFilters() throws Exception {\n    ReflectionAccessFilter filter = mock(ReflectionAccessFilter.class);\n\n    GsonBuilder returned = gsonBuilder.addReflectionAccessFilter(filter);\n\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to access private field reflectionFilters\n    Field reflectionFiltersField = GsonBuilder.class.getDeclaredField(\"reflectionFilters\");\n    reflectionFiltersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedList<ReflectionAccessFilter> reflectionFilters =\n        (LinkedList<ReflectionAccessFilter>) reflectionFiltersField.get(gsonBuilder);\n\n    assertFalse(reflectionFilters.isEmpty());\n    assertSame(filter, reflectionFilters.getFirst());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1072,
+  "completion_tokens": 276,
+  "total_tokens": 1348,
+  "llm_elapsed_time_seconds": 5.61
+}

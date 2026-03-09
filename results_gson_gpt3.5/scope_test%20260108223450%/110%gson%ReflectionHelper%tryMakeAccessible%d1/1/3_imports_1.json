@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.GsonBuildConfig;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    // Should be accessible after tryMakeAccessible\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws NoSuchMethodException {\n    // Create a spy of Constructor to throw exception on setAccessible\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    Constructor<?> spyConstructor = Mockito.spy(constructor);\n    Mockito.doThrow(new SecurityException(\"not allowed\")).when(spyConstructor).setAccessible(true);\n\n    String result = ReflectionHelper.tryMakeAccessible(spyConstructor);\n    assertNotNull(result);\n    assertTrue(result.contains(\"Failed making constructor\"));\n    assertTrue(result.contains(\"not allowed\"));\n  }\n\n  static class SampleClass {\n    private SampleClass() {}\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 465,
+  "completion_tokens": 255,
+  "total_tokens": 720,
+  "llm_elapsed_time_seconds": 3.82,
+  "repair_elapsed_time_seconds": 29.5,
+  "round_total_time_seconds": 29.5
+}

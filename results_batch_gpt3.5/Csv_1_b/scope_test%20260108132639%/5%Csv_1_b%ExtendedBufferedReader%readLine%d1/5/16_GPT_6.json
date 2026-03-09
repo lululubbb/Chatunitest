@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcs0eCVsUOitOsnZwFR5awhBQfNZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    private Reader mockReader;\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadLine_NullLine() throws Exception {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        // Mock the super.readLine() by mocking the underlying Reader to return -1 on read()\n        // so that super.readLine() returns null naturally.\n        // Alternatively, mock readLine() on the underlying BufferedReader using spy.\n        doReturn(null).when(spyReader).readLine();\n\n        // To avoid recursion, use doReturn(null).when(spyReader).readLine() is not correct here,\n        // because it mocks the method under test itself causing infinite recursion.\n        // Instead, mock the underlying Reader to return -1 on read(), so super.readLine() returns null.\n\n        // So let's reset spy and mock underlying reader properly:\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n        ExtendedBufferedReader spy = Mockito.spy(reader);\n\n        // Mock underlying Reader to return -1 on read()\n        doReturn(-1).when(mockReader).read();\n\n        // Now call real method\n        String line = spy.readLine();\n\n        assertNull(line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spy);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spy);\n        assertEquals(0, lineCounter);\n    }\n\n    @Test\n    void testReadLine_EmptyLine() throws Exception {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n        ExtendedBufferedReader spyReader = Mockito.spy(reader);\n\n        // Mock underlying Reader to return '\\n' immediately, so super.readLine() returns empty string\n        doReturn((int) '\\n').when(mockReader).read();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_NonEmptyLine() throws Exception {\n        String testLine = \"Hello, world!\";\n\n        // We will mock the underlying Reader to return characters of testLine followed by '\\n' and then -1\n        Reader realReader = new Reader() {\n            private final char[] chars = (testLine + \"\\n\").toCharArray();\n            private int pos = 0;\n\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                if (pos >= chars.length) {\n                    return -1;\n                }\n                int count = Math.min(len, chars.length - pos);\n                for (int i = 0; i < count; i++) {\n                    cbuf[off + i] = chars[pos++];\n                }\n                return count;\n            }\n\n            @Override\n            public void close() {\n            }\n        };\n\n        ExtendedBufferedReader extendedReader = new ExtendedBufferedReader(realReader);\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedReader);\n\n        String line = spyReader.readLine();\n\n        assertEquals(testLine, line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = lastCharField.getInt(spyReader);\n        assertEquals(testLine.charAt(testLine.length() - 1), lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = lineCounterField.getInt(spyReader);\n        assertEquals(1, lineCounter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850148,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 979,
+    "prompt_tokens": 1129,
+    "total_tokens": 2108,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.77
+  }
+}

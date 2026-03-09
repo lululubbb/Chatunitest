@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXmcoizkQLVZNA8jfcHI1geeRQk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJson_nullInput_returnsJsonNull() throws Exception {\n    // Use reflection to invoke public toJson(JsonElement) method\n    Method toJsonJsonElement = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class);\n    toJsonJsonElement.setAccessible(true);\n\n    String result = (String) toJsonJsonElement.invoke(gson, JsonNull.INSTANCE);\n    assertNotNull(result);\n    assertEquals(\"null\", result.trim());\n  }\n\n  @Test\n  public void testToJson_nonNullInput_returnsJsonString() {\n    String src = \"testString\";\n    String json = gson.toJson(src);\n    assertNotNull(json);\n    assertTrue(json.startsWith(\"\\\"\"));\n    assertTrue(json.endsWith(\"\\\"\"));\n    assertTrue(json.contains(\"testString\"));\n  }\n\n  @Test\n  public void testToJson_integerInput_returnsJsonNumber() {\n    Integer src = 123;\n    String json = gson.toJson(src);\n    assertNotNull(json);\n    assertEquals(\"123\", json);\n  }\n\n  @Test\n  public void testToJson_objectInput_returnsJsonObject() {\n    TestClass src = new TestClass(\"value\", 10);\n    String json = gson.toJson(src);\n    assertNotNull(json);\n    assertTrue(json.contains(\"\\\"field1\\\":\\\"value\\\"\"));\n    assertTrue(json.contains(\"\\\"field2\\\":10\"));\n  }\n\n  @Test\n  public void testToJson_arrayInput_returnsJsonArray() {\n    String[] src = {\"a\", \"b\", \"c\"};\n    String json = gson.toJson(src);\n    assertNotNull(json);\n    assertTrue(json.startsWith(\"[\"));\n    assertTrue(json.endsWith(\"]\"));\n    assertTrue(json.contains(\"\\\"a\\\"\"));\n    assertTrue(json.contains(\"\\\"b\\\"\"));\n    assertTrue(json.contains(\"\\\"c\\\"\"));\n  }\n\n  private static class TestClass {\n    String field1;\n    int field2;\n\n    TestClass(String field1, int field2) {\n      this.field1 = field1;\n      this.field2 = field2;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887334,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 518,
+    "prompt_tokens": 2791,
+    "total_tokens": 3309,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.35
+  }
+}

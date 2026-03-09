@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvZ5dlsAwaXfRkcufL0oVp7hhGpx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private static Method isLineBreakMethod;\n\n    @BeforeAll\n    public static void setUp() throws NoSuchMethodException {\n        isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakMethod.setAccessible(true);\n    }\n\n    private boolean invokeIsLineBreak(char c) {\n        try {\n            return (boolean) isLineBreakMethod.invoke(null, c);\n        } catch (IllegalAccessException | InvocationTargetException e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    public void testIsLineBreak_withLF() {\n        assertTrue(invokeIsLineBreak('\\n')); // LF\n    }\n\n    @Test\n    public void testIsLineBreak_withCR() {\n        assertTrue(invokeIsLineBreak('\\r')); // CR\n    }\n\n    @Test\n    public void testIsLineBreak_withOtherChars() {\n        assertFalse(invokeIsLineBreak('a'));\n        assertFalse(invokeIsLineBreak(' '));\n        assertFalse(invokeIsLineBreak('\\t'));\n        assertFalse(invokeIsLineBreak(','));\n        assertFalse(invokeIsLineBreak('\"'));\n        assertFalse(invokeIsLineBreak('|'));\n        assertFalse(invokeIsLineBreak('\\\\'));\n        assertFalse(invokeIsLineBreak('#'));\n        assertFalse(invokeIsLineBreak('\\0'));\n        assertFalse(invokeIsLineBreak('1'));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683683,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 351,
+    "prompt_tokens": 1955,
+    "total_tokens": 2306,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.23
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9bG4tgqbyxXHWS0HyJntDgSWfVY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n\n    @Test\n    void testGetHeaderReturnsCloneOfHeader() throws Exception {\n        // Prepare header array\n        String[] header = new String[]{\"col1\", \"col2\", \"col3\"};\n\n        // Create CSVFormat instance with header set via reflection\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set private final field 'header'\n        setFinalField(csvFormat, \"header\", header);\n\n        // Invoke getHeader and verify it returns a clone, not the same array\n        String[] returnedHeader = csvFormat.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(header, returnedHeader, \"Returned header should equal the original header\");\n        assertNotSame(header, returnedHeader, \"Returned header should be a clone, not the same instance\");\n\n        // Modify returnedHeader and verify original header is not affected\n        returnedHeader[0] = \"modified\";\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] headerAfterModification = (String[]) headerField.get(csvFormat);\n        assertEquals(\"col1\", headerAfterModification[0], \"Original header should not be modified\");\n    }\n\n    @Test\n    void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        // Create CSVFormat instance with header set to null via reflection\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        setFinalField(csvFormat, \"header\", null);\n\n        // Invoke getHeader and verify it returns null\n        String[] returnedHeader = csvFormat.getHeader();\n        assertNull(returnedHeader, \"Returned header should be null when header field is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975962,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 492,
+    "prompt_tokens": 1400,
+    "total_tokens": 1892,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.51
+  }
+}

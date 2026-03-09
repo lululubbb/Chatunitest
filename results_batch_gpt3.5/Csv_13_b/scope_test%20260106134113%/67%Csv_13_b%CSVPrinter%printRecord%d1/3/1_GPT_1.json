@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuGGEbtsO0d0LqUOT6Bi5EwvckDI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecordWithEmptyIterable() throws IOException {\n        Iterable<?> empty = Collections.emptyList();\n\n        printer.printRecord(empty);\n\n        // For empty iterable, print(value) is never called, but println() is called\n        verify(out, atLeastOnce()).append(anyChar()); // println() should append line ending chars at least once\n    }\n\n    @Test\n    void testPrintRecordWithSingleValue() throws IOException {\n        Iterable<String> values = Collections.singletonList(\"value\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter).print(\"value\");\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecordWithMultipleValues() throws IOException {\n        Iterable<Object> values = Arrays.asList(\"one\", 2, null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter).print(\"one\");\n        verify(spyPrinter).print(2);\n        verify(spyPrinter).print(null);\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrivatePrintObjectValueOffsetLen() throws Throwable {\n        String testValue = \"testValue\";\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // Call with full string\n        printMethod.invoke(printer, testValue, testValue, 0, testValue.length());\n\n        // Call with offset and len subset\n        printMethod.invoke(printer, testValue, testValue, 2, 4);\n    }\n\n    @Test\n    void testPrivatePrintAndEscape() throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        String val = \"escapeTest\";\n\n        method.invoke(printer, val, 0, val.length());\n    }\n\n    @Test\n    void testPrivatePrintAndQuote() throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        String val = \"quoteTest\";\n\n        method.invoke(printer, val, val, 0, val.length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678672,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 633,
+    "prompt_tokens": 435,
+    "total_tokens": 1068,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.64
+  }
+}

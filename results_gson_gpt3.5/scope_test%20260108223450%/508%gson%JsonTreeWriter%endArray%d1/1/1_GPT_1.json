@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmIN8llUFt4ZTbK6ogxkHxrd4LqE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void endArray_whenStackEmpty_throwsIllegalStateException() {\n    // stack is empty initially\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  @Test\n  public void endArray_whenPendingNameNotNull_throwsIllegalStateException() throws Exception {\n    // add a JsonArray to stack to avoid first condition\n    List<JsonElement> stack = getStack(jsonTreeWriter);\n    stack.add(new JsonArray());\n\n    // set pendingName to non-null\n    setPendingName(jsonTreeWriter, \"name\");\n\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  @Test\n  public void endArray_whenTopOfStackIsJsonArray_removesItAndReturnsThis() throws Exception {\n    List<JsonElement> stack = getStack(jsonTreeWriter);\n    JsonArray jsonArray = new JsonArray();\n    stack.add(jsonArray);\n    setPendingName(jsonTreeWriter, null);\n\n    JsonWriter result = jsonTreeWriter.endArray();\n\n    // The top JsonArray should be removed\n    List<JsonElement> updatedStack = getStack(jsonTreeWriter);\n    assertFalse(updatedStack.contains(jsonArray));\n    assertEquals(jsonTreeWriter, result);\n  }\n\n  @Test\n  public void endArray_whenTopOfStackIsNotJsonArray_throwsIllegalStateException() throws Exception {\n    List<JsonElement> stack = getStack(jsonTreeWriter);\n    stack.add(JsonNull.INSTANCE); // Not a JsonArray\n    setPendingName(jsonTreeWriter, null);\n\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  // Utility to get private field 'stack'\n  @SuppressWarnings(\"unchecked\")\n  private List<JsonElement> getStack(JsonTreeWriter writer) throws Exception {\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    return (List<JsonElement>) stackField.get(writer);\n  }\n\n  // Utility to set private field 'pendingName'\n  private void setPendingName(JsonTreeWriter writer, String name) throws Exception {\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    pendingNameField.set(writer, name);\n  }\n\n  // Utility to invoke private method peek()\n  private JsonElement invokePeek(JsonTreeWriter writer) throws Exception {\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    return (JsonElement) peekMethod.invoke(writer);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886379,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 671,
+    "prompt_tokens": 565,
+    "total_tokens": 1236,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.89
+  }
+}

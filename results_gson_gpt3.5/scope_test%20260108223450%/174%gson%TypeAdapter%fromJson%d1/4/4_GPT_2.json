@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn6ZiKZD9COZlhmaogqmmcQDvd7a",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapter_FromJson_Test {\n\n  private TypeAdapter<String> typeAdapter;\n\n  @BeforeEach\n  void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(com.google.gson.stream.JsonWriter out, String value) {\n        // no-op for test\n      }\n\n      @Override\n      public String read(JsonReader in) throws IOException {\n        if (in.peek() == JsonToken.NULL) {\n          in.nextNull();\n          return null;\n        }\n        return in.nextString();\n      }\n    };\n  }\n\n  @Test\n  void fromJson_withValidJsonString_shouldReturnValue() throws IOException {\n    String json = \"\\\"hello\\\"\";\n    String result = typeAdapter.fromJson(json);\n    assertEquals(\"hello\", result);\n  }\n\n  @Test\n  void fromJson_withEmptyString_shouldThrowException() {\n    String json = \"\";\n    assertThrows(IOException.class, () -> typeAdapter.fromJson(json));\n  }\n\n  @Test\n  void fromJson_withNullString_shouldThrowNullPointerException() {\n    assertThrows(NullPointerException.class, () -> typeAdapter.fromJson((String) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889491,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 307,
+    "prompt_tokens": 2711,
+    "total_tokens": 3018,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.84
+  }
+}

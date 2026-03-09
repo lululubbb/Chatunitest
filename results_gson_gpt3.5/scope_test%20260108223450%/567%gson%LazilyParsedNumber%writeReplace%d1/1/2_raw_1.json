@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectStreamException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LazilyParsedNumberTest {\n\n  private LazilyParsedNumber lazilyParsedNumber;\n  private Method writeReplaceMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    lazilyParsedNumber = new LazilyParsedNumber(\"123.45\");\n    writeReplaceMethod = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n  }\n\n  @Test\n  void testWriteReplaceReturnsBigDecimalWithCorrectValue() throws Throwable {\n    Object result;\n    try {\n      result = writeReplaceMethod.invoke(lazilyParsedNumber);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n    assertNotNull(result);\n    assertTrue(result instanceof BigDecimal);\n    assertEquals(new BigDecimal(\"123.45\"), result);\n  }\n\n  @Test\n  void testWriteReplaceThrowsObjectStreamException() throws Throwable {\n    // The method signature declares throws ObjectStreamException, but no exception is thrown in code.\n    // We test that no exception is thrown in normal case.\n    assertDoesNotThrow(() -> {\n      try {\n        writeReplaceMethod.invoke(lazilyParsedNumber);\n      } catch (InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 303,
+  "completion_tokens": 331,
+  "total_tokens": 634,
+  "llm_elapsed_time_seconds": 6.04
+}

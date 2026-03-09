@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlT2OWp3zw9DP0aNl4LBuWRvgX85",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.util.Iterator;\nimport java.util.Map.Entry;\nimport java.util.Set;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMap_entrySet_Test {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  public void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  public void entrySet_whenEntrySetIsNull_createsAndReturnsNewEntrySet() throws Exception {\n    // Ensure entrySet field is null initially\n    Field entrySetField = LinkedTreeMap.class.getDeclaredField(\"entrySet\");\n    entrySetField.setAccessible(true);\n    entrySetField.set(map, null);\n\n    Set<Entry<String, String>> result = map.entrySet();\n\n    assertNotNull(result);\n    // The entrySet field should now be set to the same instance returned\n    assertSame(result, entrySetField.get(map));\n  }\n\n  @Test\n  public void entrySet_whenEntrySetIsNotNull_returnsExistingEntrySet() throws Exception {\n    // Create a dummy EntrySet instance and set it via reflection\n    Class<?> entrySetClass = null;\n    for (Class<?> innerClass : LinkedTreeMap.class.getDeclaredClasses()) {\n      if (\"EntrySet\".equals(innerClass.getSimpleName())) {\n        entrySetClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(entrySetClass, \"EntrySet inner class not found\");\n\n    // Instead of entrySetClass.setAccessible(true) which doesn't exist,\n    // get the constructor and set it accessible\n    Constructor<?> constructor = entrySetClass.getDeclaredConstructor(LinkedTreeMap.class);\n    constructor.setAccessible(true);\n    Object dummyEntrySet = constructor.newInstance(map);\n\n    Field entrySetField = LinkedTreeMap.class.getDeclaredField(\"entrySet\");\n    entrySetField.setAccessible(true);\n    entrySetField.set(map, dummyEntrySet);\n\n    Set<Entry<String, String>> result = map.entrySet();\n\n    assertNotNull(result);\n    assertSame(dummyEntrySet, result);\n  }\n\n  @Test\n  public void entrySet_iterateEntries_emptyMap() {\n    Set<Entry<String, String>> entries = map.entrySet();\n    Iterator<Entry<String, String>> it = entries.iterator();\n    assertFalse(it.hasNext());\n  }\n\n  @Test\n  public void entrySet_iterateEntries_withOneEntry() {\n    map.put(\"key1\", \"value1\");\n    Set<Entry<String, String>> entries = map.entrySet();\n    Iterator<Entry<String, String>> it = entries.iterator();\n\n    assertTrue(it.hasNext());\n    Entry<String, String> entry = it.next();\n    assertEquals(\"key1\", entry.getKey());\n    assertEquals(\"value1\", entry.getValue());\n    assertFalse(it.hasNext());\n  }\n\n  @Test\n  public void entrySet_iteratorRemove_removesEntry() {\n    map.put(\"key1\", \"value1\");\n    Set<Entry<String, String>> entries = map.entrySet();\n    Iterator<Entry<String, String>> it = entries.iterator();\n\n    Entry<String, String> entry = it.next();\n    it.remove();\n\n    assertEquals(0, map.size());\n    assertFalse(map.containsKey(\"key1\"));\n  }\n\n  @Test\n  public void entrySet_iteratorRemove_withoutNext_throwsException() {\n    Set<Entry<String, String>> entries = map.entrySet();\n    Iterator<Entry<String, String>> it = entries.iterator();\n\n    assertThrows(IllegalStateException.class, it::remove);\n  }\n\n  @Test\n  public void entrySet_iterator_nextAfterEnd_throwsNoSuchElementException() {\n    Set<Entry<String, String>> entries = map.entrySet();\n    Iterator<Entry<String, String>> it = entries.iterator();\n\n    assertFalse(it.hasNext());\n    assertThrows(java.util.NoSuchElementException.class, it::next);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883196,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 828,
+    "prompt_tokens": 1664,
+    "total_tokens": 2492,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.1
+  }
+}

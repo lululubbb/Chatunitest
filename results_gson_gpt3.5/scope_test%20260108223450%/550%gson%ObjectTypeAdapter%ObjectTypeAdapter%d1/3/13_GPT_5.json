@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnVGcDiBKm4H02DKpKejDIxsdjuT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.ArrayDeque;\nimport java.util.Deque;\nimport java.util.Map;\n\npublic class ObjectTypeAdapterTest {\n\n  private Gson gsonMock;\n  private ToNumberStrategy toNumberStrategyMock;\n  private ObjectTypeAdapter adapter;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    gsonMock = mock(Gson.class);\n    toNumberStrategyMock = mock(ToNumberStrategy.class);\n\n    Constructor<ObjectTypeAdapter> constructor =\n        ObjectTypeAdapter.class.getDeclaredConstructor(Gson.class, ToNumberStrategy.class);\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance(gsonMock, toNumberStrategyMock);\n  }\n\n  @Test\n  public void testRead_nullValue() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(reader).nextNull();\n\n    Object result = adapter.read(reader);\n\n    verify(reader).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  public void testRead_beginArray() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n    doNothing().when(reader).beginArray();\n    doNothing().when(reader).endArray();\n\n    Method tryBeginNesting = ObjectTypeAdapter.class.getDeclaredMethod(\"tryBeginNesting\", JsonReader.class, JsonToken.class);\n    tryBeginNesting.setAccessible(true);\n\n    Object result = tryBeginNesting.invoke(adapter, reader, JsonToken.BEGIN_ARRAY);\n\n    assertTrue(result instanceof ArrayDeque);\n  }\n\n  @Test\n  public void testRead_beginObject() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    doNothing().when(reader).beginObject();\n    doNothing().when(reader).endObject();\n\n    Method tryBeginNesting = ObjectTypeAdapter.class.getDeclaredMethod(\"tryBeginNesting\", JsonReader.class, JsonToken.class);\n    tryBeginNesting.setAccessible(true);\n\n    Object result = tryBeginNesting.invoke(adapter, reader, JsonToken.BEGIN_OBJECT);\n\n    assertTrue(result instanceof Map);\n  }\n\n  @Test\n  public void testRead_terminalValue() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.STRING);\n\n    Method readTerminal = ObjectTypeAdapter.class.getDeclaredMethod(\"readTerminal\", JsonReader.class, JsonToken.class);\n    readTerminal.setAccessible(true);\n\n    when(reader.nextString()).thenReturn(\"testString\");\n\n    Object result = readTerminal.invoke(adapter, reader, JsonToken.STRING);\n\n    assertEquals(\"testString\", result);\n  }\n\n  @Test\n  public void testRead_unsupportedToken_throws() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.END_DOCUMENT);\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> adapter.read(reader));\n    assertTrue(thrown.getMessage().contains(\"Unexpected token\"));\n  }\n\n  @Test\n  public void testWrite_nullValue() throws IOException {\n    JsonWriter writer = mock(JsonWriter.class);\n\n    adapter.write(writer, null);\n\n    verify(writer).nullValue();\n  }\n\n  @Test\n  public void testWrite_nonNullValue() throws IOException {\n    JsonWriter writer = mock(JsonWriter.class);\n    Object value = new Object();\n\n    @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n    TypeAdapter delegateAdapter = mock(TypeAdapter.class);\n    when(gsonMock.getAdapter(TypeToken.get(value.getClass()))).thenReturn(delegateAdapter);\n\n    // Mock delegateAdapter.write to do nothing to avoid NPE\n    doNothing().when(delegateAdapter).write(writer, value);\n\n    adapter.write(writer, value);\n\n    verify(delegateAdapter).write(writer, value);\n  }\n\n  @Test\n  public void testNewFactory_returnsFactory() throws Exception {\n    Method newFactory = ObjectTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactory.setAccessible(true);\n\n    Object factory = newFactory.invoke(null, ToNumberPolicy.DOUBLE);\n\n    assertNotNull(factory);\n    assertTrue(factory instanceof TypeAdapterFactory);\n  }\n\n  @Test\n  public void testGetFactory_returnsFactory() {\n    TypeAdapterFactory factory = ObjectTypeAdapter.getFactory(ToNumberPolicy.DOUBLE);\n    assertNotNull(factory);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767891022,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1039,
+    "prompt_tokens": 2061,
+    "total_tokens": 3100,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.81
+  }
+}

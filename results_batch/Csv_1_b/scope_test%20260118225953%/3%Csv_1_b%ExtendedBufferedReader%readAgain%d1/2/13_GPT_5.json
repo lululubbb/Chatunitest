@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOZnMSoHUISluzvAiVr73RxJoqrX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        Reader mockReader = Mockito.mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadAgainInitialValue() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // Access private field lastChar and set to UNDEFINED\n        setLastCharField(ExtendedBufferedReader.UNDEFINED);\n        int result = invokeReadAgain();\n        assertEquals(ExtendedBufferedReader.UNDEFINED, result);\n    }\n\n    @Test\n    void testReadAgainWithCustomValue() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        int testValue = 42;\n        setLastCharField(testValue);\n        int result = invokeReadAgain();\n        assertEquals(testValue, result);\n    }\n\n    @Test\n    void testReadAgainWithEndOfStream() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        setLastCharField(ExtendedBufferedReader.END_OF_STREAM);\n        int result = invokeReadAgain();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n\n    private void setLastCharField(int value) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n            field.setAccessible(true);\n            field.setInt(extendedBufferedReader, value);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    private int invokeReadAgain() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        method.setAccessible(true);\n        return (int) method.invoke(extendedBufferedReader);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748515,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 443,
+    "prompt_tokens": 783,
+    "total_tokens": 1226,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.88
+  }
+}

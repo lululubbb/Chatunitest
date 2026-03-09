@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn7ZLZEM1jX4JfT3iCWlOWsns1XH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonSerializationContext;\nimport com.google.protobuf.Descriptors.EnumValueDescriptor;\nimport com.google.protobuf.Descriptors.FieldDescriptor;\nimport com.google.protobuf.Message;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.*;\n\nclass ProtoTypeAdapterSerializeTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private JsonSerializationContext context;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Setup minimal EnumSerialization and CaseFormat mocks or null as they are not used in serialize\n    protoTypeAdapter = ProtoTypeAdapter.newBuilder()\n        .enumSerialization(null)\n        .protoFormat(null)\n        .jsonFormat(null)\n        .serializedNameExtensions(Collections.emptySet())\n        .serializedEnumValueExtensions(Collections.emptySet())\n        .build();\n\n    context = mock(JsonSerializationContext.class);\n  }\n\n  @Test\n  void testSerialize_emptyFields_returnsEmptyJsonObject() {\n    Message src = mock(Message.class);\n    when(src.getAllFields()).thenReturn(Collections.emptyMap());\n\n    JsonElement result = protoTypeAdapter.serialize(src, (Type) Message.class, context);\n\n    assertTrue(result.isJsonObject());\n    assertEquals(0, result.getAsJsonObject().entrySet().size());\n  }\n\n  @Test\n  void testSerialize_nonEnumField_serializesValueDirectly() {\n    Message src = mock(Message.class);\n    FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);\n    Object fieldValue = \"value\";\n\n    Map<FieldDescriptor, Object> fields = new HashMap<>();\n    fields.put(fieldDescriptor, fieldValue);\n\n    when(src.getAllFields()).thenReturn(fields);\n    when(fieldDescriptor.getType()).thenReturn(FieldDescriptor.Type.INT32);\n    when(fieldDescriptor.getOptions()).thenReturn(null);\n    when(fieldDescriptor.getName()).thenReturn(\"fieldName\");\n\n    when(context.serialize(fieldValue)).thenReturn(mock(JsonElement.class));\n\n    JsonElement result = protoTypeAdapter.serialize(src, (Type) Message.class, context);\n\n    JsonObject jsonObject = result.getAsJsonObject();\n    assertTrue(jsonObject.has(\"fieldName\"));\n    verify(context).serialize(fieldValue);\n  }\n\n  @Test\n  void testSerialize_enumField_singleEnumValue_serializesEnumValue() {\n    Message src = mock(Message.class);\n    FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);\n    EnumValueDescriptor enumValueDescriptor = mock(EnumValueDescriptor.class);\n\n    Map<FieldDescriptor, Object> fields = new HashMap<>();\n    fields.put(fieldDescriptor, enumValueDescriptor);\n\n    when(src.getAllFields()).thenReturn(fields);\n    when(fieldDescriptor.getType()).thenReturn(FieldDescriptor.Type.ENUM);\n    when(fieldDescriptor.getOptions()).thenReturn(null);\n    when(fieldDescriptor.getName()).thenReturn(\"enumField\");\n\n    // Mock getEnumValue to return some object\n    Object enumValue = \"enumValue\";\n    // Use reflection to replace private getEnumValue method temporarily\n    Method getEnumValueMethod = ProtoTypeAdapter.class.getDeclaredMethod(\"getEnumValue\", EnumValueDescriptor.class);\n    getEnumValueMethod.setAccessible(true);\n\n    // Spy protoTypeAdapter to override getEnumValue\n    ProtoTypeAdapter spyAdapter = spy(protoTypeAdapter);\n    doReturn(enumValue).when(spyAdapter).getEnumValue(enumValueDescriptor);\n\n    JsonElement serializedEnum = mock(JsonElement.class);\n    when(context.serialize(enumValue)).thenReturn(serializedEnum);\n\n    JsonElement result = spyAdapter.serialize(src, (Type) Message.class, context);\n\n    JsonObject jsonObject = result.getAsJsonObject();\n    assertTrue(jsonObject.has(\"enumField\"));\n    assertEquals(serializedEnum, jsonObject.get(\"enumField\"));\n    verify(context).serialize(enumValue);\n  }\n\n  @Test\n  void testSerialize_enumField_collectionEnumValue_serializesArray() {\n    Message src = mock(Message.class);\n    FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);\n    EnumValueDescriptor enumValueDescriptor1 = mock(EnumValueDescriptor.class);\n    EnumValueDescriptor enumValueDescriptor2 = mock(EnumValueDescriptor.class);\n\n    Collection<EnumValueDescriptor> enumCollection = Arrays.asList(enumValueDescriptor1, enumValueDescriptor2);\n\n    Map<FieldDescriptor, Object> fields = new HashMap<>();\n    fields.put(fieldDescriptor, enumCollection);\n\n    when(src.getAllFields()).thenReturn(fields);\n    when(fieldDescriptor.getType()).thenReturn(FieldDescriptor.Type.ENUM);\n    when(fieldDescriptor.getOptions()).thenReturn(null);\n    when(fieldDescriptor.getName()).thenReturn(\"enumCollectionField\");\n\n    ProtoTypeAdapter spyAdapter = spy(protoTypeAdapter);\n    Object enumValue1 = \"enumValue1\";\n    Object enumValue2 = \"enumValue2\";\n\n    doReturn(enumValue1).when(spyAdapter).getEnumValue(enumValueDescriptor1);\n    doReturn(enumValue2).when(spyAdapter).getEnumValue(enumValueDescriptor2);\n\n    JsonElement serializedEnum1 = mock(JsonElement.class);\n    JsonElement serializedEnum2 = mock(JsonElement.class);\n\n    when(context.serialize(enumValue1)).thenReturn(serializedEnum1);\n    when(context.serialize(enumValue2)).thenReturn(serializedEnum2);\n\n    JsonElement result = spyAdapter.serialize(src, (Type) Message.class, context);\n\n    JsonObject jsonObject = result.getAsJsonObject();\n    assertTrue(jsonObject.has(\"enumCollectionField\"));\n\n    JsonElement element = jsonObject.get(\"enumCollectionField\");\n    assertTrue(element.isJsonArray());\n    JsonArray jsonArray = element.getAsJsonArray();\n\n    List<JsonElement> elements = new ArrayList<>();\n    jsonArray.forEach(elements::add);\n\n    assertEquals(2, elements.size());\n    assertTrue(elements.contains(serializedEnum1));\n    assertTrue(elements.contains(serializedEnum2));\n\n    verify(context).serialize(enumValue1);\n    verify(context).serialize(enumValue2);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889553,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1262,
+    "prompt_tokens": 938,
+    "total_tokens": 2200,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.68
+  }
+}

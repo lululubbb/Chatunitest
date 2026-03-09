@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmMtRXEqGGCyirZg0ExqjwSYHGHN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testConstructor_initializesMembersMap() throws Exception {\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    Object members = membersField.get(jsonObject);\n    assertNotNull(members);\n    assertTrue(members instanceof LinkedTreeMap);\n    LinkedTreeMap<?, ?> map = (LinkedTreeMap<?, ?>) members;\n    assertEquals(0, map.size());\n  }\n\n  @Test\n  public void testAddAndGet() {\n    JsonPrimitive value = new JsonPrimitive(\"test\");\n    jsonObject.add(\"key\", value);\n    JsonElement element = jsonObject.get(\"key\");\n    assertSame(value, element);\n    assertTrue(jsonObject.has(\"key\"));\n    assertEquals(1, jsonObject.size());\n    assertFalse(jsonObject.isEmpty());\n  }\n\n  @Test\n  public void testRemove() {\n    JsonPrimitive value = new JsonPrimitive(\"value\");\n    jsonObject.add(\"key\", value);\n    JsonElement removed = jsonObject.remove(\"key\");\n    assertSame(value, removed);\n    assertNull(jsonObject.get(\"key\"));\n    assertFalse(jsonObject.has(\"key\"));\n    assertEquals(0, jsonObject.size());\n    assertTrue(jsonObject.isEmpty());\n  }\n\n  @Test\n  public void testAddProperty_String() {\n    jsonObject.addProperty(\"str\", \"value\");\n    JsonPrimitive primitive = jsonObject.getAsJsonPrimitive(\"str\");\n    assertNotNull(primitive);\n    assertEquals(\"value\", primitive.getAsString());\n  }\n\n  @Test\n  public void testAddProperty_Number() {\n    jsonObject.addProperty(\"num\", 123);\n    JsonPrimitive primitive = jsonObject.getAsJsonPrimitive(\"num\");\n    assertNotNull(primitive);\n    assertEquals(123, primitive.getAsNumber().intValue());\n  }\n\n  @Test\n  public void testAddProperty_Boolean() {\n    jsonObject.addProperty(\"bool\", true);\n    JsonPrimitive primitive = jsonObject.getAsJsonPrimitive(\"bool\");\n    assertNotNull(primitive);\n    assertTrue(primitive.getAsBoolean());\n  }\n\n  @Test\n  public void testAddProperty_Character() {\n    jsonObject.addProperty(\"char\", 'c');\n    JsonPrimitive primitive = jsonObject.getAsJsonPrimitive(\"char\");\n    assertNotNull(primitive);\n    assertEquals('c', primitive.getAsCharacter());\n  }\n\n  @Test\n  public void testEntrySetAndKeySet() {\n    jsonObject.addProperty(\"a\", \"1\");\n    jsonObject.addProperty(\"b\", \"2\");\n    Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();\n    Set<String> keys = jsonObject.keySet();\n    assertEquals(2, entries.size());\n    assertEquals(2, keys.size());\n    assertTrue(keys.contains(\"a\"));\n    assertTrue(keys.contains(\"b\"));\n  }\n\n  @Test\n  public void testAsMap_returnsUnmodifiableMap() {\n    jsonObject.addProperty(\"x\", \"y\");\n    Map<String, JsonElement> map = jsonObject.asMap();\n    assertEquals(1, map.size());\n    assertTrue(map.containsKey(\"x\"));\n    assertThrows(UnsupportedOperationException.class, () -> map.put(\"z\", new JsonPrimitive(\"z\")));\n  }\n\n  @Test\n  public void testDeepCopy_independentCopy() {\n    jsonObject.addProperty(\"k\", \"v\");\n    JsonObject copy = jsonObject.deepCopy();\n    assertNotSame(jsonObject, copy);\n    assertEquals(jsonObject, copy);\n    copy.addProperty(\"k2\", \"v2\");\n    assertFalse(jsonObject.has(\"k2\"));\n  }\n\n  @Test\n  public void testEqualsAndHashCode() {\n    JsonObject o1 = new JsonObject();\n    JsonObject o2 = new JsonObject();\n    assertEquals(o1, o2);\n    assertEquals(o1.hashCode(), o2.hashCode());\n\n    o1.addProperty(\"key\", \"value\");\n    o2.addProperty(\"key\", \"value\");\n    assertEquals(o1, o2);\n    assertEquals(o1.hashCode(), o2.hashCode());\n\n    o2.addProperty(\"key2\", \"value2\");\n    assertNotEquals(o1, o2);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886659,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 973,
+    "prompt_tokens": 386,
+    "total_tokens": 1359,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.85
+  }
+}

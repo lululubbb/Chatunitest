@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwlhAoCD8KVXyy0xHYF1xft264T3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    private enum TestEnum {\n        VALUE1, VALUE2, VALUE3\n    }\n\n    @Test\n    public void testWithHeader_withNullEnum_returnsSameFormatWithNullHeader() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((Class<? extends Enum<?>>) null);\n        // Access private field 'header' via reflection to verify header is null\n        Method getHeaderMethod = CSVFormat.class.getDeclaredMethod(\"getHeader\");\n        String[] header = (String[]) getHeaderMethod.invoke(result);\n        assertNull(header);\n    }\n\n    @Test\n    public void testWithHeader_withEnum_returnsFormatWithHeaderNames() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(TestEnum.class);\n        // Access private field 'header' via reflection to verify header values\n        Method getHeaderMethod = CSVFormat.class.getDeclaredMethod(\"getHeader\");\n        String[] header = (String[]) getHeaderMethod.invoke(result);\n        assertNotNull(header);\n        assertEquals(TestEnum.values().length, header.length);\n        for (int i = 0; i < TestEnum.values().length; i++) {\n            assertEquals(TestEnum.values()[i].name(), header[i]);\n        }\n    }\n\n    @Test\n    public void testWithHeader_invokesWithHeaderArray() throws Exception {\n        CSVFormat format = Mockito.spy(CSVFormat.DEFAULT);\n        // Use reflection to invoke withHeader(Class) on spy\n        Class<?> clazz = CSVFormat.class;\n        Method withHeaderMethod = clazz.getDeclaredMethod(\"withHeader\", Class.class);\n        withHeaderMethod.setAccessible(true);\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(format, TestEnum.class);\n        // Verify that withHeader(String...) was called once with correct header names\n        Mockito.verify(format).withHeader(\"VALUE1\", \"VALUE2\", \"VALUE3\");\n        assertNotNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688309,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 441,
+    "prompt_tokens": 1854,
+    "total_tokens": 2295,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.86
+  }
+}

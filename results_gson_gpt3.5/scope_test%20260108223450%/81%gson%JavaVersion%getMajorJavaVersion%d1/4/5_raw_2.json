@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  @Test\n  public void testGetMajorJavaVersion_parseDottedSuccess() throws Exception {\n    // parseDotted returns a valid version (simulate by calling getMajorJavaVersion with a dotted version string)\n    int version = invokeGetMajorJavaVersion(\"1.8.0_181\");\n    assertEquals(8, version); // parseDotted(\"1.8.0_181\") should parse major=8 (per method logic)\n  }\n\n  @Test\n  public void testGetMajorJavaVersion_parseDottedFail_extractBeginningIntSuccess() throws Exception {\n    // Use a string that parseDotted returns -1 but extractBeginningInt returns a valid version\n    // e.g. \"11\" (no dots), parseDotted returns -1, extractBeginningInt returns 11\n    int version = invokeGetMajorJavaVersion(\"11\");\n    assertEquals(11, version);\n  }\n\n  @Test\n  public void testGetMajorJavaVersion_bothFail_returns6() throws Exception {\n    // Use a string that both parseDotted and extractBeginningInt return -1\n    int version = invokeGetMajorJavaVersion(\"invalid.version.string\");\n    assertEquals(6, version);\n  }\n\n  private int invokeGetMajorJavaVersion(String javaVersion) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    return (int) method.invoke(null, javaVersion);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1007,
+  "completion_tokens": 364,
+  "total_tokens": 1371,
+  "llm_elapsed_time_seconds": 5.37
+}

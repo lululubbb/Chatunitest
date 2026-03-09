@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9UGZUJ0KshhZgpW5QzgH2I5Ic3S",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_NullString_ThrowsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((String) null, mockFormat);\n        });\n        assertEquals(\"string\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(\"some string\", null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_ValidInputs_ReturnsCSVParser() throws IOException {\n        String input = \"a,b,c\\n1,2,3\";\n        CSVParser parser = CSVParser.parse(input, mockFormat);\n        assertNotNull(parser);\n        assertEquals(mockFormat, getField(parser, \"format\"));\n        // Verify that the reader inside lexer is a StringReader with the input string\n        assertEquals(input, readFieldStringReader(parser, \"lexer\"));\n    }\n\n    // Helper method to get private field value via reflection, traversing superclasses if needed\n    private Object getField(Object instance, String fieldName) {\n        Class<?> clazz = instance.getClass();\n        while (clazz != null) {\n            try {\n                Field field = clazz.getDeclaredField(fieldName);\n                field.setAccessible(true);\n                return field.get(instance);\n            } catch (NoSuchFieldException e) {\n                clazz = clazz.getSuperclass();\n            } catch (IllegalAccessException e) {\n                throw new RuntimeException(e);\n            }\n        }\n        throw new RuntimeException(\"Field '\" + fieldName + \"' not found in class hierarchy.\");\n    }\n\n    // Helper method to read the input string from the Lexer (via its Reader)\n    private String readFieldStringReader(CSVParser parser, String lexerFieldName) {\n        try {\n            Object lexer = getField(parser, lexerFieldName);\n            Class<?> lexerClass = lexer.getClass();\n            Field readerField = null;\n            Class<?> current = lexerClass;\n            while (current != null) {\n                try {\n                    readerField = current.getDeclaredField(\"reader\");\n                    readerField.setAccessible(true);\n                    break;\n                } catch (NoSuchFieldException e) {\n                    current = current.getSuperclass();\n                }\n            }\n            if (readerField == null) {\n                throw new RuntimeException(\"Field 'reader' not found in lexer class hierarchy.\");\n            }\n            Object reader = readerField.get(lexer);\n            if (reader instanceof StringReader) {\n                // StringReader does not expose the string directly, so use reflection on StringReader\n                Class<?> srClass = StringReader.class;\n                Field strField = null;\n                Class<?> srCurrent = srClass;\n                while (srCurrent != null) {\n                    try {\n                        strField = srCurrent.getDeclaredField(\"str\");\n                        strField.setAccessible(true);\n                        break;\n                    } catch (NoSuchFieldException e) {\n                        srCurrent = srCurrent.getSuperclass();\n                    }\n                }\n                if (strField == null) {\n                    throw new RuntimeException(\"Field 'str' not found in StringReader class hierarchy.\");\n                }\n                return (String) strField.get(reader);\n            }\n            return null;\n        } catch (IllegalAccessException e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975528,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 789,
+    "prompt_tokens": 1347,
+    "total_tokens": 2136,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.5
+  }
+}

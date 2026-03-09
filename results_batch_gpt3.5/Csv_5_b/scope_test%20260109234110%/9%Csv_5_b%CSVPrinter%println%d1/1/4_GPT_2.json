@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8uEQN2I9jrMDdJ3uQL7ThQpK85k",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVPrinterTest {\n\n    @Mock\n    private Appendable out;\n\n    @Mock\n    private CSVFormat format;\n\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        MockitoAnnotations.initMocks(this);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintln_appendsRecordSeparatorAndSetsNewRecordTrue() throws IOException {\n        String recordSeparator = \"\\n\";\n        when(format.getRecordSeparator()).thenReturn(recordSeparator);\n\n        // Initially set newRecord to false via reflection to verify it becomes true after println\n        setField(printer, \"newRecord\", false);\n\n        printer.println();\n\n        verify(out).append(recordSeparator);\n        assertTrue(getField(printer, \"newRecord\"));\n    }\n\n    // Utility method to set private boolean field 'newRecord'\n    private void setField(CSVPrinter printer, String fieldName, boolean value) {\n        try {\n            Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            field.set(printer, value);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Utility method to get private boolean field 'newRecord'\n    private boolean getField(CSVPrinter printer, String fieldName) {\n        try {\n            Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getBoolean(printer);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973294,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 397,
+    "prompt_tokens": 1490,
+    "total_tokens": 1887,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.79
+  }
+}

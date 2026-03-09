@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlgTTV9XENkEOpYknaDduFROsQUu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  private Gson mockGson;\n  private TypeAdapter<Object> mockDelegate;\n  private TypeAdapter<Object> mockRuntimeTypeAdapter;\n  private JsonWriter mockJsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockGson = mock(Gson.class);\n    mockDelegate = mock(TypeAdapter.class);\n    mockRuntimeTypeAdapter = mock(TypeAdapter.class);\n    mockJsonWriter = mock(JsonWriter.class);\n  }\n\n  @Test\n  void write_runtimeTypeSameAsDeclared_usesDelegateWrite() throws IOException {\n    String declaredType = String.class.getName();\n    Type declared = String.class;\n    Object value = \"test\";\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declared);\n\n    // Spy getRuntimeTypeIfMoreSpecific to return the same declared type\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = spy(wrapper);\n    doReturn(declared).when(spyWrapper).getRuntimeTypeIfMoreSpecific(declared, value);\n\n    spyWrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegate).write(mockJsonWriter, value);\n    verifyNoMoreInteractions(mockRuntimeTypeAdapter);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterNotReflective_usesRuntimeTypeAdapter() throws IOException {\n    Type declared = Number.class;\n    Type runtimeType = Integer.class;\n    Object value = 123;\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declared);\n\n    TypeToken<?> runtimeTypeToken = TypeToken.get(runtimeType);\n    when(mockGson.getAdapter(runtimeTypeToken)).thenReturn(mockRuntimeTypeAdapter);\n    // Make runtimeTypeAdapter not instance of ReflectiveTypeAdapterFactory.Adapter\n    when(mockRuntimeTypeAdapter.getClass()).thenReturn(TypeAdapter.class);\n\n    // Spy getRuntimeTypeIfMoreSpecific to return runtimeType\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = spy(wrapper);\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(declared, value);\n\n    spyWrapper.write(mockJsonWriter, value);\n\n    verify(mockRuntimeTypeAdapter).write(mockJsonWriter, value);\n    verify(mockDelegate, never()).write(any(), any());\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterReflective_delegateNotReflective_usesDelegate() throws IOException {\n    Type declared = Number.class;\n    Type runtimeType = Integer.class;\n    Object value = 123;\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declared);\n\n    TypeToken<?> runtimeTypeToken = TypeToken.get(runtimeType);\n    when(mockGson.getAdapter(runtimeTypeToken)).thenReturn(mockRuntimeTypeAdapter);\n\n    // Make runtimeTypeAdapter instance of ReflectiveTypeAdapterFactory.Adapter\n    Adapter reflectiveAdapter = mock(Adapter.class);\n    when(mockRuntimeTypeAdapter).thenReturn(reflectiveAdapter);\n    when(mockRuntimeTypeAdapter instanceof Adapter).thenReturn(true);\n\n    // Spy getRuntimeTypeIfMoreSpecific to return runtimeType\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = spy(wrapper);\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(declared, value);\n\n    // Spy isReflective to return false for delegate\n    doReturn(false).when(spyWrapper).isReflective(mockDelegate);\n\n    // Use reflection to set mockRuntimeTypeAdapter as instance of Adapter\n    setField(wrapper, \"delegate\", mockDelegate);\n\n    spyWrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegate).write(mockJsonWriter, value);\n    verify(mockRuntimeTypeAdapter, never()).write(any(), any());\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterReflective_delegateReflective_usesRuntimeTypeAdapter() throws IOException {\n    Type declared = Number.class;\n    Type runtimeType = Integer.class;\n    Object value = 123;\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declared);\n\n    TypeToken<?> runtimeTypeToken = TypeToken.get(runtimeType);\n    when(mockGson.getAdapter(runtimeTypeToken)).thenReturn(mockRuntimeTypeAdapter);\n\n    // Spy getRuntimeTypeIfMoreSpecific to return runtimeType\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = spy(wrapper);\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(declared, value);\n\n    // Spy isReflective to return true for delegate\n    doReturn(true).when(spyWrapper).isReflective(mockDelegate);\n\n    spyWrapper.write(mockJsonWriter, value);\n\n    verify(mockRuntimeTypeAdapter).write(mockJsonWriter, value);\n    verify(mockDelegate, never()).write(any(), any());\n  }\n\n  // Helper method to set private final fields via reflection\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = TypeAdapterRuntimeTypeWrapper.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884029,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1186,
+    "prompt_tokens": 1247,
+    "total_tokens": 2433,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.43
+  }
+}

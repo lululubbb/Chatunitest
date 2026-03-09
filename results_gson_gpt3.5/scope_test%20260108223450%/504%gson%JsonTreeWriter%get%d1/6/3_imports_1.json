@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.util.ArrayList;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonWriter;\nimport java.lang.reflect.Field;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testGet_WhenStackIsEmpty_ReturnsProduct() throws Exception {\n    // Initially product is JsonNull.INSTANCE\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(writer);\n    assertTrue(product instanceof JsonNull);\n\n    JsonElement result = writer.get();\n    assertSame(product, result);\n  }\n\n  @Test\n  public void testGet_WhenStackIsNotEmpty_ThrowsIllegalStateException() throws Exception {\n    // Use reflection to add an element to the private stack list\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n    stack.add(new JsonPrimitive(\"element\"));\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> writer.get());\n    assertTrue(thrown.getMessage().startsWith(\"Expected one JSON element but was\"));\n    assertTrue(thrown.getMessage().contains(\"element\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 531,
+  "completion_tokens": 365,
+  "total_tokens": 896,
+  "llm_elapsed_time_seconds": 7.34,
+  "repair_elapsed_time_seconds": 15.18,
+  "round_total_time_seconds": 15.18
+}

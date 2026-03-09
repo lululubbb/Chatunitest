@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaLDL0m2R7N2Xr5WhwqkEvn2vaHd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatValidateTest {\n\n    private CSVFormat csvFormat;\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        csvFormat = CSVFormat.DEFAULT;\n\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void setField(String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Because CSVFormat fields are final, we need to remove final modifier via reflection\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        field.set(csvFormat, value);\n    }\n\n    private void invokeValidate() throws Throwable {\n        try {\n            validateMethod.invoke(csvFormat);\n        } catch (InvocationTargetException e) {\n            // unwrap the underlying exception thrown by validate()\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    public void testValidateDelimiterIsLineBreak() throws Exception {\n        setField(\"delimiter\", '\\n'); // LF line break\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsDelimiter() throws Exception {\n        setField(\"delimiter\", ',');\n        setField(\"quoteCharacter\", Character.valueOf(','));\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsDelimiter() throws Exception {\n        setField(\"delimiter\", ',');\n        setField(\"escapeCharacter\", Character.valueOf(','));\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateCommentMarkerEqualsDelimiter() throws Exception {\n        setField(\"delimiter\", ',');\n        setField(\"commentMarker\", Character.valueOf(','));\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsCommentMarker() throws Exception {\n        setField(\"quoteCharacter\", Character.valueOf('Q'));\n        setField(\"commentMarker\", Character.valueOf('Q'));\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsCommentMarker() throws Exception {\n        setField(\"escapeCharacter\", Character.valueOf('E'));\n        setField(\"commentMarker\", Character.valueOf('E'));\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateEscapeCharNullAndQuoteModeNone() throws Exception {\n        setField(\"escapeCharacter\", null);\n        setField(\"quoteMode\", QuoteMode.NONE);\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateHeaderWithDuplicates() throws Exception {\n        String[] header = new String[] {\"col1\", \"col2\", \"col1\"};\n        setField(\"header\", header);\n        assertThrows(IllegalArgumentException.class, this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateHeaderNoDuplicates() throws Exception {\n        String[] header = new String[] {\"col1\", \"col2\", \"col3\"};\n        setField(\"header\", header);\n        assertDoesNotThrow(this::invokeValidate);\n    }\n\n    @Test\n    public void testValidateNoExceptions() throws Exception {\n        setField(\"delimiter\", ',');\n        setField(\"quoteCharacter\", Character.valueOf('\"'));\n        setField(\"escapeCharacter\", Character.valueOf('\\\\'));\n        setField(\"commentMarker\", Character.valueOf('#'));\n        setField(\"quoteMode\", QuoteMode.MINIMAL);\n        setField(\"header\", new String[] {\"a\", \"b\", \"c\"});\n        assertDoesNotThrow(this::invokeValidate);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555411,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 902,
+    "prompt_tokens": 2206,
+    "total_tokens": 3108,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.18
+  }
+}

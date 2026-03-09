@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCJ3FzNdDAqbYnEAYMgWrEDqFfj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.Date;\n\nclass DefaultDateTypeAdapterTest {\n\n    private DefaultDateTypeAdapter<Date> adapter;\n    private DefaultDateTypeAdapter.DateType<Date> dateType;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        dateType = mock(DefaultDateTypeAdapter.DateType.class);\n\n        // Use reflection to invoke the private constructor\n        var constructor = DefaultDateTypeAdapter.class.getDeclaredConstructor(DefaultDateTypeAdapter.DateType.class, String.class);\n        constructor.setAccessible(true);\n        adapter = (DefaultDateTypeAdapter<Date>) constructor.newInstance(dateType, \"yyyy-MM-dd\");\n    }\n\n    @Test\n    void testRead_NullToken() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        doNothing().when(jsonReader).nextNull();\n\n        Date result = adapter.read(jsonReader);\n\n        verify(jsonReader).peek();\n        verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void testRead_ValidDate() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n\n        // Spy the adapter\n        DefaultDateTypeAdapter<Date> spyAdapter = Mockito.spy(adapter);\n\n        // Use reflection to access private method deserializeToDate\n        try {\n            var method = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n            method.setAccessible(true);\n\n            Date expectedDate = new Date();\n\n            // Mock deserializeToDate to return expectedDate\n            doReturn(expectedDate).when(spyAdapter).read(any());\n            // But we want to test read(), so instead we mock deserializeToDate via reflection:\n            // Since Mockito cannot mock private methods, we override it by subclassing\n            // Instead, we simulate by temporarily replacing dateType.deserialize to return expectedDate\n\n            when(dateType.deserialize(expectedDate)).thenReturn(expectedDate);\n\n            // Instead of mocking private method, call real read but mock dateType.deserialize\n            // So call read on spyAdapter with jsonReader returning STRING token\n            // but deserializeToDate will run real method, which tries to parse jsonReader, so we mock jsonReader accordingly\n\n            // To avoid complexity, we invoke the private method directly via reflection here:\n            Date deserialized = (Date) method.invoke(spyAdapter, jsonReader);\n            when(spyAdapter.read(jsonReader)).thenCallRealMethod();\n\n            // Now call read()\n            Date result = spyAdapter.read(jsonReader);\n\n            verify(jsonReader).peek();\n            verify(dateType).deserialize(deserialized);\n            assertEquals(deserialized, result);\n\n        } catch (Exception e) {\n            fail(\"Reflection failed: \" + e.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889847,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 643,
+    "prompt_tokens": 1253,
+    "total_tokens": 1896,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.96
+  }
+}

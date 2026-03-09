@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvliXXFL8gCAvLjKSpdwErWONroK4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.internal.bind.ObjectTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class ObjectTypeAdapterTest {\n\n    private ObjectTypeAdapter objectTypeAdapter;\n    private ToNumberStrategy toNumberStrategyMock;\n    private JsonReader jsonReaderMock;\n    private Method readTerminalMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        toNumberStrategyMock = mock(ToNumberStrategy.class);\n        // Using null for Gson parameter as it's not used in the tested method\n        objectTypeAdapter = Mockito.mock(ObjectTypeAdapter.class, invocation -> {\n            if (\"readTerminal\".equals(invocation.getMethod().getName())) {\n                return invocation.callRealMethod();\n            }\n            return invocation.callRealMethod();\n        });\n        // Create real instance via reflection since constructor is private\n        try {\n            var constructor = ObjectTypeAdapter.class.getDeclaredConstructor(com.google.gson.Gson.class, ToNumberStrategy.class);\n            constructor.setAccessible(true);\n            objectTypeAdapter = constructor.newInstance(null, toNumberStrategyMock);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n\n        jsonReaderMock = mock(JsonReader.class);\n\n        readTerminalMethod = ObjectTypeAdapter.class.getDeclaredMethod(\"readTerminal\", JsonReader.class, JsonToken.class);\n        readTerminalMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testReadTerminal_string() throws Throwable {\n        when(jsonReaderMock.nextString()).thenReturn(\"testString\");\n        Object result = readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, JsonToken.STRING);\n        assertEquals(\"testString\", result);\n        verify(jsonReaderMock).nextString();\n    }\n\n    @Test\n    public void testReadTerminal_number() throws Throwable, IOException {\n        Object numberValue = 12345;\n        when(toNumberStrategyMock.readNumber(jsonReaderMock)).thenReturn(numberValue);\n        Object result = readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, JsonToken.NUMBER);\n        assertEquals(numberValue, result);\n        verify(toNumberStrategyMock).readNumber(jsonReaderMock);\n    }\n\n    @Test\n    public void testReadTerminal_booleanTrue() throws Throwable {\n        when(jsonReaderMock.nextBoolean()).thenReturn(true);\n        Object result = readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, JsonToken.BOOLEAN);\n        assertEquals(true, result);\n        verify(jsonReaderMock).nextBoolean();\n    }\n\n    @Test\n    public void testReadTerminal_booleanFalse() throws Throwable {\n        when(jsonReaderMock.nextBoolean()).thenReturn(false);\n        Object result = readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, JsonToken.BOOLEAN);\n        assertEquals(false, result);\n        verify(jsonReaderMock).nextBoolean();\n    }\n\n    @Test\n    public void testReadTerminal_null() throws Throwable {\n        doNothing().when(jsonReaderMock).nextNull();\n        Object result = readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, JsonToken.NULL);\n        assertNull(result);\n        verify(jsonReaderMock).nextNull();\n    }\n\n    @Test\n    public void testReadTerminal_unexpectedToken() {\n        JsonToken unexpectedToken = JsonToken.BEGIN_ARRAY;\n        IllegalStateException exception = assertThrows(InvocationTargetException.class, () -> {\n            readTerminalMethod.invoke(objectTypeAdapter, jsonReaderMock, unexpectedToken);\n        }).getCause();\n        assertTrue(exception instanceof IllegalStateException);\n        assertEquals(\"Unexpected token: \" + unexpectedToken, exception.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884157,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 792,
+    "prompt_tokens": 1073,
+    "total_tokens": 1865,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.85
+  }
+}

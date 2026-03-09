@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testIsEmpty_whenEmpty_shouldReturnTrue() {\n    // Initially the JsonObject is empty\n    assertTrue(jsonObject.isEmpty());\n  }\n\n  @Test\n  public void testIsEmpty_whenNotEmpty_shouldReturnFalse() throws Exception {\n    // Use reflection to access private field \"members\"\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members =\n        (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    // Add a dummy entry to members to simulate non-empty state\n    members.put(\"key\", new JsonPrimitive(\"value\"));\n\n    assertFalse(jsonObject.isEmpty());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 394,
+  "completion_tokens": 242,
+  "total_tokens": 636,
+  "llm_elapsed_time_seconds": 4.26
+}

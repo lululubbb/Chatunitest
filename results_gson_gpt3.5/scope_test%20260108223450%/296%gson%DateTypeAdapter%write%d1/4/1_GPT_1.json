@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmGhp86mLy1PdeR5wbQa9Dy2G355",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.text.DateFormat;\nimport java.util.Date;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    void setUp() {\n        dateTypeAdapter = new DateTypeAdapter();\n        jsonWriter = mock(JsonWriter.class);\n    }\n\n    @Test\n    void write_nullDate_shouldCallNullValue() throws IOException {\n        dateTypeAdapter.write(jsonWriter, null);\n        verify(jsonWriter).nullValue();\n        verifyNoMoreInteractions(jsonWriter);\n    }\n\n    @Test\n    void write_nonNullDate_shouldFormatAndWriteValue() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Date date = new Date();\n\n        // Access private dateFormats list\n        List<DateFormat> dateFormats = (List<DateFormat>) DateTypeAdapter.class.getDeclaredField(\"dateFormats\").get(dateTypeAdapter);\n        assertFalse(dateFormats.isEmpty());\n\n        DateFormat dateFormat = dateFormats.get(0);\n\n        // Spy on dateFormat to verify format method call\n        DateFormat spyDateFormat = spy(dateFormat);\n\n        // Replace the first element with the spy\n        dateFormats.set(0, spyDateFormat);\n\n        // Call write method\n        dateTypeAdapter.write(jsonWriter, date);\n\n        // Verify dateFormat.format called with the date\n        verify(spyDateFormat).format(date);\n\n        // Verify jsonWriter.value called with the formatted string\n        verify(jsonWriter).value(anyString());\n\n        verifyNoMoreInteractions(jsonWriter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886275,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 389,
+    "prompt_tokens": 788,
+    "total_tokens": 1177,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.85
+  }
+}

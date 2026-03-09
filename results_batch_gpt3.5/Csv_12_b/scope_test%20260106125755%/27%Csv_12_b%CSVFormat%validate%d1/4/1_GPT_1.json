@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutQj3Pn9CWNp1u8ndLvadoYPGrKn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatValidateTest {\n\n    private void invokeValidate(CSVFormat format) throws Exception {\n        Method validate = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validate.setAccessible(true);\n        validate.invoke(format);\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsDelimiter() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                ',',\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The quoteChar character and the delimiter cannot be the same (',')\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsDelimiter() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ';',\n                '\"',\n                QuoteMode.MINIMAL,\n                null,\n                ';',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The escape character and the delimiter cannot be the same (';')\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsDelimiter() throws Exception {\n        CSVFormat format = new CSVFormat(\n                '#',\n                '\"',\n                QuoteMode.MINIMAL,\n                '#',\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start character and the delimiter cannot be the same ('#')\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsCommentMarker() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '#',\n                QuoteMode.MINIMAL,\n                '#',\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start character and the quoteChar cannot be the same ('#')\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsCommentMarker() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                '#',\n                '#',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start and the escape character cannot be the same ('#')\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_escapeCharNullAndQuoteModeNone() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                null,\n                QuoteMode.NONE,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"No quotes mode set but no escape character is set\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_allValid() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                '#',\n                '\\\\',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675477,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 834,
+    "prompt_tokens": 1230,
+    "total_tokens": 2064,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.53
+  }
+}

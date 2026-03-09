@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmIvetKYZxZXLTnsndrt8iszujqU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.*;\nimport java.util.Map;\n\nclass GsonTypesGetRawTypeTest {\n\n  @Test\n  void testGetRawType_withClass() {\n    Class<String> clazz = String.class;\n    Class<?> result = $Gson$Types.getRawType(clazz);\n    assertSame(String.class, result);\n  }\n\n  @Test\n  void testGetRawType_withParameterizedType() throws NoSuchMethodException {\n    // Create a ParameterizedType for java.util.Map<String, Integer>\n    Method method = Sample.class.getDeclaredMethod(\"mapMethod\");\n    Type returnType = method.getGenericReturnType();\n    assertTrue(returnType instanceof ParameterizedType);\n    ParameterizedType pt = (ParameterizedType) returnType;\n\n    Class<?> result = $Gson$Types.getRawType(pt);\n    assertSame(Map.class, result);\n  }\n\n  @Test\n  void testGetRawType_withGenericArrayType() throws NoSuchFieldException {\n    // Field genericArrayField is of type T[]\n    Field field = Sample.class.getDeclaredField(\"genericArrayField\");\n    Type fieldType = field.getGenericType();\n    assertTrue(fieldType instanceof GenericArrayType);\n\n    Class<?> result = $Gson$Types.getRawType(fieldType);\n    assertTrue(result.isArray());\n    // Since T extends String, raw type is Object[] because getRawType returns Object.class for TypeVariable\n    assertEquals(Object[].class, result);\n  }\n\n  @Test\n  void testGetRawType_withTypeVariable() throws NoSuchFieldException {\n    TypeVariable<?>[] typeParameters = Sample.class.getTypeParameters();\n    assertTrue(typeParameters.length > 0);\n\n    Class<?> result = $Gson$Types.getRawType(typeParameters[0]);\n    // getRawType returns Object.class for TypeVariable\n    assertSame(Object.class, result);\n  }\n\n  @Test\n  void testGetRawType_withWildcardType() throws NoSuchFieldException {\n    Field field = Sample.class.getDeclaredField(\"wildcardField\");\n    Type fieldType = field.getGenericType();\n    assertTrue(fieldType instanceof ParameterizedType);\n    ParameterizedType pt = (ParameterizedType) fieldType;\n    Type[] args = pt.getActualTypeArguments();\n    assertEquals(1, args.length);\n    Type wildcardType = args[0];\n    assertTrue(wildcardType instanceof WildcardType);\n\n    Class<?> result = $Gson$Types.getRawType(wildcardType);\n    assertSame(Number.class, result);\n  }\n\n  @Test\n  void testGetRawType_withNull_throws() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      $Gson$Types.getRawType(null);\n    });\n    assertTrue(thrown.getMessage().contains(\"null\"));\n  }\n\n  @Test\n  void testGetRawType_withUnknownType_throws() {\n    Type unknownType = new Type() {};\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      $Gson$Types.getRawType(unknownType);\n    });\n    assertTrue(thrown.getMessage().contains(unknownType.getClass().getName()));\n  }\n\n  // Helper class with generic members to create types for testing\n  static class Sample<T extends String> {\n    T[] genericArrayField;\n    Map<String, Integer> mapMethod() { return null; }\n    java.util.List<? extends Number> wildcardField;\n\n    <U> void genericMethod(U param) {}\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886413,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 759,
+    "prompt_tokens": 2775,
+    "total_tokens": 3534,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.01
+  }
+}

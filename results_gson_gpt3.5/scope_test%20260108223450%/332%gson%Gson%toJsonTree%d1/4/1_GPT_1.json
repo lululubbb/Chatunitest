@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmoSjQzrdvzKydn98xxKd3CZ1dpO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\npublic class GsonToJsonTreeTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJsonTree_withNullSrcAndNullType() throws Exception {\n    JsonElement result = gson.toJsonTree(null, (Type) null);\n    assertNotNull(result);\n    // JsonTreeWriter returns JsonNull.INSTANCE for null input\n    assertEquals(\"null\", result.toString());\n  }\n\n  @Test\n  public void testToJsonTree_withPrimitiveType() throws Exception {\n    Integer src = 123;\n    JsonElement result = gson.toJsonTree(src, Integer.class);\n    assertNotNull(result);\n    assertEquals(\"123\", result.toString());\n  }\n\n  @Test\n  public void testToJsonTree_withStringType() throws Exception {\n    String src = \"testString\";\n    JsonElement result = gson.toJsonTree(src, String.class);\n    assertNotNull(result);\n    assertEquals(\"\\\"testString\\\"\", result.toString());\n  }\n\n  @Test\n  public void testToJsonTree_withObjectType() throws Exception {\n    Object src = new Object();\n    JsonElement result = gson.toJsonTree(src, Object.class);\n    assertNotNull(result);\n    // Object serializes to empty JSON object\n    assertEquals(\"{}\", result.toString());\n  }\n\n  @Test\n  public void testToJsonTree_withArrayType() throws Exception {\n    int[] src = new int[]{1, 2, 3};\n    JsonElement result = gson.toJsonTree(src, int[].class);\n    assertNotNull(result);\n    assertEquals(\"[1,2,3]\", result.toString());\n  }\n\n  @Test\n  public void testToJsonTree_withGenericType() throws Exception {\n    java.util.List<String> src = java.util.Arrays.asList(\"a\", \"b\");\n    Type type = new com.google.gson.reflect.TypeToken<java.util.List<String>>() {}.getType();\n    JsonElement result = gson.toJsonTree(src, type);\n    assertNotNull(result);\n    assertEquals(\"[\\\"a\\\",\\\"b\\\"]\", result.toString());\n  }\n\n  @Test\n  public void testPrivateToJsonTreeUsingReflection() throws Exception {\n    Method toJsonTreeMethod = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class, Type.class);\n    toJsonTreeMethod.setAccessible(true);\n\n    String src = \"reflectionTest\";\n    Type type = String.class;\n\n    JsonElement result = (JsonElement) toJsonTreeMethod.invoke(gson, src, type);\n    assertNotNull(result);\n    assertEquals(\"\\\"reflectionTest\\\"\", result.toString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888368,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 622,
+    "prompt_tokens": 1605,
+    "total_tokens": 2227,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 13.63
+  }
+}

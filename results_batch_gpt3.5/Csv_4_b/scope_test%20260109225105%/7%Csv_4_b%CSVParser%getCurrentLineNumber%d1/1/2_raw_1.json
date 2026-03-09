@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n    private Lexer lexerMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a dummy CSVFormat as null since not used in getCurrentLineNumber\n        parser = new CSVParser(null, null);\n\n        // Mock Lexer\n        lexerMock = mock(Lexer.class);\n\n        // Inject mocked lexer into parser using reflection\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(parser, lexerMock);\n    }\n\n    @Test\n    void testGetCurrentLineNumber_ReturnsLexerLineNumber() {\n        long expectedLineNumber = 42L;\n        when(lexerMock.getCurrentLineNumber()).thenReturn(expectedLineNumber);\n\n        long actualLineNumber = parser.getCurrentLineNumber();\n\n        assertEquals(expectedLineNumber, actualLineNumber);\n    }\n\n    @Test\n    void testGetCurrentLineNumber_ReturnsZeroWhenLexerReturnsZero() {\n        long expectedLineNumber = 0L;\n        when(lexerMock.getCurrentLineNumber()).thenReturn(expectedLineNumber);\n\n        long actualLineNumber = parser.getCurrentLineNumber();\n\n        assertEquals(expectedLineNumber, actualLineNumber);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_4_b/scope_test%20260109225105%/7%Csv_4_b%CSVParser%getCurrentLineNumber%d1/1/runtemp/Csv_4_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 458,
+  "completion_tokens": 310,
+  "total_tokens": 768,
+  "llm_elapsed_time_seconds": 5.95
+}

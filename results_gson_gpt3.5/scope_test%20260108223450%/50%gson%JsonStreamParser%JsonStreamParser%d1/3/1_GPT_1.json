@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmzYyjeXWFJnonGGlNcMSQ61NAos",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.NoSuchElementException;\n\npublic class JsonStreamParserTest {\n\n  private JsonStreamParser jsonStreamParser;\n\n  @BeforeEach\n  public void setUp() {\n    // Using the constructor with String input for normal initialization\n    jsonStreamParser = new JsonStreamParser(\"{\\\"key\\\":\\\"value\\\"}\");\n  }\n\n  @Test\n  public void testConstructorWithString_createsReader() throws Exception {\n    String json = \"{\\\"a\\\":1}\";\n    JsonStreamParser parser = new JsonStreamParser(json);\n\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(parser);\n\n    assertNotNull(jsonReader);\n    // The JsonReader should be reading from a StringReader with the given JSON string\n    Field inField = JsonReader.class.getDeclaredField(\"in\");\n    inField.setAccessible(true);\n    Reader reader = (Reader) inField.get(jsonReader);\n    assertTrue(reader instanceof StringReader);\n  }\n\n  @Test\n  public void testConstructorWithReader_setsLockAndParser() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    JsonStreamParser parser = new JsonStreamParser(mockReader);\n\n    Field lockField = JsonStreamParser.class.getDeclaredField(\"lock\");\n    lockField.setAccessible(true);\n    Object lock = lockField.get(parser);\n    assertNotNull(lock);\n\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(parser);\n    assertNotNull(jsonReader);\n  }\n\n  @Test\n  public void testHasNext_trueAndFalse() throws Exception {\n    // Create a spy to mock JsonReader behavior\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n    JsonStreamParser parser = new JsonStreamParser(reader);\n\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(parser);\n\n    // Spy on the JsonReader to control peek() behavior\n    JsonReader spyReader = spy(jsonReader);\n\n    // Replace the parser field with spyReader\n    parserField.set(parser, spyReader);\n\n    when(spyReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT).thenReturn(JsonToken.END_DOCUMENT);\n\n    assertTrue(parser.hasNext());\n    assertFalse(parser.hasNext());\n  }\n\n  @Test\n  public void testHasNext_throwsMalformedJsonException() throws Exception {\n    Reader reader = new StringReader(\"\");\n    JsonStreamParser parser = new JsonStreamParser(reader);\n\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(parser);\n\n    JsonReader spyReader = spy(jsonReader);\n    parserField.set(parser, spyReader);\n\n    when(spyReader.peek()).thenThrow(new MalformedJsonException(\"malformed\"));\n\n    assertThrows(com.google.gson.JsonSyntaxException.class, parser::hasNext);\n  }\n\n  @Test\n  public void testNext_returnsJsonElement() throws Exception {\n    JsonStreamParser parser = new JsonStreamParser(\"{\\\"key\\\":\\\"value\\\"}\");\n    assertTrue(parser.hasNext());\n    JsonElement element = parser.next();\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  public void testNext_noSuchElementException() throws Exception {\n    JsonStreamParser parser = new JsonStreamParser(\"\");\n    assertFalse(parser.hasNext());\n    assertThrows(NoSuchElementException.class, parser::next);\n  }\n\n  @Test\n  public void testNext_throwsJsonParseExceptionOnIOException() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    JsonStreamParser parser = new JsonStreamParser(mockReader);\n\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(parser);\n\n    JsonReader spyReader = spy(jsonReader);\n    parserField.set(parser, spyReader);\n\n    when(spyReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    // Mock Streams.parse to throw IOException by spying on Streams class is complicated,\n    // so instead we simulate IOException by making JsonReader throw on peek or next.\n\n    doThrow(new IOException(\"io exception\")).when(spyReader).peek();\n\n    assertThrows(com.google.gson.JsonParseException.class, parser::next);\n  }\n\n  @Test\n  public void testRemove_throwsUnsupportedOperationException() {\n    assertThrows(UnsupportedOperationException.class, () -> jsonStreamParser.remove());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889056,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1059,
+    "prompt_tokens": 287,
+    "total_tokens": 1346,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.09
+  }
+}

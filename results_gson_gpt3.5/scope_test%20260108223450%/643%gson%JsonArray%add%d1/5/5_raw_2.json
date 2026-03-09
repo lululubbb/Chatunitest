@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  void add_shouldAddElement_whenElementIsNotNull() throws Exception {\n    JsonElement element = mock(JsonElement.class);\n\n    jsonArray.add(element);\n\n    ArrayList<JsonElement> elements = getElementsField(jsonArray);\n    assertEquals(1, elements.size());\n    assertSame(element, elements.get(0));\n  }\n\n  @Test\n  void add_shouldAddJsonNullInstance_whenElementIsNull() throws Exception {\n    jsonArray.add((JsonElement) null);\n\n    ArrayList<JsonElement> elements = getElementsField(jsonArray);\n    assertEquals(1, elements.size());\n    assertSame(JsonNull.INSTANCE, elements.get(0));\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private ArrayList<JsonElement> getElementsField(JsonArray instance) throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    return (ArrayList<JsonElement>) elementsField.get(instance);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 820,
+  "completion_tokens": 282,
+  "total_tokens": 1102,
+  "llm_elapsed_time_seconds": 4.84
+}

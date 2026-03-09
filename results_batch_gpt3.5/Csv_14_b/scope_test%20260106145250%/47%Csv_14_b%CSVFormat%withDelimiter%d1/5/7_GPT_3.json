@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuvhs8dS6OmH73gD4B3Yu3vatW55S",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithDelimiter_validDelimiter() {\n        char delimiter = ';';\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat updated = original.withDelimiter(delimiter);\n\n        assertNotNull(updated);\n        assertEquals(delimiter, updated.getDelimiter());\n        // Other fields remain same as original except delimiter\n        assertEquals(original.getQuoteCharacter(), updated.getQuoteCharacter());\n        assertEquals(original.getQuoteMode(), updated.getQuoteMode());\n        assertEquals(original.getCommentMarker(), updated.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), updated.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), updated.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), updated.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), updated.getRecordSeparator());\n        assertEquals(original.getNullString(), updated.getNullString());\n        assertArrayEquals(original.getHeaderComments(), updated.getHeaderComments());\n        assertArrayEquals(original.getHeader(), updated.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), updated.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), updated.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), updated.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), updated.getTrim());\n        assertEquals(original.getTrailingDelimiter(), updated.getTrailingDelimiter());\n    }\n\n    @Test\n    void testWithDelimiter_lineBreakDelimiterCR() {\n        char delimiter = '\\r'; // CR line break\n        CSVFormat original = CSVFormat.DEFAULT;\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n                () -> original.withDelimiter(delimiter));\n        assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n    }\n\n    @Test\n    void testWithDelimiter_lineBreakDelimiterLF() {\n        char delimiter = '\\n'; // LF line break\n        CSVFormat original = CSVFormat.DEFAULT;\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n                () -> original.withDelimiter(delimiter));\n        assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n    }\n\n    @Test\n    void testWithDelimiter_lineBreakDelimiterCRLF() throws Exception {\n        // CRLF is a String line break, delimiter is char, so test with '\\r' or '\\n' only\n        // But to cover private static isLineBreak(Character), we use reflection to test it\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n        assertTrue((Boolean) method.invoke(null, '\\r'));\n        assertTrue((Boolean) method.invoke(null, '\\n'));\n        assertFalse((Boolean) method.invoke(null, ';'));\n        assertFalse((Boolean) method.invoke(null, 'a'));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684228,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 627,
+    "prompt_tokens": 2304,
+    "total_tokens": 2931,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.39
+  }
+}

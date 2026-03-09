@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testConstructorWithCharacter() throws Exception {\n    // Create JsonPrimitive instance using Character constructor\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getDeclaredConstructor(Character.class);\n    constructor.setAccessible(true);\n\n    Character c = 'a';\n    JsonPrimitive jsonPrimitive = constructor.newInstance(c);\n\n    // Access private field \"value\" via reflection\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Object value = valueField.get(jsonPrimitive);\n\n    assertNotNull(jsonPrimitive);\n    assertEquals(\"a\", value);\n  }\n\n  @Test\n  public void testConstructorWithNullCharacterThrowsNPE() throws Exception {\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getDeclaredConstructor(Character.class);\n    constructor.setAccessible(true);\n\n    assertThrows(InvocationTargetException.class, () -> {\n      constructor.newInstance((Character) null);\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 437,
+  "completion_tokens": 243,
+  "total_tokens": 680,
+  "llm_elapsed_time_seconds": 7.33,
+  "repair_elapsed_time_seconds": 14.52,
+  "round_total_time_seconds": 14.52
+}

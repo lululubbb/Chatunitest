@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZMGb4LtWRN1M6UfAY6Af5gttris",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    private CSVFormat createDefaultInstance() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                CSVFormat.DEFAULT.getQuoteMode(),\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                CSVFormat.DEFAULT.getHeaderComments(),\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase()\n        );\n    }\n\n    @Test\n    void withDelimiter_validDelimiter_returnsNewInstanceWithDelimiter() throws Exception {\n        CSVFormat original = createDefaultInstance();\n        char newDelimiter = ';';\n\n        // Ensure newDelimiter is not a line break\n        assertFalse(invokeIsLineBreak(newDelimiter));\n\n        CSVFormat result = original.withDelimiter(newDelimiter);\n\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertEquals(newDelimiter, result.getDelimiter());\n\n        // Other fields remain unchanged\n        assertEquals(original.getQuoteCharacter(), result.getQuoteCharacter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getCommentMarker(), result.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertArrayEquals(original.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(original.getHeader(), result.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void withDelimiter_lineBreakDelimiter_throwsIllegalArgumentException() throws Exception {\n        CSVFormat original = createDefaultInstance();\n\n        char[] lineBreakChars = new char[] {'\\r', '\\n'};\n\n        for (char lb : lineBreakChars) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                original.withDelimiter(lb);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    // Helper method to invoke private static isLineBreak(char)\n    private boolean invokeIsLineBreak(char c) throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n        return (boolean) method.invoke(null, c);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551632,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 705,
+    "prompt_tokens": 1976,
+    "total_tokens": 2681,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.58
+  }
+}

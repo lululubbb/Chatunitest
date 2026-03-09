@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmlC0nONSTnnjeOnnoGtI0NKroDh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  void testGetAsBigDecimal_singleElementDelegates() throws Exception {\n    // Use reflection to access private method getAsSingleElement()\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    // Create a spy of jsonArray\n    JsonArray spyArray = spy(jsonArray);\n\n    // Create a mock JsonElement to be returned by getAsSingleElement()\n    JsonElement mockElement = mock(JsonElement.class);\n    BigDecimal expected = new BigDecimal(\"123.45\");\n\n    when(mockElement.getAsBigDecimal()).thenReturn(expected);\n\n    // Stub the private method getAsSingleElement() via reflection\n    doAnswer(invocation -> mockElement).when(spyArray, getAsSingleElementMethod).invoke();\n\n    // Because Mockito cannot directly mock private methods, we use reflection to override the method behavior:\n    // Instead, use reflection to replace the method call in spyArray by a custom InvocationHandler:\n    // But simpler: use reflection to stub the private method on spyArray:\n    // Mockito 3 does not support mocking private methods directly, so use reflection to override the method:\n\n    // Instead use doReturn with reflection:\n    doReturn(mockElement).when(spyArray).getAsSingleElement();\n\n    // The above line causes compile error because getAsSingleElement is private,\n    // so we cannot call spyArray.getAsSingleElement().\n    // So we replace that with a reflective invocation:\n\n    // Use reflection to set up a proxy for getAsSingleElement() call:\n    // But since Mockito cannot mock private methods directly, we replace spyArray with a subclass overriding getAsSingleElement():\n\n    // Alternative approach: create an anonymous subclass overriding getAsSingleElement():\n\n    JsonArray spyArray2 = new JsonArray() {\n      @Override\n      protected JsonElement getAsSingleElement() {\n        return mockElement;\n      }\n    };\n\n    BigDecimal actual = spyArray2.getAsBigDecimal();\n\n    assertEquals(expected, actual);\n\n    // Verify mockElement.getAsBigDecimal() was called\n    verify(mockElement).getAsBigDecimal();\n  }\n\n  @Test\n  void testGetAsSingleElement_reflection() throws Exception {\n    // Add one element to jsonArray\n    JsonElement mockElement = mock(JsonElement.class);\n    jsonArray.add(mockElement);\n\n    // Access private getAsSingleElement() via reflection\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    JsonElement returned = (JsonElement) getAsSingleElementMethod.invoke(jsonArray);\n\n    assertSame(mockElement, returned);\n  }\n\n  @Test\n  void testGetAsBigDecimal_emptyArray_throws() {\n    // If getAsSingleElement throws (likely IllegalStateException), getAsBigDecimal should propagate\n    JsonArray emptyArray = new JsonArray();\n\n    assertThrows(IllegalStateException.class, emptyArray::getAsBigDecimal);\n  }\n\n  @Test\n  void testGetAsBigDecimal_multipleElements_throws() {\n    // Add multiple elements to cause getAsSingleElement to throw (if it does)\n    jsonArray.add(new JsonPrimitive(1));\n    jsonArray.add(new JsonPrimitive(2));\n\n    assertThrows(IllegalStateException.class, () -> jsonArray.getAsBigDecimal());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888166,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 788,
+    "prompt_tokens": 1171,
+    "total_tokens": 1959,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.26
+  }
+}

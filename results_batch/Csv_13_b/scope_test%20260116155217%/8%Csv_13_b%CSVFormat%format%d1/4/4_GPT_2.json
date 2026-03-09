@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZRGUenc1W3ZkS9mntWpnrn5OBco",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormatDefault;\n    private CSVFormat csvFormatNoQuote;\n    private CSVFormat csvFormatCustom;\n\n    @BeforeEach\n    public void setup() {\n        csvFormatDefault = CSVFormat.DEFAULT;\n        csvFormatNoQuote = CSVFormat.DEFAULT.withQuote((Character) null);\n        csvFormatCustom = CSVFormat.newFormat(';').withQuote('\\'').withQuoteMode(QuoteMode.ALL);\n    }\n\n    @Test\n    public void testFormat_withNormalValues() {\n        String result = csvFormatDefault.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormat_withNullValue() {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\");\n        String result = format.format(\"a\", null, \"c\");\n        assertEquals(\"a,NULL,c\", result);\n    }\n\n    @Test\n    public void testFormat_withEmptyValues() {\n        String result = csvFormatDefault.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormat_withNoQuoteCharacter() {\n        String result = csvFormatNoQuote.format(\"a,b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormat_withCustomDelimiterAndQuote() {\n        String result = csvFormatCustom.format(\"a;b\", \"b;c\");\n        // Values quoted due to QuoteMode.ALL and quote char '\\''\n        assertEquals(\"'a;b';'b;c'\", result);\n    }\n\n    @Test\n    public void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Create a CSVFormat instance overriding print method to simulate IOException\n        CSVFormat format = new CSVFormat(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                CSVFormat.DEFAULT.getQuoteMode(),\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                CSVFormat.DEFAULT.getHeaderComments(),\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase()) {\n            @Override\n            public String format(final Object... values) {\n                try {\n                    throw new IOException(\"IO error\");\n                } catch (IOException e) {\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            format.format(\"test\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551942,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 670,
+    "prompt_tokens": 1955,
+    "total_tokens": 2625,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.02
+  }
+}

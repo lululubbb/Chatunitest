@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxESsWJJoM5iHyxKjaXZnZm9mYvB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVFormat.Predefined;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testValueOf_withValidFormat() throws Exception {\n        try (MockedStatic<Predefined> mockedPredefined = Mockito.mockStatic(Predefined.class)) {\n            CSVFormat predefinedFormat = CSVFormat.DEFAULT;\n            CSVFormat predefinedReturnedFormat = predefinedFormat.withAllowMissingColumnNames();\n\n            Predefined predefined = Mockito.mock(Predefined.class);\n            Mockito.when(predefined.getFormat()).thenReturn(predefinedReturnedFormat);\n            mockedPredefined.when(() -> Predefined.valueOf(\"DEFAULT\")).thenReturn(predefined);\n\n            CSVFormat result = CSVFormat.valueOf(\"DEFAULT\");\n            assertNotNull(result);\n            assertEquals(predefinedReturnedFormat, result);\n\n            // Also verify that the static method was called correctly\n            mockedPredefined.verify(() -> Predefined.valueOf(\"DEFAULT\"));\n            Mockito.verify(predefined).getFormat();\n        }\n    }\n\n    @Test\n    public void testValueOf_withDifferentFormat() throws Exception {\n        try (MockedStatic<Predefined> mockedPredefined = Mockito.mockStatic(Predefined.class)) {\n            CSVFormat predefinedReturnedFormat = CSVFormat.EXCEL;\n\n            Predefined predefined = Mockito.mock(Predefined.class);\n            Mockito.when(predefined.getFormat()).thenReturn(predefinedReturnedFormat);\n            mockedPredefined.when(() -> Predefined.valueOf(\"EXCEL\")).thenReturn(predefined);\n\n            CSVFormat result = CSVFormat.valueOf(\"EXCEL\");\n            assertNotNull(result);\n            assertEquals(predefinedReturnedFormat, result);\n\n            mockedPredefined.verify(() -> Predefined.valueOf(\"EXCEL\"));\n            Mockito.verify(predefined).getFormat();\n        }\n    }\n\n    @Test\n    public void testValueOf_reflection_invocation() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"valueOf\", String.class);\n        method.setAccessible(true);\n\n        try (MockedStatic<Predefined> mockedPredefined = Mockito.mockStatic(Predefined.class)) {\n            CSVFormat predefinedReturnedFormat = CSVFormat.RFC4180;\n\n            Predefined predefined = Mockito.mock(Predefined.class);\n            Mockito.when(predefined.getFormat()).thenReturn(predefinedReturnedFormat);\n            mockedPredefined.when(() -> Predefined.valueOf(\"RFC4180\")).thenReturn(predefined);\n\n            Object result = method.invoke(null, \"RFC4180\");\n            assertNotNull(result);\n            assertTrue(result instanceof CSVFormat);\n            assertEquals(predefinedReturnedFormat, result);\n\n            mockedPredefined.verify(() -> Predefined.valueOf(\"RFC4180\"));\n            Mockito.verify(predefined).getFormat();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767690092,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 597,
+    "prompt_tokens": 2660,
+    "total_tokens": 3257,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.67
+  }
+}

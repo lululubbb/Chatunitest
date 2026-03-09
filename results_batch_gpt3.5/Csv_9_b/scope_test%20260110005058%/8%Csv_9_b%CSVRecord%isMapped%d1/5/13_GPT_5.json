@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA4Qv8zotAehDovw7Vccy5QPY2OC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Prepare default values for constructor\n        String[] values = new String[] {\"value1\", \"value2\"};\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"key1\", 0);\n        mapping.put(\"key2\", 1);\n        String comment = \"comment\";\n        long recordNumber = 1L;\n\n        // Use constructor to instantiate CSVRecord\n        csvRecord = new CSVRecord(values, mapping, comment, recordNumber);\n    }\n\n    @Test\n    public void testIsMapped_MappingNotNullAndContainsKey() {\n        assertTrue(csvRecord.isMapped(\"key1\"), \"Expected isMapped to return true for existing key\");\n        assertTrue(csvRecord.isMapped(\"key2\"), \"Expected isMapped to return true for existing key\");\n    }\n\n    @Test\n    public void testIsMapped_MappingNotNullButDoesNotContainKey() {\n        assertFalse(csvRecord.isMapped(\"nonexistent\"), \"Expected isMapped to return false for non-existing key\");\n        assertFalse(csvRecord.isMapped(null), \"Expected isMapped to return false for null key\");\n    }\n\n    @Test\n    public void testIsMapped_MappingIsNull() throws Exception {\n        // Use reflection to set private final field mapping to null\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(mappingField, mappingField.getModifiers() & ~Modifier.FINAL);\n\n        mappingField.set(csvRecord, null);\n\n        assertFalse(csvRecord.isMapped(\"key1\"), \"Expected isMapped to return false when mapping is null\");\n        assertFalse(csvRecord.isMapped(null), \"Expected isMapped to return false when mapping is null and key is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977770,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 476,
+    "prompt_tokens": 957,
+    "total_tokens": 1433,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.12
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxaZke6ibA25lx0pbtbhYVzuLbVa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.nio.charset.Charset;\nimport java.nio.charset.StandardCharsets;\nimport java.io.Reader;\nimport java.io.InputStreamReader;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport org.mockito.stubbing.Answer;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass CSVParserTest {\n\n    // Helper to mock static methods via reflection for Assertions.notNull\n    // Since Mockito.mockStatic is not available, we simulate by reflection on Assertions class\n    // but as Assertions is not provided, we simulate by overriding CSVParser.parse method behavior\n\n    @Test\n    void testParse_withValidInputStreamAndCharsetAndFormat() throws Exception {\n        // Arrange\n        String csvContent = \"header1,header2\\nvalue1,value2\\n\";\n        InputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));\n        Charset charset = StandardCharsets.UTF_8;\n        CSVFormat format = mock(CSVFormat.class);\n\n        // We cannot mock static methods with Mockito 3, so instead we create a spy of CSVParser class\n        // However CSVParser.parse is static and final class, so we cannot spy it directly.\n        // Instead, we test the real method but mock the internal parse(Reader, CSVFormat) static method by reflection.\n\n        // Save original parse(Reader, CSVFormat) method\n        Method parseReaderFormatMethod = CSVParser.class.getDeclaredMethod(\"parse\", Reader.class, CSVFormat.class);\n        parseReaderFormatMethod.setAccessible(true);\n\n        // Create dummy parser to return\n        CSVParser dummyParser = mock(CSVParser.class);\n\n        // Use a proxy to replace the parse(Reader, CSVFormat) method temporarily\n        // Since we cannot override static methods, we use a trick to replace the method by reflection (not recommended but for test)\n        // Alternatively, create a subclass with a package-private method and test that, but here we simulate minimal.\n\n        // Instead of replacing method, we test actual parse method without mocking static methods:\n        // Since Assertions.notNull is not available, but is internal validation, and we cannot mock it,\n        // we just test the real parse method with valid inputs.\n\n        CSVParser parser = CSVParser.parse(inputStream, charset, format);\n\n        assertNotNull(parser);\n        // We cannot assertEquals(dummyParser, parser) because we did not mock parse(Reader, CSVFormat)\n        // So just assert it's not null\n\n        // Additional check: the parser is instance of CSVParser\n        assertTrue(parser instanceof CSVParser);\n    }\n\n    @Test\n    void testParse_withNullInputStream_throwsException() {\n        InputStream inputStream = null;\n        Charset charset = StandardCharsets.UTF_8;\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Since Assertions.notNull is not available and cannot be mocked,\n        // the actual CSVParser.parse method will throw NullPointerException or IllegalArgumentException\n        // We test that behavior by calling real method and expecting exception\n\n        assertThrows(NullPointerException.class, () -> CSVParser.parse(inputStream, charset, format));\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsException() {\n        String csvContent = \"header1,header2\\nvalue1,value2\\n\";\n        InputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));\n        Charset charset = StandardCharsets.UTF_8;\n        CSVFormat format = null;\n\n        // Expect exception due to null format parameter\n\n        assertThrows(NullPointerException.class, () -> CSVParser.parse(inputStream, charset, format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 788,
+    "prompt_tokens": 1994,
+    "total_tokens": 2782,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.91
+  }
+}

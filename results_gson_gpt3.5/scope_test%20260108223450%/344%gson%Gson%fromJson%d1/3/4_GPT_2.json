@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrrGutqdxIryF5909wfszPE8DPY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage test.com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testFromJson_withValidJsonAndType() {\n    String json = \"\\\"hello\\\"\";\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      mockedTypeToken.when(() -> TypeToken.get(String.class)).thenReturn(typeToken);\n      // Spy on Gson to mock fromJson(String, TypeToken)\n      Gson spyGson = Mockito.spy(gson);\n      String expected = \"hello\";\n      doReturn(expected).when(spyGson).fromJson(json, typeToken);\n\n      String actual = spyGson.fromJson(json, String.class);\n      assertEquals(expected, actual);\n      verify(spyGson).fromJson(json, typeToken);\n    }\n  }\n\n  @Test\n  public void testFromJson_withNullJson() {\n    String json = null;\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      mockedTypeToken.when(() -> TypeToken.get(Object.class)).thenReturn(typeToken);\n      Gson spyGson = Mockito.spy(gson);\n      doReturn(null).when(spyGson).fromJson(json, typeToken);\n\n      Object actual = spyGson.fromJson(json, Object.class);\n      assertNull(actual);\n      verify(spyGson).fromJson(json, typeToken);\n    }\n  }\n\n  @Test\n  public void testFromJson_withInvalidJson_throwsJsonSyntaxException() {\n    String invalidJson = \"{ invalid json }\";\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      mockedTypeToken.when(() -> TypeToken.get(String.class)).thenReturn(typeToken);\n      Gson spyGson = Mockito.spy(gson);\n      doThrow(new JsonSyntaxException(\"Malformed JSON\")).when(spyGson).fromJson(invalidJson, typeToken);\n\n      assertThrows(JsonSyntaxException.class, () -> spyGson.fromJson(invalidJson, String.class));\n      verify(spyGson).fromJson(invalidJson, typeToken);\n    }\n  }\n\n  @Test\n  public void testFromJson_reflectionInvokePrivateFromJson_StringTypeToken() throws Exception {\n    // Use reflection to invoke private fromJson(String, TypeToken)\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", String.class, TypeToken.class);\n    fromJsonMethod.setAccessible(true);\n\n    String json = \"\\\"test\\\"\";\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    // Because the method is public, this is just to demonstrate reflection invocation\n    Object result = fromJsonMethod.invoke(gson, json, typeToken);\n    assertEquals(\"test\", result);\n  }\n\n  @Test\n  public void testFromJson_reflectionInvokePrivateFromJson_StringTypeToken_nullJson() throws Exception {\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", String.class, TypeToken.class);\n    fromJsonMethod.setAccessible(true);\n\n    Object result = fromJsonMethod.invoke(gson, (String) null, TypeToken.get(Object.class));\n    assertNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884735,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 797,
+    "prompt_tokens": 2083,
+    "total_tokens": 2880,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.84
+  }
+}

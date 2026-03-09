@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.BeforeExperiment;\nimport com.google.caliper.Param;\nimport com.google.gson.Gson;\nimport com.google.gson.GsonBuilder;\n\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class SerializationBenchmarkTest {\n\n  @Test\n  public void testMain_invokesNonUploadingCaliperRunnerRun() {\n    try (MockedStatic<NonUploadingCaliperRunner> mockedRunner = Mockito.mockStatic(NonUploadingCaliperRunner.class)) {\n      String[] args = new String[] {\"arg1\", \"arg2\"};\n\n      SerializationBenchmark.main(args);\n\n      mockedRunner.verify(() -> NonUploadingCaliperRunner.run(SerializationBenchmark.class, args));\n    }\n  }\n\n  @Test\n  public void testPrivateSetUpMethod_invocation() throws Exception {\n    SerializationBenchmark instance = new SerializationBenchmark();\n\n    Method setUpMethod = SerializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    setUpMethod.setAccessible(true);\n    setUpMethod.invoke(instance);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 249,
+  "completion_tokens": 201,
+  "total_tokens": 450,
+  "llm_elapsed_time_seconds": 5.84,
+  "repair_elapsed_time_seconds": 21.97,
+  "round_total_time_seconds": 21.97
+}

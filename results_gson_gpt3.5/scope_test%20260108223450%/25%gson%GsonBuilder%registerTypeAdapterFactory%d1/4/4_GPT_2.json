@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnF7tCrSvWnbVPJvcNrs1iMWePKV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void registerTypeAdapterFactory_nullFactory_throwsNullPointerException() {\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.registerTypeAdapterFactory(null);\n    });\n    assertNull(exception.getMessage(), \"Exception message should be null\");\n  }\n\n  @Test\n  public void registerTypeAdapterFactory_addsFactoryToFactoriesList() throws Exception {\n    TypeAdapterFactory factoryMock = mock(TypeAdapterFactory.class);\n\n    GsonBuilder returned = gsonBuilder.registerTypeAdapterFactory(factoryMock);\n\n    assertSame(gsonBuilder, returned, \"Method should return the same GsonBuilder instance\");\n\n    // Use reflection to get the private 'factories' field\n    Field factoriesField = GsonBuilder.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<TypeAdapterFactory> factories = (List<TypeAdapterFactory>) factoriesField.get(gsonBuilder);\n\n    assertTrue(factories.contains(factoryMock), \"Factories list should contain the registered factory\");\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890021,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 302,
+    "prompt_tokens": 1742,
+    "total_tokens": 2044,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.5
+  }
+}

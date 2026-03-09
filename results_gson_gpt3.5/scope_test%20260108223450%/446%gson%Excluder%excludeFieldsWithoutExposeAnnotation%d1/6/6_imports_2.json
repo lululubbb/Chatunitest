@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.FieldAttributes;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.annotations.Expose;\nimport com.google.gson.annotations.Since;\nimport com.google.gson.annotations.Until;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Modifier;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExcluderTest {\n\n  @Test\n  void testExcludeFieldsWithoutExposeAnnotation_returnsCloneWithRequireExposeTrue() throws Exception {\n    Excluder original = spy(new Excluder());\n    Excluder clone = new Excluder();\n    doReturn(clone).when(original).clone();\n\n    Excluder result = original.excludeFieldsWithoutExposeAnnotation();\n\n    assertNotNull(result);\n    assertSame(clone, result);\n    // Use reflection to check private boolean requireExpose\n    Field field = Excluder.class.getDeclaredField(\"requireExpose\");\n    field.setAccessible(true);\n    boolean requireExpose = (boolean) field.get(result);\n    assertTrue(requireExpose);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 856,
+  "completion_tokens": 185,
+  "total_tokens": 1041,
+  "llm_elapsed_time_seconds": 3.88,
+  "repair_elapsed_time_seconds": 19.01,
+  "round_total_time_seconds": 19.01
+}

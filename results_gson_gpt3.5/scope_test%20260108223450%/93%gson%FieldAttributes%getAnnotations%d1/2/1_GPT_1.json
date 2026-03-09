@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnLqLsZhCABWjs8OTwcn11ifBaHv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Field;\nimport java.util.Collection;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n  @Retention(RetentionPolicy.RUNTIME)\n  private @interface TestAnnotation1 {\n  }\n\n  @Retention(RetentionPolicy.RUNTIME)\n  private @interface TestAnnotation2 {\n  }\n\n  private FieldAttributes fieldAttributes;\n  private Field field;\n\n  @Test\n  void getAnnotations_returnsAllAnnotations() throws NoSuchFieldException {\n    Field field = SampleClass.class.getDeclaredField(\"fieldWithAnnotations\");\n    FieldAttributes fa = new FieldAttributes(field);\n\n    Collection<Annotation> annotations = fa.getAnnotations();\n\n    assertNotNull(annotations);\n    assertEquals(2, annotations.size());\n    assertTrue(annotations.stream().anyMatch(a -> a.annotationType() == TestAnnotation1.class));\n    assertTrue(annotations.stream().anyMatch(a -> a.annotationType() == TestAnnotation2.class));\n  }\n\n  @Test\n  void getAnnotations_emptyWhenNoAnnotations() throws NoSuchFieldException {\n    Field field = SampleClass.class.getDeclaredField(\"fieldWithoutAnnotations\");\n    FieldAttributes fa = new FieldAttributes(field);\n\n    Collection<Annotation> annotations = fa.getAnnotations();\n\n    assertNotNull(annotations);\n    assertTrue(annotations.isEmpty());\n  }\n\n  // Sample class with annotated and non-annotated fields for testing\n  private static class SampleClass {\n    @TestAnnotation1\n    @TestAnnotation2\n    private int fieldWithAnnotations;\n\n    private int fieldWithoutAnnotations;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890438,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 364,
+    "prompt_tokens": 277,
+    "total_tokens": 641,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.19
+  }
+}

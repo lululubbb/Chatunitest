@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm3i1AVJHyN9BaAIGubFtWGdlVzy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n    private Method putMethod;\n    private Field pendingNameField;\n    private Field stackField;\n    private Field productField;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        jsonTreeWriter = new JsonTreeWriter();\n        putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethod.setAccessible(true);\n        pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameField.setAccessible(true);\n        stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n        productField.setAccessible(true);\n    }\n\n    @Test\n    public void testPut_WithPendingNameAndNonNullValue_AddsToJsonObject() throws Exception {\n        // Arrange\n        JsonObject jsonObject = Mockito.mock(JsonObject.class);\n        List<JsonElement> stack = new ArrayList<>();\n        stack.add(jsonObject);\n        stackField.set(jsonTreeWriter, stack);\n        pendingNameField.set(jsonTreeWriter, \"name\");\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(false);\n\n        // Act\n        putMethod.invoke(jsonTreeWriter, value);\n\n        // Assert\n        verify(jsonObject).add(\"name\", value);\n        assertNull(pendingNameField.get(jsonTreeWriter));\n    }\n\n    @Test\n    public void testPut_WithPendingNameAndNullValueAndSerializeNullsTrue_AddsToJsonObject() throws Exception {\n        // Arrange\n        JsonObject jsonObject = Mockito.mock(JsonObject.class);\n        List<JsonElement> stack = new ArrayList<>();\n        stack.add(jsonObject);\n\n        // Spy on jsonTreeWriter to mock getSerializeNulls()\n        JsonTreeWriter spyWriter = Mockito.spy(new JsonTreeWriter());\n        pendingNameField.set(spyWriter, \"name\");\n        stackField.set(spyWriter, stack);\n        when(spyWriter.getSerializeNulls()).thenReturn(true);\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(true);\n\n        // Access put method on spy\n        Method putMethodSpy = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethodSpy.setAccessible(true);\n\n        // Act\n        putMethodSpy.invoke(spyWriter, value);\n\n        // Assert\n        verify(jsonObject).add(\"name\", value);\n        assertNull(pendingNameField.get(spyWriter));\n    }\n\n    @Test\n    public void testPut_WithPendingNameAndNullValueAndSerializeNullsFalse_DoesNotAdd() throws Exception {\n        // Arrange\n        JsonObject jsonObject = Mockito.mock(JsonObject.class);\n        List<JsonElement> stack = new ArrayList<>();\n        stack.add(jsonObject);\n\n        // Spy on jsonTreeWriter to mock getSerializeNulls()\n        JsonTreeWriter spyWriter = Mockito.spy(new JsonTreeWriter());\n        pendingNameField.set(spyWriter, \"name\");\n        stackField.set(spyWriter, stack);\n        when(spyWriter.getSerializeNulls()).thenReturn(false);\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(true);\n\n        // Access put method on spy\n        Method putMethodSpy = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethodSpy.setAccessible(true);\n\n        // Act\n        putMethodSpy.invoke(spyWriter, value);\n\n        // Assert\n        verify(jsonObject, never()).add(anyString(), any());\n        assertNull(pendingNameField.get(spyWriter));\n    }\n\n    @Test\n    public void testPut_WithEmptyStack_SetsProduct() throws Exception {\n        // Arrange\n        List<JsonElement> stack = new ArrayList<>();\n        stackField.set(jsonTreeWriter, stack);\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n\n        // Act\n        putMethod.invoke(jsonTreeWriter, value);\n\n        // Assert\n        assertSame(value, productField.get(jsonTreeWriter));\n    }\n\n    @Test\n    public void testPut_WithStackContainingJsonArray_AddsValueToArray() throws Exception {\n        // Arrange\n        JsonArray jsonArray = Mockito.mock(JsonArray.class);\n        List<JsonElement> stack = new ArrayList<>();\n        stack.add(jsonArray);\n        stackField.set(jsonTreeWriter, stack);\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n\n        // Act\n        putMethod.invoke(jsonTreeWriter, value);\n\n        // Assert\n        verify(jsonArray).add(value);\n    }\n\n    @Test\n    public void testPut_WithStackContainingNonJsonArrayAndNoPendingName_ThrowsIllegalStateException() throws Exception {\n        // Arrange\n        JsonElement element = new JsonPrimitive(\"not an array\");\n        List<JsonElement> stack = new ArrayList<>();\n        stack.add(element);\n        stackField.set(jsonTreeWriter, stack);\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonElement value = Mockito.mock(JsonElement.class);\n\n        // Act & Assert\n        Exception exception = assertThrows(IllegalStateException.class, () -> {\n            try {\n                putMethod.invoke(jsonTreeWriter, value);\n            } catch (java.lang.reflect.InvocationTargetException e) {\n                // unwrap the cause and throw it to be caught by assertThrows\n                throw e.getCause();\n            }\n        });\n        // No further verification needed, exception is expected\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885470,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1267,
+    "prompt_tokens": 2334,
+    "total_tokens": 3601,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.93
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8truF9yCTuricf21HKvZ1IUVLJp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat.Quote;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterPrintAndQuoteTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.getQuoteChar()).thenReturn('\\\"');\n        // By default, set quote policy to MINIMAL\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        printer = new CSVPrinter(out, format);\n        // newRecord is private boolean, true by default, no need to set here\n    }\n\n    private void invokePrintAndQuote(Object object, CharSequence value, int offset, int len) throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, object, value, offset, len);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    void testQuotePolicyAll() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.ALL);\n        String val = \"abc\";\n        invokePrintAndQuote(\"abc\", val, 0, val.length());\n        // Should quote entire value\n        verify(out).append('\\\"');\n        verify(out).append(val, 0, val.length());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyNonNumeric_withNumber() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NON_NUMERIC);\n        String val = \"123\";\n        invokePrintAndQuote(123, val, 0, val.length());\n        // Number: should not quote, so append directly\n        verify(out).append(val, 0, val.length());\n        verify(out, never()).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyNonNumeric_withNonNumber() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NON_NUMERIC);\n        String val = \"abc\";\n        invokePrintAndQuote(\"abc\", val, 0, val.length());\n        // Non-number: should quote\n        verify(out).append('\\\"');\n        verify(out).append(val, 0, val.length());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyNone_callsPrintAndEscape() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NONE);\n        String val = \"abc\";\n        CSVPrinter spyPrinter = spy(new CSVPrinter(out, format));\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        Method printAndEscapeMethod = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscapeMethod.setAccessible(true);\n\n        // We spy and verify printAndEscape is called\n        method.invoke(spyPrinter, \"abc\", val, 0, val.length());\n        verify(spyPrinter).printAndEscape(val, 0, val.length());\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testQuotePolicyMinimal_emptyLen_newRecordTrue() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        // newRecord is private, set to true by reflection\n        setNewRecord(printer, true);\n        String val = \"\";\n        invokePrintAndQuote(\"\", val, 0, 0);\n        verify(out).append('\\\"');\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyMinimal_emptyLen_newRecordFalse() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, false);\n        String val = \"\";\n        invokePrintAndQuote(\"\", val, 0, 0);\n        // no quote, append empty string\n        verify(out).append(val, 0, 0);\n    }\n\n    @Test\n    void testQuotePolicyMinimal_newRecordTrue_startCharInvalid() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, true);\n        String val = \"#start\";\n        invokePrintAndQuote(\"x\", val, 0, val.length());\n        // Should quote because first char is '#'(COMMENT)\n        verify(out).append('\\\"');\n        verify(out).append(val, 0, val.length());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyMinimal_containsSpecialChar() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, false);\n        String val = \"ab\\ncd\";\n        invokePrintAndQuote(\"x\", val, 0, val.length());\n        verify(out).append('\\\"');\n        // Should have appended with doubled quotes if any, here none\n        verify(out).append(val, 0, val.length());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyMinimal_endsWithSpace() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, false);\n        String val = \"abc \";\n        invokePrintAndQuote(\"x\", val, 0, val.length());\n        verify(out).append('\\\"');\n        verify(out).append(val, 0, val.length());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyMinimal_withQuoteCharInside() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, false);\n        String val = \"ab\\\"cd\";\n        invokePrintAndQuote(\"x\", val, 0, val.length());\n        verify(out).append('\\\"');\n        // Because quote char inside, it should double quotes inside\n        // The code appends segments including the quote char doubled\n        // So verify append called at least twice with segments including quote char\n        verify(out, atLeast(2)).append(any(CharSequence.class), anyInt(), anyInt());\n        verify(out).append('\\\"');\n    }\n\n    @Test\n    void testQuotePolicyMinimal_noQuoteNeeded() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n        setNewRecord(printer, false);\n        String val = \"abcDEF123\";\n        invokePrintAndQuote(\"x\", val, 0, val.length());\n        // No quote needed, should append directly once\n        verify(out).append(val, 0, val.length());\n        verify(out, never()).append('\\\"');\n    }\n\n    private void setNewRecord(CSVPrinter printer, boolean value) throws Exception {\n        var field = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        field.setAccessible(true);\n        field.set(printer, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973271,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1536,
+    "prompt_tokens": 1199,
+    "total_tokens": 2735,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.25
+  }
+}

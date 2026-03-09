@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8rLp4NQiem5DReURJrzZqU70opx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private Closeable mockLexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a real CSVParser instance with a dummy Reader and format using constructor directly\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n\n        // Create a mock lexer (Closeable)\n        mockLexer = mock(Closeable.class);\n\n        // Use reflection to set the private final lexer field\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier if present (works on Java 8)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n\n        lexerField.set(csvParser, mockLexer);\n    }\n\n    @Test\n    void close_whenLexerIsNotNull_shouldCallLexerClose() throws IOException {\n        csvParser.close();\n        verify(mockLexer, times(1)).close();\n    }\n\n    @Test\n    void close_whenLexerIsNull_shouldNotThrow() throws Exception {\n        // Set lexer field to null via reflection\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n\n        lexerField.set(csvParser, null);\n\n        assertDoesNotThrow(() -> csvParser.close());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973115,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 411,
+    "prompt_tokens": 936,
+    "total_tokens": 1347,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.49
+  }
+}

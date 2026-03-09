@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmqa5HZIpXBMRwUTOffArQtuohIj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.EnumValueOptions;\nimport com.google.protobuf.Extension;\nimport com.google.common.base.CaseFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.util.Collections;\nimport java.util.HashSet;\nimport java.util.Set;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private Extension<EnumValueOptions, String> extensionMock1;\n  private Extension<EnumValueOptions, String> extensionMock2;\n  private EnumValueOptions optionsMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create mocks for dependencies\n    extensionMock1 = mock(Extension.class);\n    extensionMock2 = mock(Extension.class);\n    optionsMock = mock(EnumValueOptions.class);\n\n    // Prepare a set of extensions with two mocks\n    Set<Extension<EnumValueOptions, String>> extensions = new HashSet<>();\n    extensions.add(extensionMock1);\n    extensions.add(extensionMock2);\n\n    // Use reflection to create ProtoTypeAdapter instance with private constructor\n    // Adjusted constructor parameter types and arguments to match actual constructor\n    Class<?> clazz = ProtoTypeAdapter.class;\n    Constructor<?> constructor = clazz.getDeclaredConstructor(\n        EnumSerialization.class,\n        CaseFormat.class,\n        CaseFormat.class,\n        Set.class,\n        Set.class);\n    constructor.setAccessible(true);\n    protoTypeAdapter = (ProtoTypeAdapter) constructor.newInstance(\n        null,\n        null,\n        null,\n        Collections.emptySet(),\n        extensions);\n  }\n\n  @Test\n  void getCustSerializedEnumValue_extensionPresent_returnsExtensionValue() throws Exception {\n    // Setup: options.hasExtension(extensionMock1) returns true\n    when(optionsMock.hasExtension(extensionMock1)).thenReturn(true);\n    when(optionsMock.hasExtension(extensionMock2)).thenReturn(false);\n    when(optionsMock.getExtension(extensionMock1)).thenReturn(\"customValue\");\n\n    // Use reflection to invoke private method\n    String defaultValue = \"default\";\n    String result = invokeGetCustSerializedEnumValue(optionsMock, defaultValue);\n\n    assertEquals(\"customValue\", result);\n\n    verify(optionsMock).hasExtension(extensionMock1);\n    verify(optionsMock, never()).getExtension(extensionMock2);\n    verify(optionsMock).getExtension(extensionMock1);\n  }\n\n  @Test\n  void getCustSerializedEnumValue_noExtensionPresent_returnsDefaultValue() throws Exception {\n    // Setup: options.hasExtension(...) returns false for all\n    when(optionsMock.hasExtension(extensionMock1)).thenReturn(false);\n    when(optionsMock.hasExtension(extensionMock2)).thenReturn(false);\n\n    String defaultValue = \"defaultValue\";\n\n    String result = invokeGetCustSerializedEnumValue(optionsMock, defaultValue);\n\n    assertEquals(defaultValue, result);\n\n    verify(optionsMock).hasExtension(extensionMock1);\n    verify(optionsMock).hasExtension(extensionMock2);\n    verify(optionsMock, never()).getExtension(any());\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private String invokeGetCustSerializedEnumValue(EnumValueOptions options, String defaultValue) throws Exception {\n    var method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\", EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n    return (String) method.invoke(protoTypeAdapter, options, defaultValue);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888500,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 709,
+    "prompt_tokens": 2100,
+    "total_tokens": 2809,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.81
+  }
+}

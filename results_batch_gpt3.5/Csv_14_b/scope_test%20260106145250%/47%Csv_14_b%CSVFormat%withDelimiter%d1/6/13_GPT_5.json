@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuvjha6xgnRgpKzsxzXAmeBO7z76c",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithDelimiter_validDelimiter() throws Exception {\n        char delimiter = ';';\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat result = original.withDelimiter(delimiter);\n\n        assertNotNull(result);\n        assertEquals(delimiter, result.getDelimiter());\n        // Other properties remain unchanged\n        assertEquals(original.getQuoteCharacter(), result.getQuoteCharacter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getCommentMarker(), result.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n\n        // headerComments and header can be null, so handle null safely\n        Object[] originalHeaderComments = getHeaderComments(original);\n        Object[] resultHeaderComments = getHeaderComments(result);\n        if (originalHeaderComments == null) {\n            assertNull(resultHeaderComments);\n        } else {\n            assertArrayEquals(originalHeaderComments, resultHeaderComments);\n        }\n\n        String[] originalHeader = original.getHeader();\n        String[] resultHeader = result.getHeader();\n        if (originalHeader == null) {\n            assertNull(resultHeader);\n        } else {\n            assertArrayEquals(originalHeader, resultHeader);\n        }\n\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), result.getTrim());\n        assertEquals(original.getTrailingDelimiter(), result.getTrailingDelimiter());\n    }\n\n    @Test\n    void testWithDelimiter_lineBreakDelimiterThrows() {\n        char[] lineBreaks = {'\\n', '\\r'};\n        for (char lb : lineBreaks) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                CSVFormat.DEFAULT.withDelimiter(lb);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    private static Object[] getHeaderComments(CSVFormat format) {\n        try {\n            Field field = CSVFormat.class.getDeclaredField(\"headerComments\");\n            field.setAccessible(true);\n            return (Object[]) field.get(format);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684341,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 589,
+    "prompt_tokens": 2261,
+    "total_tokens": 2850,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.11
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuwb5zHFZTqJSHri251UV1FusztPw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrinterReturnsCSVPrinter() throws IOException {\n        CSVPrinter printer = csvFormat.printer();\n        assertNotNull(printer);\n    }\n\n    @Test\n    void testPrinterWritesToSystemOut() throws Exception {\n        CSVPrinter printer = csvFormat.printer();\n\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        Object outObject = outField.get(printer);\n\n        assertTrue(outObject instanceof Writer);\n\n        // Since CSVPrinter wraps System.out in a Writer, we cannot directly assertSame.\n        // Instead, we check that the underlying OutputStream is System.out via reflection.\n\n        Field outFieldOfWriter = outObject.getClass().getDeclaredField(\"out\");\n        outFieldOfWriter.setAccessible(true);\n        Object underlyingOut = outFieldOfWriter.get(outObject);\n\n        assertSame(System.out, underlyingOut);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687651,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 270,
+    "prompt_tokens": 2072,
+    "total_tokens": 2342,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnOHuZygw9VndYhKZYCDHM6S270x",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.DefaultDateTypeAdapter;\nimport com.google.gson.internal.bind.DefaultDateTypeAdapter.DateType;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Date;\nimport java.util.Locale;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass DefaultDateTypeAdapterTest {\n\n  private DefaultDateTypeAdapter<Date> adapter;\n  private DateType<Date> dateType;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a DateType anonymous class for testing\n    dateType = new DateType<Date>(Date.class) {\n      @Override\n      public Date from(Date date) {\n        return date;\n      }\n\n      @Override\n      public Date to(Date date) {\n        return date;\n      }\n\n      @Override\n      public Date deserialize(Date json) {\n        return json;\n      }\n    };\n    // Use reflection to invoke private constructor DefaultDateTypeAdapter(DateType<T>, String)\n    var constructor = DefaultDateTypeAdapter.class.getDeclaredConstructor(DateType.class, String.class);\n    constructor.setAccessible(true);\n    adapter = (DefaultDateTypeAdapter<Date>) constructor.newInstance(dateType, \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\");\n\n    // Add a known DateFormat to dateFormats list (the private field)\n    var dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n    dateFormatsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n    dateFormats.clear();\n    // Add a SimpleDateFormat that matches the pattern used in constructor\n    dateFormats.add(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\", Locale.US));\n  }\n\n  @Test\n  void write_nullValue_callsNullValueOnJsonWriter() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n\n    adapter.write(out, null);\n\n    verify(out).nullValue();\n    verifyNoMoreInteractions(out);\n  }\n\n  @Test\n  void write_nonNullValue_formatsDateAndWritesValue() throws IOException {\n    // Prepare JsonWriter writing to a StringWriter to capture output\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter out = new JsonWriter(stringWriter);\n\n    Date date = new Date(0L); // Epoch time\n\n    adapter.write(out, date);\n\n    // The formatted string should be the first dateFormat applied to date\n    DateFormat dateFormat;\n    try {\n      var dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n      dateFormatsField.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n      dateFormat = dateFormats.get(0);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n    String expected = dateFormat.format(date);\n\n    // The JsonWriter writes JSON string values with quotes\n    String jsonOutput = stringWriter.toString();\n\n    // The output should contain the formatted date string quoted\n    assertTrue(jsonOutput.contains(expected));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890589,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 704,
+    "prompt_tokens": 1649,
+    "total_tokens": 2353,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.2
+  }
+}

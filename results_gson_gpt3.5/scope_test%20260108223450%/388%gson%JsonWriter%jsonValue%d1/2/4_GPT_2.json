@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm6mBly0kZb8XBaVCjQaEGswzUJp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void jsonValue_null_callsNullValueAndReturnsThis() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n    doReturn(spyWriter).when(spyWriter).nullValue();\n\n    JsonWriter result = spyWriter.jsonValue(null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  void jsonValue_nonNull_writesValue() throws Exception {\n    String value = \"{\\\"a\\\":1}\";\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Use reflection to stub private methods writeDeferredName() and beforeValue()\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    doAnswer(invocation -> {\n      writeDeferredName.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).getClass().getDeclaredMethod(\"writeDeferredName\");\n\n    doAnswer(invocation -> {\n      beforeValue.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).getClass().getDeclaredMethod(\"beforeValue\");\n\n    // Since private methods cannot be verified directly, call jsonValue and check output\n    JsonWriter result = spyWriter.jsonValue(value);\n\n    // Instead of verify private methods, verify that the output contains the value\n    assertSame(spyWriter, result);\n    assertEquals(value, stringWriter.toString());\n  }\n\n  @Test\n  void jsonValue_invokesPrivateMethodsAndAppendsValue() throws Exception {\n    String value = \"123\";\n\n    // Use reflection to invoke private methods to cover branches\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    writeDeferredName.invoke(jsonWriter);\n\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n    beforeValue.invoke(jsonWriter);\n\n    JsonWriter result = jsonWriter.jsonValue(value);\n\n    assertSame(jsonWriter, result);\n    assertTrue(stringWriter.toString().contains(value));\n  }\n}\n```\n",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885660,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 555,
+    "prompt_tokens": 1385,
+    "total_tokens": 1940,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.19
+  }
+}

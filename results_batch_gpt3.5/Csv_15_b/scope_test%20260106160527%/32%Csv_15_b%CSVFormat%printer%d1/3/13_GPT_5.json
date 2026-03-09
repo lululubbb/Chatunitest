@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuwcl84lunYgdzM1BhhgIhB28gi9X",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.io.PrintStream;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private PrintStream originalOut;\n\n    @BeforeEach\n    void setUp() {\n        // Save the original System.out\n        originalOut = System.out;\n    }\n\n    @AfterEach\n    void tearDown() {\n        // Restore original System.out\n        System.setOut(originalOut);\n    }\n\n    @Test\n    void testPrinter_DefaultCSVFormat() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVPrinter printer = csvFormat.printer();\n        assertNotNull(printer);\n\n        // Use reflection to access the private 'format' field inside CSVPrinter\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object formatValue = formatField.get(printer);\n\n        // The printer should use System.out as output and the CSVFormat instance\n        assertSame(csvFormat, formatValue);\n    }\n\n    @Test\n    void testPrinter_CustomCSVFormat() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat customFormat = CSVFormat.DEFAULT.withDelimiter(';').withQuote('|');\n        CSVPrinter printer = customFormat.printer();\n        assertNotNull(printer);\n\n        // Use reflection to access the private 'format' field inside CSVPrinter\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object formatValue = formatField.get(printer);\n\n        assertSame(customFormat, formatValue);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687755,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 370,
+    "prompt_tokens": 2221,
+    "total_tokens": 2591,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.25
+  }
+}

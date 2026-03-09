@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlzZrNQbEiy82jKWr70MjLIPesOd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n    private UnsafeAllocator allocator;\n\n    @BeforeEach\n    void setUp() {\n        allocator = UnsafeAllocator.INSTANCE;\n        assertNotNull(allocator);\n    }\n\n    @Test\n    void testNewInstance_withStringClass() throws Exception {\n        String instance = allocator.newInstance(String.class);\n        assertNotNull(instance);\n        assertEquals(\"\", instance);\n    }\n\n    @Test\n    void testNewInstance_withCustomClass() throws Exception {\n        class TestClass {\n            int x = 10;\n        }\n        TestClass instance = allocator.newInstance(TestClass.class);\n        assertNotNull(instance);\n        assertEquals(10, instance.x);\n    }\n\n    @Test\n    void testNewInstance_withAbstractClass_throwsException() {\n        assertThrows(Exception.class, () -> allocator.newInstance(AbstractClass.class));\n    }\n\n    @Test\n    void testAssertInstantiable_privateMethod() throws Exception {\n        Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n        assertInstantiable.setAccessible(true);\n\n        // Should not throw for instantiable class\n        assertInstantiable.invoke(null, String.class);\n\n        // Should throw for abstract class\n        InvocationTargetException thrown = assertThrows(InvocationTargetException.class,\n                () -> assertInstantiable.invoke(null, AbstractClass.class));\n        assertTrue(thrown.getCause() instanceof UnsupportedOperationException);\n    }\n\n    @Test\n    void testCreate_privateMethod_notNull() throws Exception {\n        Method create = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n        create.setAccessible(true);\n        Object created = create.invoke(null);\n        assertNotNull(created);\n        assertTrue(created instanceof UnsafeAllocator);\n    }\n\n    abstract static class AbstractClass {\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885213,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 415,
+    "prompt_tokens": 233,
+    "total_tokens": 648,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.16
+  }
+}

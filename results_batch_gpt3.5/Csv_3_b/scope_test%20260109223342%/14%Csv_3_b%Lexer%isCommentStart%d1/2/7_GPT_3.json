@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7xiRPzt2FSZ9bzBAG1g0XLsNXcL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerIsCommentStartTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        CSVFormat format = mock(CSVFormat.class);\n        ExtendedBufferedReader in = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass since Lexer is abstract\n        lexer = new Lexer(format, in) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Use reflection to set private final field 'commmentStart'\n        Field commentStartField = Lexer.class.getDeclaredField(\"commmentStart\");\n        commentStartField.setAccessible(true);\n        commentStartField.set(lexer, '#'); // example comment start char\n    }\n\n    @Test\n    void testIsCommentStartWhenCharIsCommentStart() {\n        assertTrue(lexer.isCommentStart('#'));\n    }\n\n    @Test\n    void testIsCommentStartWhenCharIsNotCommentStart() {\n        assertFalse(lexer.isCommentStart('a'));\n        assertFalse(lexer.isCommentStart('\\n'));\n        assertFalse(lexer.isCommentStart(' '));\n        assertFalse(lexer.isCommentStart(0));\n    }\n\n    @Test\n    void testIsCommentStartWithNegativeAndSpecialChars() {\n        assertFalse(lexer.isCommentStart(-1));\n        assertFalse(lexer.isCommentStart('\\ufffe'));\n        assertFalse(lexer.isCommentStart('\\0'));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969666,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 339,
+    "prompt_tokens": 827,
+    "total_tokens": 1166,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.46
+  }
+}

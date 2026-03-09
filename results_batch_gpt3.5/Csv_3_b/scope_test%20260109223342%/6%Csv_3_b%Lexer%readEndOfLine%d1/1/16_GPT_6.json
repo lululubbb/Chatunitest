@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw82KxONkaV7pTSAFIwNDsCaNhwX0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.Lexer;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.ExtendedBufferedReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private ExtendedBufferedReader in;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        in = mock(ExtendedBufferedReader.class);\n        CSVFormat format = mock(CSVFormat.class);\n\n        lexer = new Lexer(format, in) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n\n            @Override\n            boolean isWhitespace(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isStartOfLine(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEndOfFile(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isDelimiter(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEscape(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isQuoteChar(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isCommentStart(int c) {\n                return false;\n            }\n        };\n\n        // Inject the mocked ExtendedBufferedReader into the private final field 'in' of Lexer\n        Field inField = Lexer.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        inField.set(lexer, in);\n    }\n\n    @Test\n    void testReadEndOfLine_withCR_followedByLF() throws Exception {\n        final int CR = '\\r';\n        final int LF = '\\n';\n\n        when(in.lookAhead()).thenReturn(LF);\n        when(in.read()).thenReturn(LF);\n\n        Method method = Lexer.class.getDeclaredMethod(\"readEndOfLine\", int.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(lexer, CR);\n\n        verify(in).lookAhead();\n        verify(in).read();\n\n        assertTrue(result, \"readEndOfLine should return true for CR followed by LF\");\n    }\n\n    @Test\n    void testReadEndOfLine_withCR_notFollowedByLF() throws Exception {\n        final int CR = '\\r';\n        final int other = 'a';\n\n        when(in.lookAhead()).thenReturn(other);\n\n        Method method = Lexer.class.getDeclaredMethod(\"readEndOfLine\", int.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(lexer, CR);\n\n        verify(in).lookAhead();\n        verify(in, never()).read();\n\n        assertTrue(result, \"readEndOfLine should return true for CR not followed by LF\");\n    }\n\n    @Test\n    void testReadEndOfLine_withLF() throws Exception {\n        final int LF = '\\n';\n\n        Method method = Lexer.class.getDeclaredMethod(\"readEndOfLine\", int.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(lexer, LF);\n\n        verify(in, never()).lookAhead();\n        verify(in, never()).read();\n\n        assertTrue(result, \"readEndOfLine should return true for LF\");\n    }\n\n    @Test\n    void testReadEndOfLine_withOtherChar() throws Exception {\n        final int other = 'x';\n\n        Method method = Lexer.class.getDeclaredMethod(\"readEndOfLine\", int.class);\n        method.setAccessible(true);\n\n        boolean result = (boolean) method.invoke(lexer, other);\n\n        verify(in, never()).lookAhead();\n        verify(in, never()).read();\n\n        assertFalse(result, \"readEndOfLine should return false for non CR and non LF characters\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969952,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 804,
+    "prompt_tokens": 1344,
+    "total_tokens": 2148,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.01
+  }
+}

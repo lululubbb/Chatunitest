@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaY68OoWi9viwsiCpqM1av3m0OEE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_validChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char quoteChar = '\"';\n        CSVFormat result = original.withQuote(quoteChar);\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        assertEquals(original.getDelimiter(), result.getDelimiter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getCommentMarker(), result.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertArrayEquals(original.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(original.getHeader(), result.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), result.getTrim());\n        assertEquals(original.getTrailingDelimiter(), result.getTrailingDelimiter());\n        assertEquals(original.getAutoFlush(), result.getAutoFlush());\n    }\n\n    @Test\n    public void testWithQuote_nullQuoteChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat result = original.withQuote((Character) null);\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n        // Other properties stay the same\n        assertEquals(original.getDelimiter(), result.getDelimiter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getCommentMarker(), result.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertArrayEquals(original.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(original.getHeader(), result.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), result.getTrim());\n        assertEquals(original.getTrailingDelimiter(), result.getTrailingDelimiter());\n        assertEquals(original.getAutoFlush(), result.getAutoFlush());\n    }\n\n    @Test\n    public void testWithQuote_lineBreakCharThrows() throws Exception {\n        // Use reflection to access private static isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test line break characters that cause exception\n        Character[] lineBreakChars = {\n            '\\n', // LF\n            '\\r'  // CR\n        };\n\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        for (Character c : lineBreakChars) {\n            // Confirm isLineBreak returns true for these chars\n            Boolean isLineBreak = (Boolean) isLineBreakMethod.invoke(null, c);\n            assertTrue(isLineBreak);\n\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                original.withQuote(c);\n            });\n            assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    public void testWithQuote_nonLineBreakChars() throws Exception {\n        // Use reflection to access private static isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        Character[] nonLineBreakChars = {\n            'a', 'Z', ' ', ',', '|', '\\t', '1', '9', '!', null\n        };\n\n        for (Character c : nonLineBreakChars) {\n            Boolean isLineBreak = (Boolean) isLineBreakMethod.invoke(null, c);\n            assertFalse(isLineBreak);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556210,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 942,
+    "prompt_tokens": 2240,
+    "total_tokens": 3182,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.39
+  }
+}

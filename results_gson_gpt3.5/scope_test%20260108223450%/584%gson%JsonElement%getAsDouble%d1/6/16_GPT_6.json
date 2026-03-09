@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIHWuk29fyQX8ozg83uHZnbOxux",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void testGetAsDouble_throwsUnsupportedOperationException() {\n    JsonElement element = new JsonElement() {\n      @Override\n      public JsonElement deepCopy() {\n        return null;\n      }\n      @Override\n      public String getClass().getSimpleName() {\n        return \"JsonElement\";\n      }\n    };\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, element::getAsDouble);\n    assertEquals(\"JsonElement\", exception.getMessage());\n  }\n}\n```\n\n---\n\nSince overriding `getClass().getSimpleName()` is not possible, the better fix is to change the expected message to match the actual exception message, which is the simple name of the anonymous subclass (empty string).\n\nSo the fixed test is:\n\n```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void testGetAsDouble_throwsUnsupportedOperationException() {\n    JsonElement element = new JsonElement() {\n      @Override\n      public JsonElement deepCopy() {\n        return null;\n      }\n    };\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, element::getAsDouble);\n    // The anonymous class simple name is empty string\n    assertEquals(\"\", exception.getMessage());\n  }\n}\n```\n\n---\n\nIf you want the message to be \"JsonElement\", you can create a named subclass instead of an anonymous one:\n\n```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  private static class TestJsonElement extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return null;\n    }\n  }\n\n  @Test\n  void testGetAsDouble_throwsUnsupportedOperationException() {\n    JsonElement element = new TestJsonElement();\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, element::getAsDouble);\n    assertEquals(\"TestJsonElement\", exception.getMessage());\n  }\n}\n```\n\n---\n\nIf you want the message exactly \"JsonElement\", you can use reflection to create a proxy or mock the class name, but that is complicated.\n\n---\n\n**Final recommended fixed test (matching actual message):**\n\n```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void testGetAsDouble_throwsUnsupportedOperationException() {\n    JsonElement element = new JsonElement() {\n      @Override\n      public JsonElement deepCopy() {\n        return null;\n      }\n    };\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, element::getAsDouble);\n    assertEquals(\"\", exception.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890217,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 648,
+    "prompt_tokens": 834,
+    "total_tokens": 1482,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.29
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmMD9Du7CgCwFMljnls0BNCwswVs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\nimport static org.junit.jupiter.api.Assertions.fail;\n\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n    private JsonReader jsonReader;\n    private Method syntaxErrorMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        jsonReader = new JsonReader(new StringReader(\"\"));\n        syntaxErrorMethod = JsonReader.class.getDeclaredMethod(\"syntaxError\", String.class);\n        syntaxErrorMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testSyntaxErrorThrowsMalformedJsonExceptionWithLocationString() {\n        // We invoke the private method syntaxError with a test message and expect a MalformedJsonException\n        String testMessage = \"Test error message: \";\n        try {\n            syntaxErrorMethod.invoke(jsonReader, testMessage);\n            fail(\"Expected MalformedJsonException to be thrown\");\n        } catch (InvocationTargetException e) {\n            Throwable cause = e.getCause();\n            assertTrue(cause instanceof MalformedJsonException, \"Exception should be MalformedJsonException\");\n            String message = cause.getMessage();\n            // The message should start with the testMessage and include locationString()\n            assertTrue(message.startsWith(testMessage), \"Message should start with the test message\");\n            // locationString() is package-private, so we call it via reflection to verify the message contains it\n            try {\n                Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n                locationStringMethod.setAccessible(true);\n                String location = (String) locationStringMethod.invoke(jsonReader);\n                assertTrue(message.endsWith(location), \"Message should end with location string\");\n            } catch (Exception ex) {\n                fail(\"Failed to invoke locationString method via reflection\");\n            }\n        } catch (Exception e) {\n            fail(\"Unexpected exception: \" + e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886617,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 431,
+    "prompt_tokens": 1005,
+    "total_tokens": 1436,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.83
+  }
+}

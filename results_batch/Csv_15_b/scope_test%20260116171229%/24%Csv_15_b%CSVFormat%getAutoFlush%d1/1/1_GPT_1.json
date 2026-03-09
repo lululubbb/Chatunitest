@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyabqgZMtp2wxQAmqyKxAk7h5c1oE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetAutoFlush_DefaultFalse() throws Exception {\n        // Using DEFAULT constant which has autoFlush = false\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        assertFalse(format.getAutoFlush());\n    }\n\n    @Test\n    void testGetAutoFlush_TrueViaReflection() throws Exception {\n        // Create a CSVFormat instance via reflection to set autoFlush = true\n        CSVFormat format = createCSVFormatWithAutoFlush(true);\n\n        assertTrue(format.getAutoFlush());\n    }\n\n    @Test\n    void testGetAutoFlush_FalseViaReflection() throws Exception {\n        // Create a CSVFormat instance via reflection to set autoFlush = false\n        CSVFormat format = createCSVFormatWithAutoFlush(false);\n\n        assertFalse(format.getAutoFlush());\n    }\n\n    private CSVFormat createCSVFormatWithAutoFlush(boolean autoFlush) throws Exception {\n        // Use the constructor with all parameters to set autoFlush field\n        // Constructor signature:\n        // CSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n        //           Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        //           boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        //           Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        //           boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n        //           boolean trailingDelimiter, boolean autoFlush)\n        Class<?> clazz = CSVFormat.class;\n        java.lang.reflect.Constructor<?> ctor = clazz.getDeclaredConstructor(\n                char.class, Character.class, Class.forName(\"org.apache.commons.csv.QuoteMode\"),\n                Character.class, Character.class, boolean.class,\n                boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class,\n                boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        // Use some default values for other params, mostly from DEFAULT\n        CSVFormat defaultFormat = CSVFormat.DEFAULT;\n\n        Object instance = ctor.newInstance(\n                defaultFormat.getDelimiter(),\n                defaultFormat.getQuoteCharacter(),\n                defaultFormat.getQuoteMode(),\n                defaultFormat.getCommentMarker(),\n                defaultFormat.getEscapeCharacter(),\n                defaultFormat.getIgnoreSurroundingSpaces(),\n                defaultFormat.getIgnoreEmptyLines(),\n                defaultFormat.getRecordSeparator(),\n                defaultFormat.getNullString(),\n                null,\n                defaultFormat.getHeader(),\n                defaultFormat.getSkipHeaderRecord(),\n                defaultFormat.getAllowMissingColumnNames(),\n                defaultFormat.getIgnoreHeaderCase(),\n                defaultFormat.getTrim(),\n                defaultFormat.getTrailingDelimiter(),\n                autoFlush);\n\n        return (CSVFormat) instance;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556442,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 588,
+    "prompt_tokens": 1781,
+    "total_tokens": 2369,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.39
+  }
+}

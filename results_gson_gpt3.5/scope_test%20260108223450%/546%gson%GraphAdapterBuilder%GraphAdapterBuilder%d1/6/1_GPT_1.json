@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmun9AMR6P8ozYeJDAXO1PGoaoxs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.graph;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.GsonBuilder;\nimport com.google.gson.InstanceCreator;\nimport java.lang.reflect.Type;\nimport java.util.Map;\nimport java.util.HashMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GraphAdapterBuilderTest {\n\n  private GraphAdapterBuilder builder;\n\n  @BeforeEach\n  void setUp() {\n    builder = new GraphAdapterBuilder();\n  }\n\n  @Test\n  void constructor_initializesFields() throws Exception {\n    // Use reflection to verify instanceCreators map is initialized and empty\n    var instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    Map<?, ?> instanceCreators = (Map<?, ?>) instanceCreatorsField.get(builder);\n    assertNotNull(instanceCreators);\n    assertTrue(instanceCreators.isEmpty());\n\n    // Verify constructorConstructor is initialized (non-null)\n    var constructorConstructorField = GraphAdapterBuilder.class.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    Object constructorConstructor = constructorConstructorField.get(builder);\n    assertNotNull(constructorConstructor);\n  }\n\n  @Test\n  void addType_withType_only_addsTypeToInstanceCreators() throws Exception {\n    Type type = String.class;\n\n    GraphAdapterBuilder returned = builder.addType(type);\n\n    assertSame(builder, returned);\n\n    var instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    Map<Type, InstanceCreator<?>> instanceCreators = (Map<Type, InstanceCreator<?>>) instanceCreatorsField.get(builder);\n\n    // Since addType(Type) does not add any InstanceCreator, the map should remain empty\n    // or unchanged (depends on implementation). We test that map is not null.\n    assertNotNull(instanceCreators);\n  }\n\n  @Test\n  void addType_withTypeAndInstanceCreator_addsEntryToInstanceCreators() throws Exception {\n    Type type = Integer.class;\n    @SuppressWarnings(\"unchecked\")\n    InstanceCreator<Integer> instanceCreator = mock(InstanceCreator.class);\n\n    GraphAdapterBuilder returned = builder.addType(type, instanceCreator);\n\n    assertSame(builder, returned);\n\n    var instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    Map<Type, InstanceCreator<?>> instanceCreators = (Map<Type, InstanceCreator<?>>) instanceCreatorsField.get(builder);\n\n    assertTrue(instanceCreators.containsKey(type));\n    assertSame(instanceCreator, instanceCreators.get(type));\n  }\n\n  @Test\n  void registerOn_registersFactoryOnGsonBuilder() {\n    GsonBuilder gsonBuilder = mock(GsonBuilder.class);\n\n    builder.registerOn(gsonBuilder);\n\n    verify(gsonBuilder).registerTypeAdapterFactory(any());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888761,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 584,
+    "prompt_tokens": 403,
+    "total_tokens": 987,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.06
+  }
+}

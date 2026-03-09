@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9R3E8UOWDM4uZjFmGz1m2t5VIzr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private File mockFile;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFile = mock(File.class);\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParse_withValidFileAndFormat_returnsCSVParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // No mockConstruction (Mockito 3 does not have it)\n        // Just mock FileReader constructor indirectly by spying or simply test normally\n        // Since parse() creates new FileReader(file), we can't mock constructor without Mockito 4+\n        // So just run normally with mocks\n\n        CSVParser parser = CSVParser.parse(mockFile, mockFormat);\n        assertNotNull(parser);\n\n        // Access private final field 'format' via reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(parser);\n        assertEquals(mockFormat, actualFormat);\n    }\n\n    @Test\n    void testParse_withNullFile_throwsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> CSVParser.parse((File) null, mockFormat));\n        assertEquals(\"file\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> CSVParser.parse(mockFile, null));\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975329,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 384,
+    "prompt_tokens": 1375,
+    "total_tokens": 1759,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.24
+  }
+}

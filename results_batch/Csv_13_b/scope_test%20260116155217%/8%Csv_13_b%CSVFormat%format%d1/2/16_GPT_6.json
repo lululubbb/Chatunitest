@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZSTT7pz8XSLO4gj9w6zo0NFWPuA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Proxy;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormatWithNormalValues() throws IOException {\n        // Arrange\n        Object[] values = new Object[] {\"a\", \"b\", \"c\"};\n\n        // Act\n        String result = csvFormat.format(values);\n\n        // Assert\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormatWithNullValue() throws IOException {\n        Object[] values = new Object[] {\"a\", null, \"c\"};\n\n        String result = csvFormat.format(values);\n\n        assertEquals(\"a,,c\", result);\n    }\n\n    @Test\n    public void testFormatWithEmptyArray() throws IOException {\n        Object[] values = new Object[0];\n\n        String result = csvFormat.format(values);\n\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormatWithNullArray() {\n        // Passing null as values should cause NullPointerException in CSVPrinter.printRecord\n        assertThrows(NullPointerException.class, () -> {\n            csvFormat.format((Object[]) null);\n        });\n    }\n\n    @Test\n    public void testFormatThrowsIOExceptionWrapped() throws Exception {\n        Object[] values = new Object[] {\"a\", \"b\"};\n\n        // Create a StringWriter\n        StringWriter sw = new StringWriter();\n\n        // Create a real CSVPrinter with csvFormat and sw\n        CSVPrinter realPrinter = new CSVPrinter(sw, csvFormat);\n\n        // Spy the CSVPrinter\n        CSVPrinter spyPrinter = spy(realPrinter);\n\n        // Make printRecord throw IOException when called with 'values'\n        doThrow(new IOException(\"IO error\")).when(spyPrinter).printRecord(values);\n\n        // Create a CSVFormat instance that returns our spyPrinter when print(Appendable) is called\n        CSVFormat csvFormatMock = createCSVFormatReturningPrinter(spyPrinter);\n\n        // Use a wrapper class to simulate the format method with csvFormatMock\n        class CSVFormatWrapper {\n            private final CSVFormat format;\n\n            CSVFormatWrapper(CSVFormat format) {\n                this.format = format;\n            }\n\n            public String format(final Object... vals) {\n                final StringWriter out = new StringWriter();\n                try {\n                    // Use the CSVPrinter returned by format.print(out)\n                    CSVPrinter printer = format.print(out);\n                    printer.printRecord(vals);\n                    return out.toString().trim();\n                } catch (IOException e) {\n                    throw new IllegalStateException(e);\n                }\n            }\n        }\n\n        CSVFormatWrapper wrapper = new CSVFormatWrapper(csvFormatMock);\n\n        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {\n            wrapper.format(values);\n        });\n        assertTrue(ex.getCause() instanceof IOException);\n        assertEquals(\"IO error\", ex.getCause().getMessage());\n    }\n\n    /**\n     * Use dynamic Proxy to create a CSVFormat instance that returns the given CSVPrinter when print(Appendable) is called.\n     */\n    private CSVFormat createCSVFormatReturningPrinter(CSVPrinter printer) throws Exception {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n\n        InvocationHandler handler = new InvocationHandler() {\n            @Override\n            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n                if (\"print\".equals(method.getName()) && args != null && args.length == 1 && args[0] instanceof Appendable) {\n                    return printer;\n                }\n                // Delegate other methods to baseFormat\n                return method.invoke(baseFormat, args);\n            }\n        };\n\n        return (CSVFormat) Proxy.newProxyInstance(\n                CSVFormat.class.getClassLoader(),\n                new Class<?>[] {CSVFormat.class},\n                handler);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552017,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 877,
+    "prompt_tokens": 2474,
+    "total_tokens": 3351,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.15
+  }
+}

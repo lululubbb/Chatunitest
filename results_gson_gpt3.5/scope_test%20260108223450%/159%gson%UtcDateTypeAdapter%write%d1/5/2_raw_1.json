@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.typeadapters.UtcDateTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.util.Date;\nimport java.util.TimeZone;\n\nclass UtcDateTypeAdapterTest {\n\n  private UtcDateTypeAdapter adapter;\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  void setUp() {\n    adapter = new UtcDateTypeAdapter();\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void write_nullDate_shouldWriteNullValue() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n    adapter.write(spyWriter, null);\n    verify(spyWriter).nullValue();\n  }\n\n  @Test\n  void write_nonNullDate_shouldWriteFormattedValue() throws Exception {\n    Date date = new Date(0L); // Epoch date\n\n    // Use reflection to get the private format method\n    Method formatMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"format\", Date.class, boolean.class, TimeZone.class);\n    formatMethod.setAccessible(true);\n    String formatted = (String) formatMethod.invoke(adapter, date, true, TimeZone.getTimeZone(\"UTC\"));\n\n    JsonWriter spyWriter = spy(jsonWriter);\n    adapter.write(spyWriter, date);\n\n    InOrder inOrder = inOrder(spyWriter);\n    inOrder.verify(spyWriter).value(formatted);\n    inOrder.verifyNoMoreInteractions();\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 630,
+  "completion_tokens": 354,
+  "total_tokens": 984,
+  "llm_elapsed_time_seconds": 9.66
+}

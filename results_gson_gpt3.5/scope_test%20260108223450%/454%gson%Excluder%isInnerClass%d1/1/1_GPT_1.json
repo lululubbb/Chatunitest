@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJoyqcqU3nqteUph848nTQQugBd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n  }\n\n  private boolean invokeIsInnerClass(Class<?> clazz) throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(excluder, clazz);\n  }\n\n  static class StaticNestedClass {}\n\n  class NonStaticInnerClass {}\n\n  @Test\n  void testIsInnerClass_withStaticNestedClass() throws Exception {\n    // Static nested class isMemberClass()=true but isStatic()=true => should return false\n    boolean result = invokeIsInnerClass(StaticNestedClass.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonStaticInnerClass() throws Exception {\n    // Non-static inner class isMemberClass()=true and isStatic()=false => should return true\n    boolean result = invokeIsInnerClass(NonStaticInnerClass.class);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsInnerClass_withTopLevelClass() throws Exception {\n    // Top-level class isMemberClass()=false => should return false\n    boolean result = invokeIsInnerClass(String.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withAnonymousClass() throws Exception {\n    Object anonymous = new Object() {};\n    boolean result = invokeIsInnerClass(anonymous.getClass());\n    // anonymous class isMemberClass()=false => should return false\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890312,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 391,
+    "prompt_tokens": 593,
+    "total_tokens": 984,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.24
+  }
+}

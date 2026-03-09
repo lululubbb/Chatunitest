@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCesCklUG1RLqIq0t4OErhfAKIx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.internal.$Gson$Types;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Type;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class CollectionTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor constructorConstructor;\n\n  @Mock\n  private Gson gson;\n\n  @Mock\n  private ObjectConstructor<?> objectConstructor;\n\n  @Mock\n  private TypeAdapter<?> elementTypeAdapter;\n\n  private CollectionTypeAdapterFactory factory;\n\n  @BeforeEach\n  public void setUp() {\n    MockitoAnnotations.openMocks(this);\n    factory = new CollectionTypeAdapterFactory(constructorConstructor);\n  }\n\n  @Test\n  public void create_shouldReturnNullIfTypeIsNotCollection() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_shouldReturnAdapterForCollectionType() {\n    TypeToken<List<String>> listTypeToken = new TypeToken<List<String>>() {};\n    Type elementType = $Gson$Types.getCollectionElementType(listTypeToken.getType(), listTypeToken.getRawType());\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> castedElementTypeAdapter = (TypeAdapter<Object>) elementTypeAdapter;\n    when(gson.getAdapter((TypeToken) TypeToken.get(elementType))).thenReturn(castedElementTypeAdapter);\n    when(constructorConstructor.get((TypeToken) listTypeToken)).thenReturn((ObjectConstructor) objectConstructor);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<List<String>> adapter = (TypeAdapter<List<String>>) factory.create(gson, listTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(\"com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n\n  @Test\n  public void create_shouldReturnAdapterForCustomCollection() {\n    class CustomCollection extends ArrayList<String> {}\n\n    TypeToken<CustomCollection> customCollectionTypeToken = TypeToken.get(CustomCollection.class);\n    Type elementType = $Gson$Types.getCollectionElementType(customCollectionTypeToken.getType(), customCollectionTypeToken.getRawType());\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> castedElementTypeAdapter = (TypeAdapter<Object>) elementTypeAdapter;\n    when(gson.getAdapter((TypeToken) TypeToken.get(elementType))).thenReturn(castedElementTypeAdapter);\n    when(constructorConstructor.get((TypeToken) customCollectionTypeToken)).thenReturn((ObjectConstructor) objectConstructor);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<CustomCollection> adapter = (TypeAdapter<CustomCollection>) factory.create(gson, customCollectionTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(\"com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889868,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 677,
+    "prompt_tokens": 1545,
+    "total_tokens": 2222,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.72
+  }
+}

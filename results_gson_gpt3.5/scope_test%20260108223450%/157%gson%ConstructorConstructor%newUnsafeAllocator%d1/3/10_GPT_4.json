@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmKeI1lKGt0DJlb3Q1fDRBRMTqDQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.reflect.ReflectionHelper;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\nimport java.util.Collections;\n\nclass ConstructorConstructorTest {\n\n  private ConstructorConstructor constructorConstructorUseUnsafe;\n  private ConstructorConstructor constructorConstructorNoUnsafe;\n\n  @BeforeEach\n  void setUp() {\n    constructorConstructorUseUnsafe = new ConstructorConstructor(\n        Collections.emptyMap(),\n        true,\n        Collections.emptyList());\n\n    constructorConstructorNoUnsafe = new ConstructorConstructor(\n        Collections.emptyMap(),\n        false,\n        Collections.emptyList());\n  }\n\n  @Test\n  void newUnsafeAllocator_withUseJdkUnsafeTrue_successfulConstruction() throws Exception {\n    // Arrange\n    Class<TestClass> rawType = TestClass.class;\n\n    try (MockedStatic<UnsafeAllocator> unsafeAllocatorMockedStatic = Mockito.mockStatic(UnsafeAllocator.class)) {\n      // Mock UnsafeAllocator.INSTANCE.newInstance to actually create a TestClass instance with 'value' set\n      unsafeAllocatorMockedStatic.when(() -> UnsafeAllocator.INSTANCE.newInstance(rawType))\n          .thenAnswer(invocation -> new TestClass());\n\n      ObjectConstructor<TestClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructorUseUnsafe, rawType);\n\n      // Act\n      TestClass instance = objectConstructor.construct();\n\n      // Assert\n      assertNotNull(instance);\n      assertEquals(\"default\", instance.value);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_withUseJdkUnsafeTrue_throwsException_wrappedInRuntimeException() throws Exception {\n    // Arrange\n    Class<FakeClass> rawType = FakeClass.class;\n\n    try (MockedStatic<UnsafeAllocator> unsafeAllocatorMockedStatic = Mockito.mockStatic(UnsafeAllocator.class)) {\n      unsafeAllocatorMockedStatic.when(() -> UnsafeAllocator.INSTANCE.newInstance(rawType))\n          .thenAnswer(invocation -> { throw new IllegalAccessException(\"cannot instantiate\"); });\n\n      ObjectConstructor<FakeClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructorUseUnsafe, rawType);\n\n      // Act & Assert\n      RuntimeException thrown = assertThrows(RuntimeException.class, objectConstructor::construct);\n      assertTrue(thrown.getMessage().contains(\"Unable to create instance of\"));\n      assertTrue(thrown.getCause() instanceof IllegalAccessException);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_withUseJdkUnsafeFalse_throwsJsonIOException() throws Exception {\n    // Arrange\n    Class<TestClass> rawType = TestClass.class;\n    ObjectConstructor<TestClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructorNoUnsafe, rawType);\n\n    // Act & Assert\n    JsonIOException thrown = assertThrows(JsonIOException.class, objectConstructor::construct);\n    assertTrue(thrown.getMessage().contains(\"usage of JDK Unsafe is disabled\"));\n  }\n\n  // Helper method to invoke private newUnsafeAllocator via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> ObjectConstructor<T> invokeNewUnsafeAllocator(ConstructorConstructor constructorConstructor, Class<? super T> rawType) throws Exception {\n    Method method = ConstructorConstructor.class.getDeclaredMethod(\"newUnsafeAllocator\", Class.class);\n    method.setAccessible(true);\n    Object obj = method.invoke(constructorConstructor, rawType);\n\n    // Create a proxy ObjectConstructor that calls the original construct method via reflection to avoid class cast issues\n    return new ObjectConstructor<T>() {\n      @Override\n      public T construct() {\n        try {\n          Method constructMethod = obj.getClass().getMethod(\"construct\");\n          @SuppressWarnings(\"unchecked\")\n          T result = (T) constructMethod.invoke(obj);\n          return result;\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }\n    };\n  }\n\n  // Interface matching the nested ObjectConstructor in ConstructorConstructor\n  private interface ObjectConstructor<T> {\n    T construct();\n  }\n\n  // Test classes for instantiation\n  private static class TestClass {\n    String value = \"default\";\n  }\n\n  private static class FakeClass {\n    private FakeClass() {\n      throw new UnsupportedOperationException(\"Cannot instantiate\");\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886520,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 882,
+    "prompt_tokens": 2730,
+    "total_tokens": 3612,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.74
+  }
+}

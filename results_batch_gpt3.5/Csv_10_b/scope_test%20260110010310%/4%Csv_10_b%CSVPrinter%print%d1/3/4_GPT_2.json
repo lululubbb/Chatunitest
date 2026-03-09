@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwABXSEJct6K5ZieqvkSJAYQVDFRJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.Constants;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterPrintTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        when(format.getNullString()).thenReturn(null);\n\n        // Use reflection to invoke private print method and verify its arguments\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // Call public print method on spy\n        spyPrinter.print(null);\n\n        // Verify private print was called with expected args by intercepting via reflection\n        // We cannot verify private method call directly, so we use a custom Answer to capture arguments\n\n        // Instead of verify(spy).print(...) which fails due to private access,\n        // we intercept the private method call via a Mockito spy with doAnswer\n\n        // Create a holder for the arguments\n        final Object[] capturedArgs = new Object[4];\n\n        // Setup spy to intercept private print\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter, \"print\", any(), any(), anyInt(), anyInt());\n\n        // Call public print again to trigger interception\n        spyPrinter.print(null);\n\n        // Verify captured arguments\n        assertNull(capturedArgs[0]);\n        assertEquals(Constants.EMPTY, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(Constants.EMPTY.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNonNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        final String nullString = \"NULLSTR\";\n        when(format.getNullString()).thenReturn(nullString);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        final Object[] capturedArgs = new Object[4];\n\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter, \"print\", any(), any(), anyInt(), anyInt());\n\n        spyPrinter.print(null);\n\n        assertNull(capturedArgs[0]);\n        assertEquals(nullString, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(nullString.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        String value = \"value\";\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        final Object[] capturedArgs = new Object[4];\n\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter, \"print\", any(), any(), anyInt(), anyInt());\n\n        spyPrinter.print(value);\n\n        assertEquals(value, capturedArgs[0]);\n        assertEquals(value, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(value.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_privatePrint_invocation() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // Test coverage for private print method called by public print\n\n        String value = \"abc\";\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        // Call private print directly\n        privatePrint.invoke(printer, value, value, 0, value.length());\n\n        // No exception means success; coverage for private print\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978211,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1109,
+    "prompt_tokens": 1652,
+    "total_tokens": 2761,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.02
+  }
+}

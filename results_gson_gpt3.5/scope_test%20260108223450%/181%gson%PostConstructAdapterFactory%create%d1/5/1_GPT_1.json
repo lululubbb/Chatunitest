@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn291sWO4uDr1Z5u3Eas3rwmaqaj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Method;\n\nimport javax.annotation.PostConstruct;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.typeadapters.PostConstructAdapterFactory;\n\npublic class PostConstructAdapterFactoryTest {\n\n    private PostConstructAdapterFactory factory;\n    private Gson mockGson;\n\n    static class TestClassWithPostConstruct {\n        @PostConstruct\n        private void init() {\n        }\n    }\n\n    static class TestClassWithoutPostConstruct {\n        private void someMethod() {\n        }\n    }\n\n    @BeforeEach\n    public void setUp() {\n        factory = new PostConstructAdapterFactory();\n        mockGson = mock(Gson.class);\n    }\n\n    @Test\n    public void create_shouldReturnPostConstructAdapter_whenPostConstructMethodPresent() throws Exception {\n        TypeToken<TestClassWithPostConstruct> typeToken = TypeToken.get(TestClassWithPostConstruct.class);\n\n        // Prepare a mock delegate adapter to be returned by gson.getDelegateAdapter\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<TestClassWithPostConstruct> delegateAdapter = mock(TypeAdapter.class);\n        when(mockGson.getDelegateAdapter(ArgumentMatchers.eq(factory), ArgumentMatchers.eq(typeToken))).thenReturn(delegateAdapter);\n\n        TypeAdapter<TestClassWithPostConstruct> adapter = factory.create(mockGson, typeToken);\n\n        assertNotNull(adapter, \"Adapter should not be null when @PostConstruct method is present\");\n\n        // Verify that the adapter is an instance of PostConstructAdapter\n        assertEquals(\"com.google.gson.typeadapters.PostConstructAdapter\", adapter.getClass().getName());\n\n        // Use reflection to check that the PostConstruct method was passed correctly\n        Method postConstructMethod = null;\n        Class<?> adapterClass = adapter.getClass();\n        for (Method m : adapterClass.getDeclaredMethods()) {\n            if (m.getName().equals(\"postConstructMethod\")) {\n                postConstructMethod = m;\n                break;\n            }\n        }\n        // postConstructMethod field is private, so instead get declared field\n        var field = adapterClass.getDeclaredField(\"postConstructMethod\");\n        field.setAccessible(true);\n        Method methodValue = (Method) field.get(adapter);\n        assertNotNull(methodValue);\n        assertEquals(\"init\", methodValue.getName());\n    }\n\n    @Test\n    public void create_shouldReturnNull_whenNoPostConstructMethodPresent() {\n        TypeToken<TestClassWithoutPostConstruct> typeToken = TypeToken.get(TestClassWithoutPostConstruct.class);\n\n        TypeAdapter<TestClassWithoutPostConstruct> adapter = factory.create(mockGson, typeToken);\n\n        assertNull(adapter, \"Adapter should be null when no @PostConstruct method is present\");\n    }\n\n    @Test\n    public void create_shouldScanSuperclassesForPostConstruct() {\n        class SuperClass {\n            @PostConstruct\n            private void superInit() {\n            }\n        }\n        class SubClass extends SuperClass {\n        }\n\n        TypeToken<SubClass> typeToken = TypeToken.get(SubClass.class);\n\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<SubClass> delegateAdapter = mock(TypeAdapter.class);\n        when(mockGson.getDelegateAdapter(ArgumentMatchers.eq(factory), ArgumentMatchers.eq(typeToken))).thenReturn(delegateAdapter);\n\n        TypeAdapter<SubClass> adapter = factory.create(mockGson, typeToken);\n\n        assertNotNull(adapter, \"Adapter should not be null when superclass has @PostConstruct method\");\n\n        var field = adapter.getClass().getDeclaredField(\"postConstructMethod\");\n        field.setAccessible(true);\n        Method methodValue = (Method) field.get(adapter);\n        assertNotNull(methodValue);\n        assertEquals(\"superInit\", methodValue.getName());\n    }\n\n    @Test\n    public void create_shouldReturnNull_whenTypeIsObject() {\n        TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n        TypeAdapter<Object> adapter = factory.create(mockGson, typeToken);\n\n        assertNull(adapter, \"Adapter should be null when raw type is Object\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889217,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 877,
+    "prompt_tokens": 1018,
+    "total_tokens": 1895,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.03
+  }
+}

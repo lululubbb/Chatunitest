@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuCGyBefQeFszI4qD6SNz6TjCG7i",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n    }\n\n    @Test\n    void testParseReturnsCSVParserInstance() throws Exception {\n        // Use reflection to create a mock CSVParser and intercept constructor call\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Create a mock CSVParser instance\n        CSVParser mockParser = mock(CSVParser.class);\n\n        // Use reflection to replace CSVParser constructor call in CSVFormat.parse\n        // Since we cannot mock constructor directly with Mockito 3, \n        // we simulate by subclassing CSVFormat with overridden parse method for test\n\n        CSVFormat formatSpy = new CSVFormat(format.getDelimiter(),\n                format.getQuoteCharacter(),\n                format.getQuoteMode(),\n                format.getCommentMarker(),\n                format.getEscapeCharacter(),\n                format.getIgnoreSurroundingSpaces(),\n                format.getIgnoreEmptyLines(),\n                format.getRecordSeparator(),\n                format.getNullString(),\n                format.getHeaderComments(),\n                format.getHeader(),\n                format.getSkipHeaderRecord(),\n                format.getAllowMissingColumnNames(),\n                format.getIgnoreHeaderCase()) {\n            @Override\n            public CSVParser parse(final Reader in) throws IOException {\n                // Return the mocked parser instead of real one\n                return mockParser;\n            }\n        };\n\n        CSVParser parser = formatSpy.parse(mockReader);\n\n        assertNotNull(parser);\n        assertSame(mockParser, parser);\n    }\n\n    @Test\n    void testParseWithNullReaderThrowsNullPointerException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertThrows(NullPointerException.class, () -> format.parse(null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678424,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 420,
+    "prompt_tokens": 1604,
+    "total_tokens": 2024,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.42
+  }
+}

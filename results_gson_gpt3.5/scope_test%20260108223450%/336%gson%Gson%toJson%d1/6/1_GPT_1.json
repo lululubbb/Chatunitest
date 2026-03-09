@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnD9TaC6czaLV2TlxrP1GP2qmWo0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.internal.Streams;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_writesJsonSuccessfully() throws Exception {\n    StringWriter writer = new StringWriter();\n    Object src = \"testString\";\n    Type type = String.class;\n\n    // We spy on gson to verify internal calls\n    Gson spyGson = Mockito.spy(gson);\n\n    // Mock Streams.writerForAppendable to return the StringWriter\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.writerForAppendable(writer)).thenReturn(writer);\n\n      // Use reflection to access private toJson(Object, Type, JsonWriter)\n      Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, Type.class, JsonWriter.class);\n      toJsonMethod.setAccessible(true);\n\n      // Mock newJsonWriter to return a JsonWriter wrapping the StringWriter\n      JsonWriter jsonWriter = new JsonWriter(writer);\n      doReturn(jsonWriter).when(spyGson).newJsonWriter(writer);\n\n      // Call the public toJson method under test\n      spyGson.toJson(src, type, writer);\n\n      // Verify newJsonWriter called\n      verify(spyGson).newJsonWriter(writer);\n\n      // Verify that the internal toJson(Object, Type, JsonWriter) was called by invoking it directly\n      // (already tested indirectly by above)\n\n      // Flush to ensure all output is written\n      jsonWriter.flush();\n\n      // Assert that output JSON string is as expected\n      assertEquals(\"\\\"testString\\\"\", writer.toString());\n    }\n  }\n\n  @Test\n  void toJson_throwsJsonIOException_whenIOExceptionOccurs() throws IOException {\n    StringWriter writer = new StringWriter();\n    Object src = \"testString\";\n    Type type = String.class;\n\n    Gson spyGson = Mockito.spy(gson);\n\n    // Mock Streams.writerForAppendable to throw IOException\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.writerForAppendable(writer)).thenThrow(new IOException(\"IO error\"));\n\n      JsonIOException thrown = assertThrows(JsonIOException.class, () -> {\n        spyGson.toJson(src, type, writer);\n      });\n\n      assertTrue(thrown.getCause() instanceof IOException);\n      assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889899,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 622,
+    "prompt_tokens": 1629,
+    "total_tokens": 2251,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.1
+  }
+}

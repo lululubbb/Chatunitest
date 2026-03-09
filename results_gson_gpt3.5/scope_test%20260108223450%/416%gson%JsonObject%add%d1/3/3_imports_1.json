@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\npublic class JsonObjectTest {\n\n    private JsonObject jsonObject;\n\n    @BeforeEach\n    public void setUp() {\n        jsonObject = new JsonObject();\n    }\n\n    @Test\n    public void testAdd_WithNonNullValue_AddsProperty() throws Exception {\n        JsonPrimitive value = new JsonPrimitive(\"testValue\");\n        jsonObject.add(\"testProperty\", value);\n\n        // Access private field members via reflection\n        Field membersField = JsonObject.class.getDeclaredField(\"members\");\n        membersField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n\n        assertTrue(members.containsKey(\"testProperty\"));\n        assertEquals(value, members.get(\"testProperty\"));\n    }\n\n    @Test\n    public void testAdd_WithNullValue_AddsJsonNullInstance() throws Exception {\n        jsonObject.add(\"testProperty\", null);\n\n        // Access private field members via reflection\n        Field membersField = JsonObject.class.getDeclaredField(\"members\");\n        membersField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n\n        assertTrue(members.containsKey(\"testProperty\"));\n        assertSame(JsonNull.INSTANCE, members.get(\"testProperty\"));\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 399,
+  "completion_tokens": 321,
+  "total_tokens": 720,
+  "llm_elapsed_time_seconds": 6.22,
+  "repair_elapsed_time_seconds": 14.83,
+  "round_total_time_seconds": 14.83
+}

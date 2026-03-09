@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm0ePlFXB5bIngoPhvLPXopsUFUx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  @Test\n  public void testGetMajorJavaVersion_parseDottedSuccess() throws Exception {\n    // parseDotted returns a valid version (simulate by calling getMajorJavaVersion with a dotted version string)\n    int version = invokeGetMajorJavaVersion(\"1.8.0_181\");\n    assertEquals(1, version); // parseDotted(\"1.8.0_181\") should parse major=1 (per method logic)\n  }\n\n  @Test\n  public void testGetMajorJavaVersion_parseDottedFail_extractBeginningIntSuccess() throws Exception {\n    // Use a string that parseDotted returns -1 but extractBeginningInt returns a valid version\n    // e.g. \"11\" (no dots), parseDotted returns -1, extractBeginningInt returns 11\n    int version = invokeGetMajorJavaVersion(\"11\");\n    assertEquals(11, version);\n  }\n\n  @Test\n  public void testGetMajorJavaVersion_bothFail_returns6() throws Exception {\n    // Use a string that both parseDotted and extractBeginningInt return -1\n    int version = invokeGetMajorJavaVersion(\"invalid.version.string\");\n    assertEquals(6, version);\n  }\n\n  private int invokeGetMajorJavaVersion(String javaVersion) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    return (int) method.invoke(null, javaVersion);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885280,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 364,
+    "prompt_tokens": 304,
+    "total_tokens": 668,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.84
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuE09vDijrop2BDh3PibV96EUUx9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.Constants;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithQuoteTest {\n\n    private CSVFormat defaultFormat;\n\n    @BeforeEach\n    public void setUp() {\n        defaultFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testWithQuote_withValidQuoteChar() {\n        char quoteChar = '\"';\n        CSVFormat newFormat = defaultFormat.withQuote(quoteChar);\n        assertNotNull(newFormat);\n        assertEquals(Character.valueOf(quoteChar), newFormat.getQuoteCharacter());\n        // other properties remain unchanged\n        assertEquals(defaultFormat.getDelimiter(), newFormat.getDelimiter());\n        assertEquals(defaultFormat.getQuoteMode(), newFormat.getQuoteMode());\n        assertEquals(defaultFormat.getCommentMarker(), newFormat.getCommentMarker());\n        assertEquals(defaultFormat.getEscapeCharacter(), newFormat.getEscapeCharacter());\n        assertEquals(defaultFormat.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(defaultFormat.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(defaultFormat.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(defaultFormat.getNullString(), newFormat.getNullString());\n        assertArrayEquals(defaultFormat.getHeaderComments(), newFormat.getHeaderComments());\n        assertArrayEquals(defaultFormat.getHeader(), newFormat.getHeader());\n        assertEquals(defaultFormat.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n        assertEquals(defaultFormat.getAllowMissingColumnNames(), newFormat.getAllowMissingColumnNames());\n        assertEquals(defaultFormat.getIgnoreHeaderCase(), newFormat.getIgnoreHeaderCase());\n    }\n\n    @Test\n    public void testWithQuote_withNullQuoteChar() {\n        CSVFormat newFormat = defaultFormat.withQuote((Character) null);\n        assertNotNull(newFormat);\n        assertNull(newFormat.getQuoteCharacter());\n        // other properties remain unchanged\n        assertEquals(defaultFormat.getDelimiter(), newFormat.getDelimiter());\n        assertEquals(defaultFormat.getQuoteMode(), newFormat.getQuoteMode());\n        assertEquals(defaultFormat.getCommentMarker(), newFormat.getCommentMarker());\n        assertEquals(defaultFormat.getEscapeCharacter(), newFormat.getEscapeCharacter());\n        assertEquals(defaultFormat.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(defaultFormat.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(defaultFormat.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(defaultFormat.getNullString(), newFormat.getNullString());\n        assertArrayEquals(defaultFormat.getHeaderComments(), newFormat.getHeaderComments());\n        assertArrayEquals(defaultFormat.getHeader(), newFormat.getHeader());\n        assertEquals(defaultFormat.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n        assertEquals(defaultFormat.getAllowMissingColumnNames(), newFormat.getAllowMissingColumnNames());\n        assertEquals(defaultFormat.getIgnoreHeaderCase(), newFormat.getIgnoreHeaderCase());\n    }\n\n    @Test\n    public void testWithQuote_withLineBreakChar_throwsIllegalArgumentException()\n            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // Use reflection to invoke private static method isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // CR char\n        Character crChar = Constants.CR;\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, crChar));\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n                () -> defaultFormat.withQuote(crChar));\n        assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n\n        // LF char\n        Character lfChar = Constants.LF;\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, lfChar));\n        thrown = assertThrows(IllegalArgumentException.class, () -> defaultFormat.withQuote(lfChar));\n        assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n\n        // null is allowed as per method, no exception expected\n        Character nullChar = null;\n        assertFalse((Boolean) isLineBreakMethod.invoke(null, nullChar));\n        CSVFormat newFormat = defaultFormat.withQuote(nullChar);\n        assertNotNull(newFormat);\n        assertNull(newFormat.getQuoteCharacter());\n\n        // CRLF is a String, not Character, so not tested here\n    }\n\n    @Test\n    public void testIsLineBreak_privateStaticMethod() throws Exception {\n        Method isLineBreakChar = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakChar.setAccessible(true);\n        Method isLineBreakCharacter = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakCharacter.setAccessible(true);\n\n        // Test char version\n        assertTrue((Boolean) isLineBreakChar.invoke(null, Constants.CR));\n        assertTrue((Boolean) isLineBreakChar.invoke(null, Constants.LF));\n        assertFalse((Boolean) isLineBreakChar.invoke(null, 'a'));\n        assertFalse((Boolean) isLineBreakChar.invoke(null, Constants.COMMA));\n\n        // Test Character version\n        assertTrue((Boolean) isLineBreakCharacter.invoke(null, Constants.CR));\n        assertTrue((Boolean) isLineBreakCharacter.invoke(null, Constants.LF));\n        assertFalse((Boolean) isLineBreakCharacter.invoke(null, 'a'));\n        // For null argument, wrap it in an Object array to avoid varargs warning\n        assertFalse((Boolean) isLineBreakCharacter.invoke(null, new Object[] { null }));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678532,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1188,
+    "prompt_tokens": 2345,
+    "total_tokens": 3533,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.92
+  }
+}

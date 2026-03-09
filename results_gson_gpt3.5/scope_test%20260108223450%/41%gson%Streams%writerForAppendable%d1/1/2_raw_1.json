@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\n\nimport org.junit.jupiter.api.Test;\n\nclass StreamsTest {\n\n  @Test\n  void writerForAppendable_withWriterInstance_returnsSameInstance() {\n    Writer writerMock = mock(Writer.class);\n    Writer result = Streams.writerForAppendable(writerMock);\n    assertSame(writerMock, result);\n  }\n\n  @Test\n  void writerForAppendable_withNonWriterAppendable_returnsAppendableWriter() throws IOException {\n    Appendable appendable = new StringBuilder();\n    Writer result = Streams.writerForAppendable(appendable);\n    assertNotNull(result);\n    // The returned Writer should not be the same as the appendable (since appendable is not a Writer)\n    assertNotSame(appendable, result);\n\n    // Using reflection to invoke AppendableWriter's write method to verify it delegates to Appendable\n    try {\n      result.write('a');\n      result.flush();\n      // The appendable should have 'a' appended\n      assertEquals(\"a\", appendable.toString());\n    } finally {\n      result.close();\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 320,
+  "completion_tokens": 250,
+  "total_tokens": 570,
+  "llm_elapsed_time_seconds": 5.23
+}

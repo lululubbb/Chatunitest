@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmkbJShYaBuKnePqKdDToU11mw7b",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.sql.Time;\nimport java.text.SimpleDateFormat;\nimport java.util.Date;\n\nclass SqlTimeTypeAdapterTest {\n\n    private SqlTimeTypeAdapter adapter;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Use reflection to instantiate private constructor\n        Method constructor = SqlTimeTypeAdapter.class.getDeclaredConstructor();\n        constructor.setAccessible(true);\n        adapter = (SqlTimeTypeAdapter) constructor.invoke(null);\n    }\n\n    @Test\n    void read_nullToken_returnsNull() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.NULL);\n\n        // nextNull() should be called\n        doNothing().when(in).nextNull();\n\n        Time result = adapter.read(in);\n\n        verify(in).peek();\n        verify(in).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_validTimeString_returnsSqlTime() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.STRING);\n        when(in.nextString()).thenReturn(\"10:15:30 AM\");\n\n        Time result = adapter.read(in);\n\n        verify(in).peek();\n        verify(in).nextString();\n\n        // Expected time parsed from string \"10:15:30 AM\"\n        SimpleDateFormat sdf = new SimpleDateFormat(\"hh:mm:ss a\");\n        try {\n            Date parsedDate = sdf.parse(\"10:15:30 AM\");\n            Time expectedTime = new Time(parsedDate.getTime());\n            assertEquals(expectedTime, result);\n        } catch (Exception e) {\n            fail(\"Parsing time failed in test setup\");\n        }\n    }\n\n    @Test\n    void read_invalidTimeString_throwsJsonSyntaxException() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.STRING);\n        String invalidTime = \"invalid-time\";\n        when(in.nextString()).thenReturn(invalidTime);\n        when(in.getPreviousPath()).thenReturn(\"path\");\n\n        JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n            adapter.read(in);\n        });\n\n        verify(in).peek();\n        verify(in).nextString();\n        verify(in).getPreviousPath();\n\n        assertTrue(thrown.getMessage().contains(\"Failed parsing\"));\n        assertTrue(thrown.getMessage().contains(invalidTime));\n        assertTrue(thrown.getMessage().contains(\"path\"));\n        assertNotNull(thrown.getCause());\n        assertTrue(thrown.getCause() instanceof java.text.ParseException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888129,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 592,
+    "prompt_tokens": 1117,
+    "total_tokens": 1709,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.39
+  }
+}

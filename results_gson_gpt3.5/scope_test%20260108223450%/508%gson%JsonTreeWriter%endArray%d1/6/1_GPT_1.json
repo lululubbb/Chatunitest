@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmIRnQTLqnjCG3lntRiHVdG4gtSQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  void endArray_shouldThrowIllegalStateException_whenStackIsEmpty() {\n    // stack is empty initially\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  @Test\n  void endArray_shouldThrowIllegalStateException_whenPendingNameIsNotNull() throws Exception {\n    setField(jsonTreeWriter, \"pendingName\", \"name\");\n    // Add one element to stack to avoid empty stack exception\n    List<JsonElement> stack = new ArrayList<>();\n    stack.add(new JsonArray());\n    setField(jsonTreeWriter, \"stack\", stack);\n\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  @Test\n  void endArray_shouldRemoveTopStackElement_whenTopIsJsonArray() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    List<JsonElement> stack = new ArrayList<>();\n    stack.add(jsonArray);\n    setField(jsonTreeWriter, \"stack\", stack);\n\n    JsonWriter result = jsonTreeWriter.endArray();\n\n    // The stack should be empty after removing the top element\n    List<JsonElement> updatedStack = getField(jsonTreeWriter, \"stack\");\n    assertTrue(updatedStack.isEmpty());\n    // The returned object should be the same instance\n    assertSame(jsonTreeWriter, result);\n  }\n\n  @Test\n  void endArray_shouldThrowIllegalStateException_whenTopIsNotJsonArray() throws Exception {\n    List<JsonElement> stack = new ArrayList<>();\n    stack.add(JsonNull.INSTANCE);\n    setField(jsonTreeWriter, \"stack\", stack);\n\n    assertThrows(IllegalStateException.class, () -> jsonTreeWriter.endArray());\n  }\n\n  // Utility methods to access private fields via reflection\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object instance, String fieldName) throws Exception {\n    Field field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(instance);\n  }\n\n  private void setField(Object instance, String fieldName, Object value) throws Exception {\n    Field field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886383,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 606,
+    "prompt_tokens": 565,
+    "total_tokens": 1171,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmCBjEkbpbUVEWRi1GWw4HVKr7Kf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.internal.$Gson$Types;\n\nclass GsonTypesResolveTest {\n\n    private Class<?> contextRawType;\n    private Type context;\n    private Type toResolve;\n\n    @BeforeEach\n    void setUp() {\n        contextRawType = SampleClass.class;\n        context = SampleClass.class;\n    }\n\n    @Test\n    void resolve_nullToResolve_returnsNull() throws Exception {\n        Type result = invokeResolve(context, contextRawType, null, new HashMap<>());\n        assertNull(result);\n    }\n\n    @Test\n    void resolve_primitiveType_returnsTypeItself() throws Exception {\n        Type primitiveType = int.class;\n        Type result = invokeResolve(context, contextRawType, primitiveType, new HashMap<>());\n        assertSame(primitiveType, result);\n    }\n\n    @Test\n    void resolve_typeVariableResolved() throws Exception {\n        TypeVariable<?>[] typeVariables = SampleGenericClass.class.getTypeParameters();\n        assertTrue(typeVariables.length > 0);\n        TypeVariable<?> typeVar = typeVariables[0];\n        Type result = invokeResolve(SampleGenericClass.class, SampleGenericClass.class, typeVar, new HashMap<>());\n        // The result should not be the original type variable (should be resolved or fallback)\n        assertNotNull(result);\n    }\n\n    @Test\n    void resolve_parameterizedType_resolvesArguments() throws Exception {\n        ParameterizedType parameterizedType = (ParameterizedType) SampleGenericClass.class.getGenericSuperclass();\n        Type result = invokeResolve(SampleGenericClass.class, SampleGenericClass.class, parameterizedType, new HashMap<>());\n        assertNotNull(result);\n        assertTrue(result instanceof ParameterizedType);\n    }\n\n    @Test\n    void resolve_genericArrayType_resolvesComponent() throws Exception {\n        GenericArrayType genericArrayType = new GenericArrayType() {\n            @Override\n            public Type getGenericComponentType() {\n                return SampleGenericClass.class.getTypeParameters()[0];\n            }\n\n            @Override\n            public String getTypeName() {\n                return getGenericComponentType().getTypeName() + \"[]\";\n            }\n        };\n        Type result = invokeResolve(SampleGenericClass.class, SampleGenericClass.class, genericArrayType, new HashMap<>());\n        assertNotNull(result);\n    }\n\n    @Test\n    void resolve_wildcardType_resolvesBounds() throws Exception {\n        WildcardType wildcardType = new WildcardType() {\n            @Override\n            public Type[] getUpperBounds() {\n                return new Type[] { Number.class };\n            }\n\n            @Override\n            public Type[] getLowerBounds() {\n                return new Type[0];\n            }\n\n            @Override\n            public String getTypeName() {\n                return \"? extends Number\";\n            }\n        };\n        Type result = invokeResolve(SampleGenericClass.class, SampleGenericClass.class, wildcardType, new HashMap<>());\n        assertNotNull(result);\n    }\n\n    @Test\n    void resolve_recursiveTypeVariable_avoidsInfiniteLoop() throws Exception {\n        TypeVariable<?> recursiveVar = RecursiveType.class.getTypeParameters()[0];\n        Type result = invokeResolve(RecursiveType.class, RecursiveType.class, recursiveVar, new HashMap<>());\n        assertNotNull(result);\n    }\n\n    private Type invokeResolve(Type context, Class<?> contextRawType, Type toResolve, Map<TypeVariable<?>, Type> visited) throws Exception {\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n        return (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, visited);\n    }\n\n    static class SampleClass {}\n\n    static class SampleGenericClass<T> extends SampleClass {}\n\n    static class RecursiveType<T extends Comparable<T>> {}\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885995,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 830,
+    "prompt_tokens": 628,
+    "total_tokens": 1458,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.56
+  }
+}

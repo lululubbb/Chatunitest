@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA45V04Clvp9UCXhxloQAYW7XMg2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecordWithMapping;\n    private CSVRecord csvRecordWithoutMapping;\n    private Map<String, Integer> mapping;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n\n        // Using constructor via reflection since CSVRecord constructor is package-private\n        Class<CSVRecord> clazz = CSVRecord.class;\n        Constructor<CSVRecord> ctor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        ctor.setAccessible(true);\n\n        csvRecordWithMapping = ctor.newInstance(new Object[]{new String[]{\"value1\", \"value2\"}, mapping, \"comment\", 1L});\n        csvRecordWithoutMapping = ctor.newInstance(new Object[]{new String[]{\"value1\", \"value2\"}, null, \"comment\", 2L});\n    }\n\n    @Test\n    public void testIsMapped_withMappingContainingName() {\n        // Invoke isMapped normally (public method)\n        assertTrue(csvRecordWithMapping.isMapped(\"header1\"));\n        assertTrue(csvRecordWithMapping.isMapped(\"header2\"));\n    }\n\n    @Test\n    public void testIsMapped_withMappingNotContainingName() {\n        assertFalse(csvRecordWithMapping.isMapped(\"header3\"));\n    }\n\n    @Test\n    public void testIsMapped_withNullMapping() {\n        assertFalse(csvRecordWithoutMapping.isMapped(\"header1\"));\n    }\n\n    @Test\n    public void testIsMapped_withNullName() {\n        // name = null, mapping != null\n        assertFalse(csvRecordWithMapping.isMapped(null));\n    }\n\n    @Test\n    public void testIsMapped_reflectionInvocation() throws Exception {\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        // mapping != null and contains key\n        Boolean result1 = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, \"header1\");\n        assertTrue(result1);\n\n        // mapping != null and does not contain key\n        Boolean result2 = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, \"nonexistent\");\n        assertFalse(result2);\n\n        // mapping == null\n        Boolean result3 = (Boolean) isMappedMethod.invoke(csvRecordWithoutMapping, \"header1\");\n        assertFalse(result3);\n\n        // name == null\n        Boolean result4 = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, (Object) null);\n        assertFalse(result4);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977749,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 595,
+    "prompt_tokens": 1060,
+    "total_tokens": 1655,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.78
+  }
+}

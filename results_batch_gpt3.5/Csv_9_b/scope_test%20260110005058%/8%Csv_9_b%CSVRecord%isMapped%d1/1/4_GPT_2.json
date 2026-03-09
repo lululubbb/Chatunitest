@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA35mWxNoON1leiWb1qPHC0v5FQB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecordWithMapping;\n    private CSVRecord csvRecordWithoutMapping;\n    private Map<String, Integer> mapping;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Prepare mapping with some keys\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n\n        // Create CSVRecord instances using constructor via reflection (package-private)\n        csvRecordWithMapping = createCSVRecord(new String[]{\"value1\", \"value2\"}, mapping, \"comment\", 1L);\n        csvRecordWithoutMapping = createCSVRecord(new String[]{\"value1\", \"value2\"}, null, \"comment\", 1L);\n    }\n\n    private CSVRecord createCSVRecord(String[] values, Map<String, Integer> mapping, String comment, long recordNumber) throws Exception {\n        // Constructor: CSVRecord(final String[] values, final Map<String, Integer> mapping, final String comment, final long recordNumber)\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(values, mapping, comment, recordNumber);\n    }\n\n    @Test\n    public void testIsMapped_withMappingContainsKey() throws Exception {\n        // Test with mapping != null and mapping contains key\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        Boolean result = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, \"header1\");\n        assertTrue(result);\n\n        result = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, \"header2\");\n        assertTrue(result);\n    }\n\n    @Test\n    public void testIsMapped_withMappingDoesNotContainKey() throws Exception {\n        // Test with mapping != null but does not contain key\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        Boolean result = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, \"unknown\");\n        assertFalse(result);\n    }\n\n    @Test\n    public void testIsMapped_withNullMapping() throws Exception {\n        // Test with mapping == null\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        Boolean result = (Boolean) isMappedMethod.invoke(csvRecordWithoutMapping, \"header1\");\n        assertFalse(result);\n    }\n\n    @Test\n    public void testIsMapped_withNullName() throws Exception {\n        // Test with null name argument, mapping != null\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        Boolean result = (Boolean) isMappedMethod.invoke(csvRecordWithMapping, new Object[]{null});\n        // mapping.containsKey(null) returns false normally, so expect false\n        assertFalse(result);\n\n        // Also test with null mapping and null name\n        result = (Boolean) isMappedMethod.invoke(csvRecordWithoutMapping, new Object[]{null});\n        assertFalse(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977687,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 726,
+    "prompt_tokens": 1175,
+    "total_tokens": 1901,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.5
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmcUOkPaE1bG69x9G4DZ4VtAL4wu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n    // Set stackSize to 2 and initialize pathIndices to test increment\n    setField(jsonReader, \"stackSize\", 2);\n    int[] pathIndices = new int[32];\n    pathIndices[1] = 5;\n    setField(jsonReader, \"pathIndices\", pathIndices);\n  }\n\n  @Test\n  void endArray_peekedIsPEEKED_END_ARRAY_decrementsStackSizeAndIncrementsPathIndexAndResetsPeeked() throws Exception {\n    setField(jsonReader, \"peeked\", getPeekedEndArray());\n    int originalStackSize = (int) getField(jsonReader, \"stackSize\");\n    int[] pathIndices = (int[]) getField(jsonReader, \"pathIndices\");\n    int originalPathIndex = pathIndices[originalStackSize - 1];\n\n    jsonReader.endArray();\n\n    int newStackSize = (int) getField(jsonReader, \"stackSize\");\n    int[] updatedPathIndices = (int[]) getField(jsonReader, \"pathIndices\");\n    int peeked = (int) getField(jsonReader, \"peeked\");\n\n    assertEquals(originalStackSize - 1, newStackSize, \"stackSize should be decremented\");\n    assertEquals(originalPathIndex + 1, updatedPathIndices[newStackSize - 1], \"pathIndices at new stackSize-1 should be incremented\");\n    assertEquals(getPeekedNone(), peeked, \"peeked should be reset to PEEKED_NONE\");\n  }\n\n  @Test\n  void endArray_peekedIsPEEKED_NONE_callsDoPeekAndThrowsIfNotPEEKED_END_ARRAY() throws Exception {\n    setField(jsonReader, \"peeked\", getPeekedNone());\n\n    // Spy on jsonReader to mock doPeek and peek methods\n    JsonReader spyReader = spy(jsonReader);\n\n    // doPeek returns a code not equal to PEEKED_END_ARRAY (e.g. PEEKED_BEGIN_ARRAY)\n    doReturn(getPeekedBeginArray()).when(spyReader).doPeek();\n    // peek returns a token for exception message\n    doReturn(JsonToken.BEGIN_ARRAY).when(spyReader).peek();\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::endArray);\n    assertTrue(thrown.getMessage().contains(\"Expected END_ARRAY but was BEGIN_ARRAY\"));\n  }\n\n  @Test\n  void endArray_peekedIsInvalid_throwsIllegalStateException() throws Exception {\n    setField(jsonReader, \"peeked\", getPeekedBeginObject());\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(JsonToken.BEGIN_OBJECT).when(spyReader).peek();\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::endArray);\n    assertTrue(thrown.getMessage().contains(\"Expected END_ARRAY but was BEGIN_OBJECT\"));\n  }\n\n  // Helper to set private field value via reflection\n  private static void setField(Object target, String fieldName, Object value) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  // Helper to get private field value via reflection\n  private static Object getField(Object target, String fieldName) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(target);\n  }\n\n  // Constants from JsonReader class\n  private static int getPeekedNone() throws Exception {\n    return getStaticFinalIntField(\"PEEKED_NONE\");\n  }\n\n  private static int getPeekedEndArray() throws Exception {\n    return getStaticFinalIntField(\"PEEKED_END_ARRAY\");\n  }\n\n  private static int getPeekedBeginArray() throws Exception {\n    return getStaticFinalIntField(\"PEEKED_BEGIN_ARRAY\");\n  }\n\n  private static int getPeekedBeginObject() throws Exception {\n    return getStaticFinalIntField(\"PEEKED_BEGIN_OBJECT\");\n  }\n\n  private static int getStaticFinalIntField(String name) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(name);\n    field.setAccessible(true);\n    return field.getInt(null);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887626,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 976,
+    "prompt_tokens": 1080,
+    "total_tokens": 2056,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.46
+  }
+}

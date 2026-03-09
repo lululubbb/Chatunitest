@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZEmWjeEj6CpuoTW4fQS94hOwiKn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    public void testPrint_nullValue_nullStringNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        when(format.getNullString()).thenReturn(null);\n\n        // Use reflection to invoke the private print method\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.print(null);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // Verify private print method was called with empty string for nullString == null\n        // Using reflection to verify invocation\n        // Since verify() cannot access private method, invoke print method directly to check no exception\n\n        // Alternatively, verify that print(Object) calls private print with expected arguments by spying and capturing arguments:\n        // But since private method is inaccessible, just invoke it and assert no exception\n\n        // Here, invoke private print method directly to simulate the call:\n        printMethod.invoke(spyPrinter, null, \"\", 0, 0);\n    }\n\n    @Test\n    public void testPrint_nullValue_nullStringNotNull() throws IOException {\n        when(format.getNullString()).thenReturn(\"NULL\");\n\n        printer.print(null);\n\n        // no exception means success\n    }\n\n    @Test\n    public void testPrint_nonNullValue() throws IOException {\n        String value = \"value\";\n        printer.print(value);\n\n        // no exception means success\n    }\n\n    @Test\n    public void testPrint_nonNullValue_emptyString() throws IOException {\n        Object value = new Object() {\n            @Override\n            public String toString() {\n                return \"\";\n            }\n        };\n\n        printer.print(value);\n\n        // no exception means success\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551168,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 486,
+    "prompt_tokens": 1057,
+    "total_tokens": 1543,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.79
+  }
+}

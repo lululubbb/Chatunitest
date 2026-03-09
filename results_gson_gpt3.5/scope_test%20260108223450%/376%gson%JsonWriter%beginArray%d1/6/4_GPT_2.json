@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnKSS3aqas3mLRSwrESEPXuxvoeA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void beginArray_shouldOpenEmptyArrayAndWriteDeferredName() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n    // Arrange\n    // Set deferredName to non-null to verify writeDeferredName effect (uses reflection)\n    setField(jsonWriter, \"deferredName\", \"name\");\n\n    // Spy on jsonWriter to verify writeDeferredName is called\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Use reflection to make writeDeferredName accessible and verify its invocation manually\n    Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    // Act\n    JsonWriter returned = spyWriter.beginArray();\n\n    // Assert\n    // Verify writeDeferredName was called via spy by using doCallRealMethod and verify with reflection\n    verify(spyWriter).beginArray(); // beginArray called\n\n    // Since writeDeferredName is private, verify invocation by spying on beginArray only.\n    // Alternatively, verify that deferredName is null after beginArray (indicating writeDeferredName executed)\n    String deferredNameAfter = (String) getField(spyWriter, \"deferredName\");\n    assertNull(deferredNameAfter);\n\n    assertSame(spyWriter, returned);\n\n    // The internal stack should have EMPTY_ARRAY on top (4 according to JsonScope)\n    int[] stack = (int[]) getField(spyWriter, \"stack\");\n    int stackSize = (int) getField(spyWriter, \"stackSize\");\n    int top = stack[stackSize - 1];\n    assertEquals(JsonScope.EMPTY_ARRAY, top);\n\n    // The output should have '[' character appended\n    String output = stringWriter.toString();\n    assertEquals(\"[\", output);\n  }\n\n  @Test\n  public void beginArray_shouldWorkWithNullDeferredName() throws IOException {\n    // Arrange\n    setField(jsonWriter, \"deferredName\", null);\n\n    // Act\n    JsonWriter returned = jsonWriter.beginArray();\n\n    // Assert\n    assertSame(jsonWriter, returned);\n\n    int[] stack = (int[]) getField(jsonWriter, \"stack\");\n    int stackSize = (int) getField(jsonWriter, \"stackSize\");\n    assertEquals(JsonScope.EMPTY_ARRAY, stack[stackSize - 1]);\n\n    String output = stringWriter.toString();\n    assertEquals(\"[\", output);\n  }\n\n  @Test\n  public void beginArray_shouldThrowIOException_whenOpenThrows() throws IOException {\n    // We create a JsonWriter with a Writer that throws IOException on write\n    Writer throwingWriter = new Writer() {\n      @Override\n      public void write(char[] cbuf, int off, int len) throws IOException {\n        throw new IOException(\"forced\");\n      }\n      @Override public void flush() throws IOException {}\n      @Override public void close() throws IOException {}\n    };\n    JsonWriter writer = new JsonWriter(throwingWriter);\n\n    // Act & Assert\n    IOException ex = assertThrows(IOException.class, writer::beginArray);\n    assertEquals(\"forced\", ex.getMessage());\n  }\n\n  // Helper to set private fields via reflection\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = getFieldFromClassHierarchy(target.getClass(), fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get private fields via reflection\n  private static Object getField(Object target, String fieldName) {\n    try {\n      Field field = getFieldFromClassHierarchy(target.getClass(), fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to find field in class hierarchy\n  private static Field getFieldFromClassHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {\n    Class<?> current = clazz;\n    while (current != null) {\n      try {\n        return current.getDeclaredField(fieldName);\n      } catch (NoSuchFieldException e) {\n        current = current.getSuperclass();\n      }\n    }\n    throw new NoSuchFieldException(fieldName);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890352,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1020,
+    "prompt_tokens": 1633,
+    "total_tokens": 2653,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.5
+  }
+}

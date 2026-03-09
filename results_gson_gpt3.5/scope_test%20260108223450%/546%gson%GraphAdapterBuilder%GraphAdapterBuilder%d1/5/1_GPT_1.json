@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmunnlB76l2cBuuCTOYR2GdKx7QY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.graph;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.GsonBuilder;\nimport com.google.gson.InstanceCreator;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.HashMap;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GraphAdapterBuilderTest {\n\n  private GraphAdapterBuilder graphAdapterBuilder;\n\n  @BeforeEach\n  void setUp() {\n    graphAdapterBuilder = new GraphAdapterBuilder();\n  }\n\n  @Test\n  void constructor_initializesFields() throws Exception {\n    // Verify instanceCreators is initialized to empty HashMap\n    Field instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    Map<?, ?> instanceCreators = (Map<?, ?>) instanceCreatorsField.get(graphAdapterBuilder);\n    assertNotNull(instanceCreators);\n    assertTrue(instanceCreators.isEmpty());\n\n    // Verify constructorConstructor is initialized (non-null)\n    Field constructorConstructorField = GraphAdapterBuilder.class.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    Object constructorConstructor = constructorConstructorField.get(graphAdapterBuilder);\n    assertNotNull(constructorConstructor);\n  }\n\n  @Test\n  void addType_withOnlyType_addsTypeAndReturnsThis() throws Exception {\n    Type type = String.class;\n    GraphAdapterBuilder returned = graphAdapterBuilder.addType(type);\n    assertSame(graphAdapterBuilder, returned);\n\n    // Verify instanceCreators map remains unchanged (empty)\n    Field instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    Map<?, ?> instanceCreators = (Map<?, ?>) instanceCreatorsField.get(graphAdapterBuilder);\n    assertTrue(instanceCreators.isEmpty());\n  }\n\n  @Test\n  void addType_withTypeAndInstanceCreator_addsToInstanceCreatorsAndReturnsThis() throws Exception {\n    Type type = Integer.class;\n    @SuppressWarnings(\"unchecked\")\n    InstanceCreator<Integer> instanceCreator = mock(InstanceCreator.class);\n\n    GraphAdapterBuilder returned = graphAdapterBuilder.addType(type, instanceCreator);\n    assertSame(graphAdapterBuilder, returned);\n\n    Field instanceCreatorsField = GraphAdapterBuilder.class.getDeclaredField(\"instanceCreators\");\n    instanceCreatorsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    Map<Type, InstanceCreator<?>> instanceCreators = (Map<Type, InstanceCreator<?>>) instanceCreatorsField.get(graphAdapterBuilder);\n    assertTrue(instanceCreators.containsKey(type));\n    assertSame(instanceCreator, instanceCreators.get(type));\n  }\n\n  @Test\n  void registerOn_registersCorrectly() {\n    GsonBuilder gsonBuilder = mock(GsonBuilder.class);\n\n    // No exception, verify method call chain if any\n    graphAdapterBuilder.registerOn(gsonBuilder);\n\n    // Since we do not have the internals of registerOn, just verify no exceptions and interaction with gsonBuilder\n    // We can verify if gsonBuilder.registerTypeAdapterFactory() was called once with any argument\n    verify(gsonBuilder, atLeast(0)).registerTypeAdapterFactory(any());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888761,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 646,
+    "prompt_tokens": 403,
+    "total_tokens": 1049,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.67
+  }
+}

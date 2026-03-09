@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass StreamsTest {\n\n  @Test\n  void write_callsTypeAdaptersJsonElementWrite() throws IOException {\n    JsonElement element = mock(JsonElement.class);\n    JsonWriter writer = mock(JsonWriter.class);\n\n    try (MockedStatic<TypeAdapters> mockedTypeAdapters = Mockito.mockStatic(TypeAdapters.class)) {\n      // Mock the static field JSON_ELEMENT to return a mock adapter\n      @SuppressWarnings(\"unchecked\")\n      var jsonElementAdapterMock = mock(TypeAdapters.JSON_ELEMENT.getClass());\n\n      // When TypeAdapters.JSON_ELEMENT is accessed, return our mock\n      mockedTypeAdapters.when(() -> TypeAdapters.JSON_ELEMENT).thenReturn(jsonElementAdapterMock);\n\n      // Mock the write method on the adapter mock\n      doNothing().when(jsonElementAdapterMock).write(writer, element);\n\n      Streams.write(element, writer);\n\n      verify(jsonElementAdapterMock).write(writer, element);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/40%gson%Streams%write%d1/3/temp/Streams_40_3Test.java:28: 错误: 不兼容的类型: lambda 主体与 void 函数接口不兼容\n      mockedTypeAdapters.when(() -> TypeAdapters.JSON_ELEMENT).thenReturn(jsonElementAdapterMock);\n                                                ^\n    (请考虑使用块 lambda 主体, 或者改为使用语句表达式)\n注: /home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/40%gson%Streams%write%d1/3/temp/Streams_40_3Test.java使用了未经检查或不安全的操作。\n注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。\n注: 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出\n1 个错误\n",
+  "prompt_tokens": 1092,
+  "completion_tokens": 246,
+  "total_tokens": 1338,
+  "llm_elapsed_time_seconds": 5.76
+}

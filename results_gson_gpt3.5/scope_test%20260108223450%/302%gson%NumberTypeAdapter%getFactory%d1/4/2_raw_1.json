@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport org.junit.jupiter.api.Test;\n\nclass NumberTypeAdapterTest {\n\n  @Test\n  void getFactory_withLazilyParsedNumber_returnsLazilyParsedNumberFactory() {\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(ToNumberPolicy.LAZILY_PARSED_NUMBER);\n    assertNotNull(factory);\n    assertSame(getPrivateStaticField(\"LAZILY_PARSED_NUMBER_FACTORY\"), factory);\n  }\n\n  @Test\n  void getFactory_withCustomStrategy_returnsNewFactory() {\n    ToNumberStrategy customStrategy = mock(ToNumberStrategy.class);\n    // Ensure customStrategy is not LAZILY_PARSED_NUMBER\n    assertNotSame(ToNumberPolicy.LAZILY_PARSED_NUMBER, customStrategy);\n\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(customStrategy);\n    assertNotNull(factory);\n    assertNotSame(getPrivateStaticField(\"LAZILY_PARSED_NUMBER_FACTORY\"), factory);\n  }\n\n  private static Object getPrivateStaticField(String fieldName) {\n    try {\n      var field = NumberTypeAdapter.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(null);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 394,
+  "completion_tokens": 296,
+  "total_tokens": 690,
+  "llm_elapsed_time_seconds": 12.52
+}

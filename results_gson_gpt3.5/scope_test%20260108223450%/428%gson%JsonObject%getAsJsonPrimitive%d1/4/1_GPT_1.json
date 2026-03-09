@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn9BzSVa5N6mU5Z6RjQS2AxIXxoT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_existingMember_returnsJsonPrimitive() throws Exception {\n    // Prepare a JsonPrimitive to add\n    JsonPrimitive primitive = new JsonPrimitive(\"value\");\n\n    // Use reflection to access the private 'members' field and add the member\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n    members.put(\"key\", primitive);\n\n    // Call the focal method\n    JsonPrimitive result = jsonObject.getAsJsonPrimitive(\"key\");\n\n    // Verify the returned value is the same JsonPrimitive instance\n    assertNotNull(result);\n    assertSame(primitive, result);\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_nonExistingMember_returnsNull() {\n    // No member added for \"missingKey\"\n\n    // Call the focal method\n    JsonPrimitive result = jsonObject.getAsJsonPrimitive(\"missingKey\");\n\n    // Should return null if member not present\n    assertNull(result);\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_memberIsNotJsonPrimitive_throwsClassCastException() throws Exception {\n    // Prepare a mock JsonElement that is not a JsonPrimitive\n    JsonElement element = mock(JsonElement.class);\n\n    // Use reflection to access the private 'members' field and add the member\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n    members.put(\"key\", element);\n\n    // Expect ClassCastException when casting to JsonPrimitive\n    assertThrows(ClassCastException.class, () -> jsonObject.getAsJsonPrimitive(\"key\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889653,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 506,
+    "prompt_tokens": 398,
+    "total_tokens": 904,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.29
+  }
+}

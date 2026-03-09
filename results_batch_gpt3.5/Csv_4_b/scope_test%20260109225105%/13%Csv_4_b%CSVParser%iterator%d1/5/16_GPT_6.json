@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8IO2186v7uwb3NlsM0QPnLliStM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.Iterator;\nimport java.util.NoSuchElementException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nclass CSVParserIteratorTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        parser = spy(new CSVParser(mock(java.io.Reader.class), mock(CSVFormat.class)));\n        // Reset internal 'closed' state to false using reflection\n        try {\n            Field closedField = CSVParser.class.getDeclaredField(\"closed\");\n            closedField.setAccessible(true);\n            closedField.setBoolean(parser, false);\n        } catch (NoSuchFieldException ignored) {\n            // If field 'closed' does not exist, ignore\n        } catch (IllegalAccessException ignored) {\n        }\n    }\n\n    @Test\n    void testIteratorHasNextAndNext_withRecords() throws IOException {\n        CSVRecord record1 = mock(CSVRecord.class);\n        CSVRecord record2 = mock(CSVRecord.class);\n\n        doReturn(record1).doReturn(record2).doReturn(null).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // first hasNext() should fetch record1\n        assertTrue(iterator.hasNext());\n        // next() should return record1\n        assertSame(record1, iterator.next());\n\n        // second hasNext() should fetch record2\n        assertTrue(iterator.hasNext());\n        // next() should return record2\n        assertSame(record2, iterator.next());\n\n        // third hasNext() should fetch null and return false\n        assertFalse(iterator.hasNext());\n\n        // next() after no more records should throw NoSuchElementException\n        assertThrows(NoSuchElementException.class, new Executable() {\n            @Override\n            public void execute() {\n                iterator.next();\n            }\n        });\n    }\n\n    @Test\n    void testIteratorHasNext_whenParserClosed() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertFalse(iterator.hasNext());\n        assertThrows(NoSuchElementException.class, new Executable() {\n            @Override\n            public void execute() {\n                iterator.next();\n            }\n        });\n    }\n\n    @Test\n    void testIteratorNext_withoutCallingHasNext_firstCall() throws IOException {\n        CSVRecord record = mock(CSVRecord.class);\n\n        doReturn(record).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // Call next() without hasNext() first, should still return record\n        assertSame(record, iterator.next());\n\n        // Next call to next() with no more records should throw\n        doReturn(null).when(parser).nextRecord();\n        assertThrows(NoSuchElementException.class, new Executable() {\n            @Override\n            public void execute() {\n                iterator.next();\n            }\n        });\n    }\n\n    @Test\n    void testIteratorNext_whenParserClosed_throws() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertThrows(NoSuchElementException.class, new Executable() {\n            @Override\n            public void execute() {\n                iterator.next();\n            }\n        });\n    }\n\n    @Test\n    void testIteratorRemove_throwsUnsupportedOperationException() {\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertThrows(UnsupportedOperationException.class, new Executable() {\n            @Override\n            public void execute() {\n                iterator.remove();\n            }\n        });\n    }\n\n    @Test\n    void testIterator_getNextRecord_throwsRuntimeExceptionOnIOException() throws IOException {\n        doThrow(new IOException(\"io error\")).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n            iterator.hasNext();\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"io error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970948,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 891,
+    "prompt_tokens": 1644,
+    "total_tokens": 2535,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.92
+  }
+}

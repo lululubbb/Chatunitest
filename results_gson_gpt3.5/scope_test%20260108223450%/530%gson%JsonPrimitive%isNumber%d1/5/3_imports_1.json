@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testIsNumber_withInteger() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(42);\n    assertTrue(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withDouble() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(3.14);\n    assertTrue(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withLazilyParsedNumber() throws Exception {\n    LazilyParsedNumber lazilyParsedNumber = new LazilyParsedNumber(\"12345\");\n    JsonPrimitive primitive = new JsonPrimitive(lazilyParsedNumber);\n    assertTrue(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withBoolean() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    assertFalse(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withString() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"not a number\");\n    assertFalse(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withCharacter() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive('c');\n    assertFalse(primitive.isNumber());\n  }\n\n  @Test\n  public void testIsNumber_withCustomObject() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"dummy\");\n    // Use reflection to set private field 'value' to a custom Object that is not a Number\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(primitive, new Object());\n    assertFalse(primitive.isNumber());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 408,
+  "completion_tokens": 379,
+  "total_tokens": 787,
+  "llm_elapsed_time_seconds": 7.04,
+  "repair_elapsed_time_seconds": 12.25,
+  "round_total_time_seconds": 12.25
+}

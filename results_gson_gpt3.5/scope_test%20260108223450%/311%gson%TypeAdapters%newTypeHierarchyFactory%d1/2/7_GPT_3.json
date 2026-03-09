@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmoA5IEtT77sh4X48VxjIuf3Jp1O",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdaptersTest {\n\n  static class SuperClass {}\n  static class SubClass extends SuperClass {}\n  static class OtherClass {}\n\n  @Test\n  void testNewTypeHierarchyFactory_withAssignableType_writeAndRead() throws IOException {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SuperClass> mockedAdapter = mock(TypeAdapter.class);\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(SuperClass.class, mockedAdapter);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<SubClass> subClassTypeToken = TypeToken.get(SubClass.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SubClass> adapter = (TypeAdapter<SubClass>) factory.create(gson, subClassTypeToken);\n    assertNotNull(adapter);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n    SubClass subInstance = new SubClass();\n    adapter.write(jsonWriter, subInstance);\n    verify(mockedAdapter).write(jsonWriter, subInstance);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    SubClass returnedInstance = new SubClass();\n    when(mockedAdapter.read(jsonReader)).thenReturn(returnedInstance);\n    SubClass readResult = adapter.read(jsonReader);\n    assertSame(returnedInstance, readResult);\n  }\n\n  @Test\n  void testNewTypeHierarchyFactory_withNonAssignableType_returnsNull() {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SuperClass> mockedAdapter = mock(TypeAdapter.class);\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(SuperClass.class, mockedAdapter);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<OtherClass> otherClassTypeToken = TypeToken.get(OtherClass.class);\n\n    TypeAdapter<?> adapter = factory.create(gson, otherClassTypeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  void testNewTypeHierarchyFactory_readReturnsWrongType_throwsJsonSyntaxException() throws IOException {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SuperClass> mockedAdapter = mock(TypeAdapter.class);\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(SuperClass.class, mockedAdapter);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<SubClass> subClassTypeToken = TypeToken.get(SubClass.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SubClass> adapter = (TypeAdapter<SubClass>) factory.create(gson, subClassTypeToken);\n    assertNotNull(adapter);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    // Create a SuperClass instance that is NOT an instance of SubClass\n    SuperClass wrongInstance = new SuperClass();\n\n    when(mockedAdapter.read(jsonReader)).thenReturn(wrongInstance);\n    when(jsonReader.getPreviousPath()).thenReturn(\"$\");\n\n    JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> adapter.read(jsonReader));\n    assertTrue(ex.getMessage().contains(\"Expected a \" + SubClass.class.getName()));\n    assertTrue(ex.getMessage().contains(\"but was \" + wrongInstance.getClass().getName()));\n    assertTrue(ex.getMessage().contains(\"at path $\"));\n  }\n\n  @Test\n  void testToString_returnsExpectedString() {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<SuperClass> mockedAdapter = mock(TypeAdapter.class);\n    TypeAdapterFactory factory = TypeAdapters.newTypeHierarchyFactory(SuperClass.class, mockedAdapter);\n\n    String toString = factory.toString();\n    assertTrue(toString.contains(\"Factory[typeHierarchy=\" + SuperClass.class.getName()));\n    assertTrue(toString.contains(\"adapter=\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888350,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 830,
+    "prompt_tokens": 2133,
+    "total_tokens": 2963,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.33
+  }
+}

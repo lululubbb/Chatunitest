@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvluMfdJx5wLE2AEf4xJYpHMKeXSx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_withNonNullObject_callsToJsonWithClass() throws IOException {\n    Appendable writer = mock(Appendable.class);\n    Object src = \"testString\";\n\n    gson.toJson(src, writer);\n\n    // No exception means success, but also test with reflection the private method call indirectly\n    // Use reflection to get toJson(Object, Type, Appendable) to verify it exists and is callable\n    try {\n      Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, java.lang.reflect.Type.class, Appendable.class);\n      toJsonMethod.setAccessible(true);\n      toJsonMethod.invoke(gson, src, src.getClass(), writer);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"toJson(Object, Type, Appendable) method should exist and be accessible\");\n    }\n  }\n\n  @Test\n  void toJson_withNullObject_callsToJsonWithJsonNullInstance() throws IOException {\n    Appendable writer = mock(Appendable.class);\n\n    gson.toJson(null, writer);\n\n    // Use reflection to verify that toJson(JsonNull.INSTANCE, Appendable) can be called\n    try {\n      Class<?> jsonNullClass = Class.forName(\"com.google.gson.JsonNull\");\n      Object jsonNullInstance = jsonNullClass.getField(\"INSTANCE\").get(null);\n\n      Method toJsonWithTypeMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, java.lang.reflect.Type.class, Appendable.class);\n      toJsonWithTypeMethod.setAccessible(true);\n      toJsonWithTypeMethod.invoke(gson, jsonNullInstance, Object.class, writer);\n    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {\n      fail(\"Reflection invocation failed: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  void toJson_withAppendableThrowingIOException_throwsJsonIOException() {\n    Appendable writer = mock(Appendable.class);\n    Object src = \"test\";\n\n    try {\n      doThrow(new IOException(\"IO error\")).when(writer).append(anyChar());\n    } catch (IOException e) {\n      fail(\"Mock setup failed\");\n    }\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> gson.toJson(src, writer));\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"IO error\", thrown.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884890,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 621,
+    "prompt_tokens": 2796,
+    "total_tokens": 3417,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.61
+  }
+}

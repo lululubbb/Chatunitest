@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmaVANJ4w7sQ4tztxhrxKhOdARyc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static int invokeParseInt(String value, int beginIndex, int endIndex) throws Throwable {\n    try {\n      Method method = UtcDateTypeAdapter.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n      method.setAccessible(true);\n      return (int) method.invoke(null, value, beginIndex, endIndex);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  public void testParseInt_validSingleDigit() throws Throwable {\n    assertEquals(5, invokeParseInt(\"5\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_validMultipleDigits() throws Throwable {\n    assertEquals(123, invokeParseInt(\"123\", 0, 3));\n  }\n\n  @Test\n  public void testParseInt_validSubstring() throws Throwable {\n    assertEquals(456, invokeParseInt(\"abc456def\", 3, 6));\n  }\n\n  @Test\n  public void testParseInt_beginIndexEqualsEndIndex() throws Throwable {\n    // empty substring should throw NumberFormatException due to no digits processed\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"123\", 1, 1));\n  }\n\n  @Test\n  public void testParseInt_beginIndexNegative() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"123\", -1, 2));\n  }\n\n  @Test\n  public void testParseInt_endIndexGreaterThanLength() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"123\", 0, 5));\n  }\n\n  @Test\n  public void testParseInt_beginIndexGreaterThanEndIndex() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"123\", 2, 1));\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterAtStart() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"a123\", 0, 4));\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterInMiddle() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"12a3\", 0, 4));\n  }\n\n  @Test\n  public void testParseInt_invalidCharacterAtEnd() {\n    assertThrows(NumberFormatException.class, () -> invokeParseInt(\"123a\", 0, 4));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887503,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 561,
+    "prompt_tokens": 578,
+    "total_tokens": 1139,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.3
+  }
+}

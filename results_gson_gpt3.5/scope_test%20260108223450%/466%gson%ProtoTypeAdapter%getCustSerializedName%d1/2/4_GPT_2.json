@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmenFoOlla79sqOCCRVr6LqwXQEN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.FieldOptions;\nimport com.google.protobuf.Extension;\nimport com.google.common.base.CaseFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashSet;\nimport java.util.Set;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private CaseFormat protoFormatMock;\n  private CaseFormat jsonFormatMock;\n  private Set<Extension<FieldOptions, String>> serializedNameExtensions;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    protoFormatMock = mock(CaseFormat.class);\n    jsonFormatMock = mock(CaseFormat.class);\n    serializedNameExtensions = new HashSet<>();\n\n    // Use reflection to access the private constructor\n    Constructor<ProtoTypeAdapter> constructor = ProtoTypeAdapter.class.getDeclaredConstructor(\n        EnumSerialization.class,\n        CaseFormat.class,\n        CaseFormat.class,\n        Set.class,\n        Set.class);\n    constructor.setAccessible(true);\n    protoTypeAdapter = constructor.newInstance(\n        null,\n        protoFormatMock,\n        jsonFormatMock,\n        serializedNameExtensions,\n        Collections.emptySet()\n    );\n  }\n\n  @Test\n  void getCustSerializedName_returnsExtensionValue_whenExtensionPresent() throws Exception {\n    // Arrange\n    @SuppressWarnings(\"unchecked\")\n    Extension<FieldOptions, String> extension = mock(Extension.class);\n    serializedNameExtensions.add(extension);\n\n    FieldOptions optionsMock = mock(FieldOptions.class);\n    when(optionsMock.hasExtension(extension)).thenReturn(true);\n    when(optionsMock.getExtension(extension)).thenReturn(\"extensionValue\");\n\n    // Use reflection to access private method\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedName\", FieldOptions.class, String.class);\n    method.setAccessible(true);\n\n    // Act\n    String result = (String) method.invoke(protoTypeAdapter, optionsMock, \"defaultName\");\n\n    // Assert\n    assertEquals(\"extensionValue\", result);\n  }\n\n  @Test\n  void getCustSerializedName_returnsFormattedName_whenNoExtensionPresent() throws Exception {\n    // Arrange\n    FieldOptions optionsMock = mock(FieldOptions.class);\n\n    // Clear extensions to test no extension case\n    serializedNameExtensions.clear();\n\n    String defaultName = \"default_name\";\n\n    when(protoFormatMock.to(jsonFormatMock, defaultName)).thenReturn(\"formattedName\");\n\n    // Use reflection to access private method\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedName\", FieldOptions.class, String.class);\n    method.setAccessible(true);\n\n    // Act\n    String result = (String) method.invoke(protoTypeAdapter, optionsMock, defaultName);\n\n    // Assert\n    assertEquals(\"formattedName\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887769,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 601,
+    "prompt_tokens": 1384,
+    "total_tokens": 1985,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.78
+  }
+}

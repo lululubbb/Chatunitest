@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmhuUwAkIkhXzGVlAiSUiDcXaL5c",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenIsAssignableFromTest {\n\n  private TypeToken<?> typeTokenClass;\n  private TypeToken<?> typeTokenParameterized;\n  private TypeToken<?> typeTokenGenericArray;\n  private Class<?> rawTypeClass;\n  private ParameterizedType parameterizedTypeMock;\n  private GenericArrayType genericArrayTypeMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create TypeToken with raw class type\n    typeTokenClass = new TypeToken<String>() {};\n    rawTypeClass = typeTokenClass.getRawType();\n\n    // Create ParameterizedType mock for testing\n    parameterizedTypeMock = mock(ParameterizedType.class);\n    when(parameterizedTypeMock.getRawType()).thenReturn(String.class);\n    when(parameterizedTypeMock.getActualTypeArguments()).thenReturn(new Type[] {String.class});\n\n    // Create TypeToken with ParameterizedType via reflection\n    typeTokenParameterized = createTypeTokenWithType(parameterizedTypeMock);\n\n    // Create GenericArrayType mock for testing\n    genericArrayTypeMock = mock(GenericArrayType.class);\n    when(genericArrayTypeMock.getGenericComponentType()).thenReturn(String[].class);\n\n    // Create TypeToken with GenericArrayType via reflection\n    typeTokenGenericArray = createTypeTokenWithType(genericArrayTypeMock);\n  }\n\n  private TypeToken<?> createTypeTokenWithType(Type type) throws Exception {\n    // Use private constructor TypeToken(Type) via reflection\n    Constructor<TypeToken> constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n    constructor.setAccessible(true);\n    return constructor.newInstance(type);\n  }\n\n  @Test\n  void isAssignableFrom_nullType_returnsFalse() {\n    // Disambiguate call by casting null to Type\n    assertFalse(typeTokenClass.isAssignableFrom((Type) null));\n  }\n\n  @Test\n  void isAssignableFrom_sameType_returnsTrue() {\n    // type equals from\n    Type type = typeTokenClass.getType();\n    assertTrue(typeTokenClass.isAssignableFrom(type));\n  }\n\n  @Test\n  void isAssignableFrom_rawTypeAssignableFrom_returnsTrue() {\n    Type from = Integer.class;\n    TypeToken<Number> numberToken = new TypeToken<Number>() {};\n    // Number.class.isAssignableFrom(Integer.class) == true\n    assertTrue(numberToken.isAssignableFrom(from));\n  }\n\n  @Test\n  void isAssignableFrom_rawTypeAssignableFrom_returnsFalse() {\n    Type from = Number.class;\n    TypeToken<Integer> integerToken = new TypeToken<Integer>() {};\n    // Integer.class.isAssignableFrom(Number.class) == false\n    assertFalse(integerToken.isAssignableFrom(from));\n  }\n\n  @Test\n  void isAssignableFrom_parameterizedType_callsPrivateIsAssignableFrom() throws Exception {\n    // Use reflection to invoke private static isAssignableFrom(Type, ParameterizedType, Map)\n    Method privateMethod = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class, ParameterizedType.class, Map.class);\n    privateMethod.setAccessible(true);\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n\n    // from is String.class, to is parameterizedTypeMock (rawType String.class)\n    boolean result = (boolean) privateMethod.invoke(null, String.class, parameterizedTypeMock, typeVarMap);\n    assertTrue(result);\n\n    // from is Integer.class, to is parameterizedTypeMock (rawType String.class) - should be false\n    result = (boolean) privateMethod.invoke(null, Integer.class, parameterizedTypeMock, typeVarMap);\n    assertFalse(result);\n  }\n\n  @Test\n  void isAssignableFrom_genericArrayType_returnsTrue() {\n    // rawType.isAssignableFrom($Gson$Types.getRawType(from)) must be true and private isAssignableFrom(from, GenericArrayType) true\n    // from is String[].class, type is genericArrayTypeMock with component String[]\n    Type from = String[].class;\n    assertTrue(typeTokenGenericArray.isAssignableFrom(from));\n  }\n\n  @Test\n  void isAssignableFrom_genericArrayType_returnsFalseDueToRawType() throws Exception {\n    // Create TypeToken with GenericArrayType with rawType that does not assign from the from type raw type\n    GenericArrayType genericArrayType = mock(GenericArrayType.class);\n    when(genericArrayType.getGenericComponentType()).thenReturn(String.class);\n\n    TypeToken<?> token = createTypeTokenWithType(genericArrayType);\n\n    // from raw type is Integer[].class which raw type is Integer[].class\n    Type from = Integer[].class;\n\n    // rawType.isAssignableFrom(String[].class) false => should return false\n    assertFalse(token.isAssignableFrom(from));\n  }\n\n  @Test\n  void isAssignableFrom_throwsOnUnexpectedType() throws Exception {\n    // Create a TypeToken with a Type that is not Class, ParameterizedType or GenericArrayType\n    Type weirdType = new Type() {};\n    TypeToken<?> token = createTypeTokenWithType(weirdType);\n\n    AssertionError error = assertThrows(AssertionError.class, () -> token.isAssignableFrom(String.class));\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Expected one of\"));\n  }\n\n  @Test\n  void isAssignableFrom_deprecatedClassOverload_consistent() {\n    TypeToken<Number> token = new TypeToken<Number>() {};\n    assertTrue(token.isAssignableFrom((Class<?>) Integer.class));\n    assertFalse(token.isAssignableFrom((Class<?>) String.class));\n  }\n\n  @Test\n  void isAssignableFrom_deprecatedTokenOverload_consistent() {\n    TypeToken<Number> token = new TypeToken<Number>() {};\n    TypeToken<Integer> intToken = new TypeToken<Integer>() {};\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    assertTrue(token.isAssignableFrom(intToken));\n    assertFalse(token.isAssignableFrom(stringToken));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887962,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1280,
+    "prompt_tokens": 2065,
+    "total_tokens": 3345,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.1
+  }
+}

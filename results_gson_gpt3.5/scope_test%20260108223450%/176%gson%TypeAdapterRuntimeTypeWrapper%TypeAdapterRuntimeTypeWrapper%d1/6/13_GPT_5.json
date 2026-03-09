@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvms7ID3oGL1Fhy5F3HOCc330wuRA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  Gson mockGson;\n  TypeAdapter<Object> mockDelegate;\n  Type mockType;\n  TypeAdapterRuntimeTypeWrapper<Object> wrapper;\n\n  @BeforeEach\n  void setUp() {\n    mockGson = mock(Gson.class);\n    mockDelegate = mock(TypeAdapter.class);\n    mockType = Object.class;\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, mockType);\n  }\n\n  @Test\n  void read_delegatesToDelegate() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    Object expected = new Object();\n    when(mockDelegate.read(mockReader)).thenReturn(expected);\n\n    Object actual = wrapper.read(mockReader);\n\n    verify(mockDelegate).read(mockReader);\n    assertSame(expected, actual);\n  }\n\n  @Test\n  void write_withNullValue_delegatesToDelegate() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n\n    wrapper.write(mockWriter, null);\n\n    verify(mockDelegate).write(mockWriter, null);\n  }\n\n  @Test\n  void write_withValue_runtimeTypeMoreSpecificAndReflectiveUsesDelegate() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n    Object value = new String(\"test\");\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> delegate = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, delegate, Object.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> runtimeTypeAdapter = mock(TypeAdapter.class);\n\n    when(mockGson.<String>getAdapter(String.class)).thenReturn(runtimeTypeAdapter);\n\n    // To simulate isReflective(delegate) == true, we override toString of delegate to contain \"ReflectiveTypeAdapter\"\n    when(delegate.toString()).thenReturn(\"ReflectiveTypeAdapter\");\n\n    // runtimeTypeAdapter toString returns non-reflective to ensure delegate path\n    when(runtimeTypeAdapter.toString()).thenReturn(\"NonReflectiveAdapter\");\n\n    spyWrapper.write(mockWriter, value);\n\n    verify(mockGson).getAdapter(String.class);\n\n    verify(delegate).write(mockWriter, value);\n    verify(runtimeTypeAdapter, never()).write(any(), any());\n  }\n\n  @Test\n  void write_withValue_runtimeTypeMoreSpecificAndNotReflectiveUsesRuntimeTypeAdapter() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n    Object value = new String(\"test\");\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> delegate = mock(TypeAdapter.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> runtimeTypeAdapter = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, delegate, Object.class);\n\n    // Use a cast to TypeAdapter<?> to avoid generic mismatch in when()\n    when(mockGson.<String>getAdapter(String.class)).thenReturn((TypeAdapter) runtimeTypeAdapter);\n\n    // To simulate isReflective(delegate) == false and isReflective(runtimeTypeAdapter) == false,\n    // override toString accordingly\n    when(delegate.toString()).thenReturn(\"NonReflectiveAdapter\");\n    when(runtimeTypeAdapter.toString()).thenReturn(\"NonReflectiveAdapter\");\n\n    spyWrapper.write(mockWriter, value);\n\n    verify(runtimeTypeAdapter).write(mockWriter, value);\n    verify(delegate, never()).write(any(), any());\n  }\n\n  @Test\n  void isReflective_returnsTrueForReflectiveAdapter() throws Exception {\n    // Create a dummy TypeAdapter subclass to simulate reflective adapter\n    TypeAdapter<Object> reflectiveAdapter = new TypeAdapter<Object>() {\n      @Override\n      public Object read(JsonReader in) { return null; }\n      @Override\n      public void write(JsonWriter out, Object value) {}\n      @Override\n      public String toString() { return \"ReflectiveTypeAdapter\"; }\n    };\n\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"isReflective\", TypeAdapter.class);\n    method.setAccessible(true);\n\n    Boolean result = (Boolean) method.invoke(null, reflectiveAdapter);\n    assertTrue(result);\n  }\n\n  @Test\n  void isReflective_returnsFalseForNonReflectiveAdapter() throws Exception {\n    TypeAdapter<Object> nonReflectiveAdapter = mock(TypeAdapter.class);\n    when(nonReflectiveAdapter.toString()).thenReturn(\"NonReflectiveAdapter\");\n\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"isReflective\", TypeAdapter.class);\n    method.setAccessible(true);\n\n    Boolean result = (Boolean) method.invoke(null, nonReflectiveAdapter);\n    assertFalse(result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_returnsMoreSpecificType() throws Exception {\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n\n    Type baseType = Object.class;\n    String value = \"string\";\n\n    Type result = (Type) method.invoke(null, baseType, value);\n    assertEquals(value.getClass(), result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_returnsOriginalTypeWhenValueNull() throws Exception {\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n\n    Type baseType = Object.class;\n    Object value = null;\n\n    Type result = (Type) method.invoke(null, baseType, value);\n    assertEquals(baseType, result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_returnsOriginalTypeWhenTypeVariable() throws Exception {\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n\n    TypeVariable<Class<TypeAdapterRuntimeTypeWrapper>>[] typeParameters = TypeAdapterRuntimeTypeWrapper.class.getTypeParameters();\n    TypeVariable<?> typeVariable = typeParameters.length > 0 ? typeParameters[0] : null;\n\n    if (typeVariable != null) {\n      Type result = (Type) method.invoke(null, typeVariable, \"string\");\n      assertEquals(typeVariable, result);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888595,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1388,
+    "prompt_tokens": 2724,
+    "total_tokens": 4112,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 41.64
+  }
+}

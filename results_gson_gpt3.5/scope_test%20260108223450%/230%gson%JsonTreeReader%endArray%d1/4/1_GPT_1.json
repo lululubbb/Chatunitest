@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNRVxym4IRIQehiZbRAuRNN8fqP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Mock JsonElement input for constructor (can be null since we won't use it directly)\n    reader = new JsonTreeReader(null);\n\n    // Setup internal state for testing endArray\n    // stackSize = 2 (to allow stack pops and pathIndices increment)\n    setField(reader, \"stackSize\", 2);\n\n    // Initialize stack with dummy objects (not null) to avoid NullPointerException on popStack\n    Object[] stack = new Object[32];\n    stack[0] = new Object();\n    stack[1] = new Object();\n    setField(reader, \"stack\", stack);\n\n    // Initialize pathIndices with zeroes\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 0;\n    setField(reader, \"pathIndices\", pathIndices);\n  }\n\n  @Test\n  public void testEndArray_normal() throws Exception {\n    // Spy on reader to verify expect and popStack calls\n    JsonTreeReader spyReader = spy(reader);\n\n    // Mock expect(JsonToken.END_ARRAY) to do nothing (no exception)\n    doNothing().when(spyReader).expect(JsonToken.END_ARRAY);\n\n    // Mock popStack to return dummy objects (simulate stack pop)\n    doReturn(new Object()).when(spyReader).popStack();\n\n    // Call endArray\n    spyReader.endArray();\n\n    // Verify expect called once with END_ARRAY\n    verify(spyReader, times(1)).expect(JsonToken.END_ARRAY);\n\n    // Verify popStack called twice\n    verify(spyReader, times(2)).popStack();\n\n    // Verify pathIndices[stackSize - 1] incremented by 1\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    int stackSize = getField(spyReader, \"stackSize\");\n    assertEquals(1, pathIndices[stackSize - 1]);\n  }\n\n  @Test\n  public void testEndArray_stackSizeZero_noIncrement() throws Exception {\n    // Set stackSize to 0 to test no increment branch\n    setField(reader, \"stackSize\", 0);\n\n    JsonTreeReader spyReader = spy(reader);\n    doNothing().when(spyReader).expect(JsonToken.END_ARRAY);\n    doReturn(new Object()).when(spyReader).popStack();\n\n    spyReader.endArray();\n\n    verify(spyReader, times(1)).expect(JsonToken.END_ARRAY);\n    verify(spyReader, times(2)).popStack();\n\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    // Since stackSize is 0, no increment should occur, all zeros\n    for (int i = 0; i < pathIndices.length; i++) {\n      assertEquals(0, pathIndices[i]);\n    }\n  }\n\n  @Test\n  public void testEndArray_expectThrows() throws Exception {\n    JsonTreeReader spyReader = spy(reader);\n    doThrow(new IllegalStateException(\"Expected END_ARRAY\")).when(spyReader).expect(JsonToken.END_ARRAY);\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::endArray);\n    assertEquals(\"Expected END_ARRAY\", thrown.getMessage());\n\n    // popStack should not be called if expect throws\n    verify(spyReader, never()).popStack();\n  }\n\n  // Helper to set private fields via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object target, String name) throws Exception {\n    Field field = JsonTreeReader.class.getDeclaredField(name);\n    field.setAccessible(true);\n    return (T) field.get(target);\n  }\n\n  private void setField(Object target, String name, Object value) throws Exception {\n    Field field = JsonTreeReader.class.getDeclaredField(name);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886693,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 890,
+    "prompt_tokens": 591,
+    "total_tokens": 1481,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.06
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9zQnOSLlwH6v5QrJh5YMQpdtkfe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private String[] values;\n    private Map<String, Integer> mapping;\n\n    @BeforeEach\n    void setUp() {\n        values = new String[] {\"value1\", \"value2\", \"value3\"};\n        mapping = new HashMap<>();\n        mapping.put(\"col1\", 0);\n        mapping.put(\"col2\", 1);\n        mapping.put(\"col3\", 2);\n    }\n\n    @Test\n    void testIsConsistent_mappingNull() throws Exception {\n        // Create CSVRecord with mapping = null\n        csvRecord = createCSVRecord(values, null, \"comment\", 1L);\n\n        // isConsistent should return true when mapping is null\n        assertTrue(invokeIsConsistent(csvRecord));\n    }\n\n    @Test\n    void testIsConsistent_mappingSizeEqualsValuesLength() throws Exception {\n        // mapping size equals values length\n        csvRecord = createCSVRecord(values, mapping, \"comment\", 1L);\n\n        // isConsistent should return true\n        assertTrue(invokeIsConsistent(csvRecord));\n    }\n\n    @Test\n    void testIsConsistent_mappingSizeNotEqualsValuesLength() throws Exception {\n        // mapping size not equal to values length\n        Map<String, Integer> smallerMapping = new HashMap<>();\n        smallerMapping.put(\"col1\", 0);\n        smallerMapping.put(\"col2\", 1);\n        // values length = 3, mapping size = 2\n\n        csvRecord = createCSVRecord(values, smallerMapping, \"comment\", 1L);\n\n        // isConsistent should return false\n        assertFalse(invokeIsConsistent(csvRecord));\n    }\n\n    private CSVRecord createCSVRecord(String[] values, Map<String, Integer> mapping, String comment, long recordNumber) throws Exception {\n        // Use reflection to invoke package-private constructor\n        return new CSVRecord(values, mapping, comment, recordNumber);\n    }\n\n    private boolean invokeIsConsistent(CSVRecord record) throws Exception {\n        // isConsistent is public so can call directly\n        return record.isConsistent();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977460,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 501,
+    "prompt_tokens": 400,
+    "total_tokens": 901,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.34
+  }
+}

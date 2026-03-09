@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmmcO2O8mmtejPbQyMAjNsGYb750",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void intValue_parsesIntegerSuccessfully() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123\");\n    assertEquals(123, number.intValue());\n  }\n\n  @Test\n  public void intValue_parsesLongSuccessfully() {\n    // Value too large for Integer.parseInt but fits in long\n    LazilyParsedNumber number = new LazilyParsedNumber(\"2147483648\"); // Integer.MAX_VALUE + 1\n    assertEquals((int)2147483648L, number.intValue());\n  }\n\n  @Test\n  public void intValue_parsesBigDecimalSuccessfully() {\n    // Value too large for long, fallback to BigDecimal\n    LazilyParsedNumber number = new LazilyParsedNumber(\"92233720368547758079223372036854775807\"); \n    assertEquals(new BigDecimal(\"92233720368547758079223372036854775807\").intValue(), number.intValue());\n  }\n\n  @Test\n  public void testWriteReplace_isPrivateAndReturnsObject() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(number);\n    assertNotNull(result);\n  }\n\n  @Test\n  public void testReadObject_isPrivateVoid() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", java.io.ObjectInputStream.class);\n    readObject.setAccessible(true);\n    // We just invoke with null stream to trigger exception, to cover method\n    try {\n      readObject.invoke(number, new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(new byte[0])));\n      fail(\"Expected IOException or InvalidObjectException\");\n    } catch (Exception e) {\n      // Expected exception due to invalid stream\n      assertTrue(e.getCause() instanceof IOException || e.getCause() instanceof InvalidObjectException);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888254,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 480,
+    "prompt_tokens": 352,
+    "total_tokens": 832,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.48
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuyKQ8PVG2C1HihtPqzQMrziyJhe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVFormat.Predefined;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testValueOf_withValidFormatName() throws Exception {\n        // Backup original enum constants array\n        Predefined[] originalValues = Predefined.values();\n\n        // Create a mock Predefined instance\n        Predefined predefinedMock = Mockito.mock(Predefined.class);\n        CSVFormat expectedFormat = CSVFormat.DEFAULT;\n        Mockito.when(predefinedMock.getFormat()).thenReturn(expectedFormat);\n        Mockito.when(predefinedMock.name()).thenReturn(\"DEFAULT\");\n        Mockito.when(predefinedMock.ordinal()).thenReturn(0);\n\n        // Replace the enum constants array with a new one containing the mock for \"DEFAULT\"\n        Field valuesField = null;\n        Field[] fields = Predefined.class.getDeclaredFields();\n        for (Field f : fields) {\n            if (f.getName().contains(\"$VALUES\")) {\n                valuesField = f;\n                break;\n            }\n        }\n        if (valuesField == null) {\n            throw new NoSuchFieldException(\"$VALUES field not found in Predefined enum\");\n        }\n        valuesField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(valuesField, valuesField.getModifiers() & ~Modifier.FINAL);\n\n        // Create new enum array with the mock replacing the original DEFAULT\n        Predefined[] newValues = new Predefined[originalValues.length];\n        for (int i = 0; i < originalValues.length; i++) {\n            if (\"DEFAULT\".equals(originalValues[i].name())) {\n                newValues[i] = predefinedMock;\n            } else {\n                newValues[i] = originalValues[i];\n            }\n        }\n\n        valuesField.set(null, newValues);\n\n        try {\n            CSVFormat actualFormat = CSVFormat.valueOf(\"DEFAULT\");\n            assertSame(expectedFormat, actualFormat);\n        } finally {\n            // Restore original enum constants array\n            valuesField.set(null, originalValues);\n        }\n    }\n\n    @Test\n    void testValueOf_withNullFormatName_shouldThrowNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVFormat.valueOf(null));\n    }\n\n    @Test\n    void testValueOf_withUnknownFormatName_shouldThrowIllegalArgumentException() {\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"UNKNOWN\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767681404,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 559,
+    "prompt_tokens": 1765,
+    "total_tokens": 2324,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.34
+  }
+}

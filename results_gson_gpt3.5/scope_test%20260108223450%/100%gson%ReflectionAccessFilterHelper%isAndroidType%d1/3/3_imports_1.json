@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.lang.reflect.AccessibleObject;\nimport java.util.List;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsAndroidType_withAndroidPrefix() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    method.setAccessible(true);\n\n    assertTrue((Boolean) method.invoke(null, \"android.app.Activity\"));\n    assertTrue((Boolean) method.invoke(null, \"androidx.recyclerview.widget.RecyclerView\"));\n  }\n\n  @Test\n  void testIsAndroidType_withJavaType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    method.setAccessible(true);\n\n    // We need to test the branch isJavaType(className) returns true\n    // For that, we must know what isJavaType(String) accepts as java types.\n    // Assuming \"java.lang.String\" is java type.\n    assertTrue((Boolean) method.invoke(null, \"java.lang.String\"));\n  }\n\n  @Test\n  void testIsAndroidType_withNonAndroidNonJavaType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    method.setAccessible(true);\n\n    assertFalse((Boolean) method.invoke(null, \"com.example.MyClass\"));\n    assertFalse((Boolean) method.invoke(null, \"\"));\n    assertFalse((Boolean) method.invoke(null, \"androidxx.something\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 328,
+  "completion_tokens": 365,
+  "total_tokens": 693,
+  "llm_elapsed_time_seconds": 5.23,
+  "repair_elapsed_time_seconds": 12.07,
+  "round_total_time_seconds": 12.07
+}

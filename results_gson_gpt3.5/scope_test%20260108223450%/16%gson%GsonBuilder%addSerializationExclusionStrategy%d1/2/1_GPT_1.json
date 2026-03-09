@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBet6F8DjpcpYCnxMuokwP2IKa4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertSame;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testAddSerializationExclusionStrategy() throws Exception {\n    ExclusionStrategy strategy = mock(ExclusionStrategy.class);\n\n    // Access excluder field before invocation\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder originalExcluder = (Excluder) excluderField.get(gsonBuilder);\n\n    // Mock Excluder to return a new Excluder instance upon withExclusionStrategy call\n    Excluder mockExcluder = mock(Excluder.class);\n    when(mockExcluder.withExclusionStrategy(strategy, true, false)).thenReturn(mockExcluder);\n\n    // Replace excluder field with mockExcluder for testing\n    excluderField.set(gsonBuilder, mockExcluder);\n\n    // Call focal method\n    GsonBuilder returnedBuilder = gsonBuilder.addSerializationExclusionStrategy(strategy);\n\n    // Verify that the method returns the same GsonBuilder instance\n    assertSame(gsonBuilder, returnedBuilder);\n\n    // Verify excluder field has been updated to mockExcluder\n    Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n    assertSame(mockExcluder, updatedExcluder);\n  }\n\n  @Test\n  public void testAddSerializationExclusionStrategy_nullStrategy_throwsNullPointerException() {\n    try {\n      gsonBuilder.addSerializationExclusionStrategy(null);\n    } catch (NullPointerException e) {\n      // expected\n      return;\n    }\n    throw new AssertionError(\"Expected NullPointerException to be thrown\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889806,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 444,
+    "prompt_tokens": 1137,
+    "total_tokens": 1581,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.16
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmtQ7uFsaDtdQcWsM5LxjGwtUmOr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass LinkedTreeMap_FindByObjectTest {\n\n    private LinkedTreeMap<String, String> map;\n\n    @BeforeEach\n    public void setUp() {\n        // Using default constructor (assumes natural ordering)\n        map = new LinkedTreeMap<>();\n    }\n\n    @Test\n    public void testFindByObject_withExistingKey_returnsNode() throws Exception {\n        // Put a key-value pair\n        map.put(\"key1\", \"value1\");\n\n        // Access private findByObject via reflection\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        // Retrieve node for existing key\n        @SuppressWarnings(\"unchecked\")\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, \"key1\");\n\n        assertNotNull(node);\n        assertEquals(\"key1\", node.key);\n        assertEquals(\"value1\", node.value);\n    }\n\n    @Test\n    public void testFindByObject_withNonExistingKey_returnsNull() throws Exception {\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, \"nonExistingKey\");\n\n        assertNull(node);\n    }\n\n    @Test\n    public void testFindByObject_withNullKey_returnsNull() throws Exception {\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, (Object) null);\n\n        assertNull(node);\n    }\n\n    @Test\n    public void testFindByObject_withIncompatibleKeyType_returnsNull() throws Exception {\n        // Create a map with natural ordering (String keys)\n        LinkedTreeMap<String, String> stringMap = new LinkedTreeMap<>();\n\n        // Put a key-value pair to have some content\n        stringMap.put(\"key1\", \"value1\");\n\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        try {\n            @SuppressWarnings(\"unchecked\")\n            Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(stringMap, 123);\n            // Should return null if ClassCastException caught inside findByObject\n            assertNull(node);\n        } catch (Exception e) {\n            // unwrap InvocationTargetException and fail if unexpected exception\n            Throwable cause = e.getCause();\n            if (cause instanceof ClassCastException) {\n                fail(\"ClassCastException should be caught inside findByObject and return null\");\n            } else {\n                throw e;\n            }\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888676,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 673,
+    "prompt_tokens": 2767,
+    "total_tokens": 3440,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.05
+  }
+}

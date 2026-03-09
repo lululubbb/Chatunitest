@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnNVRDjjVRuPIrSKuF9N4DXf8zOH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_withNullJsonElement_returnsJsonNullString() {\n    JsonElement jsonElement = JsonNull.INSTANCE;\n    String json = gson.toJson(jsonElement);\n    assertEquals(\"null\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitive_returnsPrimitiveAsString() {\n    JsonElement jsonElement = new JsonPrimitive(\"test\");\n    String json = gson.toJson(jsonElement);\n    assertEquals(\"\\\"test\\\"\", json);\n  }\n\n  @Test\n  void toJson_withJsonObject_returnsJsonObjectString() {\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.addProperty(\"key\", \"value\");\n    String json = gson.toJson(jsonObject);\n    assertEquals(\"{\\\"key\\\":\\\"value\\\"}\", json);\n  }\n\n  @Test\n  void toJson_withJsonArray_returnsJsonArrayString() {\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(new JsonPrimitive(1));\n    jsonArray.add(new JsonPrimitive(2));\n    String json = gson.toJson(jsonArray);\n    assertEquals(\"[1,2]\", json);\n  }\n\n  @Test\n  void toJson_invokesToJsonJsonElementWriter() throws Exception {\n    JsonPrimitive primitive = spy(new JsonPrimitive(\"test\"));\n    JsonElement element = primitive;\n\n    StringWriter stringWriter = spy(new StringWriter());\n    Gson spyGson = spy(gson);\n\n    JsonWriter jsonWriter = spyGson.newJsonWriter(stringWriter);\n\n    // Use reflection to invoke private toJson(JsonElement, JsonWriter)\n    Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class, JsonWriter.class);\n    toJsonMethod.setAccessible(true);\n    toJsonMethod.invoke(spyGson, element, jsonWriter);\n\n    // Verify that JsonPrimitive.write(JsonWriter) was called\n    verify(primitive, atLeastOnce()).write(any(JsonWriter.class));\n\n    String json = stringWriter.toString();\n    assertNotNull(json);\n  }\n\n  @Test\n  void toJson_withEmptyJsonObject_returnsEmptyBraces() {\n    JsonObject jsonObject = new JsonObject();\n    String json = gson.toJson(jsonObject);\n    assertEquals(\"{}\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveNumber_returnsNumberString() {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(123);\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"123\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveBoolean_returnsBooleanString() {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(true);\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"true\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveNull_returnsNullString() {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"null\");\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"\\\"null\\\"\", json);\n  }\n\n  @Test\n  void toJson_withComplexJsonElement_returnsCorrectJson() {\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.addProperty(\"string\", \"value\");\n    jsonObject.addProperty(\"number\", 10);\n    jsonObject.addProperty(\"bool\", true);\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(new JsonPrimitive(1));\n    jsonArray.add(new JsonPrimitive(2));\n    jsonObject.add(\"array\", jsonArray);\n\n    String json = gson.toJson(jsonObject);\n    assertEquals(\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":10,\\\"bool\\\":true,\\\"array\\\":[1,2]}\", json);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890541,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 829,
+    "prompt_tokens": 2110,
+    "total_tokens": 2939,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.49
+  }
+}

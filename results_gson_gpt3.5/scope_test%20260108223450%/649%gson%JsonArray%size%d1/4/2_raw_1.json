@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void testSize_EmptyElements() throws Exception {\n    // Using reflection to set private field elements to empty list\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, new ArrayList<JsonElement>());\n\n    int size = jsonArray.size();\n\n    assertEquals(0, size);\n  }\n\n  @Test\n  public void testSize_WithElements() throws Exception {\n    // Using reflection to set private field elements to list with 3 mock JsonElement objects\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    ArrayList<JsonElement> elements = new ArrayList<>();\n    elements.add(new JsonPrimitive(\"one\"));\n    elements.add(new JsonPrimitive(\"two\"));\n    elements.add(new JsonPrimitive(\"three\"));\n    elementsField.set(jsonArray, elements);\n\n    int size = jsonArray.size();\n\n    assertEquals(3, size);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 478,
+  "completion_tokens": 286,
+  "total_tokens": 764,
+  "llm_elapsed_time_seconds": 5.04
+}

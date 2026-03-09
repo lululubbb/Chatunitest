@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwatEWj2l0CkALNyIzP5CWW0EQB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\n\nclass TypeAdapterRuntimeTypeWrapperTest<T> {\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_valueNull_returnsOriginalType() throws Exception {\n    Type originalType = String.class;\n    Object value = null;\n\n    Type result = invokeGetRuntimeTypeIfMoreSpecific(originalType, value);\n\n    assertSame(originalType, result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_typeIsClass_valueNonNull_returnsValueClass() throws Exception {\n    Type originalType = Object.class;\n    Object value = \"testString\";\n\n    Type result = invokeGetRuntimeTypeIfMoreSpecific(originalType, value);\n\n    assertEquals(value.getClass(), result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_typeIsTypeVariable_valueNonNull_returnsValueClass() throws Exception {\n    TypeVariable<?> typeVariable = TypeAdapterRuntimeTypeWrapperTest.class.getTypeParameters()[0];\n    Object value = 123;\n\n    Type result = invokeGetRuntimeTypeIfMoreSpecific(typeVariable, value);\n\n    assertEquals(value.getClass(), result);\n  }\n\n  @Test\n  void getRuntimeTypeIfMoreSpecific_typeIsOtherType_valueNonNull_returnsOriginalType() throws Exception {\n    Type originalType = new Type() {};\n    Object value = 456;\n\n    Type result = invokeGetRuntimeTypeIfMoreSpecific(originalType, value);\n\n    assertSame(originalType, result);\n  }\n\n  private Type invokeGetRuntimeTypeIfMoreSpecific(Type type, Object value) throws Exception {\n    Class<?> clazz = Class.forName(\"com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper\");\n    var method = clazz.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    method.setAccessible(true);\n    // getRuntimeTypeIfMoreSpecific is private static, so invoke with null instance\n    return (Type) method.invoke(null, type, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888872,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 447,
+    "prompt_tokens": 914,
+    "total_tokens": 1361,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.84
+  }
+}

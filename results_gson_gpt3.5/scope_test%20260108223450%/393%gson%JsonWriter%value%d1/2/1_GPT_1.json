@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnFARpoTjXf7QEvhk6iFsEUr2idm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void value_shouldWriteFiniteDouble() throws IOException {\n    jsonWriter.value(123.456);\n    assertEquals(\"123.456\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldWriteNegativeDouble() throws IOException {\n    jsonWriter.value(-789.01);\n    assertEquals(\"-789.01\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldWriteZero() throws IOException {\n    jsonWriter.value(0.0);\n    assertEquals(\"0.0\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldThrowForNaN_whenLenientFalse() {\n    jsonWriter.setLenient(false);\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.NaN);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_shouldThrowForPositiveInfinity_whenLenientFalse() {\n    jsonWriter.setLenient(false);\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.POSITIVE_INFINITY);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_shouldThrowForNegativeInfinity_whenLenientFalse() {\n    jsonWriter.setLenient(false);\n    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n      jsonWriter.value(Double.NEGATIVE_INFINITY);\n    });\n    assertTrue(exception.getMessage().contains(\"Numeric values must be finite\"));\n  }\n\n  @Test\n  public void value_shouldAllowNaN_whenLenientTrue() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Double.NaN);\n    assertEquals(\"NaN\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldAllowPositiveInfinity_whenLenientTrue() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Double.POSITIVE_INFINITY);\n    assertEquals(\"Infinity\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldAllowNegativeInfinity_whenLenientTrue() throws IOException {\n    jsonWriter.setLenient(true);\n    jsonWriter.value(Double.NEGATIVE_INFINITY);\n    assertEquals(\"-Infinity\", stringWriter.toString());\n  }\n\n  @Test\n  public void value_shouldCallWriteDeferredNameAndBeforeValue() throws Exception {\n    // Spy on JsonWriter to verify private method calls via reflection\n    JsonWriter spyWriter = spy(new JsonWriter(new StringWriter()));\n\n    // Use reflection to set lenient to true to avoid exceptions for special doubles\n    java.lang.reflect.Field lenientField = JsonWriter.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    lenientField.set(spyWriter, true);\n\n    // Replace writeDeferredName with a spy method to track invocation\n    java.lang.reflect.Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    // Replace beforeValue with spy\n    java.lang.reflect.Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    // Call value(double)\n    spyWriter.value(42.0);\n\n    // Verify that writeDeferredName and beforeValue were called once each\n    verify(spyWriter, times(1)).writeDeferredName();\n    verify(spyWriter, times(1)).beforeValue();\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890024,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 836,
+    "prompt_tokens": 777,
+    "total_tokens": 1613,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.76
+  }
+}

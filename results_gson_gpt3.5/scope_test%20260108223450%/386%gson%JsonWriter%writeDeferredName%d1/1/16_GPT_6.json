@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmt3L1ZRpwGJgdmGAmVLDyykvvlh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  private Method writeDeferredNameMethod;\n\n  private Method beforeNameMethod;\n  private Method stringMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n\n    // Access private method via reflection\n    writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n    beforeNameMethod.setAccessible(true);\n\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  void writeDeferredName_deferredNameNull_noAction() throws Throwable {\n    // deferredName is null by default, so invoking should do nothing and not throw\n    writeDeferredNameMethod.invoke(jsonWriter);\n    // No exception means success, output should be empty\n    assertEquals(\"\", stringWriter.toString());\n  }\n\n  @Test\n  void writeDeferredName_deferredNameSet_executesBeforeNameAndString() throws Throwable {\n    // Create a new StringWriter and JsonWriter so the stack is properly initialized\n    StringWriter localWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(localWriter);\n\n    // Begin an object to set the stack correctly and avoid nesting problem\n    writer.beginObject();\n\n    // Set deferredName field to a non-null value via reflection\n    Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(writer, \"testName\");\n\n    // Invoke writeDeferredName via reflection\n    writeDeferredNameMethod.invoke(writer);\n\n    // Verify deferredName is set to null after invocation\n    assertNull(deferredNameField.get(writer));\n\n    // The output should contain the name string \"testName\" in quotes\n    String output = localWriter.toString();\n    assertTrue(output.contains(\"\\\"testName\\\"\"));\n  }\n\n  @Test\n  void writeDeferredName_beforeNameThrowsIOException_propagates() throws Throwable {\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      // Create a subclass overriding beforeName to throw IOException\n      class JsonWriterWithFailingBeforeName extends JsonWriter {\n        JsonWriterWithFailingBeforeName(StringWriter out) {\n          super(out);\n        }\n\n        // Expose a method to call writeDeferredName via reflection to simulate the exception\n        public void invokeWriteDeferredName() throws Throwable {\n          Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n          deferredNameField.setAccessible(true);\n          deferredNameField.set(this, \"testName\");\n\n          // Call writeDeferredName via reflection\n          Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n          writeDeferredName.setAccessible(true);\n\n          // Call beforeName via overridden method to throw IOException\n          beforeName();\n\n          // If no exception, call writeDeferredName (which would call private beforeName that does nothing)\n          writeDeferredName.invoke(this);\n        }\n\n        // Override beforeName by hiding private method with public method that throws\n        public void beforeName() throws IOException {\n          throw new IOException(\"beforeName failure\");\n        }\n      }\n\n      JsonWriterWithFailingBeforeName failingWriter = new JsonWriterWithFailingBeforeName(stringWriter);\n\n      // We invoke the public beforeName() method to simulate the exception during writeDeferredName\n      failingWriter.invokeWriteDeferredName();\n\n      fail(\"Expected IOException to be thrown\");\n    });\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"beforeName failure\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  void writeDeferredName_stringThrowsIOException_propagates() throws Throwable {\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      class JsonWriterWithFailingString extends JsonWriter {\n        JsonWriterWithFailingString(StringWriter out) {\n          super(out);\n        }\n\n        // Override string method to throw IOException\n        public void string(String value) throws IOException {\n          throw new IOException(\"string failure\");\n        }\n      }\n\n      // Create a new StringWriter and JsonWriterWithFailingString with proper stack state\n      StringWriter localWriter = new StringWriter();\n      JsonWriterWithFailingString failingWriter = new JsonWriterWithFailingString(localWriter);\n\n      // Begin an object to set the stack correctly and avoid nesting problem\n      failingWriter.beginObject();\n\n      Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n      deferredNameField.setAccessible(true);\n      deferredNameField.set(failingWriter, \"testName\");\n\n      // We cannot override private string method, so we test by invoking string method directly via reflection\n      // This will throw IOException as overridden\n      stringMethod.invoke(failingWriter, \"testName\");\n\n      fail(\"Expected IOException to be thrown\");\n    });\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"string failure\", thrown.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888653,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1147,
+    "prompt_tokens": 2707,
+    "total_tokens": 3854,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.56
+  }
+}

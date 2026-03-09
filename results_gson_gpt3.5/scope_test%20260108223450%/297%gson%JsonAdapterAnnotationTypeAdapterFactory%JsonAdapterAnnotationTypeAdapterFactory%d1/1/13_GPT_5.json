@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmFebBpWzyRyj5lU9ekkcND63iuW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.*;\nimport com.google.gson.annotations.JsonAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Method;\n\nclass JsonAdapterAnnotationTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor mockConstructorConstructor;\n  @Mock\n  private Gson mockGson;\n\n  private JsonAdapterAnnotationTypeAdapterFactory factory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    factory = new JsonAdapterAnnotationTypeAdapterFactory(mockConstructorConstructor);\n  }\n\n  static class DummyType {}\n\n  @JsonAdapter(DummyAdapter.class)\n  static class AnnotatedDummy {}\n\n  static class DummyAdapter extends TypeAdapter<DummyType> {\n    @Override\n    public void write(com.google.gson.stream.JsonWriter out, DummyType value) {\n    }\n\n    @Override\n    public DummyType read(com.google.gson.stream.JsonReader in) {\n      return null;\n    }\n  }\n\n  @Test\n  void testConstructor() {\n    JsonAdapterAnnotationTypeAdapterFactory f = new JsonAdapterAnnotationTypeAdapterFactory(mockConstructorConstructor);\n    assertNotNull(f);\n  }\n\n  @Test\n  void testCreate_withJsonAdapterAnnotation_returnsTypeAdapter() throws Exception {\n    TypeToken<AnnotatedDummy> typeToken = TypeToken.get(AnnotatedDummy.class);\n\n    JsonAdapter jsonAdapterAnnotation = AnnotatedDummy.class.getAnnotation(JsonAdapter.class);\n    assertNotNull(jsonAdapterAnnotation);\n\n    // Use reflection to access private method getTypeAdapter\n    Method getTypeAdapterMethod = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\n        \"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    getTypeAdapterMethod.setAccessible(true);\n\n    // Mock constructorConstructor to return a dummy ObjectConstructor<DummyAdapter> when requested\n    DummyAdapter dummyAdapterInstance = new DummyAdapter();\n    when(mockConstructorConstructor.get(TypeToken.get(DummyAdapter.class))).thenReturn(() -> dummyAdapterInstance);\n\n    // Invoke private getTypeAdapter method\n    TypeAdapter<?> adapter = (TypeAdapter<?>) getTypeAdapterMethod.invoke(factory,\n        mockConstructorConstructor, mockGson, typeToken, jsonAdapterAnnotation);\n\n    assertNotNull(adapter);\n    assertTrue(adapter instanceof TypeAdapter);\n  }\n\n  @Test\n  void testCreate_withoutJsonAdapterAnnotation_returnsNull() {\n    TypeToken<DummyType> typeToken = TypeToken.get(DummyType.class);\n    TypeAdapter<?> adapter = factory.create(mockGson, typeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  void testCreate_withJsonAdapterAnnotation_returnsTypeAdapter_public() {\n    TypeToken<AnnotatedDummy> typeToken = TypeToken.get(AnnotatedDummy.class);\n    TypeAdapter<?> adapter = factory.create(mockGson, typeToken);\n    assertNotNull(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886210,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 633,
+    "prompt_tokens": 1165,
+    "total_tokens": 1798,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.49
+  }
+}

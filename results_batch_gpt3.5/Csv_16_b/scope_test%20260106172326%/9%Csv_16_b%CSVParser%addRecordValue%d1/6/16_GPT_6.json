@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxiIKr4lJWRETM2aFDe1dYCx3hUk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private CSVFormat mockFormat;\n    private Token reusableToken;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Mock CSVFormat\n        mockFormat = mock(CSVFormat.class);\n        when(mockFormat.getTrim()).thenReturn(false);\n        when(mockFormat.getTrailingDelimiter()).thenReturn(false);\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        // Create CSVParser instance using constructor with Reader and CSVFormat\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), mockFormat);\n\n        // Access reusableToken field and set it up\n        Field tokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        tokenField.setAccessible(true);\n        reusableToken = (Token) tokenField.get(csvParser);\n\n        // Clear recordList for clean state\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        List<String> recordList = (List<String>) recordListField.get(csvParser);\n        recordList.clear();\n    }\n\n    @Test\n    void testAddRecordValue_normalInput_notLastRecord() throws Exception {\n        // Modify reusableToken.content's internal StringBuilder content instead of reassigning\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = (StringBuilder) contentField.get(reusableToken);\n        content.setLength(0);\n        content.append(\"value1\");\n\n        // Mock format behavior\n        when(mockFormat.getTrim()).thenReturn(true);\n        when(mockFormat.getTrailingDelimiter()).thenReturn(false);\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        // Invoke private method addRecordValue with lastRecord = false\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\", boolean.class);\n        method.setAccessible(true);\n        method.invoke(csvParser, false);\n\n        // Verify recordList contains trimmed \"value1\"\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        List<String> recordList = (List<String>) recordListField.get(csvParser);\n\n        assertEquals(1, recordList.size());\n        assertEquals(\"value1\", recordList.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_trimTrue_andNullString() throws Exception {\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = (StringBuilder) contentField.get(reusableToken);\n        content.setLength(0);\n        content.append(\"  NULL  \");\n\n        when(mockFormat.getTrim()).thenReturn(true);\n        when(mockFormat.getTrailingDelimiter()).thenReturn(false);\n        when(mockFormat.getNullString()).thenReturn(\"NULL\");\n\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\", boolean.class);\n        method.setAccessible(true);\n        method.invoke(csvParser, false);\n\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        List<String> recordList = (List<String>) recordListField.get(csvParser);\n\n        assertEquals(1, recordList.size());\n        assertNull(recordList.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_emptyInput_lastRecordTrailingDelimiterTrue() throws Exception {\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = (StringBuilder) contentField.get(reusableToken);\n        content.setLength(0);\n        content.append(\"   \");\n\n        when(mockFormat.getTrim()).thenReturn(true);\n        when(mockFormat.getTrailingDelimiter()).thenReturn(true);\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\", boolean.class);\n        method.setAccessible(true);\n        method.invoke(csvParser, true);\n\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        List<String> recordList = (List<String>) recordListField.get(csvParser);\n\n        // Since lastRecord is true, inputClean is empty and trailingDelimiter is true, method returns early\n        assertEquals(0, recordList.size());\n    }\n\n    @Test\n    void testAddRecordValue_emptyInput_lastRecordTrailingDelimiterFalse() throws Exception {\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = (StringBuilder) contentField.get(reusableToken);\n        content.setLength(0);\n        content.append(\"   \");\n\n        when(mockFormat.getTrim()).thenReturn(true);\n        when(mockFormat.getTrailingDelimiter()).thenReturn(false);\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\", boolean.class);\n        method.setAccessible(true);\n        method.invoke(csvParser, true);\n\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        List<String> recordList = (List<String>) recordListField.get(csvParser);\n\n        // recordList should contain empty string because trailingDelimiter is false\n        assertEquals(1, recordList.size());\n        assertEquals(\"\", recordList.get(0));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691942,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1163,
+    "prompt_tokens": 2014,
+    "total_tokens": 3177,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.38
+  }
+}

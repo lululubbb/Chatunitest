@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\n\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.Lexer;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass CSVParserIsClosedTest {\n\n    CSVParser csvParser;\n    Lexer lexerMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a dummy Reader and CSVFormat to construct CSVParser instance\n        Reader reader = mock(Reader.class);\n        // CSVFormat is not detailed, so use null for simplicity\n        csvParser = new CSVParser(reader, null);\n\n        // Create a mock Lexer\n        lexerMock = mock(Lexer.class);\n\n        // Use reflection to set private final field 'lexer' in CSVParser to lexerMock\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @Test\n    void testIsClosedReturnsTrue() {\n        when(lexerMock.isClosed()).thenReturn(true);\n\n        boolean result = csvParser.isClosed();\n\n        assertTrue(result);\n        verify(lexerMock).isClosed();\n    }\n\n    @Test\n    void testIsClosedReturnsFalse() {\n        when(lexerMock.isClosed()).thenReturn(false);\n\n        boolean result = csvParser.isClosed();\n\n        assertFalse(result);\n        verify(lexerMock).isClosed();\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_16_b/scope_test%20260106172326%/17%Csv_16_b%CSVParser%isClosed%d1/4/runtemp/Csv_16_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 602,
+  "completion_tokens": 325,
+  "total_tokens": 927,
+  "llm_elapsed_time_seconds": 6.08
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvluAN9Ufb70Qe8WrxCAebvYheepS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Array;\nimport java.util.Arrays;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass ArrayTypeAdapterTest {\n\n  private Gson gson;\n  private TypeAdapter<Integer> componentTypeAdapter;\n  private ArrayTypeAdapter<Integer> arrayTypeAdapter;\n\n  @BeforeEach\n  void setUp() {\n    gson = mock(Gson.class);\n    componentTypeAdapter = mock(TypeAdapter.class);\n    arrayTypeAdapter = new ArrayTypeAdapter<>(gson, componentTypeAdapter, Integer.class);\n  }\n\n  @Test\n  void read_nullJson_returnsNull() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NULL);\n\n    Object result = arrayTypeAdapter.read(in);\n\n    verify(in).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  void read_emptyArray_returnsEmptyArray() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.BEGIN_ARRAY, JsonToken.END_ARRAY);\n    when(in.hasNext()).thenReturn(false);\n\n    Object result = arrayTypeAdapter.read(in);\n\n    verify(in).beginArray();\n    verify(in).hasNext();\n    verify(in).endArray();\n    assertTrue(result instanceof Integer[]);\n    assertEquals(0, Array.getLength(result));\n  }\n\n  @Test\n  void read_arrayOfIntegers_returnsArray() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n    when(in.hasNext()).thenReturn(true, true, false);\n    when(componentTypeAdapter.read(in)).thenReturn(1, 2);\n    doNothing().when(in).beginArray();\n    doNothing().when(in).endArray();\n\n    // Arrange peek calls for hasNext and peek in the original method\n    // but only peek() is called once at start, so we mock only that.\n    // hasNext() controls the loop.\n\n    Object result = arrayTypeAdapter.read(in);\n\n    InOrder inOrder = inOrder(in, componentTypeAdapter);\n    inOrder.verify(in).peek();\n    inOrder.verify(in).beginArray();\n    inOrder.verify(in, times(3)).hasNext();\n    inOrder.verify(componentTypeAdapter, times(2)).read(in);\n    inOrder.verify(in).endArray();\n\n    assertTrue(result instanceof Integer[]);\n    Integer[] array = (Integer[]) result;\n    assertArrayEquals(new Integer[]{1, 2}, array);\n  }\n\n  @Test\n  void read_arrayOfPrimitiveInts_returnsPrimitiveIntArray() throws IOException {\n    // Create adapter for int primitive type\n    TypeAdapter<Integer> intComponentAdapter = mock(TypeAdapter.class);\n    ArrayTypeAdapter<Integer> adapter = new ArrayTypeAdapter<>(gson, intComponentAdapter, int.class);\n\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n    when(in.hasNext()).thenReturn(true, true, false);\n    when(intComponentAdapter.read(in)).thenReturn(10, 20);\n    doNothing().when(in).beginArray();\n    doNothing().when(in).endArray();\n\n    Object result = adapter.read(in);\n\n    InOrder inOrder = inOrder(in, intComponentAdapter);\n    inOrder.verify(in).peek();\n    inOrder.verify(in).beginArray();\n    inOrder.verify(in, times(3)).hasNext();\n    inOrder.verify(intComponentAdapter, times(2)).read(in);\n    inOrder.verify(in).endArray();\n\n    assertTrue(result.getClass().isArray());\n    assertEquals(int.class, result.getClass().getComponentType());\n    assertEquals(2, Array.getLength(result));\n    assertEquals(10, Array.get(result, 0));\n    assertEquals(20, Array.get(result, 1));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884878,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 861,
+    "prompt_tokens": 1303,
+    "total_tokens": 2164,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.15
+  }
+}

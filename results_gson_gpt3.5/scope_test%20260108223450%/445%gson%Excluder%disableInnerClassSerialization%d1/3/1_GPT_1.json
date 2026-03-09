@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCtYDzt1Tg780g1fqcyeP9XKOjm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ExcluderTest {\n\n  @Test\n  void testDisableInnerClassSerialization() throws Exception {\n    Excluder original = new Excluder();\n\n    // Use reflection to invoke the private clone() method to verify cloning behavior\n    Method cloneMethod = Excluder.class.getDeclaredMethod(\"clone\");\n    cloneMethod.setAccessible(true);\n    Excluder clonedViaReflection = (Excluder) cloneMethod.invoke(original);\n\n    // Call disableInnerClassSerialization and get the result\n    Excluder disabled = original.disableInnerClassSerialization();\n\n    // Verify that disableInnerClassSerialization returns a new instance (clone)\n    assertNotSame(original, disabled);\n\n    // Verify that the clone method is called and returns equivalent object\n    assertEquals(clonedViaReflection.getClass(), disabled.getClass());\n\n    // Use reflection to get the private field serializeInnerClasses from both objects\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n\n    boolean originalValue = (boolean) serializeInnerClassesField.get(original);\n    boolean disabledValue = (boolean) serializeInnerClassesField.get(disabled);\n\n    // Original should be true (default)\n    assertTrue(originalValue);\n\n    // Disabled should be false after disableInnerClassSerialization\n    assertFalse(disabledValue);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889883,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 322,
+    "prompt_tokens": 601,
+    "total_tokens": 923,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.7
+  }
+}

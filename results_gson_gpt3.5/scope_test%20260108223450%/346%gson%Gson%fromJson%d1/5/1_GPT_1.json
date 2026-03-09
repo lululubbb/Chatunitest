@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmW5lL6Vf6vNMiyw2TxfxmsRUhuP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.Primitives;\nimport com.google.gson.reflect.TypeToken;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_validJson_returnsObject() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Reader reader = new StringReader(json);\n    Class<Dummy> clazz = Dummy.class;\n\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      TypeToken<Dummy> dummyTypeToken = TypeToken.get(clazz);\n      mockedTypeToken.when(() -> TypeToken.get(clazz)).thenReturn(dummyTypeToken);\n\n      // Spy on Gson to mock fromJson(Reader, TypeToken<T>)\n      Gson spyGson = Mockito.spy(gson);\n      Dummy dummyInstance = new Dummy(\"test\");\n      doReturn(dummyInstance).when(spyGson).fromJson(reader, dummyTypeToken);\n\n      Dummy result = spyGson.fromJson(reader, clazz);\n\n      assertNotNull(result);\n      assertEquals(\"test\", result.name);\n    }\n  }\n\n  @Test\n  void fromJson_nullReader_returnsNull() throws Exception {\n    Reader reader = null;\n    Class<Dummy> clazz = Dummy.class;\n\n    Gson spyGson = Mockito.spy(gson);\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class)) {\n      TypeToken<Dummy> dummyTypeToken = TypeToken.get(clazz);\n      mockedTypeToken.when(() -> TypeToken.get(clazz)).thenReturn(dummyTypeToken);\n      doReturn(null).when(spyGson).fromJson(reader, dummyTypeToken);\n\n      Dummy result = spyGson.fromJson(reader, clazz);\n\n      assertNull(result);\n    }\n  }\n\n  @Test\n  void fromJson_castThrowsClassCastException_throwsJsonSyntaxException() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Reader reader = new StringReader(json);\n    Class<Dummy> clazz = Dummy.class;\n\n    try (MockedStatic<TypeToken> mockedTypeToken = Mockito.mockStatic(TypeToken.class);\n        MockedStatic<Primitives> mockedPrimitives = Mockito.mockStatic(Primitives.class)) {\n      TypeToken<Dummy> dummyTypeToken = TypeToken.get(clazz);\n      mockedTypeToken.when(() -> TypeToken.get(clazz)).thenReturn(dummyTypeToken);\n\n      Gson spyGson = Mockito.spy(gson);\n      Object object = new Object(); // Not Dummy\n      doReturn(object).when(spyGson).fromJson(reader, dummyTypeToken);\n\n      mockedPrimitives.when(() -> Primitives.wrap(clazz)).thenReturn((Class) clazz);\n\n      assertThrows(ClassCastException.class, () -> {\n        spyGson.fromJson(reader, clazz);\n      });\n    }\n  }\n\n  // Dummy class for testing\n  static class Dummy {\n    String name;\n\n    Dummy(String name) {\n      this.name = name;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887229,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 695,
+    "prompt_tokens": 1614,
+    "total_tokens": 2309,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.32
+  }
+}

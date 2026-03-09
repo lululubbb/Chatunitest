@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.util.ArrayList;\nimport java.util.Objects;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter writer;\n\n    @BeforeEach\n    public void setUp() {\n        writer = new JsonTreeWriter();\n    }\n\n    @Test\n    public void testGet_whenStackIsEmpty_returnsProduct() throws Exception {\n        // Initially product is JsonNull.INSTANCE\n        JsonElement result = writer.get();\n        assertNotNull(result);\n        assertTrue(result instanceof JsonNull);\n    }\n\n    @Test\n    public void testGet_whenStackIsNotEmpty_throwsIllegalStateException() throws Exception {\n        // Use reflection to add element to private stack field\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n        stack.add(new JsonArray());\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            writer.get();\n        });\n        assertTrue(thrown.getMessage().startsWith(\"Expected one JSON element but was \"));\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 531,
+  "completion_tokens": 297,
+  "total_tokens": 828,
+  "llm_elapsed_time_seconds": 7.09,
+  "repair_elapsed_time_seconds": 15.03,
+  "round_total_time_seconds": 15.03
+}

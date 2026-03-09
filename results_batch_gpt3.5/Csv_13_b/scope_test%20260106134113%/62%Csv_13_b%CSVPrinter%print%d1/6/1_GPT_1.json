@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuhLywz1D5fWcIPNtXpRhjZ30cDp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private CSVFormat format;\n    private Appendable out;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_NewRecordTrue_QuoteCharacterSet() throws Throwable {\n        setField(printer, \"newRecord\", true);\n        when(format.isQuoteCharacterSet()).thenReturn(true);\n        when(format.isEscapeCharacterSet()).thenReturn(false);\n\n        CharSequence value = \"value\";\n        Object object = new Object();\n\n        invokePrint(printer, object, value, 0, value.length());\n\n        // Should call printAndQuote, no delimiter appended since newRecord true\n        verify(out, never()).append(anyChar());\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_QuoteCharacterSet() throws Throwable {\n        setField(printer, \"newRecord\", false);\n        when(format.isQuoteCharacterSet()).thenReturn(true);\n        when(format.isEscapeCharacterSet()).thenReturn(false);\n        when(format.getDelimiter()).thenReturn(',');\n\n        CharSequence value = \"value\";\n        Object object = new Object();\n\n        invokePrint(printer, object, value, 0, value.length());\n\n        // Should append delimiter once\n        verify(out).append(',');\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_EscapeCharacterSet() throws Throwable {\n        setField(printer, \"newRecord\", false);\n        when(format.isQuoteCharacterSet()).thenReturn(false);\n        when(format.isEscapeCharacterSet()).thenReturn(true);\n        when(format.getDelimiter()).thenReturn(';');\n\n        CharSequence value = \"escapeValue\";\n        Object object = new Object();\n\n        invokePrint(printer, object, value, 0, value.length());\n\n        verify(out).append(';');\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_NoQuoteNoEscape() throws Throwable {\n        setField(printer, \"newRecord\", false);\n        when(format.isQuoteCharacterSet()).thenReturn(false);\n        when(format.isEscapeCharacterSet()).thenReturn(false);\n        when(format.getDelimiter()).thenReturn('|');\n\n        CharSequence value = \"abcdef\";\n        Object object = new Object();\n\n        invokePrint(printer, object, value, 1, 3);\n\n        // Should append delimiter\n        verify(out).append('|');\n        // Should append value from offset 1 to 4 (1 + 3)\n        verify(out).append(value, 1, 4);\n    }\n\n    @Test\n    void testPrint_NewRecordTrue_NoQuoteNoEscape() throws Throwable {\n        setField(printer, \"newRecord\", true);\n        when(format.isQuoteCharacterSet()).thenReturn(false);\n        when(format.isEscapeCharacterSet()).thenReturn(false);\n\n        CharSequence value = \"abcdef\";\n        Object object = new Object();\n\n        invokePrint(printer, object, value, 2, 2);\n\n        // Should not append delimiter\n        verify(out, never()).append(anyChar());\n        verify(out).append(value, 2, 4);\n    }\n\n    // Helper to invoke private print method\n    private void invokePrint(CSVPrinter printer, Object object, CharSequence value, int offset, int len) throws Throwable {\n        try {\n            Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n            printMethod.setAccessible(true);\n            printMethod.invoke(printer, object, value, offset, len);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    // Helper to set private field via reflection\n    private void setField(Object target, String fieldName, Object value) {\n        try {\n            var field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            field.set(target, value);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680351,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 893,
+    "prompt_tokens": 946,
+    "total_tokens": 1839,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.91
+  }
+}

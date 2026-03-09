@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnQdPkLnNPExb35NAEHcegueqj7g",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void testValueTrueWritesTrue() throws Exception {\n    // No spying or stubbing private methods needed; just test value(true) directly.\n    JsonWriter returned = jsonWriter.value(true);\n    assertSame(jsonWriter, returned);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  public void testValueFalseWritesFalse() throws IOException {\n    JsonWriter writer = new JsonWriter(stringWriter);\n    JsonWriter returned = writer.value(false);\n    assertSame(writer, returned);\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  public void testValueCallsPrivateMethodsCorrectly() throws Exception {\n    JsonWriter writer = new JsonWriter(stringWriter);\n\n    // Use reflection to push a state to stack to avoid IllegalStateException\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(writer, 1);\n\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(writer);\n    stack[0] = 0; // EMPTY_DOCUMENT\n\n    // Access private methods\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    // Call private methods to ensure no exceptions\n    writeDeferredName.invoke(writer);\n    beforeValue.invoke(writer);\n\n    // Now call value(true) normally to ensure it writes \"true\"\n    JsonWriter returned = writer.value(true);\n    assertSame(writer, returned);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890735,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 492,
+    "prompt_tokens": 1557,
+    "total_tokens": 2049,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.04
+  }
+}

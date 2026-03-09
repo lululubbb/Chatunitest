@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm0p8sNUbu1qG6Cbt0nMjy4ZrZC6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass LazilyParsedNumberTest {\n\n  @Test\n  void doubleValue_validNumber_returnsParsedDouble() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123.456\");\n    double result = number.doubleValue();\n    assertEquals(123.456, result, 0.000001);\n  }\n\n  @Test\n  void doubleValue_negativeNumber_returnsParsedDouble() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"-987.654\");\n    double result = number.doubleValue();\n    assertEquals(-987.654, result, 0.000001);\n  }\n\n  @Test\n  void doubleValue_invalidNumber_throwsNumberFormatException() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"notANumber\");\n    assertThrows(NumberFormatException.class, number::doubleValue);\n  }\n\n  @Test\n  void toString_returnsOriginalValue() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"42.0\");\n    assertEquals(\"42.0\", number.toString());\n  }\n\n  @Test\n  void equals_sameValueObjects_areEqual() {\n    LazilyParsedNumber n1 = new LazilyParsedNumber(\"100\");\n    LazilyParsedNumber n2 = new LazilyParsedNumber(\"100\");\n    assertEquals(n1, n2);\n    assertEquals(n1.hashCode(), n2.hashCode());\n  }\n\n  @Test\n  void equals_differentValueObjects_notEqual() {\n    LazilyParsedNumber n1 = new LazilyParsedNumber(\"100\");\n    LazilyParsedNumber n2 = new LazilyParsedNumber(\"200\");\n    assertNotEquals(n1, n2);\n  }\n\n  @Test\n  void equals_nullAndOtherType_notEqual() {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"1\");\n    assertNotEquals(n, null);\n    assertNotEquals(n, \"1\");\n  }\n\n  @Test\n  void intValue_returnsIntValue() {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"123\");\n    assertEquals(123, n.intValue());\n  }\n\n  @Test\n  void longValue_returnsLongValue() {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"1234567890123\");\n    assertEquals(1234567890123L, n.longValue());\n  }\n\n  @Test\n  void floatValue_returnsFloatValue() {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"3.14\");\n    assertEquals(3.14f, n.floatValue(), 0.0001f);\n  }\n\n  @Test\n  void writeReplace_reflection_returnsString() throws Exception {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"1\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object replacement = writeReplace.invoke(n);\n    assertNotNull(replacement);\n    // The writeReplace returns the original String value, not LazilyParsedNumber instance\n    assertTrue(replacement instanceof CharSequence);\n    assertEquals(\"1\", replacement.toString());\n  }\n\n  @Test\n  void readObject_reflection_throwsInvalidObjectException() throws Exception {\n    LazilyParsedNumber n = new LazilyParsedNumber(\"1\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObject.setAccessible(true);\n    ObjectInputStream mockStream = Mockito.mock(ObjectInputStream.class);\n    // readObject should throw InvalidObjectException wrapped in InvocationTargetException\n    InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> readObject.invoke(n, mockStream));\n    // The cause should be InvalidObjectException\n    assertTrue(exception.getCause() instanceof InvalidObjectException);\n    assertEquals(\"Deserialization is unsupported\", exception.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885291,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 861,
+    "prompt_tokens": 1503,
+    "total_tokens": 2364,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.31
+  }
+}

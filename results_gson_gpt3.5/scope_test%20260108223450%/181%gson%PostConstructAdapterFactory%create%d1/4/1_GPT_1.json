@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn28BQl4nJLAZCx23FGiudpxUtyT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport javax.annotation.PostConstruct;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\n\npublic class PostConstructAdapterFactoryTest {\n\n    private PostConstructAdapterFactory factory;\n    private Gson mockGson;\n\n    @BeforeEach\n    public void setUp() {\n        factory = new PostConstructAdapterFactory();\n        mockGson = mock(Gson.class);\n    }\n\n    static class TestClassWithPostConstruct {\n        boolean postConstructCalled = false;\n\n        @PostConstruct\n        private void init() {\n            postConstructCalled = true;\n        }\n    }\n\n    static class TestClassWithoutPostConstruct {\n        // no @PostConstruct methods\n    }\n\n    @Test\n    public void create_WithPostConstructMethod_ReturnsPostConstructAdapter() throws Exception {\n        TypeToken<TestClassWithPostConstruct> typeToken = TypeToken.get(TestClassWithPostConstruct.class);\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<TestClassWithPostConstruct> delegateAdapter = mock(TypeAdapter.class);\n        when(mockGson.getDelegateAdapter(ArgumentMatchers.any(), ArgumentMatchers.eq(typeToken))).thenReturn(delegateAdapter);\n\n        TypeAdapter<TestClassWithPostConstruct> adapter = factory.create(mockGson, typeToken);\n\n        assertNotNull(adapter);\n        assertEquals(\"PostConstructAdapter\", adapter.getClass().getSimpleName());\n\n        // Use reflection to get the private field 'postConstructMethod' from PostConstructAdapter\n        Method postConstructMethod = TestClassWithPostConstruct.class.getDeclaredMethod(\"init\");\n        postConstructMethod.setAccessible(true);\n\n        // Verify that the PostConstruct annotation is present on the method\n        assertTrue(postConstructMethod.isAnnotationPresent(PostConstruct.class));\n    }\n\n    @Test\n    public void create_WithoutPostConstructMethod_ReturnsNull() {\n        TypeToken<TestClassWithoutPostConstruct> typeToken = TypeToken.get(TestClassWithoutPostConstruct.class);\n\n        TypeAdapter<TestClassWithoutPostConstruct> adapter = factory.create(mockGson, typeToken);\n\n        assertNull(adapter);\n        verify(mockGson, never()).getDelegateAdapter(any(), any());\n    }\n\n    @Test\n    public void create_InheritedPostConstructMethod_ReturnsPostConstructAdapter() {\n        class SuperClass {\n            @PostConstruct\n            private void init() {}\n        }\n        class SubClass extends SuperClass {}\n\n        TypeToken<SubClass> typeToken = TypeToken.get(SubClass.class);\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<SubClass> delegateAdapter = mock(TypeAdapter.class);\n        when(mockGson.getDelegateAdapter(ArgumentMatchers.any(), ArgumentMatchers.eq(typeToken))).thenReturn(delegateAdapter);\n\n        TypeAdapter<SubClass> adapter = factory.create(mockGson, typeToken);\n\n        assertNotNull(adapter);\n        assertEquals(\"PostConstructAdapter\", adapter.getClass().getSimpleName());\n    }\n\n    @Test\n    public void create_PostConstructMethodInSuperclassWithObjectSuperclass_ReturnsPostConstructAdapter() {\n        class Base {\n            @PostConstruct\n            private void baseInit() {}\n        }\n        class Derived extends Base {}\n\n        TypeToken<Derived> typeToken = TypeToken.get(Derived.class);\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<Derived> delegateAdapter = mock(TypeAdapter.class);\n        when(mockGson.getDelegateAdapter(ArgumentMatchers.any(), ArgumentMatchers.eq(typeToken))).thenReturn(delegateAdapter);\n\n        TypeAdapter<Derived> adapter = factory.create(mockGson, typeToken);\n\n        assertNotNull(adapter);\n        assertEquals(\"PostConstructAdapter\", adapter.getClass().getSimpleName());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889216,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 786,
+    "prompt_tokens": 1018,
+    "total_tokens": 1804,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.93
+  }
+}

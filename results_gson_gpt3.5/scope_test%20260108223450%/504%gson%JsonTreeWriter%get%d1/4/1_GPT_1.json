@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn5cL6vN5JUlG4V79EFhfqbWhClN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter writer;\n\n    @BeforeEach\n    public void setUp() {\n        writer = new JsonTreeWriter();\n    }\n\n    @Test\n    public void testGet_whenStackIsEmpty_returnsProduct() throws Exception {\n        // Initially product is JsonNull.INSTANCE\n        JsonElement result = writer.get();\n        assertNotNull(result);\n        assertTrue(result instanceof JsonNull);\n    }\n\n    @Test\n    public void testGet_whenStackIsNotEmpty_throwsIllegalStateException() throws Exception {\n        // Use reflection to add element to private stack field\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n        stack.add(new JsonArray());\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            writer.get();\n        });\n        assertTrue(thrown.getMessage().startsWith(\"Expected one JSON element but was \"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889432,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 297,
+    "prompt_tokens": 531,
+    "total_tokens": 828,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.09
+  }
+}

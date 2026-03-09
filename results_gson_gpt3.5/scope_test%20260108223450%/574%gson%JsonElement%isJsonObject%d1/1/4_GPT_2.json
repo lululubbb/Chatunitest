@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmQQTLRABFgawEdLECOqGVmh5e6I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Proxy;\n\nclass JsonElementTest {\n\n  private static class JsonElementSubclass extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return this;\n    }\n  }\n\n  @Test\n  void testIsJsonObject_withJsonObjectInstance_returnsTrue() {\n    // Create a proxy instance that implements JsonObject interface behavior\n    JsonElement element = (JsonElement) Proxy.newProxyInstance(\n      JsonObject.class.getClassLoader(),\n      new Class<?>[] { JsonObject.class },\n      new InvocationHandler() {\n        @Override\n        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n          if (\"deepCopy\".equals(method.getName())) {\n            return proxy;\n          }\n          if (\"isJsonObject\".equals(method.getName())) {\n            return true;\n          }\n          // fallback to default behavior for other methods\n          if (method.getReturnType() == boolean.class) {\n            return false;\n          }\n          return null;\n        }\n      }\n    );\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  void testIsJsonObject_withJsonElementInstance_returnsFalse() {\n    JsonElement element = new JsonElementSubclass();\n    assertFalse(element.isJsonObject());\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886878,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 295,
+    "prompt_tokens": 758,
+    "total_tokens": 1053,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.82
+  }
+}

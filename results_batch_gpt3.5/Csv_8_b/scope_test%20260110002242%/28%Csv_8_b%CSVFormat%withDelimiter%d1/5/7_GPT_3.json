@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9baH8CGicftmLdcZOUfsYRCANdv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatWithDelimiterTest {\n\n    @Test\n    public void testWithDelimiter_validDelimiter() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        char newDelimiter = ';';\n        CSVFormat newFormat = format.withDelimiter(newDelimiter);\n\n        assertNotNull(newFormat);\n        assertEquals(newDelimiter, newFormat.getDelimiter());\n        // Other properties should remain unchanged\n        assertEquals(format.getQuoteChar(), newFormat.getQuoteChar());\n        assertEquals(format.getQuotePolicy(), newFormat.getQuotePolicy());\n        assertEquals(format.getCommentStart(), newFormat.getCommentStart());\n        assertEquals(format.getEscape(), newFormat.getEscape());\n        assertEquals(format.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(format.getNullString(), newFormat.getNullString());\n        assertArrayEquals(format.getHeader(), newFormat.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    public void testWithDelimiter_lineBreakDelimiters() throws Exception {\n        // Access private static method isLineBreak(char) via reflection\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test line break characters that should cause exception\n        char[] lineBreakChars = {'\\r', '\\n'};\n\n        for (char c : lineBreakChars) {\n            assertTrue((Boolean) isLineBreakMethod.invoke(null, c));\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                CSVFormat.DEFAULT.withDelimiter(c);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    public void testWithDelimiter_nonLineBreakCharacters() throws Exception {\n        // Access private static method isLineBreak(char) via reflection\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakMethod.setAccessible(true);\n\n        char[] nonLineBreakChars = {'a', ' ', ',', ';', '\\t', '1'};\n\n        for (char c : nonLineBreakChars) {\n            assertFalse((Boolean) isLineBreakMethod.invoke(null, c));\n            CSVFormat newFormat = CSVFormat.DEFAULT.withDelimiter(c);\n            assertEquals(c, newFormat.getDelimiter());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975982,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 560,
+    "prompt_tokens": 1611,
+    "total_tokens": 2171,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.2
+  }
+}

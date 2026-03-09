@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmQsamBJIkzSe86f1twQ8isnTVa1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nclass GsonDoubleAdapterTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void doubleAdapter_returnsTypeAdaptersDouble_whenSerializeSpecialFloatingPointValuesTrue() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, true);\n\n    assertSame(TypeAdapters.DOUBLE, adapter);\n  }\n\n  @Test\n  void doubleAdapter_adapterRead_returnsNullOnJsonNull() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, false);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n    Double result = (Double) adapter.read(jsonReader);\n\n    verify(jsonReader).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  void doubleAdapter_adapterRead_returnsNextDouble() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, false);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n    when(jsonReader.peek()).thenReturn(JsonToken.NUMBER);\n    when(jsonReader.nextDouble()).thenReturn(123.456);\n\n    Double result = (Double) adapter.read(jsonReader);\n\n    verify(jsonReader, never()).nextNull();\n    verify(jsonReader).nextDouble();\n    assertEquals(123.456, result);\n  }\n\n  @Test\n  void doubleAdapter_adapterWrite_writesNullValueWhenValueIsNull() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, false);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n\n    adapter.write(jsonWriter, null);\n\n    verify(jsonWriter).nullValue();\n    verify(jsonWriter, never()).value(anyDouble());\n  }\n\n  @Test\n  void doubleAdapter_adapterWrite_writesDoubleValueWhenValueIsNotNull() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, false);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n\n    Number value = 42.42;\n\n    adapter.write(jsonWriter, value);\n\n    InOrder inOrder = inOrder(jsonWriter);\n    inOrder.verify(jsonWriter).value(value.doubleValue());\n  }\n\n  @Test\n  void doubleAdapter_adapterWrite_throwsOnInvalidFloatingPoint() throws Exception {\n    Method doubleAdapterMethod = Gson.class.getDeclaredMethod(\"doubleAdapter\", boolean.class);\n    doubleAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) doubleAdapterMethod.invoke(gson, false);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n\n    Number nanValue = Double.NaN;\n\n    IOException thrown = assertThrows(IOException.class, () -> adapter.write(jsonWriter, nanValue));\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886906,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 860,
+    "prompt_tokens": 2760,
+    "total_tokens": 3620,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.15
+  }
+}

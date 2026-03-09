@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport java.io.Serializable;\nimport java.util.Arrays;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Map.Entry;\n\nimport static org.junit.jupiter.api.Assertions.assertArrayEquals;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    @Test\n    void testValues() throws Exception {\n        // Prepare test data\n        String[] testValues = new String[] { \"value1\", \"value2\", \"value3\" };\n        Map<String, Integer> mapping = new HashMap<>();\n        String comment = \"comment\";\n        long recordNumber = 1L;\n\n        // Use reflection to get the CSVRecord constructor\n        Class<?> clazz = CSVRecord.class;\n        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n\n        // Create CSVRecord instance using constructor\n        CSVRecord record = (CSVRecord) constructor.newInstance(testValues, mapping, comment, recordNumber);\n\n        // Use reflection to access the package-private values() method\n        Method valuesMethod = CSVRecord.class.getDeclaredMethod(\"values\");\n        valuesMethod.setAccessible(true);\n\n        // Invoke values() method\n        String[] result = (String[]) valuesMethod.invoke(record);\n\n        // Assert that the returned array is exactly the same as the one passed to constructor\n        assertArrayEquals(testValues, result);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_9_b/scope_test%20260110005058%/16%Csv_9_b%CSVRecord%values%d1/3/runtemp/Csv_9_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 692,
+  "completion_tokens": 294,
+  "total_tokens": 986,
+  "llm_elapsed_time_seconds": 3.98,
+  "repair_elapsed_time_seconds": 31.7,
+  "round_total_time_seconds": 31.7
+}

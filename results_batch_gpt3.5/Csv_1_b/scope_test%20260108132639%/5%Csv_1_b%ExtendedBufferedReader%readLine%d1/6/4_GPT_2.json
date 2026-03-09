@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcq5X5uUVCuz3eKlOFcsYj0HKCdw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader) {\n            @Override\n            public String readLine() throws IOException {\n                return super.readLine();\n            }\n        };\n    }\n\n    @Test\n    void testReadLine_NonNullNonEmptyLine() throws Exception {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new Reader() {\n            private boolean returned = false;\n\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                if (!returned) {\n                    String str = \"Hello\\n\";\n                    int length = Math.min(len, str.length());\n                    str.getChars(0, length, cbuf, off);\n                    returned = true;\n                    return length;\n                }\n                return -1;\n            }\n\n            @Override\n            public void close() {\n            }\n        });\n\n        String line = reader.readLine();\n        assertEquals(\"Hello\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(reader);\n        assertEquals('o', lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(reader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_NonNullEmptyLine() throws Exception {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new Reader() {\n            private boolean returned = false;\n\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                if (!returned) {\n                    String str = \"\\n\";\n                    int length = Math.min(len, str.length());\n                    str.getChars(0, length, cbuf, off);\n                    returned = true;\n                    return length;\n                }\n                return -1;\n            }\n\n            @Override\n            public void close() {\n            }\n        });\n\n        String line = reader.readLine();\n        assertEquals(\"\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(reader);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(reader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_NullLine() throws Exception {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                return -1;\n            }\n\n            @Override\n            public void close() {\n            }\n        });\n\n        String line = reader.readLine();\n        assertNull(line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(reader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(reader);\n        assertEquals(0, lineCounter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850029,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 811,
+    "prompt_tokens": 1276,
+    "total_tokens": 2087,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.42
+  }
+}

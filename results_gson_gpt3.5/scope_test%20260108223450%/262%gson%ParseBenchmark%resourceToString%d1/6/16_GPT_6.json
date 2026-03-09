@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm7NionSr334739BgxKwlTA6YJkP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.File;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.net.URL;\nimport java.util.zip.ZipEntry;\nimport java.util.zip.ZipFile;\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\npublic class ParseBenchmarkTest {\n\n  private static final String ZIP_RESOURCE_PATH = \"/ParseBenchmarkData.zip\";\n  private static final String TEST_FILE_NAME = \"test.json\";\n  private static final String TEST_CONTENT = \"{\\\"key\\\":\\\"value\\\"}\";\n\n  private Method resourceToStringMethod;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    resourceToStringMethod = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n    resourceToStringMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testResourceToString_readsContentFromZipEntry() throws Exception {\n    try (MockedConstruction<ZipFile> mockedZipFile = Mockito.mockConstruction(ZipFile.class,\n        (mock, context) -> {\n          ZipEntry zipEntry = new ZipEntry(TEST_FILE_NAME);\n          when(mock.getEntry(TEST_FILE_NAME)).thenReturn(zipEntry);\n\n          InputStream inputStream = new ByteArrayInputStream(TEST_CONTENT.getBytes());\n          when(mock.getInputStream(zipEntry)).thenReturn(inputStream);\n\n          doNothing().when(mock).close();\n        })) {\n\n      // Invoke the private static method resourceToString via reflection\n      String result = (String) resourceToStringMethod.invoke(null, TEST_FILE_NAME);\n\n      assertEquals(TEST_CONTENT, result);\n    }\n  }\n\n  @Test\n  public void testResourceToString_closesZipFileOnException() throws Exception {\n    try (MockedConstruction<ZipFile> mockedZipFile = Mockito.mockConstruction(ZipFile.class,\n        (mock, context) -> {\n          when(mock.getEntry(TEST_FILE_NAME)).thenThrow(new IOException(\"forced exception\"));\n          doNothing().when(mock).close();\n        })) {\n\n      Exception thrown = assertThrows(Exception.class, () -> {\n        resourceToStringMethod.invoke(null, TEST_FILE_NAME);\n      });\n\n      assertFalse(mockedZipFile.constructed().isEmpty(), \"No ZipFile instances constructed\");\n      ZipFile mockZipFile = mockedZipFile.constructed().get(0);\n      verify(mockZipFile).close();\n\n      assertTrue(thrown.getCause() instanceof IOException);\n      assertEquals(\"forced exception\", thrown.getCause().getMessage());\n    }\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885697,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 564,
+    "prompt_tokens": 1723,
+    "total_tokens": 2287,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.48
+  }
+}

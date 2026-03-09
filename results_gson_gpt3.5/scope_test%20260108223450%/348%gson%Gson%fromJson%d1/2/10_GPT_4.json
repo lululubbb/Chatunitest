@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmcsBmVfAOCEdbIuCg005xutQxIV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.ArgumentMatchers.eq;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\nimport java.util.Map;\n\nclass GsonFromJsonReaderTypeTokenTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_validJson_returnsObject() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<Map<String, String>> typeToken = (TypeToken<Map<String, String>>) (TypeToken<?>) TypeToken.getParameterized(Map.class, String.class, String.class);\n\n    // Spy on gson to mock fromJson(JsonReader, TypeToken)\n    Gson spyGson = Mockito.spy(gson);\n\n    // Prepare a dummy object to return\n    Map<String, String> dummyMap = Map.of(\"key\", \"value\");\n\n    // Mock fromJson(JsonReader, TypeToken) to return dummyMap\n    doReturn(dummyMap).when(spyGson).fromJson(any(JsonReader.class), eq(typeToken));\n\n    // Use reflection to access private static method assertFullConsumption(Object, JsonReader)\n    Method assertFullConsumptionMethod = Gson.class.getDeclaredMethod(\"assertFullConsumption\", Object.class, JsonReader.class);\n    assertFullConsumptionMethod.setAccessible(true);\n\n    try (MockedStatic<Gson> mockedStatic = Mockito.mockStatic(Gson.class)) {\n      // Mock the static method assertFullConsumption to do nothing when called with any arguments\n      mockedStatic.when(() -> assertFullConsumptionMethod.invoke(null, dummyMap, any(JsonReader.class)))\n          .thenAnswer(invocation -> null);\n      mockedStatic.when(() -> assertFullConsumptionMethod.invoke(any(), any()))\n          .thenAnswer(invocation -> null);\n\n      // Because reflection with matchers inside invoke is problematic,\n      // we mock the entire static method by suppressing it using doNothing()\n      mockedStatic.when(() -> {\n        try {\n          assertFullConsumptionMethod.invoke(null, any(), any());\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }).thenAnswer(invocation -> null);\n\n      // Call the focal method\n      Object result = spyGson.fromJson(reader, typeToken);\n\n      // Verify the returned object is the dummyMap\n      assertSame(dummyMap, result);\n\n      // Verify fromJson(JsonReader, TypeToken) was called once\n      verify(spyGson, times(1)).fromJson(any(JsonReader.class), eq(typeToken));\n\n      // Verify that assertFullConsumption was called once with the dummyMap and a JsonReader instance\n      mockedStatic.verify(() -> {\n        try {\n          assertFullConsumptionMethod.invoke(null, dummyMap, any(JsonReader.class));\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }, times(1));\n    }\n  }\n\n  @Test\n  void fromJson_nullReader_throwsNullPointerException() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    assertThrows(NullPointerException.class, () -> gson.fromJson((Reader) null, typeToken));\n  }\n\n  @Test\n  void fromJson_invalidJson_throwsJsonSyntaxException() {\n    String invalidJson = \"{invalidJson}\";\n    Reader reader = new StringReader(invalidJson);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    // We expect JsonSyntaxException or JsonIOException on invalid JSON\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(reader, typeToken));\n  }\n\n  @Test\n  void fromJson_emptyJson_returnsNullOrThrows() {\n    String emptyJson = \"\";\n    Reader reader = new StringReader(emptyJson);\n    TypeToken<Object> typeToken = TypeToken.get(Object.class);\n\n    // It may throw JsonSyntaxException or return null depending on implementation\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(reader, typeToken));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887650,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 897,
+    "prompt_tokens": 2743,
+    "total_tokens": 3640,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.56
+  }
+}

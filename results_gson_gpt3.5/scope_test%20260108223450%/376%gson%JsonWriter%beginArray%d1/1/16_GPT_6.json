@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMREBIWs9uvXV3c5NSVVeJzdZUG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n    // Initialize stack and stackSize properly to avoid \"JsonWriter is closed\" errors\n    int[] stack = new int[32];\n    stack[0] = JsonScope.EMPTY_DOCUMENT;\n    setField(jsonWriter, \"stack\", stack);\n    setField(jsonWriter, \"stackSize\", 1);\n    setField(jsonWriter, \"deferredName\", null);\n  }\n\n  @Test\n  void beginArray_shouldReturnJsonWriterAndWriteOpenArray() throws IOException {\n    // Arrange\n    // stack and stackSize already set in @BeforeEach\n\n    // Act\n    JsonWriter result = jsonWriter.beginArray();\n\n    // Assert\n    assertSame(jsonWriter, result);\n\n    // The output should contain '['\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"[\"));\n\n    // The stack top should now be EMPTY_ARRAY (1)\n    int stackSize = (int) getField(jsonWriter, \"stackSize\");\n    assertEquals(2, stackSize); // stackSize increments by 1 after beginArray\n    int[] updatedStack = (int[]) getField(jsonWriter, \"stack\");\n    assertEquals(JsonScope.EMPTY_ARRAY, updatedStack[stackSize - 1]);\n  }\n\n  @Test\n  void beginArray_shouldCallWriteDeferredName_whenDeferredNameIsNotNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Arrange\n    int[] stack = new int[32];\n    stack[0] = JsonScope.EMPTY_OBJECT; // Changed from EMPTY_DOCUMENT to EMPTY_OBJECT to avoid nesting problem\n    setField(jsonWriter, \"stack\", stack);\n    setField(jsonWriter, \"stackSize\", 1);\n    setField(jsonWriter, \"deferredName\", \"someName\");\n\n    // Spy on jsonWriter to verify writeDeferredName call via reflection\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Use reflection to invoke beginArray on spyWriter\n    Method beginArrayMethod = JsonWriter.class.getDeclaredMethod(\"beginArray\");\n    beginArrayMethod.setAccessible(true);\n    beginArrayMethod.invoke(spyWriter);\n\n    // Verify deferredName was reset to null after writeDeferredName call\n    assertNull(getField(spyWriter, \"deferredName\"));\n  }\n\n  @Test\n  void beginArray_shouldThrowIOException_ifWriterThrows() throws IOException {\n    Writer mockWriter = mock(Writer.class);\n    // Make sure any write call throws IOException\n    doThrow(new IOException(\"test exception\")).when(mockWriter).write(any(char[].class), anyInt(), anyInt());\n    // Also make sure flush() throws IOException to cover other calls\n    doThrow(new IOException(\"test exception\")).when(mockWriter).flush();\n\n    JsonWriter writerWithMock = new JsonWriter(mockWriter);\n\n    // Arrange stack so open() will attempt to write\n    int[] stack = new int[32];\n    stack[0] = JsonScope.EMPTY_DOCUMENT;\n    setField(writerWithMock, \"stack\", stack);\n    setField(writerWithMock, \"stackSize\", 1);\n    setField(writerWithMock, \"deferredName\", null);\n\n    // Act & Assert\n    IOException thrown = assertThrows(IOException.class, writerWithMock::beginArray);\n    assertEquals(\"test exception\", thrown.getMessage());\n  }\n\n  // Helper methods for reflection\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      var field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      var field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890475,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 932,
+    "prompt_tokens": 1943,
+    "total_tokens": 2875,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.14
+  }
+}

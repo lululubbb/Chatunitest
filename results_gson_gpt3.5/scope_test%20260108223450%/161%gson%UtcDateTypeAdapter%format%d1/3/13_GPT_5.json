@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnLMs18478O3SxsiG1R5L0VGbvKy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass UtcDateTypeAdapterFormatTest {\n\n    private static Method formatMethod;\n\n    @BeforeAll\n    public static void setUp() throws NoSuchMethodException {\n        formatMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"format\", Date.class, boolean.class, TimeZone.class);\n        formatMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testFormatUtcWithoutMillis() throws InvocationTargetException, IllegalAccessException {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = Calendar.getInstance(utc);\n        cal.clear();\n        cal.set(2023, Calendar.MARCH, 15, 10, 20, 30);\n        cal.set(Calendar.MILLISECOND, 0);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, false, utc);\n        assertEquals(\"2023-03-15T10:20:30Z\", formatted);\n    }\n\n    @Test\n    public void testFormatUtcWithMillis() throws InvocationTargetException, IllegalAccessException {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = Calendar.getInstance(utc);\n        cal.clear();\n        cal.set(2023, Calendar.MARCH, 15, 10, 20, 30);\n        cal.set(Calendar.MILLISECOND, 123);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, true, utc);\n        assertEquals(\"2023-03-15T10:20:30.123Z\", formatted);\n    }\n\n    @Test\n    public void testFormatWithPositiveOffsetNoMillis() throws InvocationTargetException, IllegalAccessException {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT+02:30\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2023, Calendar.DECEMBER, 25, 23, 59, 59);\n        cal.set(Calendar.MILLISECOND, 0);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, false, tz);\n        assertEquals(\"2023-12-25T23:59:59+02:30\", formatted);\n    }\n\n    @Test\n    public void testFormatWithNegativeOffsetWithMillis() throws InvocationTargetException, IllegalAccessException {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT-05:45\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2023, Calendar.JULY, 4, 12, 0, 0);\n        cal.set(Calendar.MILLISECOND, 999);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, true, tz);\n        assertEquals(\"2023-07-04T12:00:00.999-05:45\", formatted);\n    }\n\n    @Test\n    public void testFormatWithZeroOffsetMillisFalse() throws InvocationTargetException, IllegalAccessException {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2024, Calendar.JANUARY, 1, 0, 0, 0);\n        cal.set(Calendar.MILLISECOND, 0);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, false, tz);\n        assertEquals(\"2024-01-01T00:00:00Z\", formatted);\n    }\n\n    @Test\n    public void testFormatWithZeroOffsetMillisTrue() throws InvocationTargetException, IllegalAccessException {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2024, Calendar.JANUARY, 1, 0, 0, 0);\n        cal.set(Calendar.MILLISECOND, 1);\n        Date date = cal.getTime();\n\n        String formatted = (String) formatMethod.invoke(null, date, true, tz);\n        assertEquals(\"2024-01-01T00:00:00.001Z\", formatted);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890408,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 956,
+    "prompt_tokens": 2786,
+    "total_tokens": 3742,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.8
+  }
+}

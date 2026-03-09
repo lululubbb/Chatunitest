@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmdUFsGC3RgKYQmMkkZDQX98NhlZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Initialize with an empty JsonObject for default\n    reader = new JsonTreeReader(new JsonObject());\n    // Manually set stackSize and stack to simulate initial state\n    setPrivateField(reader, \"stackSize\", 1);\n    setPrivateField(reader, \"stack\", new Object[] {new JsonObject()});\n    setPrivateField(reader, \"pathNames\", new String[32]);\n    setPrivateField(reader, \"pathIndices\", new int[32]);\n  }\n\n  @Test\n  public void testGetPath_emptyStack_returnsRoot() throws Exception {\n    // Reset stackSize to 0 to simulate empty stack\n    setPrivateField(reader, \"stackSize\", 0);\n\n    Method getPathMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    String path = (String) getPathMethod.invoke(reader, false);\n    assertEquals(\"$\", path);\n\n    String pathUsePrevious = (String) getPathMethod.invoke(reader, true);\n    assertEquals(\"$\", pathUsePrevious);\n  }\n\n  @Test\n  public void testGetPath_withObjectAndArray() throws Exception {\n    /*\n     * Setup stack and pathNames/pathIndices to simulate JSON like:\n     * {\n     *   \"name\": [\n     *     1,\n     *     2\n     *   ]\n     * }\n     * \n     * stackSize = 3:\n     * stack[0] = JsonObject\n     * stack[1] = JsonArray\n     * stack[2] = JsonPrimitive\n     * \n     * pathNames[1] = \"name\"\n     * pathIndices[2] = 1 (index in array)\n     */\n\n    setPrivateField(reader, \"stackSize\", 3);\n\n    JsonObject rootObject = new JsonObject();\n    JsonArray array = new JsonArray();\n    JsonPrimitive primitive = new JsonPrimitive(123);\n\n    setPrivateField(reader, \"stack\", new Object[] {rootObject, array, primitive});\n    String[] pathNames = new String[32];\n    pathNames[1] = \"name\";\n    setPrivateField(reader, \"pathNames\", pathNames);\n    int[] pathIndices = new int[32];\n    pathIndices[2] = 1;\n    setPrivateField(reader, \"pathIndices\", pathIndices);\n\n    Method getPathMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    String path = (String) getPathMethod.invoke(reader, false);\n    // Expected path: $.name[1]\n    assertEquals(\"$.name[1]\", path);\n  }\n\n  @Test\n  public void testGetPath_withOnlyArrayIndexes() throws Exception {\n    /*\n     * Setup stackSize = 2 with two arrays, indexes 0 and 2:\n     * path should be $[0][2]\n     */\n    setPrivateField(reader, \"stackSize\", 2);\n    JsonArray array1 = new JsonArray();\n    JsonArray array2 = new JsonArray();\n    setPrivateField(reader, \"stack\", new Object[] {array1, array2});\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 2;\n    setPrivateField(reader, \"pathIndices\", pathIndices);\n\n    // pathNames are null by default\n    setPrivateField(reader, \"pathNames\", new String[32]);\n\n    Method getPathMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    String path = (String) getPathMethod.invoke(reader, false);\n    assertEquals(\"$[0][2]\", path);\n  }\n\n  @Test\n  public void testGetPath_withNullPathNamesAndIndexes() throws Exception {\n    /*\n     * Setup stackSize = 2 with a JsonObject and JsonPrimitive, no pathNames or pathIndices set\n     * The path should just include $ and then empty or no names/indexes\n     */\n    setPrivateField(reader, \"stackSize\", 2);\n    JsonObject obj = new JsonObject();\n    JsonPrimitive prim = new JsonPrimitive(\"value\");\n    setPrivateField(reader, \"stack\", new Object[] {obj, prim});\n    setPrivateField(reader, \"pathNames\", new String[32]);\n    setPrivateField(reader, \"pathIndices\", new int[32]);\n\n    Method getPathMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    String path = (String) getPathMethod.invoke(reader, false);\n    // Since pathNames and pathIndices are not set, path should be just \"$\"\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_withUsePreviousPathTrue() throws Exception {\n    /*\n     * Test getPath(true) returns same as getPath(false) since no special logic in provided code snippet\n     * Setup stackSize=1 with JsonObject and pathNames[0] = \"obj\"\n     */\n    setPrivateField(reader, \"stackSize\", 1);\n    JsonObject obj = new JsonObject();\n    setPrivateField(reader, \"stack\", new Object[] {obj});\n    String[] pathNames = new String[32];\n    pathNames[0] = \"obj\";\n    setPrivateField(reader, \"pathNames\", pathNames);\n    setPrivateField(reader, \"pathIndices\", new int[32]);\n\n    Method getPathMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n\n    String pathFalse = (String) getPathMethod.invoke(reader, false);\n    String pathTrue = (String) getPathMethod.invoke(reader, true);\n\n    assertEquals(\"$.obj\", pathFalse);\n    assertEquals(\"$.obj\", pathTrue);\n  }\n\n  private void setPrivateField(Object target, String fieldName, Object value) {\n    try {\n      Field field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887688,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1406,
+    "prompt_tokens": 2749,
+    "total_tokens": 4155,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 41.45
+  }
+}

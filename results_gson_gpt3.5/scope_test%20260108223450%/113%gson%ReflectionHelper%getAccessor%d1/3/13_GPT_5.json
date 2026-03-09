@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbIaxUu8xFZTlVRPWdcrRTZVqYB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Proxy;\nimport java.lang.reflect.InvocationHandler;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  private static Field dummyField;\n  private static Method dummyMethod;\n  private static Object originalRecordHelper;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    dummyField = DummyClass.class.getField(\"field\");\n    dummyMethod = DummyClass.class.getMethod(\"accessorMethod\");\n\n    java.lang.reflect.Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from RECORD_HELPER\n    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    // Save original value to restore if needed\n    originalRecordHelper = recordHelperField.get(null);\n\n    // Instead of using the RECORD_HELPER field's type directly (which is a class, not an interface),\n    // create a proxy implementing the known interface com.google.gson.internal.reflect.ReflectionHelper.RecordHelper\n    // We access the interface by name via reflection:\n\n    Class<?> recordHelperInterface = null;\n    for (Class<?> innerClass : ReflectionHelper.class.getDeclaredClasses()) {\n      if (\"RecordHelper\".equals(innerClass.getSimpleName()) && innerClass.isInterface()) {\n        recordHelperInterface = innerClass;\n        break;\n      }\n    }\n    if (recordHelperInterface == null) {\n      throw new IllegalStateException(\"RecordHelper interface not found\");\n    }\n\n    Object dummyRecordHelper = Proxy.newProxyInstance(\n        recordHelperInterface.getClassLoader(),\n        new Class<?>[] { recordHelperInterface },\n        new InvocationHandler() {\n          @Override\n          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n            if (\"getAccessor\".equals(method.getName())) {\n              return dummyMethod;\n            }\n            throw new UnsupportedOperationException(\"Unsupported method: \" + method.getName());\n          }\n        });\n\n    recordHelperField.set(null, dummyRecordHelper);\n  }\n\n  private void setDummyRecordHelper(final Method accessor) throws Exception {\n    java.lang.reflect.Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier if still present\n    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    Class<?> recordHelperInterface = null;\n    for (Class<?> innerClass : ReflectionHelper.class.getDeclaredClasses()) {\n      if (\"RecordHelper\".equals(innerClass.getSimpleName()) && innerClass.isInterface()) {\n        recordHelperInterface = innerClass;\n        break;\n      }\n    }\n    if (recordHelperInterface == null) {\n      throw new IllegalStateException(\"RecordHelper interface not found\");\n    }\n\n    Object dummyRecordHelper = Proxy.newProxyInstance(\n        recordHelperInterface.getClassLoader(),\n        new Class<?>[] { recordHelperInterface },\n        new InvocationHandler() {\n          @Override\n          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n            if (\"getAccessor\".equals(method.getName())) {\n              return accessor;\n            }\n            throw new UnsupportedOperationException(\"Unsupported method: \" + method.getName());\n          }\n        });\n\n    recordHelperField.set(null, dummyRecordHelper);\n  }\n\n  @Test\n  void getAccessor_returnsMethodFromRecordHelper() throws Exception {\n    setDummyRecordHelper(dummyMethod);\n    Method result = ReflectionHelper.getAccessor(DummyClass.class, dummyField);\n    assertNotNull(result);\n    assertEquals(dummyMethod, result);\n  }\n\n  @Test\n  void getAccessor_nullField_returnsNull() throws Exception {\n    setDummyRecordHelper(null);\n    Method result = ReflectionHelper.getAccessor(DummyClass.class, null);\n    assertNull(result);\n  }\n\n  @Test\n  void getAccessor_nullClass_returnsNull() throws Exception {\n    setDummyRecordHelper(null);\n    Method result = ReflectionHelper.getAccessor(null, dummyField);\n    assertNull(result);\n  }\n\n  static class DummyClass {\n    public String field;\n    public String accessorMethod() { return \"accessor\"; }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887552,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 951,
+    "prompt_tokens": 1618,
+    "total_tokens": 2569,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.81
+  }
+}

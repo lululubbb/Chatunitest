@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90umhMGz5qoWMgJr4jW8u4sJc8H",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.sql.ResultSet;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class, withSettings().extraInterfaces(Closeable.class, Flushable.class));\n        format = mock(CSVFormat.class);\n        doNothing().when(format).validate();\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testConstructor_nullOut_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, format));\n        assertEquals(\"out\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_nullFormat_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(out, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testClose_callsOutCloseIfPossible() throws IOException {\n        ((Closeable) out).close();\n        doNothing().when((Closeable) out).close();\n        printer.close();\n        verify((Closeable) out).close();\n    }\n\n    @Test\n    void testFlush_callsOutFlushIfPossible() throws IOException {\n        ((Flushable) out).flush();\n        doNothing().when((Flushable) out).flush();\n        printer.flush();\n        verify((Flushable) out).flush();\n    }\n\n    @Test\n    void testPrint_nullValue() throws IOException {\n        printer.print((Object) null);\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException {\n        String value = \"test\";\n        printer.print(value);\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintAndEscape_privateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, \"abc,def\", 0, 7);\n        } catch (InvocationTargetException e) {\n            if (e.getCause() instanceof IOException) {\n                fail(\"IOException thrown: \" + e.getCause().getMessage());\n            } else {\n                throw e;\n            }\n        }\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintAndQuote_privateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, \"obj\", \"quoted\", 0, 6);\n        } catch (InvocationTargetException e) {\n            if (e.getCause() instanceof IOException) {\n                fail(\"IOException thrown: \" + e.getCause().getMessage());\n            } else {\n                throw e;\n            }\n        }\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrint_privateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(printer, \"obj\", \"value\", 0, 5);\n        } catch (InvocationTargetException e) {\n            if (e.getCause() instanceof IOException) {\n                fail(\"IOException thrown: \" + e.getCause().getMessage());\n            } else {\n                throw e;\n            }\n        }\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintComment() throws IOException {\n        printer.printComment(\"This is a comment\");\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintln() throws IOException {\n        printer.println();\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintRecordIterable() throws IOException {\n        printer.printRecord(Arrays.asList(\"one\", \"two\", \"three\"));\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintRecordVarargs() throws IOException {\n        printer.printRecord(\"one\", \"two\", \"three\");\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintRecordsIterable() throws IOException {\n        printer.printRecords(Arrays.asList(Arrays.asList(\"a\", \"b\"), Arrays.asList(\"c\", \"d\")));\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintRecordsArray() throws IOException {\n        Object[] records = new Object[] { new Object[] { \"a\", \"b\" }, new Object[] { \"c\", \"d\" } };\n        printer.printRecords(records);\n        verifyAppendCalled();\n    }\n\n    @Test\n    void testPrintRecordsResultSet() throws Exception {\n        ResultSet rs = mock(ResultSet.class);\n        when(rs.next()).thenReturn(true, false);\n        java.sql.ResultSetMetaData meta = mock(java.sql.ResultSetMetaData.class);\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n        when(rs.getObject(1)).thenReturn(\"value\");\n        printer.printRecords(rs);\n        verifyAppendCalled();\n        verify(rs).close();\n    }\n\n    @Test\n    void testGetOut_returnsAppendable() {\n        assertSame(out, printer.getOut());\n    }\n\n    private void verifyAppendCalled() {\n        try {\n            verify(out, atLeastOnce()).append(any(CharSequence.class));\n        } catch (IOException e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973708,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1255,
+    "prompt_tokens": 1775,
+    "total_tokens": 3030,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.92
+  }
+}

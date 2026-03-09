@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmfEGtqzPYm0kp3WOy6XeY6PEYHn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a JsonElement to initialize JsonTreeReader\n    JsonElement element = new JsonPrimitive(\"test\");\n    reader = new JsonTreeReader(element);\n  }\n\n  @Test\n  void nextJsonElement_unexpectedTokens_throwIllegalStateException() throws Exception {\n    Method nextJsonElementMethod = JsonTreeReader.class.getDeclaredMethod(\"nextJsonElement\");\n    nextJsonElementMethod.setAccessible(true);\n\n    // Use reflection to mock peek() to return each unexpected token and test exception\n    JsonToken[] unexpectedTokens = {\n        JsonToken.NAME,\n        JsonToken.END_ARRAY,\n        JsonToken.END_OBJECT,\n        JsonToken.END_DOCUMENT\n    };\n\n    for (JsonToken token : unexpectedTokens) {\n      JsonTreeReader spyReader = spy(reader);\n      doReturn(token).when(spyReader).peek();\n\n      IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n        nextJsonElementMethod.invoke(spyReader);\n      });\n      assertTrue(thrown.getMessage().contains(\"Unexpected \" + token));\n    }\n  }\n\n  @Test\n  void nextJsonElement_validToken_returnsElement() throws Exception {\n    // Prepare a JsonPrimitive element and push it on the stack\n    JsonPrimitive primitive = new JsonPrimitive(\"value\");\n    JsonTreeReader spyReader = spy(new JsonTreeReader(primitive));\n\n    // Mock peek() to return a token not in the exception list (e.g. STRING)\n    doReturn(JsonToken.STRING).when(spyReader).peek();\n\n    // Mock peekStack() to return the primitive element\n    Method peekStackMethod = JsonTreeReader.class.getDeclaredMethod(\"peekStack\");\n    peekStackMethod.setAccessible(true);\n    doReturn(primitive).when(spyReader).peekStack();\n\n    // We also need to mock skipValue(), as it is called inside nextJsonElement\n    doNothing().when(spyReader).skipValue();\n\n    // Invoke nextJsonElement via reflection\n    Method nextJsonElementMethod = JsonTreeReader.class.getDeclaredMethod(\"nextJsonElement\");\n    nextJsonElementMethod.setAccessible(true);\n\n    JsonElement result = (JsonElement) nextJsonElementMethod.invoke(spyReader);\n\n    assertEquals(primitive, result);\n    verify(spyReader).skipValue();\n  }\n\n  @Test\n  void nextJsonElement_validToken_withJsonObject() throws Exception {\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.addProperty(\"key\", \"value\");\n\n    JsonTreeReader spyReader = spy(new JsonTreeReader(jsonObject));\n\n    doReturn(JsonToken.BEGIN_OBJECT).when(spyReader).peek();\n    doReturn(jsonObject).when(spyReader).peekStack();\n    doNothing().when(spyReader).skipValue();\n\n    Method nextJsonElementMethod = JsonTreeReader.class.getDeclaredMethod(\"nextJsonElement\");\n    nextJsonElementMethod.setAccessible(true);\n\n    JsonElement result = (JsonElement) nextJsonElementMethod.invoke(spyReader);\n\n    assertEquals(jsonObject, result);\n    verify(spyReader).skipValue();\n  }\n\n  @Test\n  void nextJsonElement_validToken_withJsonArray() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(new JsonPrimitive(1));\n    jsonArray.add(new JsonPrimitive(2));\n\n    JsonTreeReader spyReader = spy(new JsonTreeReader(jsonArray));\n\n    doReturn(JsonToken.BEGIN_ARRAY).when(spyReader).peek();\n    doReturn(jsonArray).when(spyReader).peekStack();\n    doNothing().when(spyReader).skipValue();\n\n    Method nextJsonElementMethod = JsonTreeReader.class.getDeclaredMethod(\"nextJsonElement\");\n    nextJsonElementMethod.setAccessible(true);\n\n    JsonElement result = (JsonElement) nextJsonElementMethod.invoke(spyReader);\n\n    assertEquals(jsonArray, result);\n    verify(spyReader).skipValue();\n  }\n\n  @Test\n  void nextJsonElement_validToken_withJsonNull() throws Exception {\n    JsonNull jsonNull = JsonNull.INSTANCE;\n\n    JsonTreeReader spyReader = spy(new JsonTreeReader(jsonNull));\n\n    doReturn(JsonToken.NULL).when(spyReader).peek();\n    doReturn(jsonNull).when(spyReader).peekStack();\n    doNothing().when(spyReader).skipValue();\n\n    Method nextJsonElementMethod = JsonTreeReader.class.getDeclaredMethod(\"nextJsonElement\");\n    nextJsonElementMethod.setAccessible(true);\n\n    JsonElement result = (JsonElement) nextJsonElementMethod.invoke(spyReader);\n\n    assertEquals(jsonNull, result);\n    verify(spyReader).skipValue();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887796,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1055,
+    "prompt_tokens": 641,
+    "total_tokens": 1696,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.29
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAM8iQJ6vSla2M4vkknXVz2qRxfh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private File fileMock;\n    private Charset charset;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        fileMock = mock(File.class);\n        charset = Charset.defaultCharset();\n        formatMock = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_withValidFileCharsetAndFormat_shouldReturnCSVParserInstance() throws Exception {\n        when(fileMock.exists()).thenReturn(true);\n        when(fileMock.canRead()).thenReturn(true);\n        // Provide a valid path to avoid FileNotFoundException during FileInputStream creation\n        when(fileMock.getPath()).thenReturn(\"src/test/resources/dummy.csv\");\n\n        // Stub fileMock.getAbsolutePath() as well, since FileInputStream may use it internally\n        when(fileMock.getAbsolutePath()).thenReturn(\"src/test/resources/dummy.csv\");\n\n        CSVParser parser = CSVParser.parse(fileMock, charset, formatMock);\n        assertNotNull(parser);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(formatMock, formatField.get(parser));\n    }\n\n    @Test\n    void parse_withNullFile_shouldThrowNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((File) null, charset, formatMock);\n        });\n        assertEquals(\"file\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_withNullFormat_shouldThrowNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(fileMock, charset, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978868,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 419,
+    "prompt_tokens": 968,
+    "total_tokens": 1387,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.85
+  }
+}

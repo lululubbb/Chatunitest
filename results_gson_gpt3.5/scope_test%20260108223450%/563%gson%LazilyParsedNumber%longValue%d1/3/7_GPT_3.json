@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmEZOGPyU6aSp2WAogtODmPg8Ihz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\nimport java.io.ByteArrayInputStream;\nimport java.io.ObjectInputStream;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void testLongValue_parseLongSuccess() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1234567890\");\n    long result = number.longValue();\n    assertEquals(1234567890L, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_usesBigDecimal() {\n    // Value too large for long parseLong, triggers NumberFormatException\n    String largeValue = \"92233720368547758079223372036854775807\"; // > Long.MAX_VALUE\n    LazilyParsedNumber number = new LazilyParsedNumber(largeValue);\n    long expected = new BigDecimal(largeValue).longValue();\n    long actual = number.longValue();\n    assertEquals(expected, actual);\n  }\n\n  @Test\n  public void testWriteReplace_privateMethod_returnsObject() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(number);\n    assertNotNull(result);\n  }\n\n  @Test\n  public void testReadObject_privateMethod_throwsInvalidObjectException() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObject.setAccessible(true);\n\n    byte[] serializedData = new byte[] {\n      (byte)0xAC, (byte)0xED, // STREAM_MAGIC\n      0x00, 0x05               // STREAM_VERSION\n    };\n    try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(serializedData))) {\n      Exception exception = assertThrows(\n        java.lang.reflect.InvocationTargetException.class,\n        () -> readObject.invoke(number, in)\n      );\n      // The cause should be InvalidObjectException\n      Throwable cause = exception.getCause();\n      assertNotNull(cause);\n      assertTrue(cause instanceof java.io.InvalidObjectException);\n      assertEquals(\"Deserialization is unsupported\", cause.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886143,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 513,
+    "prompt_tokens": 1128,
+    "total_tokens": 1641,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.25
+  }
+}

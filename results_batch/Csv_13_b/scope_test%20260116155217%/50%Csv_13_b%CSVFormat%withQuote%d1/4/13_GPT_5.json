@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZEGznzOFP6zautlcVH9nC1DBFUN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatWithQuoteTest {\n\n    @Test\n    void testWithQuote_primitiveChar() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n\n        // Test with a normal quote character\n        CSVFormat result = baseFormat.withQuote('\\'');\n        assertNotNull(result);\n        assertEquals(Character.valueOf('\\''), result.getQuoteCharacter());\n\n        // Test with double quote character (same as default)\n        CSVFormat result2 = baseFormat.withQuote('\"');\n        assertNotNull(result2);\n        assertEquals(Character.valueOf('\"'), result2.getQuoteCharacter());\n\n        // Test with backslash character\n        CSVFormat result3 = baseFormat.withQuote('\\\\');\n        assertNotNull(result3);\n        assertEquals(Character.valueOf('\\\\'), result3.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_primitiveChar_nullChar() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n\n        // Test with null character (char) - '\\0'\n        CSVFormat result = baseFormat.withQuote('\\0');\n        assertNotNull(result);\n        assertEquals(Character.valueOf('\\0'), result.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_callsWithQuoteCharacter() throws Exception {\n        CSVFormat baseFormat = Mockito.spy(CSVFormat.DEFAULT);\n\n        // Use reflection to get the private withQuote(Character) method\n        Method withQuoteCharMethod = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        withQuoteCharMethod.setAccessible(true);\n\n        // Call the public withQuote(char) method and verify it calls withQuote(Character)\n        CSVFormat result = baseFormat.withQuote('Q');\n        assertNotNull(result);\n        assertEquals(Character.valueOf('Q'), result.getQuoteCharacter());\n\n        // Also invoke private withQuote(Character) directly via reflection to test coverage\n        CSVFormat result2 = (CSVFormat) withQuoteCharMethod.invoke(baseFormat, Character.valueOf('Z'));\n        assertNotNull(result2);\n        assertEquals(Character.valueOf('Z'), result2.getQuoteCharacter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551136,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 458,
+    "prompt_tokens": 1662,
+    "total_tokens": 2120,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.65
+  }
+}

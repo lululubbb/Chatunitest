@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmt2yG7In8otaZ6bsz8Qrs0tOMAE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.util.Comparator;\n\nclass LinkedTreeMap_FindByObjectTest {\n\n  private LinkedTreeMap<Object, Object> map;\n\n  @BeforeEach\n  void setUp() {\n    // Use default constructor which assumes Comparable keys\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void findByObject_withNullKey_returnsNull() throws Exception {\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    method.setAccessible(true);\n\n    Object result = method.invoke(map, new Object[] {null});\n    assertNull(result);\n  }\n\n  @Test\n  void findByObject_withKeyFound_returnsNode() throws Exception {\n    // Put an entry so findByObject can find it\n    String key = \"key1\";\n    String value = \"value1\";\n    map.put(key, value);\n\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<Object, Object> node = (Node<Object, Object>) method.invoke(map, key);\n    assertNotNull(node);\n    assertEquals(key, node.key);\n    assertEquals(value, node.value);\n  }\n\n  @Test\n  void findByObject_withKeyNotFound_returnsNull() throws Exception {\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<Object, Object> node = (Node<Object, Object>) method.invoke(map, \"nonexistent\");\n    assertNull(node);\n  }\n\n  @Test\n  void findByObject_withClassCastException_returnsNull() throws Exception {\n    // Create a map with a comparator that expects Strings\n    Comparator<Object> comparator = (o1, o2) -> ((String) o1).compareTo((String) o2);\n    LinkedTreeMap<Object, Object> stringMap = new LinkedTreeMap<>(comparator, false);\n    stringMap.put(\"a\", \"A\");\n\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    method.setAccessible(true);\n\n    // Pass an Integer key that will cause ClassCastException inside find\n    Object badKey = Integer.valueOf(1);\n    Object result = method.invoke(stringMap, badKey);\n    assertNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888652,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 550,
+    "prompt_tokens": 2753,
+    "total_tokens": 3303,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.34
+  }
+}

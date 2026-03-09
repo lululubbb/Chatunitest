@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  @Test\n  void serializeSpecialFloatingPointValues_setsFlagToTrue_andReturnsThis() {\n    GsonBuilder builder = new GsonBuilder();\n    // Initially the flag should be false (default from DEFAULT_SPECIALIZE_FLOAT_VALUES)\n    // but since DEFAULT_SPECIALIZE_FLOAT_VALUES is not given here, we assume false to test effect.\n    // Call the focal method\n    GsonBuilder returned = builder.serializeSpecialFloatingPointValues();\n    // Check that the method returns the same instance (for chaining)\n    assertSame(builder, returned);\n\n    // Use reflection to access the private field serializeSpecialFloatingPointValues\n    boolean flagValue;\n    try {\n      var field = GsonBuilder.class.getDeclaredField(\"serializeSpecialFloatingPointValues\");\n      field.setAccessible(true);\n      flagValue = field.getBoolean(builder);\n    } catch (ReflectiveOperationException e) {\n      throw new RuntimeException(e);\n    }\n    // The flag should now be true\n    assertTrue(flagValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1069,
+  "completion_tokens": 230,
+  "total_tokens": 1299,
+  "llm_elapsed_time_seconds": 5.45
+}

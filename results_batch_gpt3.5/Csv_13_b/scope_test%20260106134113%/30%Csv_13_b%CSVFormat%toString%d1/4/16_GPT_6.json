@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuWcJGXhRb84whU7RQTgeChlArEg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatToStringTest {\n\n    @Test\n    void testToString_DefaultFormat() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String toString = format.toString();\n        assertTrue(toString.contains(\"Delimiter=<,>\"));\n        assertTrue(toString.contains(\"QuoteChar=<\\\">\"));\n        assertFalse(toString.contains(\"Escape=<\"));\n        assertFalse(toString.contains(\"CommentStart=<\"));\n        assertFalse(toString.contains(\"NullString=<\"));\n        assertTrue(toString.contains(\"RecordSeparator=<\\r\\n>\"));\n        assertTrue(toString.contains(\"EmptyLines:ignored\"));\n        assertFalse(toString.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(toString.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(toString.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toString.contains(\"HeaderComments:\"));\n        assertFalse(toString.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_AllFieldsSet() throws Exception {\n        // Use reflection to invoke private constructor\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class, boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        char delimiter = ';';\n        Character quoteChar = '\\'';\n        QuoteMode quoteMode = QuoteMode.ALL;\n        Character commentMarker = '#';\n        Character escapeChar = '\\\\';\n        boolean ignoreSurroundingSpaces = true;\n        boolean ignoreEmptyLines = true;\n        String recordSeparator = \"\\n\";\n        String nullString = \"NULL\";\n        Object[] headerComments = new Object[] { \"comment1\", \"comment2\" };\n        String[] header = new String[] { \"h1\", \"h2\" };\n        boolean skipHeaderRecord = true;\n        boolean allowMissingColumnNames = false;\n        boolean ignoreHeaderCase = true;\n\n        CSVFormat format = constructor.newInstance(delimiter, quoteChar, quoteMode, commentMarker,\n                escapeChar, ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments,\n                header, skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase);\n\n        String toString = format.toString();\n\n        assertTrue(toString.contains(\"Delimiter=<;>\"));\n        assertTrue(toString.contains(\"Escape=<\\\\>\"));\n        assertTrue(toString.contains(\"QuoteChar=<'>'\") || toString.contains(\"QuoteChar=<'\")); // Accept either with or without trailing '>'\n        assertTrue(toString.contains(\"CommentStart=<#>\"));\n        assertTrue(toString.contains(\"NullString=<NULL>\"));\n        assertTrue(toString.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(toString.contains(\"EmptyLines:ignored\"));\n        assertTrue(toString.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(toString.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(toString.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(toString.contains(\"HeaderComments:[comment1, comment2]\"));\n        assertTrue(toString.contains(\"Header:[h1, h2]\"));\n    }\n\n    @Test\n    void testToString_NoOptionalFields() throws Exception {\n        // Use reflection to invoke private constructor with minimal fields set\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class, boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        char delimiter = '|';\n        Character quoteChar = null;\n        QuoteMode quoteMode = null;\n        Character commentMarker = null;\n        Character escapeChar = null;\n        boolean ignoreSurroundingSpaces = false;\n        boolean ignoreEmptyLines = false;\n        String recordSeparator = null;\n        String nullString = null;\n        Object[] headerComments = null;\n        String[] header = null;\n        boolean skipHeaderRecord = false;\n        boolean allowMissingColumnNames = false;\n        boolean ignoreHeaderCase = false;\n\n        CSVFormat format = constructor.newInstance(delimiter, quoteChar, quoteMode, commentMarker,\n                escapeChar, ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments,\n                header, skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase);\n\n        String toString = format.toString();\n\n        assertTrue(toString.contains(\"Delimiter=<>|>\"));\n        assertFalse(toString.contains(\"Escape=<\"));\n        assertFalse(toString.contains(\"QuoteChar=<\"));\n        assertFalse(toString.contains(\"CommentStart=<\"));\n        assertFalse(toString.contains(\"NullString=<\"));\n        assertFalse(toString.contains(\"RecordSeparator=<\"));\n        assertFalse(toString.contains(\"EmptyLines:ignored\"));\n        assertFalse(toString.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(toString.contains(\"IgnoreHeaderCase:ignored\"));\n        assertTrue(toString.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(toString.contains(\"HeaderComments:\"));\n        assertFalse(toString.contains(\"Header:\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679686,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1109,
+    "prompt_tokens": 2268,
+    "total_tokens": 3377,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.32
+  }
+}

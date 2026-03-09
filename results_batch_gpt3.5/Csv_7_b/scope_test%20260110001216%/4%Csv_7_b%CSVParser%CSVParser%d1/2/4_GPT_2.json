@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9OPyaJmbn56KlCGPzJ3oM2lxvc2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVFormat mockFormat;\n    private Reader reader;\n\n    @BeforeEach\n    public void setUp() {\n        mockFormat = mock(CSVFormat.class);\n        reader = new StringReader(\"header1,header2\\nvalue1,value2\");\n    }\n\n    @Test\n    public void testConstructor_NullReader_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, mockFormat);\n        });\n        assertEquals(\"reader\", ex.getMessage());\n    }\n\n    @Test\n    public void testConstructor_NullFormat_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(reader, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    public void testConstructor_ValidInputs_InitializesFields() throws Exception {\n        doNothing().when(mockFormat).validate();\n\n        CSVParser parser = new CSVParser(reader, mockFormat);\n\n        // Check format field\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat formatValue = (CSVFormat) formatField.get(parser);\n        assertSame(mockFormat, formatValue);\n\n        // Check lexer field is not null\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        Object lexerValue = lexerField.get(parser);\n        assertNotNull(lexerValue);\n\n        // Check headerMap field is not null\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        Map<String, Integer> headerMapValue = (Map<String, Integer>) headerMapField.get(parser);\n        assertNotNull(headerMapValue);\n    }\n\n    @Test\n    public void testConstructor_FormatValidateThrowsIOException() throws IOException {\n        doThrow(new IOException(\"validation failed\")).when(mockFormat).validate();\n\n        IOException ex = assertThrows(IOException.class, () -> {\n            new CSVParser(reader, mockFormat);\n        });\n        assertEquals(\"validation failed\", ex.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975165,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 517,
+    "prompt_tokens": 1215,
+    "total_tokens": 1732,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.75
+  }
+}

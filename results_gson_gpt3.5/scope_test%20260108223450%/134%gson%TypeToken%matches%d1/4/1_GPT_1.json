@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlca69899oaX9HrEpy8fmYq12XSk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenMatchesTest {\n\n  @Test\n  void matches_shouldReturnTrue_whenTypesAreEqual() throws Exception {\n    Type type = String.class;\n    Map<String, Type> typeMap = new HashMap<>();\n\n    boolean result = invokeMatches(type, type, typeMap);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void matches_shouldReturnTrue_whenFromIsTypeVariable_andToEqualsMappedType() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    TypeVariable<?> typeVariable = mock(TypeVariable.class);\n    when(typeVariable.getName()).thenReturn(\"T\");\n\n    Type mappedType = Integer.class;\n    Map<String, Type> typeMap = new HashMap<>();\n    typeMap.put(\"T\", mappedType);\n\n    boolean result = invokeMatches(typeVariable, mappedType, typeMap);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void matches_shouldReturnFalse_whenFromIsTypeVariable_andToDoesNotEqualMappedType() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    TypeVariable<?> typeVariable = mock(TypeVariable.class);\n    when(typeVariable.getName()).thenReturn(\"T\");\n\n    Type mappedType = Integer.class;\n    Map<String, Type> typeMap = new HashMap<>();\n    typeMap.put(\"T\", mappedType);\n\n    Type differentType = String.class;\n\n    boolean result = invokeMatches(typeVariable, differentType, typeMap);\n\n    assertFalse(result);\n  }\n\n  @Test\n  void matches_shouldReturnFalse_whenTypesAreDifferentAndFromIsNotTypeVariable() throws Exception {\n    Type from = Integer.class;\n    Type to = String.class;\n    Map<String, Type> typeMap = new HashMap<>();\n\n    boolean result = invokeMatches(from, to, typeMap);\n\n    assertFalse(result);\n  }\n\n  private boolean invokeMatches(Type from, Type to, Map<String, Type> typeMap) throws Exception {\n    var method = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, from, to, typeMap);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883788,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 486,
+    "prompt_tokens": 524,
+    "total_tokens": 1010,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.97
+  }
+}

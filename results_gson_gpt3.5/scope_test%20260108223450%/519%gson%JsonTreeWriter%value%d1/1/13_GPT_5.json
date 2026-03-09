@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnRe9ZuVaCDk8oNbx5KdRdAXgxw2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValue_long_simple() throws Exception {\n    JsonWriter returned = writer.value(123L);\n    assertSame(writer, returned);\n\n    // Access private field 'product' to verify it holds the JsonPrimitive with the long value\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(writer);\n    assertTrue(product instanceof JsonPrimitive);\n    assertEquals(123L, ((JsonPrimitive) product).getAsLong());\n  }\n\n  @Test\n  public void testValue_long_withArrayInStack() throws Exception {\n    // Use reflection to invoke beginArray() to push a JsonArray on stack\n    JsonWriter bw = writer.beginArray();\n    assertSame(writer, bw);\n\n    JsonWriter returned = writer.value(456L);\n    assertSame(writer, returned);\n\n    // Access private field 'stack'\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n\n    // The top of stack should be a JsonArray containing the new JsonPrimitive\n    assertFalse(stack.isEmpty());\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top instanceof JsonArray);\n    JsonArray array = (JsonArray) top;\n    assertEquals(1, array.size());\n    assertEquals(456L, array.get(0).getAsLong());\n  }\n\n  @Test\n  public void testValue_long_withObjectAndPendingName() throws Exception {\n    // Begin object and set a pending name\n    writer.beginObject();\n    writer.name(\"fieldName\");\n\n    // Call value(long)\n    JsonWriter returned = writer.value(789L);\n    assertSame(writer, returned);\n\n    // Access private field 'stack'\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n\n    // The top of stack should be a JsonObject with the field set\n    assertFalse(stack.isEmpty());\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top instanceof JsonObject);\n    JsonObject obj = (JsonObject) top;\n    assertTrue(obj.has(\"fieldName\"));\n    assertEquals(789L, obj.get(\"fieldName\").getAsLong());\n\n    // pendingName should be reset to null\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    String pendingName = (String) pendingNameField.get(writer);\n    assertNull(pendingName);\n  }\n\n  @Test\n  public void testValue_long_afterClose_throws() throws Exception {\n    // Call close() to set the writer to closed state\n    writer.close();\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> writer.value(1L));\n    assertEquals(\"JsonWriter is closed.\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890798,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 787,
+    "prompt_tokens": 1644,
+    "total_tokens": 2431,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.45
+  }
+}

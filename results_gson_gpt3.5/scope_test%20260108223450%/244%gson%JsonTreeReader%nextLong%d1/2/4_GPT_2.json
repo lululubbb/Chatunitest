@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZAwBkhQZ4Mzptwgw33h7GwVKVX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // We create a minimal JsonPrimitive to pass to constructor\n        JsonPrimitive primitive = new JsonPrimitive(123L);\n        jsonTreeReader = new JsonTreeReader(primitive);\n\n        // Set stack to contain the JsonPrimitive and stackSize to 1\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n        stack[0] = primitive;\n        stackField.set(jsonTreeReader, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 1);\n\n        // Set pathIndices to zeros\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n        pathIndices[0] = 0;\n        pathIndicesField.set(jsonTreeReader, pathIndices);\n    }\n\n    @Test\n    public void testNextLong_withNumberToken_returnsLongValue() throws Exception {\n        // Mock peek() to return NUMBER token\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(123L, result);\n\n        // Verify stackSize decreased by 1\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(0, stackSize);\n\n        // Verify pathIndices incremented (should not throw)\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(1, pathIndices[0]);\n    }\n\n    @Test\n    public void testNextLong_withStringToken_returnsLongValue() throws Exception {\n        // Setup stack with JsonPrimitive with numeric string\n        JsonPrimitive primitive = new JsonPrimitive(\"456\");\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n        stack[0] = primitive;\n        stackField.set(jsonTreeReader, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 1);\n\n        // Reset pathIndices to 0 before test\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n        pathIndices[0] = 0;\n        pathIndicesField.set(jsonTreeReader, pathIndices);\n\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.STRING).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(456L, result);\n\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(0, stackSize);\n\n        int[] updatedPathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(1, updatedPathIndices[0]);\n    }\n\n    @Test\n    public void testNextLong_withInvalidToken_throwsIllegalStateException() throws Exception {\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.BEGIN_ARRAY).when(spyReader).peek();\n\n        IllegalStateException ex = assertThrows(IllegalStateException.class, spyReader::nextLong);\n        assertTrue(ex.getMessage().contains(\"Expected NUMBER but was BEGIN_ARRAY\"));\n    }\n\n    @Test\n    public void testNextLong_decrementsStackSizeAndIncrementsPathIndices() throws Exception {\n        // Setup stackSize > 1 to test incrementing pathIndices at stackSize-1 index\n        JsonPrimitive primitive = new JsonPrimitive(789L);\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n        stack[0] = primitive;\n        // Use a valid JsonPrimitive with numeric string instead of \"dummy\"\n        stack[1] = new JsonPrimitive(\"123\");\n        stackField.set(jsonTreeReader, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 2);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n        pathIndices[1] = 5;\n        pathIndicesField.set(jsonTreeReader, pathIndices);\n\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(789L, result);\n\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(1, stackSize);\n\n        int[] updatedPathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(6, updatedPathIndices[1]);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887420,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1250,
+    "prompt_tokens": 2667,
+    "total_tokens": 3917,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.12
+  }
+}

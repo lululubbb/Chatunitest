@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n\n  @BeforeEach\n  public void setUp() {\n    mockWriter = new StringWriter();\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  public void testSetHtmlSafe_true() throws Exception {\n    // Initially htmlSafe is false\n    assertFalse(jsonWriter.isHtmlSafe());\n\n    // Use reflection to invoke setHtmlSafe\n    Method setHtmlSafeMethod = JsonWriter.class.getDeclaredMethod(\"setHtmlSafe\", boolean.class);\n    setHtmlSafeMethod.setAccessible(true);\n    setHtmlSafeMethod.invoke(jsonWriter, true);\n\n    // Verify htmlSafe is now true\n    assertTrue(jsonWriter.isHtmlSafe());\n  }\n\n  @Test\n  public void testSetHtmlSafe_false() throws Exception {\n    // Set htmlSafe true first\n    Method setHtmlSafeMethod = JsonWriter.class.getDeclaredMethod(\"setHtmlSafe\", boolean.class);\n    setHtmlSafeMethod.setAccessible(true);\n    setHtmlSafeMethod.invoke(jsonWriter, true);\n    assertTrue(jsonWriter.isHtmlSafe());\n\n    // Now set htmlSafe false\n    setHtmlSafeMethod.invoke(jsonWriter, false);\n    assertFalse(jsonWriter.isHtmlSafe());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 723,
+  "completion_tokens": 322,
+  "total_tokens": 1045,
+  "llm_elapsed_time_seconds": 6.62
+}

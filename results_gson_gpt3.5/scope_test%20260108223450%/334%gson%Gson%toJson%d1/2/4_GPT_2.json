@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlxf9M1I5r3fR34r3cRWsSLkvZrE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJson_withNullObject_returnsJsonNull() {\n    String json = gson.toJson(null, Object.class);\n    assertEquals(\"null\", json);\n  }\n\n  @Test\n  public void testToJson_withStringObject_returnsJsonString() {\n    String input = \"test\";\n    String json = gson.toJson(input, String.class);\n    assertEquals(\"\\\"test\\\"\", json);\n  }\n\n  @Test\n  public void testToJson_withIntegerObject_returnsJsonNumber() {\n    Integer input = 123;\n    String json = gson.toJson(input, Integer.class);\n    assertEquals(\"123\", json);\n  }\n\n  @Test\n  public void testToJson_withCustomTypeToken_returnsJson() {\n    Type type = new TypeToken<Integer>() {}.getType();\n    Integer input = 456;\n    String json = gson.toJson(input, type);\n    assertEquals(\"456\", json);\n  }\n\n  @Test\n  public void testToJson_invokesPrivateToJsonWithWriter() throws Exception {\n    String input = \"privateTest\";\n    Type type = String.class;\n\n    // Use reflection to invoke private method: toJson(Object src, Type typeOfSrc, Appendable writer)\n    Method privateToJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, Type.class, Appendable.class);\n    privateToJsonMethod.setAccessible(true);\n\n    StringWriter writer = new StringWriter();\n    privateToJsonMethod.invoke(gson, input, type, writer);\n\n    assertEquals(\"\\\"privateTest\\\"\", writer.toString());\n  }\n\n  @Test\n  public void testToJson_withComplexObject_returnsJson() {\n    class Person {\n      String name = \"John\";\n      int age = 30;\n    }\n    Person person = new Person();\n    String json = gson.toJson(person, Person.class);\n    assertTrue(json.contains(\"\\\"name\\\":\\\"John\\\"\"));\n    assertTrue(json.contains(\"\\\"age\\\":30\"));\n  }\n\n  @Test\n  public void testToJson_withArray_returnsJsonArray() {\n    Integer[] numbers = {1, 2, 3};\n    String json = gson.toJson(numbers, Integer[].class);\n    assertEquals(\"[1,2,3]\", json);\n  }\n\n  @Test\n  public void testToJson_withList_returnsJsonArray() {\n    java.util.List<String> list = java.util.Arrays.asList(\"a\", \"b\", \"c\");\n    Type type = new TypeToken<java.util.List<String>>() {}.getType();\n    String json = gson.toJson(list, type);\n    assertEquals(\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\", json);\n  }\n\n  @Test\n  public void testToJson_withMap_returnsJsonObject() {\n    java.util.Map<String, Integer> map = new java.util.HashMap<>();\n    map.put(\"one\", 1);\n    map.put(\"two\", 2);\n    Type type = new TypeToken<java.util.Map<String, Integer>>() {}.getType();\n    String json = gson.toJson(map, type);\n    assertTrue(json.contains(\"\\\"one\\\":1\"));\n    assertTrue(json.contains(\"\\\"two\\\":2\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885095,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 746,
+    "prompt_tokens": 2036,
+    "total_tokens": 2782,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.41
+  }
+}

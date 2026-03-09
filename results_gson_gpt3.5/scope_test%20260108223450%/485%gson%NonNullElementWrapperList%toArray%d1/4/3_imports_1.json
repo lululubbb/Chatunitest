@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = new ArrayList<>();\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void toArray_returnsDelegateToArray() {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n    Object[] array = list.toArray();\n    assertArrayEquals(new Object[] { \"a\", \"b\" }, array);\n  }\n\n  @Test\n  void toArray_emptyDelegate_returnsEmptyArray() {\n    Object[] array = list.toArray();\n    assertEquals(0, array.length);\n  }\n\n  @Test\n  void toArray_reflectionInvoke() throws Exception {\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\");\n    toArrayMethod.setAccessible(true);\n    delegate.add(\"x\");\n    Object[] result = (Object[]) toArrayMethod.invoke(list);\n    assertArrayEquals(new Object[] { \"x\" }, result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 373,
+  "completion_tokens": 277,
+  "total_tokens": 650,
+  "llm_elapsed_time_seconds": 6.84,
+  "repair_elapsed_time_seconds": 23.26,
+  "round_total_time_seconds": 23.26
+}

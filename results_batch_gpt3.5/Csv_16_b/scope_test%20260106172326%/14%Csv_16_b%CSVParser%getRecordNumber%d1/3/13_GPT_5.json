@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxdK7iVEz1QCu28z3u1xY3MLrCjy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Reader reader = new StringReader(\"header1,header2\\nvalue1,value2\");\n\n        try {\n            Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n            constructor.setAccessible(true);\n            csvParser = constructor.newInstance(reader, format, 0L, 42L);\n        } catch (NoSuchMethodException e) {\n            csvParser = new CSVParser(reader, format);\n            Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n            recordNumberField.setAccessible(true);\n            recordNumberField.setLong(csvParser, 42L);\n        }\n    }\n\n    @Test\n    public void testGetRecordNumber() {\n        long recordNumber = csvParser.getRecordNumber();\n        assertEquals(42L, recordNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691634,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 271,
+    "prompt_tokens": 938,
+    "total_tokens": 1209,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 3.36
+  }
+}

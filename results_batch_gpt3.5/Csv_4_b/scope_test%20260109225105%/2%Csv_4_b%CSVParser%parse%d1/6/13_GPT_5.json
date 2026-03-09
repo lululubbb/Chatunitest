@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8MFIWXazOZs83ypEoa1zmziYJXa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    @Test\n    void testParse_validStringAndFormat_returnsCSVParser() throws Exception {\n        // Arrange\n        String input = \"a,b,c\\n1,2,3\";\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Act\n        CSVParser parser = CSVParser.parse(input, format);\n\n        // Assert\n        assertNotNull(parser);\n\n        // Use reflection to access private field 'format'\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(parser);\n        assertEquals(format, actualFormat);\n\n        assertFalse(parser.isClosed());\n    }\n\n    @Test\n    void testParse_nullString_throwsException() {\n        CSVFormat format = mock(CSVFormat.class);\n\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.<String>parse((String) null, format);\n        });\n        assertEquals(\"string\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_nullFormat_throwsException() {\n        String input = \"a,b,c\";\n\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(input, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767971187,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 317,
+    "prompt_tokens": 953,
+    "total_tokens": 1270,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.99
+  }
+}

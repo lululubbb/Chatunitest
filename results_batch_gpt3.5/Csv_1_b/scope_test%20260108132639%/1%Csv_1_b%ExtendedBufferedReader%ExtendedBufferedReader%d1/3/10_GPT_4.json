@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcr4w7S21RS9nvMv4PKGiP8I9i0A",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    private Reader mockReader;\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testConstructor() {\n        assertNotNull(extendedBufferedReader);\n    }\n\n    @Test\n    void testReadDelegatesToSuper() throws IOException {\n        // Setup mockReader to return 65\n        when(mockReader.read()).thenReturn(65);\n\n        int result = extendedBufferedReader.read();\n\n        assertEquals(65, result);\n        verify(mockReader).read();\n    }\n\n    @Test\n    void testReadCharArray() throws IOException {\n        char[] buf = new char[10];\n        int offset = 2;\n        int length = 5;\n\n        // Setup mockReader to read chars into buf\n        doAnswer(invocation -> {\n            char[] b = invocation.getArgument(0);\n            int off = invocation.getArgument(1);\n            int len = invocation.getArgument(2);\n            String data = \"abcde\";\n            for (int i = 0; i < len; i++) {\n                b[off + i] = data.charAt(i);\n            }\n            return len;\n        }).when(mockReader).read(any(char[].class), eq(offset), eq(length));\n\n        int readCount = extendedBufferedReader.read(buf, offset, length);\n\n        assertEquals(5, readCount);\n        assertArrayEquals(new char[] {0,0,'a','b','c','d','e',0,0,0}, buf);\n        verify(mockReader).read(any(char[].class), eq(offset), eq(length));\n    }\n\n    @Test\n    void testReadLine() throws IOException {\n        // Setup mockReader to return \"line1\\n\" when read() is called internally\n        String line = \"line1\";\n        char[] chars = (line + \"\\n\").toCharArray();\n        final int[] index = {0};\n        when(mockReader.read()).thenAnswer(invocation -> {\n            if (index[0] < chars.length) {\n                return chars[index[0]++];\n            }\n            return -1;\n        });\n\n        String resultLine = extendedBufferedReader.readLine();\n\n        assertEquals(line, resultLine);\n    }\n\n    @Test\n    void testLookAhead() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {\n        Method lookAheadMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"lookAhead\");\n        lookAheadMethod.setAccessible(true);\n\n        // Setup mockReader to return 100\n        when(mockReader.read()).thenReturn(100);\n\n        int result = (int) lookAheadMethod.invoke(extendedBufferedReader);\n\n        assertEquals(100, result);\n        verify(mockReader).read();\n    }\n\n    @Test\n    void testReadAgain() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        // Setup mockReader to return 101\n        when(mockReader.read()).thenReturn(101);\n\n        int result = (int) readAgainMethod.invoke(extendedBufferedReader);\n\n        assertEquals(101, result);\n        verify(mockReader).read();\n    }\n\n    @Test\n    void testGetLineNumber() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {\n        Method getLineNumberMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"getLineNumber\");\n        getLineNumberMethod.setAccessible(true);\n\n        // Initially lineCounter is 0\n        int lineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(0, lineNumber);\n\n        // Use reflection to set lineCounter to a value and test again\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        lineCounterField.setInt(extendedBufferedReader, 5);\n\n        int updatedLineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(5, updatedLineNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850090,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 967,
+    "prompt_tokens": 1335,
+    "total_tokens": 2302,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.22
+  }
+}

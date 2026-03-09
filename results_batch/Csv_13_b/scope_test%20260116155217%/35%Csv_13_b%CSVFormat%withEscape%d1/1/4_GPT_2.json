@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZGfysgIGhWi5lYYIxz8DLdrnop2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithEscapeChar() {\n        char escapeChar = '\\\\';\n        CSVFormat result = csvFormat.withEscape(escapeChar);\n        assertNotNull(result);\n        assertEquals(Character.valueOf(escapeChar), result.getEscapeCharacter());\n        // Original instance should be unchanged (immutability)\n        assertNull(csvFormat.getEscapeCharacter());\n        // The returned instance should not be the same as original\n        assertNotSame(csvFormat, result);\n    }\n\n    @Test\n    void testWithEscapeCharDifferent() {\n        char escapeChar = 'X';\n        CSVFormat result = csvFormat.withEscape(escapeChar);\n        assertNotNull(result);\n        assertEquals(Character.valueOf(escapeChar), result.getEscapeCharacter());\n        assertNull(csvFormat.getEscapeCharacter());\n        assertNotSame(csvFormat, result);\n    }\n\n    @Test\n    void testWithEscapeCharUsingReflection() throws Exception {\n        Method withEscapeCharMethod = CSVFormat.class.getDeclaredMethod(\"withEscape\", Character.class);\n        withEscapeCharMethod.setAccessible(true);\n        CSVFormat result = (CSVFormat) withEscapeCharMethod.invoke(csvFormat, Character.valueOf('E'));\n        assertNotNull(result);\n        assertEquals(Character.valueOf('E'), result.getEscapeCharacter());\n    }\n\n    @Test\n    void testWithEscapeCharacterNull() {\n        CSVFormat result = csvFormat.withEscape((Character) null);\n        assertNotNull(result);\n        assertNull(result.getEscapeCharacter());\n        assertNotSame(csvFormat, result);\n    }\n\n    @Test\n    void testWithEscapeCharacterSameAsCurrent() {\n        CSVFormat formatWithEscape = csvFormat.withEscape('Z');\n        CSVFormat result = formatWithEscape.withEscape('Z');\n        // Should return the same instance if escape character is unchanged\n        assertSame(formatWithEscape, result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551285,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 455,
+    "prompt_tokens": 1675,
+    "total_tokens": 2130,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.32
+  }
+}

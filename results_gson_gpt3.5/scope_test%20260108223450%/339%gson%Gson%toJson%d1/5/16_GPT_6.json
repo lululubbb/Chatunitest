@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmSSEMJ9kmqbUkMK5y8QJj8JYzyX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_validJsonElement_appendsJson() throws IOException {\n    JsonElement jsonElement = mock(JsonElement.class);\n    StringWriter writer = new StringWriter();\n\n    // Spy gson to mock newJsonWriter and toJson(JsonElement, JsonWriter)\n    Gson spyGson = Mockito.spy(gson);\n    JsonWriter jsonWriter = new JsonWriter(writer);\n    doReturn(jsonWriter).when(spyGson).newJsonWriter(any());\n\n    doAnswer(invocation -> {\n      JsonWriter argJsonWriter = invocation.getArgument(1);\n      argJsonWriter.value(\"test\");\n      argJsonWriter.flush();\n      return null;\n    }).when(spyGson).toJson(any(JsonElement.class), any(JsonWriter.class));\n\n    // Call the method under test on the spy\n    spyGson.toJson(jsonElement, (Appendable) writer);\n\n    assertEquals(\"\\\"test\\\"\", writer.toString());\n  }\n\n  @Test\n  void toJson_ioException_throwsJsonIOException() throws IOException {\n    JsonElement jsonElement = mock(JsonElement.class);\n    Appendable writer = mock(Appendable.class);\n\n    // Spy gson to mock newJsonWriter throwing IOException\n    Gson spyGson = Mockito.spy(gson);\n    doThrow(new IOException(\"io error\")).when(spyGson).newJsonWriter(any());\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> {\n      spyGson.toJson(jsonElement, writer);\n    });\n\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"io error\", thrown.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887004,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 430,
+    "prompt_tokens": 2763,
+    "total_tokens": 3193,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.95
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9n1sXupD3E9RRlJ924uD3Sbk1DA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        // Use the predefined DEFAULT instance\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testGetEscape_DefaultNull() {\n        // By default, escape is null in CSVFormat.DEFAULT\n        assertNull(csvFormat.getEscape());\n    }\n\n    @Test\n    void testGetEscape_WithEscapeChar() throws Exception {\n        // Create CSVFormat instance with escape character set via withEscape(Character)\n        CSVFormat formatWithEscape = csvFormat.withEscape('\\\\');\n        assertNotNull(formatWithEscape.getEscape());\n        assertEquals(Character.valueOf('\\\\'), formatWithEscape.getEscape());\n    }\n\n    @Test\n    void testGetEscape_ReflectionSetEscape() throws Exception {\n        // Use reflection to set private final field 'escape' to a specific value and test getEscape()\n        Field escapeField = CSVFormat.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(escapeField, escapeField.getModifiers() & ~Modifier.FINAL);\n\n        // Create a new CSVFormat instance with escape = null to allow modification\n        CSVFormat format = csvFormat.withEscape((Character) null);\n\n        // Set escape field to 'e'\n        escapeField.set(format, Character.valueOf('e'));\n\n        Character escape = format.getEscape();\n        assertNotNull(escape);\n        assertEquals(Character.valueOf('e'), escape);\n    }\n\n    @Test\n    void testGetEscape_NullEscape() throws Exception {\n        // Create format with escape explicitly set to null\n        CSVFormat formatNullEscape = csvFormat.withEscape((Character) null);\n        assertNull(formatNullEscape.getEscape());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976691,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 437,
+    "prompt_tokens": 1391,
+    "total_tokens": 1828,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.31
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxn80kX5cwDXqDcMGJuu52pYGxLU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.BufferedReader;\nimport java.io.IOException;\nimport java.nio.charset.Charset;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nclass CSVParserParsePathTest {\n\n    private Path mockPath;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockPath = mock(Path.class);\n        charset = Charset.defaultCharset();\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_nullPath_throwsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse((Path) null, charset, format));\n        assertEquals(\"path\", ex.getMessage());\n    }\n\n    @Test\n    void parse_nullFormat_throwsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(mockPath, charset, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_returnsNonNullParser() throws IOException {\n        MockedStatic<Files> mockedFiles = null;\n        MockedStatic<CSVParser> mockedCSVParser = null;\n        try {\n            mockedFiles = mockStatic(Files.class);\n            BufferedReader mockReader = mock(BufferedReader.class);\n            mockedFiles.when(() -> Files.newBufferedReader(mockPath, charset)).thenReturn(mockReader);\n\n            mockedCSVParser = mockStatic(CSVParser.class);\n            mockedCSVParser.when(() -> CSVParser.parse(mockReader, format)).thenReturn(new CSVParser(mockReader, format));\n\n            CSVParser actualParser = CSVParser.parse(mockPath, charset, format);\n            assertNotNull(actualParser);\n        } finally {\n            if (mockedCSVParser != null) {\n                mockedCSVParser.close();\n            }\n            if (mockedFiles != null) {\n                mockedFiles.close();\n            }\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692242,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 441,
+    "prompt_tokens": 2013,
+    "total_tokens": 2454,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.84
+  }
+}

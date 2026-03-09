@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport static org.apache.commons.csv.Constants.COMMENT;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.LF;\nimport static org.apache.commons.csv.Constants.SP;\nimport java.io.Flushable;\nimport java.sql.ResultSet;\nimport java.sql.SQLException;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterCloseTest {\n\n    private Appendable mockAppendable;\n    private CSVFormat mockFormat;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void close_withCloseableAppendable_callsClose() throws IOException {\n        Closeable closeableAppendable = mock(Closeable.class);\n        printer = new CSVPrinter(closeableAppendable, mockFormat);\n\n        printer.close();\n\n        verify(closeableAppendable, times(1)).close();\n    }\n\n    @Test\n    void close_withNonCloseableAppendable_doesNotThrow() throws IOException {\n        mockAppendable = mock(Appendable.class);\n        // Appendable is not Closeable here\n        printer = new CSVPrinter(mockAppendable, mockFormat);\n\n        assertDoesNotThrow(() -> printer.close());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_13_b/scope_test%20260116155217%/58%Csv_13_b%CSVPrinter%close%d1/3/runtemp/Csv_13_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n/home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_13_b/scope_test%20260116155217%/58%Csv_13_b%CSVPrinter%close%d1/3/runtemp/Csv_13_b/.test_suite/org/apache/commons/csv/CSVPrinter_58_3Test.java:36: 错误: 不兼容的类型: Closeable无法转换为Appendable\n        printer = new CSVPrinter(closeableAppendable, mockFormat);\n                                 ^\n注: 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出\n1 个错误\n1 个警告",
+  "prompt_tokens": 437,
+  "completion_tokens": 246,
+  "total_tokens": 683,
+  "llm_elapsed_time_seconds": 5.03,
+  "repair_elapsed_time_seconds": 16.85,
+  "round_total_time_seconds": 16.85
+}

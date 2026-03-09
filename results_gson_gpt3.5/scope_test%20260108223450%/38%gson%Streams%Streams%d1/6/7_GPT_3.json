@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvml69J8A295ARNl38bYzA5LV3RTq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.EOFException;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\npublic class StreamsTest {\n\n  @Test\n  void testPrivateConstructor() throws Exception {\n    Constructor<Streams> constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, constructor::newInstance);\n    assertNotNull(thrown);\n    assertTrue(thrown.getCause() instanceof UnsupportedOperationException);\n  }\n\n  @Test\n  void parse_validJson_returnsJsonElement() throws IOException {\n    String json = \"\\\"hello\\\"\";\n    JsonReader reader = new JsonReader(new StringReader(json));\n    JsonElement element = Streams.parse(reader);\n    assertNotNull(element);\n    assertEquals(\"hello\", element.getAsString());\n  }\n\n  @Test\n  void parse_emptyJson_throwsJsonSyntaxException() {\n    JsonReader reader = new JsonReader(new StringReader(\"\"));\n    assertThrows(JsonParseException.class, () -> Streams.parse(reader));\n  }\n\n  @Test\n  void parse_malformedJson_throwsJsonSyntaxException() {\n    JsonReader reader = new JsonReader(new StringReader(\"{ this is not json }\"));\n    assertThrows(JsonSyntaxException.class, () -> Streams.parse(reader));\n  }\n\n  @Test\n  void parse_ioException_throwsJsonIOException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenThrow(new IOException(\"io error\"));\n    assertThrows(JsonIOException.class, () -> Streams.parse(reader));\n  }\n\n  @Test\n  void write_writesJsonElement() throws IOException {\n    JsonElement element = TypeAdapters.JSON_ELEMENT.read(new JsonReader(new StringReader(\"\\\"test\\\"\")));\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(stringWriter);\n    Streams.write(element, writer);\n    writer.flush();\n    assertEquals(\"\\\"test\\\"\", stringWriter.toString());\n  }\n\n  @Test\n  void write_nullElement_writesNull() throws IOException {\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(stringWriter);\n    Streams.write(JsonNull.INSTANCE, writer);\n    writer.flush();\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  @Test\n  void writerForAppendable_withStringBuilder_returnsWriter() throws IOException {\n    StringBuilder sb = new StringBuilder();\n    Writer writer = Streams.writerForAppendable(sb);\n    assertNotNull(writer);\n    writer.write(\"abc\");\n    writer.flush();\n    assertEquals(\"abc\", sb.toString());\n  }\n\n  @Test\n  void writerForAppendable_withWriter_returnsSameInstance() throws IOException {\n    StringWriter sw = new StringWriter();\n    Writer writer = Streams.writerForAppendable(sw);\n    assertSame(sw, writer);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888160,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 704,
+    "prompt_tokens": 1652,
+    "total_tokens": 2356,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.28
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn1N3d2eqYp6fypXyUE69UEmqJ4P",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass JsonTreeReaderPushTest {\n\n    private JsonTreeReader jsonTreeReader;\n    private Method pushMethod;\n    private Field stackField;\n    private Field stackSizeField;\n    private Field pathIndicesField;\n    private Field pathNamesField;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a dummy JsonElement to instantiate JsonTreeReader (using null here as constructor param is not focal)\n        jsonTreeReader = new JsonTreeReader(null);\n\n        // Access private push method\n        pushMethod = JsonTreeReader.class.getDeclaredMethod(\"push\", Object.class);\n        pushMethod.setAccessible(true);\n\n        // Access private fields\n        stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n\n        stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n\n        pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n\n        pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n        pathNamesField.setAccessible(true);\n    }\n\n    @Test\n    public void testPushNormalWithinCapacity() throws Exception {\n        // Initial stackSize = 0, stack length = 32\n        // Push one object, stackSize should increase by 1, stack array unchanged\n\n        Object newTop = new Object();\n        int initialStackSize = (int) stackSizeField.get(jsonTreeReader);\n        Object[] initialStack = (Object[]) stackField.get(jsonTreeReader);\n        int initialLength = initialStack.length;\n\n        pushMethod.invoke(jsonTreeReader, newTop);\n\n        int updatedStackSize = (int) stackSizeField.get(jsonTreeReader);\n        Object[] updatedStack = (Object[]) stackField.get(jsonTreeReader);\n\n        // stackSize incremented by 1\n        assertEquals(initialStackSize + 1, updatedStackSize);\n\n        // The newTop is at the top of the stack\n        assertSame(newTop, updatedStack[initialStackSize]);\n\n        // The stack array reference remains the same (no resize)\n        assertSame(initialStack, updatedStack);\n\n        // pathIndices and pathNames arrays length remain unchanged\n        int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n        String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n        assertEquals(initialLength, pathIndices.length);\n        assertEquals(initialLength, pathNames.length);\n    }\n\n    @Test\n    public void testPushTriggersResize() throws Exception {\n        // Setup stackSize == stack.length to trigger resize\n        Object[] initialStack = new Object[4];\n        Arrays.fill(initialStack, new Object());\n        stackField.set(jsonTreeReader, initialStack);\n        stackSizeField.set(jsonTreeReader, initialStack.length);\n\n        int[] initialPathIndices = new int[4];\n        pathIndicesField.set(jsonTreeReader, initialPathIndices);\n\n        String[] initialPathNames = new String[4];\n        pathNamesField.set(jsonTreeReader, initialPathNames);\n\n        Object newTop = new Object();\n\n        pushMethod.invoke(jsonTreeReader, newTop);\n\n        int updatedStackSize = (int) stackSizeField.get(jsonTreeReader);\n        Object[] updatedStack = (Object[]) stackField.get(jsonTreeReader);\n        int[] updatedPathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n        String[] updatedPathNames = (String[]) pathNamesField.get(jsonTreeReader);\n\n        // stackSize incremented by 1\n        assertEquals(initialStack.length + 1, updatedStackSize);\n\n        // The newTop is at the top of the stack\n        assertSame(newTop, updatedStack[initialStack.length]);\n\n        // The stack array reference is new (resized)\n        assertNotSame(initialStack, updatedStack);\n\n        // The new length is doubled\n        assertEquals(initialStack.length * 2, updatedStack.length);\n        assertEquals(initialPathIndices.length * 2, updatedPathIndices.length);\n        assertEquals(initialPathNames.length * 2, updatedPathNames.length);\n\n        // The old contents are preserved\n        for (int i = 0; i < initialStack.length; i++) {\n            assertSame(initialStack[i], updatedStack[i]);\n            assertEquals(initialPathIndices[i], updatedPathIndices[i]);\n            assertEquals(initialPathNames[i], updatedPathNames[i]);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889169,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 983,
+    "prompt_tokens": 1646,
+    "total_tokens": 2629,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.86
+  }
+}

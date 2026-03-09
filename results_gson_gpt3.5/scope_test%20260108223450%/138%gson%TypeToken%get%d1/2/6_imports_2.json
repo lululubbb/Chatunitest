@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.reflect;\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.GenericArrayType;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Type;\nimport java.util.Map;\n\nclass TypeTokenTest {\n\n  @Test\n  void testGet_withClassType() {\n    TypeToken<?> token = TypeToken.get(String.class);\n    assertNotNull(token);\n    assertEquals(String.class, token.getRawType());\n    assertEquals(String.class, token.getType());\n  }\n\n  @Test\n  void testGet_withParameterizedType() {\n    Type parameterizedType = new TypeToken<Map<String, Integer>>() {}.getType();\n    TypeToken<?> token = TypeToken.get(parameterizedType);\n    assertNotNull(token);\n    assertEquals(Map.class, token.getRawType(), \"Raw type should be Map\");\n    assertEquals(parameterizedType, token.getType());\n  }\n\n  @Test\n  void testGet_withGenericArrayType() {\n    Type arrayType = new TypeToken<String[]>() {}.getType();\n    TypeToken<?> token = TypeToken.get(arrayType);\n    assertNotNull(token);\n    assertEquals(String[].class, token.getRawType());\n    assertEquals(arrayType, token.getType());\n  }\n\n  @Test\n  void testGet_withTypeVariable() throws Exception {\n    TypeToken<?> token = TypeToken.get(TypeToken.class.getTypeParameters()[0]);\n    assertNotNull(token);\n    assertEquals(Object.class, token.getRawType());\n    assertEquals(TypeToken.class.getTypeParameters()[0], token.getType());\n  }\n\n  @Test\n  void testGet_withNullType() {\n    assertThrows(NullPointerException.class, () -> {\n      TypeToken.get(null);\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1195,
+  "completion_tokens": 354,
+  "total_tokens": 1549,
+  "llm_elapsed_time_seconds": 8.55,
+  "repair_elapsed_time_seconds": 21.7,
+  "round_total_time_seconds": 21.7
+}

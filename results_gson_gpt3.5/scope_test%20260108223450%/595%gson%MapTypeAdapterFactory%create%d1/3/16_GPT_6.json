@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnOTiiQndtuQP7uMh7otWF3g1a9i",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Type;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass MapTypeAdapterFactoryTest {\n\n  private ConstructorConstructor constructorConstructor;\n  private Gson gson;\n  private MapTypeAdapterFactory factory;\n\n  @BeforeEach\n  void setUp() {\n    constructorConstructor = mock(ConstructorConstructor.class);\n    gson = mock(Gson.class);\n    factory = new MapTypeAdapterFactory(constructorConstructor, true);\n  }\n\n  @Test\n  void create_returnsNull_whenRawTypeIsNotMap() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_returnsAdapter_whenRawTypeIsMap() throws Exception {\n    // Prepare a Map type token\n    TypeToken<Map<String, Integer>> typeToken = new TypeToken<Map<String, Integer>>() {};\n\n    // Prepare key and value types\n    Type keyType = String.class;\n    Type valueType = Integer.class;\n\n    // Mock keyAdapter and valueAdapter\n    TypeAdapter<?> keyAdapter = mock(TypeAdapter.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Integer> valueAdapter = (TypeAdapter<Integer>) mock(TypeAdapter.class);\n\n    // Mock gson.getAdapter to return valueAdapter with correct generics\n    when(gson.getAdapter(TypeToken.get(valueType))).thenReturn(valueAdapter);\n\n    // Mock constructorConstructor.get to return an ObjectConstructor\n    @SuppressWarnings(\"unchecked\")\n    ObjectConstructor<Map<String, Integer>> objectConstructor = mock(ObjectConstructor.class);\n    when(constructorConstructor.get(typeToken)).thenReturn(objectConstructor);\n\n    // Use reflection to create a MapTypeAdapterFactory instance with a mocked getKeyAdapter method\n    MapTypeAdapterFactory factoryWithMockedGetKeyAdapter = new MapTypeAdapterFactory(constructorConstructor, true) {\n      @Override\n      @SuppressWarnings(\"unchecked\")\n      public <T> TypeAdapter<T> create(Gson gsonParam, TypeToken<T> typeTokenParam) {\n        Type type = typeTokenParam.getType();\n        Class<? super T> rawType = typeTokenParam.getRawType();\n        if (!Map.class.isAssignableFrom(rawType)) {\n          return null;\n        }\n        Type[] keyAndValueTypes = com.google.gson.internal.$Gson$Types.getMapKeyAndValueTypes(type, rawType);\n        // Return mocked keyAdapter for key type\n        TypeAdapter<?> keyAdapterLocal = keyAdapter;\n        TypeAdapter<?> valueAdapterLocal = gsonParam.getAdapter(TypeToken.get(keyAndValueTypes[1]));\n        ObjectConstructor<T> constructor = constructorConstructor.get(typeTokenParam);\n\n        try {\n          // Use reflection to access the private Adapter class constructor\n          Class<?> adapterClass = Class.forName(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\");\n          java.lang.reflect.Constructor<?> adapterConstructor = adapterClass.getDeclaredConstructor(\n              Gson.class, Type.class, TypeAdapter.class, Type.class, TypeAdapter.class, ObjectConstructor.class);\n          adapterConstructor.setAccessible(true);\n\n          @SuppressWarnings(\"unchecked\")\n          TypeAdapter<T> result = (TypeAdapter<T>) adapterConstructor.newInstance(\n              gsonParam, keyAndValueTypes[0], keyAdapterLocal,\n              keyAndValueTypes[1], valueAdapterLocal, constructor);\n\n          return result;\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }\n    };\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Map<String, Integer>> adapter = (TypeAdapter<Map<String, Integer>>) factoryWithMockedGetKeyAdapter.create(gson, typeToken);\n\n    assertNotNull(adapter);\n    // The returned adapter should be an instance of MapTypeAdapterFactory.Adapter\n    assertEquals(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890601,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 867,
+    "prompt_tokens": 2039,
+    "total_tokens": 2906,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.09
+  }
+}

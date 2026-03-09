@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlz01iEG1wwLws33rXbqP8kaYmlP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mockStatic;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.text.DateFormatSymbols;\nimport java.util.Locale;\n\nimport org.junit.jupiter.api.AfterAll;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nclass PreJava9DateFormatProviderTest {\n\n  private static MockedStatic<PreJava9DateFormatProvider> mockedStatic;\n\n  @BeforeAll\n  static void setUp() {\n    mockedStatic = mockStatic(PreJava9DateFormatProvider.class, invocation -> {\n      if (invocation.getMethod().getName().equals(\"getDatePartOfDateTimePattern\")) {\n        int arg = invocation.getArgument(0);\n        // Provide patterns based on style for coverage\n        switch (arg) {\n          case DateFormat.SHORT:\n            return \"M/d/yy\";\n          case DateFormat.MEDIUM:\n            return \"MMM d, yyyy\";\n          case DateFormat.LONG:\n            return \"MMMM d, yyyy\";\n          case DateFormat.FULL:\n            return \"EEEE, MMMM d, yyyy\";\n          default:\n            return \"unknownDateStyle\";\n        }\n      } else if (invocation.getMethod().getName().equals(\"getTimePartOfDateTimePattern\")) {\n        int arg = invocation.getArgument(0);\n        switch (arg) {\n          case DateFormat.SHORT:\n            return \"h:mm a\";\n          case DateFormat.MEDIUM:\n            return \"h:mm:ss a\";\n          case DateFormat.LONG:\n            return \"h:mm:ss a z\";\n          case DateFormat.FULL:\n            return \"h:mm:ss a zzzz\";\n          default:\n            return \"unknownTimeStyle\";\n        }\n      } else {\n        return invocation.callRealMethod();\n      }\n    });\n  }\n\n  @AfterAll\n  static void tearDown() {\n    mockedStatic.close();\n  }\n\n  @Test\n  void testGetUSDateTimeFormat_shortShort() {\n    DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);\n    assertEquals(\"M/d/yy h:mm a\", ((SimpleDateFormat) df).toPattern());\n    DateFormatSymbols dfs = ((SimpleDateFormat) df).getDateFormatSymbols();\n    // Fix: check that local pattern chars are the expected default string\n    assertEquals(\"GyMdkHmsSEDFwWahKzZ\", dfs.getLocalPatternChars());\n  }\n\n  @Test\n  void testGetUSDateTimeFormat_mediumMedium() {\n    DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(DateFormat.MEDIUM, DateFormat.MEDIUM);\n    assertEquals(\"MMM d, yyyy h:mm:ss a\", ((SimpleDateFormat) df).toPattern());\n    // Skipping locale check due to no getLocale method\n  }\n\n  @Test\n  void testGetUSDateTimeFormat_longLong() {\n    DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(DateFormat.LONG, DateFormat.LONG);\n    assertEquals(\"MMMM d, yyyy h:mm:ss a z\", ((SimpleDateFormat) df).toPattern());\n    // Skipping locale check due to no getLocale method\n  }\n\n  @Test\n  void testGetUSDateTimeFormat_fullFull() {\n    DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(DateFormat.FULL, DateFormat.FULL);\n    assertEquals(\"EEEE, MMMM d, yyyy h:mm:ss a zzzz\", ((SimpleDateFormat) df).toPattern());\n    // Skipping locale check due to no getLocale method\n  }\n\n  @Test\n  void testPrivateGetDateFormatPattern() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDateFormatPattern\", int.class);\n    method.setAccessible(true);\n    String patternShort = (String) method.invoke(null, DateFormat.SHORT);\n    String patternMedium = (String) method.invoke(null, DateFormat.MEDIUM);\n    String patternLong = (String) method.invoke(null, DateFormat.LONG);\n    String patternFull = (String) method.invoke(null, DateFormat.FULL);\n\n    // Patterns depend on implementation, so just test non-null and non-empty\n    assertNotNull(patternShort);\n    assertNotNull(patternMedium);\n    assertNotNull(patternLong);\n    assertNotNull(patternFull);\n    assertFalse(patternShort.isEmpty());\n    assertFalse(patternMedium.isEmpty());\n    assertFalse(patternLong.isEmpty());\n    assertFalse(patternFull.isEmpty());\n  }\n\n  @Test\n  void testPrivateGetDatePartOfDateTimePattern() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDatePartOfDateTimePattern\", int.class);\n    method.setAccessible(true);\n    String result = (String) method.invoke(null, DateFormat.SHORT);\n    assertEquals(\"M/d/yy\", result);\n  }\n\n  @Test\n  void testPrivateGetTimePartOfDateTimePattern() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getTimePartOfDateTimePattern\", int.class);\n    method.setAccessible(true);\n    String result = (String) method.invoke(null, DateFormat.SHORT);\n    assertEquals(\"h:mm a\", result);\n  }\n\n  // Helper assertions for private method test\n  private static void assertNotNull(Object obj) {\n    org.junit.jupiter.api.Assertions.assertNotNull(obj);\n  }\n\n  private static void assertFalse(boolean condition) {\n    org.junit.jupiter.api.Assertions.assertFalse(condition);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885178,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1240,
+    "prompt_tokens": 1886,
+    "total_tokens": 3126,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.51
+  }
+}

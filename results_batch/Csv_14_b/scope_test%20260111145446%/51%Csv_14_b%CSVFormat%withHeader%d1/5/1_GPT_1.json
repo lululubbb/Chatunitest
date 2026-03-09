@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwkSrSioem7eGzOXZyuqYOE0zi9Mw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.mockito.Mockito;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setup() {\n        csvFormat = new CSVFormat(',', '\\\"', QuoteMode.ALL, '#', '\\\\', true, false, \"\\r\\n\", \"\\\\N\",\n                new Object[]{\"Header1\", \"Header2\"}, new String[]{\"Comment1\", \"Comment2\"}, true, false, true, false, true);\n    }\n\n    @Test\n    public void testWithHeader() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // Given\n        Class<?> headerEnum = TestEnum.class;\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", Class.class);\n        withHeaderMethod.setAccessible(true);\n\n        // When\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(csvFormat, headerEnum);\n\n        // Then\n        assertNotNull(result);\n        assertArrayEquals(new String[]{\"VALUE1\", \"VALUE2\"}, result.getHeader());\n    }\n\n    enum TestEnum {\n        VALUE1,\n        VALUE2\n    }\n}\n```  ",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768117669,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 265,
+    "prompt_tokens": 1580,
+    "total_tokens": 1845,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 2.55
+  }
+}

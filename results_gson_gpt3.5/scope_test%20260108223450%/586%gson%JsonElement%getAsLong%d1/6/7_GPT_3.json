@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmTvFfeANuIJKRArLsKnKsMOIv5r",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\nimport com.google.gson.JsonElement;\n\npublic class JsonElementTest {\n\n  static class JsonElementStub extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return this;\n    }\n\n    @Override\n    public long getAsLong() {\n      throw new UnsupportedOperationException(\"JsonElementStub\");\n    }\n  }\n\n  @Test\n  public void testGetAsLong_throwsUnsupportedOperationException() throws Exception {\n    JsonElement element = new JsonElementStub();\n\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, () -> {\n      element.getAsLong();\n    });\n\n    assertEquals(\"JsonElementStub\", thrown.getMessage());\n  }\n\n  @Test\n  public void testGetAsLong_reflectionInvocation_throwsUnsupportedOperationException() throws Exception {\n    JsonElement element = new JsonElementStub();\n\n    Method method = JsonElement.class.getDeclaredMethod(\"getAsLong\");\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(element);\n    });\n\n    Throwable cause = thrown.getCause();\n    if (cause instanceof UnsupportedOperationException) {\n      assertEquals(\"JsonElementStub\", cause.getMessage());\n    } else {\n      fail(\"Expected cause to be UnsupportedOperationException\");\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887095,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 304,
+    "prompt_tokens": 925,
+    "total_tokens": 1229,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.9
+  }
+}

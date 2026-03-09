@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn943nUzJ9yobOZNKqxoJmBC8ce3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n\n    @BeforeEach\n    public void setUp() {\n        jsonTreeWriter = new JsonTreeWriter();\n    }\n\n    @Test\n    public void testValue_WithNonNullBoolean() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        JsonWriter returned = jsonTreeWriter.value(Boolean.TRUE);\n        assertSame(jsonTreeWriter, returned);\n\n        // Use reflection to access private method 'peek' to verify internal state\n        Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n        JsonElement topElement = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n\n        assertTrue(topElement instanceof JsonPrimitive);\n        assertEquals(new JsonPrimitive(true), topElement);\n    }\n\n    @Test\n    public void testValue_WithNullBoolean() throws IOException {\n        JsonWriter returned = jsonTreeWriter.value((Boolean) null);\n        assertSame(jsonTreeWriter, returned);\n\n        // get() should return JsonNull.INSTANCE after nullValue() call\n        assertEquals(jsonTreeWriter.get(), com.google.gson.JsonNull.INSTANCE);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889646,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 332,
+    "prompt_tokens": 1177,
+    "total_tokens": 1509,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.66
+  }
+}

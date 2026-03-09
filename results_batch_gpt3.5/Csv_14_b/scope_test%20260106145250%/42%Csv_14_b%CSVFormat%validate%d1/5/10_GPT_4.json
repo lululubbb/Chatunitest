@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvksJaoxCUANXG2qiMEbw4fuWAJG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        // Get private validate method with CSVFormat.class and no parameters\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Throwable {\n        try {\n            validateMethod.invoke(format);\n        } catch (InvocationTargetException e) {\n            // unwrap the underlying exception thrown by validate()\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    public void testValidateDelimiterIsLineBreak() throws Throwable {\n        CSVFormat format = CSVFormat.newFormat('\\n');\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsDelimiter() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote(CSVFormat.DEFAULT.getDelimiter());\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsDelimiter() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape(CSVFormat.DEFAULT.getDelimiter());\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateCommentMarkerEqualsDelimiter() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker(CSVFormat.DEFAULT.getDelimiter());\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsCommentMarker() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote('#').withCommentMarker('#');\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsCommentMarker() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('#').withCommentMarker('#');\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateNoEscapeCharAndQuoteModeNone() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape(null).withQuoteMode(QuoteMode.NONE);\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateHeaderDuplicates() throws Throwable {\n        String[] headers = new String[] {\"a\", \"b\", \"a\"};\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(headers);\n        assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateHeaderNoDuplicates() throws Throwable {\n        String[] headers = new String[] {\"a\", \"b\", \"c\"};\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(headers);\n        // Should not throw\n        invokeValidate(format);\n    }\n\n    @Test\n    public void testValidateAllValid() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(';')\n                .withQuote('\"')\n                .withEscape('\\\\')\n                .withCommentMarker('#')\n                .withQuoteMode(QuoteMode.ALL)\n                .withHeader(\"header1\", \"header2\");\n        // Should not throw\n        invokeValidate(format);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684414,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 729,
+    "prompt_tokens": 2063,
+    "total_tokens": 2792,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.86
+  }
+}

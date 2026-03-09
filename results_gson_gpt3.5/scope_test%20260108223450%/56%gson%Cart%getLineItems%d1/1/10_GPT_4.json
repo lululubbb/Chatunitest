@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNzPZD1Miw3jAS3XSZIzZ7zRLN4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android.model;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nclass CartTest {\n\n  @Test\n  void testGetLineItemsReturnsCorrectList() throws Exception {\n    // Create mock LineItem instances using a simple subclass since LineItem class is not found\n    class DummyLineItem {}\n\n    Object item1 = new DummyLineItem();\n    Object item2 = new DummyLineItem();\n\n    List<Object> items = new ArrayList<>();\n    items.add(item1);\n    items.add(item2);\n\n    // Use Cart class directly instead of reflection to avoid ClassNotFoundException\n    // Create a raw List to pass to constructor (casting to raw List to avoid type issues)\n    @SuppressWarnings(\"unchecked\")\n    List lineItemsRaw = (List) items;\n\n    // Instantiate Cart with dummy lineItems list, buyerName and creditCard\n    Cart cart = new Cart(lineItemsRaw, \"buyerName\", \"creditCard123\");\n\n    // Use reflection to set the private final field lineItems to our dummy list (optional here)\n    Field lineItemsField = Cart.class.getDeclaredField(\"lineItems\");\n    lineItemsField.setAccessible(true);\n    lineItemsField.set(cart, lineItemsRaw);\n\n    // Invoke getLineItems method\n    @SuppressWarnings(\"unchecked\")\n    List<Object> result = (List<Object>) cart.getLineItems();\n\n    assertNotNull(result);\n    assertEquals(2, result.size());\n    assertSame(item1, result.get(0));\n    assertSame(item2, result.get(1));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886727,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 353,
+    "prompt_tokens": 1005,
+    "total_tokens": 1358,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.22
+  }
+}

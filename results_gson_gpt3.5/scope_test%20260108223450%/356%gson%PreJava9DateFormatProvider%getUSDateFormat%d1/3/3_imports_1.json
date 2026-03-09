@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\nimport org.junit.jupiter.api.Test;\n\nclass PreJava9DateFormatProviderTest {\n\n  @Test\n  void testGetUSDateFormat_returnsSimpleDateFormatWithCorrectPatternAndLocale() throws Exception {\n    // Use reflection to access private static getDateFormatPattern(int) method\n    Method getDateFormatPatternMethod = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDateFormatPattern\", int.class);\n    getDateFormatPatternMethod.setAccessible(true);\n\n    // Test for multiple style values to ensure coverage\n    int[] styles = {DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL};\n\n    for (int style : styles) {\n      String expectedPattern = (String) getDateFormatPatternMethod.invoke(null, style);\n\n      DateFormat df = PreJava9DateFormatProvider.getUSDateFormat(style);\n\n      assertNotNull(df, \"DateFormat should not be null\");\n      assertTrue(df instanceof SimpleDateFormat, \"DateFormat should be instance of SimpleDateFormat\");\n\n      SimpleDateFormat sdf = (SimpleDateFormat) df;\n      assertEquals(expectedPattern, sdf.toPattern(), \"Pattern should match expected pattern\");\n      assertEquals(Locale.US, sdf.getLocale(), \"Locale should be US\");\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/356%gson%PreJava9DateFormatProvider%getUSDateFormat%d1/3/temp/PreJava9DateFormatProvider_356_3Test.java:34: 错误: 找不到符号\n      assertEquals(Locale.US, sdf.getLocale(), \"Locale should be US\");\n                                 ^\n  符号:   方法 getLocale()\n  位置: 类型为SimpleDateFormat的变量 sdf\n1 个错误\n",
+  "prompt_tokens": 276,
+  "completion_tokens": 311,
+  "total_tokens": 587,
+  "llm_elapsed_time_seconds": 5.57,
+  "repair_elapsed_time_seconds": 8.29,
+  "round_total_time_seconds": 8.29
+}

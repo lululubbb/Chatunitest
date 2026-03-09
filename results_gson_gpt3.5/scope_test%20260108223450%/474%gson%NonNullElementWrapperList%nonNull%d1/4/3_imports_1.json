@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> list;\n  private Method nonNullMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n\n    nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n  }\n\n  @Test\n  void nonNull_withNonNullElement_returnsElement() throws InvocationTargetException, IllegalAccessException {\n    String element = \"test\";\n\n    @SuppressWarnings(\"unchecked\")\n    String result = (String) nonNullMethod.invoke(list, element);\n\n    assertEquals(element, result);\n  }\n\n  @Test\n  void nonNull_withNullElement_throwsNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      try {\n        nonNullMethod.invoke(list, new Object[] { null });\n      } catch (InvocationTargetException e) {\n        // unwrap the underlying exception thrown by the method\n        throw e.getCause();\n      }\n    });\n    assertEquals(\"Element must be non-null\", thrown.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 394,
+  "completion_tokens": 309,
+  "total_tokens": 703,
+  "llm_elapsed_time_seconds": 5.49,
+  "repair_elapsed_time_seconds": 20.61,
+  "round_total_time_seconds": 20.61
+}

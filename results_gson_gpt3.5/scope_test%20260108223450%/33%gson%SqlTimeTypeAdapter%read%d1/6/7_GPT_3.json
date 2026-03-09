@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmlQDdHraWCwdo3b0jSy4bmKTsrI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.sql;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.sql.SqlTimeTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.sql.Time;\nimport java.text.SimpleDateFormat;\nimport java.util.Date;\n\nclass SqlTimeTypeAdapterTest {\n\n  SqlTimeTypeAdapter adapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Constructor<SqlTimeTypeAdapter> constructor = SqlTimeTypeAdapter.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance();\n\n    // Fix the DateFormat's timezone to UTC to avoid locale/timezone issues in parsing\n    Field formatField = SqlTimeTypeAdapter.class.getDeclaredField(\"format\");\n    formatField.setAccessible(true);\n    SimpleDateFormat format = (SimpleDateFormat) formatField.get(adapter);\n    format.setLenient(false);\n    format.setTimeZone(java.util.TimeZone.getTimeZone(\"UTC\"));\n  }\n\n  @Test\n  void read_shouldReturnNull_whenJsonTokenIsNull() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NULL);\n\n    Time result = adapter.read(in);\n\n    InOrder inOrder = inOrder(in);\n    inOrder.verify(in).peek();\n    inOrder.verify(in).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  void read_shouldReturnTime_whenJsonTokenIsStringAndParsable() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.STRING);\n    String timeString = \"11:22:33 AM\";\n    when(in.nextString()).thenReturn(timeString);\n\n    Time result = adapter.read(in);\n\n    assertNotNull(result);\n    // Validate result matches the parsed time string using the same format and timezone\n    SimpleDateFormat format = new SimpleDateFormat(\"hh:mm:ss a\");\n    format.setLenient(false);\n    format.setTimeZone(java.util.TimeZone.getTimeZone(\"UTC\"));\n    try {\n      Date expectedDate = format.parse(timeString);\n      assertEquals(expectedDate.getTime(), result.getTime());\n    } catch (Exception e) {\n      fail(\"Date parsing in test failed\");\n    }\n  }\n\n  @Test\n  void read_shouldThrowJsonSyntaxException_whenParseExceptionThrown() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.STRING);\n    String invalidTime = \"invalid-time-format\";\n    when(in.nextString()).thenReturn(invalidTime);\n    when(in.getPreviousPath()).thenReturn(\"$.timeField\");\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> adapter.read(in));\n    String expectedMessage = \"Failed parsing '\" + invalidTime + \"' as SQL Time; at path $.timeField\";\n    assertTrue(thrown.getMessage().contains(expectedMessage));\n    assertNotNull(thrown.getCause());\n    assertEquals(java.text.ParseException.class, thrown.getCause().getClass());\n  }\n\n  @Test\n  void read_shouldBeThreadSafe_whenCalledConcurrently() throws Exception {\n    JsonReader in1 = mock(JsonReader.class);\n    JsonReader in2 = mock(JsonReader.class);\n\n    when(in1.peek()).thenReturn(JsonToken.STRING);\n    when(in2.peek()).thenReturn(JsonToken.STRING);\n\n    String timeString1 = \"01:02:03 PM\";\n    String timeString2 = \"11:59:59 AM\";\n\n    when(in1.nextString()).thenReturn(timeString1);\n    when(in2.nextString()).thenReturn(timeString2);\n\n    // Run two threads calling read concurrently\n    Runnable task1 = () -> {\n      try {\n        Time t1 = adapter.read(in1);\n        assertNotNull(t1);\n      } catch (IOException e) {\n        fail(e);\n      }\n    };\n    Runnable task2 = () -> {\n      try {\n        Time t2 = adapter.read(in2);\n        assertNotNull(t2);\n      } catch (IOException e) {\n        fail(e);\n      }\n    };\n\n    Thread thread1 = new Thread(task1);\n    Thread thread2 = new Thread(task2);\n    thread1.start();\n    thread2.start();\n    thread1.join();\n    thread2.join();\n  }\n\n  @Test\n  void read_shouldUseReflectionToInvokePrivateFormatParse() throws Exception {\n    // Test private DateFormat field 'format' parse method via reflection indirectly\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.STRING);\n    String timeString = \"10:10:10 AM\";\n    when(in.nextString()).thenReturn(timeString);\n\n    // Access private field 'format' via reflection\n    Field formatField = SqlTimeTypeAdapter.class.getDeclaredField(\"format\");\n    formatField.setAccessible(true);\n    SimpleDateFormat format = (SimpleDateFormat) formatField.get(adapter);\n\n    // Ensure format has correct timezone and leniency\n    format.setLenient(false);\n    format.setTimeZone(java.util.TimeZone.getTimeZone(\"UTC\"));\n\n    // Access parse method of DateFormat\n    Method parseMethod = format.getClass().getMethod(\"parse\", String.class);\n    parseMethod.setAccessible(true);\n\n    Object parsedDate = parseMethod.invoke(format, timeString);\n    assertNotNull(parsedDate);\n    assertTrue(parsedDate instanceof Date);\n\n    // Also call read normally to verify no exception\n    Time result = adapter.read(in);\n    assertNotNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888180,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1195,
+    "prompt_tokens": 2510,
+    "total_tokens": 3705,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.18
+  }
+}

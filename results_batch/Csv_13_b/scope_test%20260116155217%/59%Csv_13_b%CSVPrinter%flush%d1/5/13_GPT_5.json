@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZRv38vYmBEc0jSuR6msbXSJ2kgL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterFlushTest {\n\n    private Appendable appendableMock;\n    private CSVFormat csvFormatMock;\n    private CSVPrinter csvPrinter;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        appendableMock = mock(Appendable.class);\n        csvFormatMock = mock(CSVFormat.class);\n        csvPrinter = new CSVPrinter(appendableMock, csvFormatMock);\n    }\n\n    @Test\n    void flush_whenOutIsFlushable_flushCalled() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Flushable flushableMock = mock(Flushable.class);\n        setPrivateField(csvPrinter, \"out\", flushableMock);\n\n        csvPrinter.flush();\n\n        verify(flushableMock, times(1)).flush();\n    }\n\n    @Test\n    void flush_whenOutIsNotFlushable_noException() throws IOException {\n        csvPrinter.flush();\n    }\n\n    private static void setPrivateField(Object target, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {\n        Field field = target.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551983,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 359,
+    "prompt_tokens": 858,
+    "total_tokens": 1217,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.35
+  }
+}

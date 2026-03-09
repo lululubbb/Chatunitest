@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnP2LSYkfcyKtRBKdLMk8BVcGlwB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.WildcardType;\n\nimport org.junit.jupiter.api.Test;\n\nclass GsonTypesSupertypeOfTest {\n\n  private static class WildcardTypeImpl implements WildcardType {\n    private final Type[] upperBounds;\n    private final Type[] lowerBounds;\n\n    WildcardTypeImpl(Type[] upperBounds, Type[] lowerBounds) {\n      this.upperBounds = upperBounds.clone();\n      this.lowerBounds = lowerBounds.clone();\n    }\n\n    @Override\n    public Type[] getUpperBounds() {\n      return upperBounds.clone();\n    }\n\n    @Override\n    public Type[] getLowerBounds() {\n      return lowerBounds.clone();\n    }\n\n    @Override\n    public boolean equals(Object other) {\n      if (!(other instanceof WildcardType)) {\n        return false;\n      }\n      WildcardType that = (WildcardType) other;\n      return java.util.Arrays.equals(upperBounds, that.getUpperBounds())\n          && java.util.Arrays.equals(lowerBounds, that.getLowerBounds());\n    }\n\n    @Override\n    public int hashCode() {\n      return java.util.Arrays.hashCode(upperBounds) ^ java.util.Arrays.hashCode(lowerBounds);\n    }\n\n    @Override\n    public String toString() {\n      StringBuilder sb = new StringBuilder(\"?\");\n      if (lowerBounds.length > 0) {\n        sb.append(\" super \").append(lowerBounds[0].getTypeName());\n      } else if (upperBounds.length > 0 && !upperBounds[0].equals(Object.class)) {\n        sb.append(\" extends \").append(upperBounds[0].getTypeName());\n      }\n      return sb.toString();\n    }\n  }\n\n  @Test\n  void supertypeOf_withWildcardType_noLowerBounds_returnsWildcardWithObjectUpperBoundAndEmptyLowerBound() throws Exception {\n    // Arrange\n    WildcardType wildcard = mock(WildcardType.class);\n    when(wildcard.getLowerBounds()).thenReturn(new Type[0]);\n    when(wildcard.getUpperBounds()).thenReturn(new Type[] {Object.class});\n\n    // Act\n    WildcardType result = $Gson$Types.supertypeOf(wildcard);\n\n    // Assert\n    assertNotNull(result);\n    assertArrayEquals(new Type[] {Object.class}, result.getUpperBounds());\n    assertArrayEquals(new Type[0], result.getLowerBounds());\n  }\n\n  @Test\n  void supertypeOf_withWildcardType_withLowerBounds_returnsWildcardWithObjectUpperBoundAndGivenLowerBounds() throws Exception {\n    // Arrange\n    Type lowerBound = String.class;\n    WildcardType wildcard = mock(WildcardType.class);\n    when(wildcard.getLowerBounds()).thenReturn(new Type[] {lowerBound});\n    when(wildcard.getUpperBounds()).thenReturn(new Type[] {Object.class});\n\n    // Act\n    WildcardType result = $Gson$Types.supertypeOf(wildcard);\n\n    // Assert\n    assertNotNull(result);\n    assertArrayEquals(new Type[] {Object.class}, result.getUpperBounds());\n    assertArrayEquals(new Type[] {lowerBound}, result.getLowerBounds());\n  }\n\n  @Test\n  void supertypeOf_withNonWildcardType_returnsWildcardWithObjectUpperBoundAndGivenTypeAsLowerBound() throws Exception {\n    // Arrange\n    Type type = String.class;\n\n    // Act\n    WildcardType result = $Gson$Types.supertypeOf(type);\n\n    // Assert\n    assertNotNull(result);\n    assertArrayEquals(new Type[] {Object.class}, result.getUpperBounds());\n    assertArrayEquals(new Type[] {type}, result.getLowerBounds());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890636,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 770,
+    "prompt_tokens": 2731,
+    "total_tokens": 3501,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.09
+  }
+}

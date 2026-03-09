@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAMbOEjvMxDf2BrAjy9EnFPO1N2e",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    private File mockFile;\n    private Charset charset;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setup() throws IOException {\n        mockFile = mock(File.class);\n        charset = Charset.defaultCharset();\n        mockFormat = mock(CSVFormat.class);\n\n        // Mock file.exists() and file.canRead() to true\n        when(mockFile.exists()).thenReturn(true);\n        when(mockFile.canRead()).thenReturn(true);\n    }\n\n    @Test\n    void parse_NullFile_ThrowsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((File) null, charset, mockFormat);\n        });\n        assertEquals(\"file\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockFile, charset, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_ValidFile_ReturnsCSVParser() throws Exception {\n        // Create a real temporary file to avoid FileNotFoundException\n        File tempFile = File.createTempFile(\"temp\", \".csv\");\n        tempFile.deleteOnExit();\n\n        // Use a real CSVFormat instance instead of a mock to ensure correct behavior\n        CSVFormat realFormat = CSVFormat.DEFAULT;\n\n        CSVParser parser = CSVParser.parse(tempFile, charset, realFormat);\n\n        assertNotNull(parser);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(realFormat, formatField.get(parser));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978897,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 420,
+    "prompt_tokens": 981,
+    "total_tokens": 1401,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.33
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmLuub62Zx2TlfmUdPlEV4oIPvxL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass Gson_toJsonTree_Test {\n\n    private Gson gson;\n\n    @BeforeEach\n    public void setUp() {\n        gson = new Gson();\n    }\n\n    @Test\n    public void testToJsonTree_NullInput_ReturnsJsonNullInstance() {\n        JsonElement result = gson.toJsonTree(null);\n        assertSame(JsonNull.INSTANCE, result);\n    }\n\n    @Test\n    public void testToJsonTree_NonNullInput_UsesOverloadedMethod() throws Exception {\n        String testString = \"test\";\n\n        // Use reflection to access private toJsonTree(Object, Type) method\n        Method toJsonTreeWithType = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class, java.lang.reflect.Type.class);\n        toJsonTreeWithType.setAccessible(true);\n\n        // Spy on gson to verify call to private method\n        Gson spyGson = spy(gson);\n\n        // Call the public toJsonTree(Object) method\n        JsonElement result = spyGson.toJsonTree(testString);\n\n        // Verify that the private toJsonTree(Object, Type) method was called with correct args\n        verify(spyGson).toJsonTree(testString, testString.getClass());\n\n        // Also invoke the private method directly and compare results\n        JsonElement directResult = (JsonElement) toJsonTreeWithType.invoke(gson, testString, testString.getClass());\n        assertEquals(directResult, result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886598,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 362,
+    "prompt_tokens": 2014,
+    "total_tokens": 2376,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.64
+  }
+}

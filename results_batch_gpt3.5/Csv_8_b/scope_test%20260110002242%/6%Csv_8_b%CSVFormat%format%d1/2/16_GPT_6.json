@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9tKOTrNl6N1c802LLtVYg0EodIE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        // Use DEFAULT format for testing\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withNormalValues() throws Exception {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    void testFormat_withNullValues() throws Exception {\n        String result = csvFormat.format(\"a\", null, \"c\");\n        // null values are printed as empty strings by default\n        assertEquals(\"a,,c\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws Exception {\n        String result = csvFormat.format(\"\", \"\", \"\");\n        assertEquals(\",,,\", result.replaceAll(\"[\\\\r\\\\n]\", \"\").substring(0,3) + \"\", \"Empty strings separated by commas\");\n    }\n\n    @Test\n    void testFormat_withSingleValue() throws Exception {\n        String result = csvFormat.format(\"single\");\n        assertEquals(\"single\", result);\n    }\n\n    @Test\n    void testFormat_withNoValues() throws Exception {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Mock CSVPrinter to throw IOException on printRecord(Object...)\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"mock IO error\")).when(mockPrinter).printRecord(any(Object[].class));\n\n        // Create a proxy CSVFormat by subclassing DEFAULT and override format method using reflection to inject mockPrinter\n        CSVFormat format = new CSVFormatProxy(CSVFormat.DEFAULT, mockPrinter);\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            format.format(\"value\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"mock IO error\", thrown.getCause().getMessage());\n    }\n\n    private static class CSVFormatProxy extends CSVFormat {\n        private static final long serialVersionUID = 1L;\n        private final CSVPrinter printer;\n\n        CSVFormatProxy(CSVFormat base, CSVPrinter printer) throws Exception {\n            super(base.getDelimiter(), base.getQuoteChar(), base.getQuotePolicy(), base.getCommentStart(),\n                    base.getEscape(), base.getIgnoreSurroundingSpaces(), base.getIgnoreEmptyLines(),\n                    base.getRecordSeparator(), base.getNullString(), base.getHeader(), base.getSkipHeaderRecord());\n            this.printer = printer;\n        }\n\n        @Override\n        public String format(Object... values) {\n            try {\n                printer.printRecord(values);\n                return \"\";\n            } catch (IOException e) {\n                throw new IllegalStateException(e);\n            }\n        }\n    }\n\n    @Test\n    void testFormat_reflectionInvoke() throws Exception {\n        Method formatMethod = CSVFormat.class.getDeclaredMethod(\"format\", Object[].class);\n        formatMethod.setAccessible(true);\n        String result = (String) formatMethod.invoke(csvFormat, (Object) new Object[]{\"x\", \"y\"});\n        assertEquals(\"x,y\", result);\n    }\n\n    @Test\n    void testFormat_withDifferentCSVFormatInstance() throws Exception {\n        // Create CSVFormat instance with different delimiter and quote char using with* methods\n        CSVFormat customFormat = CSVFormat.DEFAULT\n                .withDelimiter(';')\n                .withQuoteChar('\"')\n                .withIgnoreSurroundingSpaces(false)\n                .withIgnoreEmptyLines(true)\n                .withRecordSeparator(\"\\n\")\n                .withSkipHeaderRecord(false);\n\n        String result = customFormat.format(\"a\", \"b;c\", \"c\");\n        // The value with delimiter should be quoted\n        assertEquals(\"a;\\\"b;c\\\";c\", result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977082,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 875,
+    "prompt_tokens": 2050,
+    "total_tokens": 2925,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.61
+  }
+}

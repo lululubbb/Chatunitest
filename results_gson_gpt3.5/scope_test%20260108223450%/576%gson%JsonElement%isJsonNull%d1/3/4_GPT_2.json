@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmjrmSSEBjY7IQYx6yktAdHettED",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass JsonElementTest {\n\n  // Concrete subclass of JsonElement to test non-JsonNull instance\n  static class JsonElementStub extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return this;\n    }\n  }\n\n  // JsonNull is presumably a subclass of JsonElement representing JSON null\n  static class JsonNull extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return this;\n    }\n  }\n\n  @Test\n  void testIsJsonNull_withJsonNullInstance() {\n    JsonElement jsonNull = new JsonNull() {\n      @Override\n      public boolean isJsonNull() {\n        return true;\n      }\n    };\n    assertTrue(jsonNull.isJsonNull(), \"JsonNull instance should return true for isJsonNull()\");\n  }\n\n  @Test\n  void testIsJsonNull_withNonJsonNullInstance() {\n    JsonElement jsonElement = new JsonElementStub() {\n      @Override\n      public boolean isJsonNull() {\n        return false;\n      }\n    };\n    assertFalse(jsonElement.isJsonNull(), \"Non-JsonNull instance should return false for isJsonNull()\");\n  }\n\n  @Test\n  void testIsJsonNull_viaReflection() throws Exception {\n    JsonElement jsonNull = new JsonNull() {\n      @Override\n      public boolean isJsonNull() {\n        return true;\n      }\n    };\n    JsonElement jsonElement = new JsonElementStub() {\n      @Override\n      public boolean isJsonNull() {\n        return false;\n      }\n    };\n\n    Method isJsonNullMethod = JsonElement.class.getDeclaredMethod(\"isJsonNull\");\n    isJsonNullMethod.setAccessible(true);\n\n    Boolean resultForJsonNull = (Boolean) isJsonNullMethod.invoke(jsonNull);\n    Boolean resultForJsonElement = (Boolean) isJsonNullMethod.invoke(jsonElement);\n\n    assertTrue(resultForJsonNull, \"Reflection invoke: JsonNull instance should return true\");\n    assertFalse(resultForJsonElement, \"Reflection invoke: Non-JsonNull instance should return false\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888083,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 455,
+    "prompt_tokens": 1368,
+    "total_tokens": 1823,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.37
+  }
+}

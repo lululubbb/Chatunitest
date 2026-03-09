@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0h0vpSlfSzCYH1cBGi7IQYlVxr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Writer;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterOpenTest {\n  private Writer mockWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  public void testOpen_emptyArray() throws Throwable {\n    invokeOpenAndVerify(JsonScope.EMPTY_ARRAY, '[');\n  }\n\n  @Test\n  public void testOpen_emptyDocument() throws Throwable {\n    invokeOpenAndVerify(JsonScope.EMPTY_DOCUMENT, '[');\n  }\n\n  @Test\n  public void testOpen_emptyObject() throws Throwable {\n    invokeOpenAndVerify(JsonScope.EMPTY_OBJECT, '{');\n  }\n\n  @Test\n  public void testOpen_nonemptyArray() throws Throwable {\n    invokeOpenAndVerify(JsonScope.NONEMPTY_ARRAY, '[');\n  }\n\n  @Test\n  public void testOpen_nonemptyDocument() throws Throwable {\n    invokeOpenAndVerify(JsonScope.NONEMPTY_DOCUMENT, '[');\n  }\n\n  @Test\n  public void testOpen_nonemptyObject() throws Throwable {\n    invokeOpenAndVerify(JsonScope.NONEMPTY_OBJECT, '{');\n  }\n\n  @Test\n  public void testOpen_danglingName() throws Throwable {\n    invokeOpenAndVerify(JsonScope.DANGLING_NAME, '{');\n  }\n\n  private void invokeOpenAndVerify(int empty, char openBracket) throws Throwable {\n    Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n    openMethod.setAccessible(true);\n\n    int beforeStackSize = getStackSize(jsonWriter);\n\n    Object result = openMethod.invoke(jsonWriter, empty, openBracket);\n\n    verify(mockWriter).write(openBracket);\n\n    int afterStackSize = getStackSize(jsonWriter);\n    assertEquals(beforeStackSize + 1, afterStackSize);\n\n    int top = getTopOfStack(jsonWriter);\n    assertEquals(empty, top);\n\n    assertNotNull(result);\n    assertSame(jsonWriter, result);\n  }\n\n  private int getStackSize(JsonWriter writer) throws Exception {\n    var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    return (int) stackSizeField.get(writer);\n  }\n\n  private int getTopOfStack(JsonWriter writer) throws Exception {\n    var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(writer);\n\n    int stackSize = getStackSize(writer);\n    if (stackSize == 0) {\n      throw new IllegalStateException(\"Stack is empty\");\n    }\n    return stack[stackSize - 1];\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889127,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 602,
+    "prompt_tokens": 1537,
+    "total_tokens": 2139,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.14
+  }
+}

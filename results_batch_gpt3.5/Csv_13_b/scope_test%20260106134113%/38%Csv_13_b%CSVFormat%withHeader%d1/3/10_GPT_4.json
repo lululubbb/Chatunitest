@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuKcu9vyeCvMrLU3Si2a5nh3wlhW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVFormatWithHeaderTest {\n\n    private ResultSet resultSetMock;\n    private ResultSetMetaData metaDataMock;\n\n    @BeforeEach\n    public void setup() {\n        resultSetMock = mock(ResultSet.class);\n        metaDataMock = mock(ResultSetMetaData.class);\n    }\n\n    @Test\n    public void testWithHeader_withNonNullResultSet_shouldCallWithHeaderMetaData() throws SQLException {\n        when(resultSetMock.getMetaData()).thenReturn(metaDataMock);\n\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVFormat spyFormat = Mockito.spy(csvFormat);\n\n        CSVFormat expectedFormat = CSVFormat.DEFAULT.withHeader(\"a\", \"b\");\n        doReturn(expectedFormat).when(spyFormat).withHeader(metaDataMock);\n\n        CSVFormat result = spyFormat.withHeader(resultSetMock);\n\n        verify(resultSetMock).getMetaData();\n        verify(spyFormat).withHeader(metaDataMock);\n        assertSame(expectedFormat, result);\n    }\n\n    @Test\n    public void testWithHeader_withNullResultSet_shouldCallWithHeaderNull() throws SQLException {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVFormat spyFormat = Mockito.spy(csvFormat);\n\n        CSVFormat expectedFormat = CSVFormat.DEFAULT.withHeader((ResultSetMetaData) null);\n        doReturn(expectedFormat).when(spyFormat).withHeader((ResultSetMetaData) isNull());\n\n        CSVFormat result = spyFormat.withHeader((ResultSet) null);\n\n        verify(spyFormat).withHeader((ResultSetMetaData) isNull());\n        assertSame(expectedFormat, result);\n    }\n\n    @Test\n    public void testWithHeader_withResultSetThrowsSQLException_shouldThrow() throws SQLException {\n        when(resultSetMock.getMetaData()).thenThrow(new SQLException(\"MetaData error\"));\n\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        SQLException thrown = assertThrows(SQLException.class, () -> {\n            csvFormat.withHeader(resultSetMock);\n        });\n\n        assertEquals(\"MetaData error\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678942,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 487,
+    "prompt_tokens": 1700,
+    "total_tokens": 2187,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.12
+  }
+}

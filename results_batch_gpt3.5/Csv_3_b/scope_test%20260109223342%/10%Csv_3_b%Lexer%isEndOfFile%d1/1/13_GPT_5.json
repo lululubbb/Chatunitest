@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7yY9G8bJGI6WNSuDlxRyasuJT0h",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.END_OF_STREAM;\nimport static org.junit.jupiter.api.Assertions.assertFalse;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass LexerTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() {\n        // Create a concrete subclass of Lexer since Lexer is abstract\n        lexer = new Lexer(Mockito.mock(CSVFormat.class), Mockito.mock(ExtendedBufferedReader.class)) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsEndOfFile_whenEndOfStream() throws Exception {\n        Method isEndOfFileMethod = Lexer.class.getDeclaredMethod(\"isEndOfFile\", int.class);\n        isEndOfFileMethod.setAccessible(true);\n\n        boolean result = (boolean) isEndOfFileMethod.invoke(lexer, (Object) END_OF_STREAM);\n        assertTrue(result, \"Should return true when input is END_OF_STREAM\");\n    }\n\n    @Test\n    void testIsEndOfFile_whenNotEndOfStream() throws Exception {\n        Method isEndOfFileMethod = Lexer.class.getDeclaredMethod(\"isEndOfFile\", int.class);\n        isEndOfFileMethod.setAccessible(true);\n\n        int notEndOfStream = 'A'; // any char other than END_OF_STREAM\n        boolean result = (boolean) isEndOfFileMethod.invoke(lexer, (Object) notEndOfStream);\n        assertFalse(result, \"Should return false when input is not END_OF_STREAM\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969718,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 352,
+    "prompt_tokens": 836,
+    "total_tokens": 1188,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.06
+  }
+}

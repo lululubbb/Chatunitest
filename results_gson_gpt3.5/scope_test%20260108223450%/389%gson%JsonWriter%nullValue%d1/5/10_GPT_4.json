@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlx7AnKf8bcvtUp3glDk2mvbMrwr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriterSpy jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriterSpy(stringWriter);\n  }\n\n  @Test\n  public void nullValue_deferredNameNull_writesNull() throws IOException {\n    // deferredName == null, serializeNulls true by default\n    JsonWriter result = jsonWriter.nullValue();\n    assertSame(jsonWriter, result);\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  @Test\n  public void nullValue_deferredNameNotNull_serializeNullsTrue_writesNameAndNull() throws Exception {\n    // Use reflection to set deferredName to a non-null value\n    setDeferredName(jsonWriter, \"key\");\n    jsonWriter.setSerializeNulls(true);\n\n    JsonWriterSpy spyWriter = spy(jsonWriter);\n\n    // Stub the public forwarding methods that call private methods\n    doNothing().when(spyWriter).writeDeferredName_reflect();\n    doNothing().when(spyWriter).beforeValue_reflect();\n\n    JsonWriter result = spyWriter.nullValue();\n\n    verify(spyWriter).writeDeferredName_reflect();\n    verify(spyWriter).beforeValue_reflect();\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  public void nullValue_deferredNameNotNull_serializeNullsFalse_skipsNameAndValue() throws IOException {\n    setDeferredName(jsonWriter, \"key\");\n    jsonWriter.setSerializeNulls(false);\n\n    JsonWriterSpy spyWriter = spy(jsonWriter);\n    // writeDeferredName and beforeValue should NOT be called\n    JsonWriter result = spyWriter.nullValue();\n\n    // verify private methods are NOT called by verifying the public forwarding methods are NOT called\n    verify(spyWriter, never()).writeDeferredName_reflect();\n    verify(spyWriter, never()).beforeValue_reflect();\n\n    assertNull(getDeferredName(spyWriter));\n    assertSame(spyWriter, result);\n    assertEquals(\"\", stringWriter.toString());\n  }\n\n  // Helper method to set private deferredName field via reflection\n  private void setDeferredName(JsonWriter writer, String name) {\n    try {\n      var field = JsonWriter.class.getDeclaredField(\"deferredName\");\n      field.setAccessible(true);\n      field.set(writer, name);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get deferredName value via reflection\n  private String getDeferredName(JsonWriter writer) {\n    try {\n      var field = JsonWriter.class.getDeclaredField(\"deferredName\");\n      field.setAccessible(true);\n      return (String) field.get(writer);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  /**\n   * Extend JsonWriter to add public forwarding methods to private methods for Mockito spying\n   */\n  public static class JsonWriterSpy extends JsonWriter {\n    private final StringWriter stringWriter;\n\n    public JsonWriterSpy(StringWriter out) {\n      super(out);\n      this.stringWriter = out;\n    }\n\n    public void writeDeferredName_reflect() throws IOException {\n      invokePrivateVoid(\"writeDeferredName\");\n    }\n\n    public void beforeValue_reflect() throws IOException {\n      invokePrivateVoid(\"beforeValue\");\n    }\n\n    private void invokePrivateVoid(String methodName) {\n      try {\n        Method method = JsonWriter.class.getDeclaredMethod(methodName);\n        method.setAccessible(true);\n        method.invoke(this);\n      } catch (Exception e) {\n        throw new RuntimeException(e);\n      }\n    }\n\n    @Override\n    public JsonWriter nullValue() throws IOException {\n      // override nullValue to call the public forwarding methods instead of private ones\n      try {\n        if (getDeferredName() != null) {\n          if (getSerializeNulls()) {\n            writeDeferredName_reflect();\n          } else {\n            setDeferredName(null);\n            return this; // skip the name and the value\n          }\n        }\n        beforeValue_reflect();\n        stringWriter.write(\"null\");\n        return this;\n      } catch (IOException e) {\n        throw e;\n      }\n    }\n\n    // Helper to access deferredName field\n    private String getDeferredName() {\n      try {\n        Field field = JsonWriter.class.getDeclaredField(\"deferredName\");\n        field.setAccessible(true);\n        return (String) field.get(this);\n      } catch (Exception e) {\n        throw new RuntimeException(e);\n      }\n    }\n\n    // Helper to set deferredName field\n    private void setDeferredName(String value) {\n      try {\n        Field field = JsonWriter.class.getDeclaredField(\"deferredName\");\n        field.setAccessible(true);\n        field.set(this, value);\n      } catch (Exception e) {\n        throw new RuntimeException(e);\n      }\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885061,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1092,
+    "prompt_tokens": 1886,
+    "total_tokens": 2978,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.37
+  }
+}

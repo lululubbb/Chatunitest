@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\n\nimport org.junit.jupiter.api.Test;\n\npublic class PreJava9DateFormatProviderTest {\n\n  @Test\n  public void testGetUSDateTimeFormat() {\n    int dateStyle = DateFormat.SHORT;\n    int timeStyle = DateFormat.MEDIUM;\n    DateFormat df = PreJava9DateFormatProvider.getUSDateTimeFormat(dateStyle, timeStyle);\n    assertNotNull(df);\n    assertTrue(df instanceof SimpleDateFormat);\n    SimpleDateFormat sdf = (SimpleDateFormat) df;\n\n    // Use reflection to invoke private static getDatePartOfDateTimePattern\n    try {\n      Method getDatePartMethod = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDatePartOfDateTimePattern\", int.class);\n      getDatePartMethod.setAccessible(true);\n      String datePart = (String) getDatePartMethod.invoke(null, dateStyle);\n      assertNotNull(datePart);\n      assertFalse(datePart.isEmpty());\n\n      Method getTimePartMethod = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getTimePartOfDateTimePattern\", int.class);\n      getTimePartMethod.setAccessible(true);\n      String timePart = (String) getTimePartMethod.invoke(null, timeStyle);\n      assertNotNull(timePart);\n      assertFalse(timePart.isEmpty());\n\n      String expectedPattern = datePart + \" \" + timePart;\n      assertEquals(expectedPattern, sdf.toPattern());\n      assertEquals(Locale.US, sdf.getLocale());\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/357%gson%PreJava9DateFormatProvider%getUSDateTimeFormat%d1/1/temp/PreJava9DateFormatProvider_357_1Test.java:43: 错误: 找不到符号\n      assertEquals(Locale.US, sdf.getLocale());\n                                 ^\n  符号:   方法 getLocale()\n  位置: 类型为SimpleDateFormat的变量 sdf\n1 个错误\n",
+  "prompt_tokens": 301,
+  "completion_tokens": 391,
+  "total_tokens": 692,
+  "llm_elapsed_time_seconds": 7.32,
+  "repair_elapsed_time_seconds": 15.47,
+  "round_total_time_seconds": 15.47
+}

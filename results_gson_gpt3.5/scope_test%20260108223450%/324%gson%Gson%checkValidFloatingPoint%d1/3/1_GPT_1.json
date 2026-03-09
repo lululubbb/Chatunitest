@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmK7CaIhGFiJgj030hbrTsniT0hz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class GsonTest {\n\n  @Test\n  void testCheckValidFloatingPoint_validValues() throws Exception {\n    Method method = Gson.class.getDeclaredMethod(\"checkValidFloatingPoint\", double.class);\n    method.setAccessible(true);\n\n    // Valid double values should not throw\n    assertDoesNotThrow(() -> method.invoke(null, 0.0));\n    assertDoesNotThrow(() -> method.invoke(null, 1.0));\n    assertDoesNotThrow(() -> method.invoke(null, -1.0));\n    assertDoesNotThrow(() -> method.invoke(null, Double.MAX_VALUE));\n    assertDoesNotThrow(() -> method.invoke(null, Double.MIN_VALUE));\n  }\n\n  @Test\n  void testCheckValidFloatingPoint_nanValue() throws Exception {\n    Method method = Gson.class.getDeclaredMethod(\"checkValidFloatingPoint\", double.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n        () -> method.invoke(null, Double.NaN));\n    // InvocationTargetException wraps IllegalArgumentException, unwrap it\n    Throwable cause = thrown.getCause();\n    assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n  }\n\n  @Test\n  void testCheckValidFloatingPoint_positiveInfinity() throws Exception {\n    Method method = Gson.class.getDeclaredMethod(\"checkValidFloatingPoint\", double.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n        () -> method.invoke(null, Double.POSITIVE_INFINITY));\n    Throwable cause = thrown.getCause();\n    assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n  }\n\n  @Test\n  void testCheckValidFloatingPoint_negativeInfinity() throws Exception {\n    Method method = Gson.class.getDeclaredMethod(\"checkValidFloatingPoint\", double.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,\n        () -> method.invoke(null, Double.NEGATIVE_INFINITY));\n    Throwable cause = thrown.getCause();\n    assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886487,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 468,
+    "prompt_tokens": 1639,
+    "total_tokens": 2107,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.66
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOc2iywmC9CeYu1HGrBYVmOUIUae",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadReturnsCharAndUpdatesLastCharNoNewline() throws IOException {\n        when(mockReader.read()).thenReturn((int) 'a', -1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals('a', result);\n        assertEquals('a', getPrivateField(reader, \"lastChar\"));\n        assertEquals(0, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    @Test\n    void testReadReturnsNewlineAndIncrementsLineCounter() throws IOException {\n        when(mockReader.read()).thenReturn((int) '\\n', -1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals('\\n', result);\n        assertEquals('\\n', getPrivateField(reader, \"lastChar\"));\n        assertEquals(1, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    @Test\n    void testReadReturnsEOF() throws IOException {\n        when(mockReader.read()).thenReturn(-1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals(-1, result);\n        assertEquals(-1, getPrivateField(reader, \"lastChar\")); // lastChar should be set to -1 after EOF\n        assertEquals(0, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    // Utility method to read private fields via reflection\n    private int getPrivateField(ExtendedBufferedReader reader, String fieldName) {\n        try {\n            java.lang.reflect.Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            Object value = field.get(reader);\n            if (value instanceof Integer) {\n                return (Integer) value;\n            } else {\n                throw new RuntimeException(\"Field \" + fieldName + \" is not an int\");\n            }\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748654,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 516,
+    "prompt_tokens": 846,
+    "total_tokens": 1362,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.38
+  }
+}

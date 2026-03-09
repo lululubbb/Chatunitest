@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn8wfPSStO9MRMfrLoivMDuAfhqn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.sql;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.sql.Time;\nimport java.util.Date;\nimport java.util.Locale;\nimport java.util.TimeZone;\n\nclass SqlTimeTypeAdapterTest {\n\n  private SqlTimeTypeAdapter adapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Constructor<SqlTimeTypeAdapter> constructor = SqlTimeTypeAdapter.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance();\n\n    // Set the private 'format' field's locale and timezone to US/UTC to avoid locale/timezone issues\n    Field formatField = SqlTimeTypeAdapter.class.getDeclaredField(\"format\");\n    formatField.setAccessible(true);\n    DateFormat format = (DateFormat) formatField.get(adapter);\n    // Recreate format with Locale.US to ensure consistent parsing of \"AM\"/\"PM\"\n    SimpleDateFormat sdf = new SimpleDateFormat(\"hh:mm:ss a\", Locale.US);\n    sdf.setTimeZone(TimeZone.getTimeZone(\"UTC\"));\n    formatField.set(adapter, sdf);\n  }\n\n  @Test\n  void testRead_withValidTimeString() throws Exception {\n    String timeString = \"01:23:45 PM\";\n    JsonReader reader = new JsonReader(new StringReader(\"\\\"\" + timeString + \"\\\"\"));\n\n    Time time = adapter.read(reader);\n\n    DateFormat expectedFormat = new SimpleDateFormat(\"hh:mm:ss a\", Locale.US);\n    expectedFormat.setTimeZone(TimeZone.getTimeZone(\"UTC\"));\n    Date expectedDate = expectedFormat.parse(timeString);\n    assertEquals(new Time(expectedDate.getTime()), time);\n  }\n\n  @Test\n  void testRead_withNull() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(reader).nextNull();\n\n    Time result = adapter.read(reader);\n\n    assertNull(result);\n    verify(reader).nextNull();\n  }\n\n  @Test\n  void testRead_withMalformedString_throwsJsonSyntaxException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.STRING);\n    when(reader.nextString()).thenReturn(\"bad time format\");\n\n    assertThrows(com.google.gson.JsonSyntaxException.class, () -> adapter.read(reader));\n  }\n\n  @Test\n  void testWrite_withValidTime() throws Exception {\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(stringWriter);\n\n    DateFormat format = getPrivateFormat(adapter);\n    // Recreate format with Locale.US and UTC timezone to match adapter's format\n    SimpleDateFormat sdf = new SimpleDateFormat(\"hh:mm:ss a\", Locale.US);\n    sdf.setTimeZone(TimeZone.getTimeZone(\"UTC\"));\n    Date date = sdf.parse(\"02:34:56 PM\");\n    Time time = new Time(date.getTime());\n\n    adapter.write(writer, time);\n    writer.flush();\n\n    String expected = \"\\\"\" + sdf.format(time) + \"\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void testWrite_withNull() throws IOException {\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter writer = new JsonWriter(stringWriter);\n\n    adapter.write(writer, null);\n    writer.flush();\n\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  private DateFormat getPrivateFormat(SqlTimeTypeAdapter adapter) throws Exception {\n    Field formatField = SqlTimeTypeAdapter.class.getDeclaredField(\"format\");\n    formatField.setAccessible(true);\n    return (DateFormat) formatField.get(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889638,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 832,
+    "prompt_tokens": 1752,
+    "total_tokens": 2584,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.41
+  }
+}

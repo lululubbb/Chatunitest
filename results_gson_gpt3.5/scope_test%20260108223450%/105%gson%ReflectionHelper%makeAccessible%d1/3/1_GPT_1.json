@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvln7VFYiy2rAIQOaRfCYrHJ8x0iL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void makeAccessible_setsAccessibleTrue_whenNoException() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    // No exception thrown by setAccessible\n    doNothing().when(accessibleObject).setAccessible(true);\n\n    assertDoesNotThrow(() -> ReflectionHelper.makeAccessible(accessibleObject));\n\n    verify(accessibleObject).setAccessible(true);\n  }\n\n  @Test\n  void makeAccessible_throwsJsonIOException_withProperMessage_whenExceptionThrown() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    doThrow(new SecurityException(\"denied\")).when(accessibleObject).setAccessible(true);\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> ReflectionHelper.makeAccessible(accessibleObject));\n    String msg = thrown.getMessage();\n\n    // The message should start with \"Failed making \"\n    assertTrue(msg.startsWith(\"Failed making \"));\n    // The message should mention \"accessible\" and \"either increase its visibility\"\n    assertTrue(msg.contains(\"accessible\"));\n    assertTrue(msg.contains(\"either increase its visibility\"));\n    // The cause should be the SecurityException\n    assertNotNull(thrown.getCause());\n    assertEquals(SecurityException.class, thrown.getCause().getClass());\n    assertEquals(\"denied\", thrown.getCause().getMessage());\n\n    verify(accessibleObject).setAccessible(true);\n  }\n\n  @Test\n  void makeAccessible_throwsJsonIOException_callsGetAccessibleObjectDescription() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    doThrow(new RuntimeException(\"fail\")).when(accessibleObject).setAccessible(true);\n\n    JsonIOException ex = assertThrows(JsonIOException.class, () -> ReflectionHelper.makeAccessible(accessibleObject));\n    String message = ex.getMessage();\n\n    // The message should contain description from getAccessibleObjectDescription\n    // The description is obtained with uppercaseFirstLetter = false\n    // We cannot directly check the exact description string, but it should be part of the message\n    assertTrue(message.startsWith(\"Failed making \"));\n    assertTrue(message.contains(\"accessible\"));\n\n    verify(accessibleObject).setAccessible(true);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884441,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 498,
+    "prompt_tokens": 449,
+    "total_tokens": 947,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.7
+  }
+}

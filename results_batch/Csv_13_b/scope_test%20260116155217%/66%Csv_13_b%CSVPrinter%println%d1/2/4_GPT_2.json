@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYzwARCT4RjSYDIVr5LPr4tvbx7a",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\nimport org.mockito.MockitoSession;\n\nclass CSVPrinterTest {\n\n    @Mock\n    private Appendable out;\n\n    @Mock\n    private CSVFormat format;\n\n    private CSVPrinter printer;\n\n    private MockitoSession mockito;\n\n    @BeforeEach\n    void setUp() {\n        mockito = MockitoAnnotations.openMocks(this);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void println_appendsRecordSeparatorWhenNotNull() throws IOException {\n        String recordSeparator = \"\\n\";\n        when(format.getRecordSeparator()).thenReturn(recordSeparator);\n\n        printer.println();\n\n        verify(out).append(recordSeparator);\n        assertTrue(getNewRecordField(printer));\n    }\n\n    @Test\n    void println_doesNotAppendWhenRecordSeparatorIsNull() throws IOException {\n        when(format.getRecordSeparator()).thenReturn(null);\n\n        printer.println();\n\n        verify(out, never()).append(anyString());\n        assertTrue(getNewRecordField(printer));\n    }\n\n    private boolean getNewRecordField(CSVPrinter printer) {\n        try {\n            java.lang.reflect.Field field = CSVPrinter.class.getDeclaredField(\"newRecord\");\n            field.setAccessible(true);\n            return field.getBoolean(printer);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550248,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 319,
+    "prompt_tokens": 915,
+    "total_tokens": 1234,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.91
+  }
+}

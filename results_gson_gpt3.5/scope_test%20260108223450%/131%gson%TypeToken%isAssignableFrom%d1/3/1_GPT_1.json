@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJrS1EwjKMryxkklbW18qbVbyRZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nclass TypeToken_isAssignableFromTest {\n\n  private ParameterizedType toType;\n  private Map<String, Type> typeVarMap;\n\n  @BeforeEach\n  void setUp() {\n    typeVarMap = new HashMap<>();\n  }\n\n  private ParameterizedType createParameterizedType(final Class<?> raw, final Type... args) {\n    return new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return args;\n      }\n\n      @Override\n      public Type getRawType() {\n        return raw;\n      }\n\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n\n      @Override\n      public boolean equals(Object o) {\n        if (!(o instanceof ParameterizedType)) return false;\n        ParameterizedType that = (ParameterizedType) o;\n        return raw.equals(that.getRawType()) && \n               java.util.Arrays.equals(args, that.getActualTypeArguments());\n      }\n\n      @Override\n      public int hashCode() {\n        return raw.hashCode() ^ java.util.Arrays.hashCode(args);\n      }\n\n      @Override\n      public String toString() {\n        StringBuilder sb = new StringBuilder();\n        sb.append(raw.getTypeName());\n        if (args != null && args.length > 0) {\n          sb.append(\"<\");\n          for (int i = 0; i < args.length; i++) {\n            if (i > 0) sb.append(\", \");\n            sb.append(args[i].getTypeName());\n          }\n          sb.append(\">\");\n        }\n        return sb.toString();\n      }\n    };\n  }\n\n  @Test\n  void isAssignableFrom_nullFrom_returnsFalse() throws Exception {\n    // from == null -> false\n    boolean result = invokeIsAssignableFrom(null, toType, typeVarMap);\n    assertFalse(result);\n  }\n\n  @Test\n  void isAssignableFrom_toEqualsFrom_returnsTrue() throws Exception {\n    // to.equals(from) -> true\n    Class<?> raw = Map.class;\n    TypeVariable<?>[] typeParams = raw.getTypeParameters();\n    Type[] actualArgs = new Type[] {String.class, Integer.class};\n    toType = createParameterizedType(raw, actualArgs);\n\n    boolean result = invokeIsAssignableFrom(toType, toType, new HashMap<>());\n    assertTrue(result);\n  }\n\n  @Test\n  void isAssignableFrom_parameterizedTypeMatchesTypeEqualsTrue() throws Exception {\n    // Setup from as ParameterizedType with type variables mapping to actual types\n    Class<?> raw = Map.class;\n    TypeVariable<?>[] tParams = raw.getTypeParameters();\n    TypeVariable<?> kVar = tParams[0];\n    TypeVariable<?> vVar = tParams[1];\n\n    // from: Map<K, V>\n    ParameterizedType from = createParameterizedType(raw, kVar, vVar);\n    // to: Map<String, Integer>\n    toType = createParameterizedType(raw, String.class, Integer.class);\n\n    Map<String, Type> map = new HashMap<>();\n    map.put(kVar.getName(), String.class);\n    map.put(vVar.getName(), Integer.class);\n\n    try (MockedStatic<$Gson$Types> mockedGsonTypes = Mockito.mockStatic($Gson$Types.class)) {\n      mockedGsonTypes.when(() -> $Gson$Types.getRawType(from)).thenReturn(raw);\n      boolean result = invokeIsAssignableFrom(from, toType, new HashMap<>());\n      assertTrue(result);\n    }\n  }\n\n  @Test\n  void isAssignableFrom_genericInterfaceMatches_returnsTrue() throws Exception {\n    // from implements an interface that matches to\n    Class<?> raw = MyList.class;\n    TypeVariable<?>[] tParams = List.class.getTypeParameters();\n    TypeVariable<?> eVar = tParams[0];\n\n    // to: List<String>\n    toType = createParameterizedType(List.class, String.class);\n\n    // from: MyList<String> (MyList implements List<String>)\n    ParameterizedType from = createParameterizedType(raw, String.class);\n\n    try (MockedStatic<$Gson$Types> mockedGsonTypes = Mockito.mockStatic($Gson$Types.class)) {\n      mockedGsonTypes.when(() -> $Gson$Types.getRawType(from)).thenReturn(raw);\n      Mockito.when(raw.getGenericInterfaces()).thenReturn(new Type[] {toType});\n      Mockito.when(raw.getGenericSuperclass()).thenReturn(null);\n\n      boolean result = invokeIsAssignableFrom(from, toType, new HashMap<>());\n      assertTrue(result);\n    }\n  }\n\n  @Test\n  void isAssignableFrom_noMatchSuperclassChain_returnsFalse() throws Exception {\n    // from has superclass chain that does not match to\n    Class<?> raw = String.class;\n    toType = createParameterizedType(Map.class, String.class, Integer.class);\n\n    ParameterizedType from = createParameterizedType(raw, new Type[0]);\n\n    try (MockedStatic<$Gson$Types> mockedGsonTypes = Mockito.mockStatic($Gson$Types.class)) {\n      mockedGsonTypes.when(() -> $Gson$Types.getRawType(from)).thenReturn(raw);\n      Mockito.when(raw.getGenericInterfaces()).thenReturn(new Type[0]);\n      Mockito.when(raw.getGenericSuperclass()).thenReturn(null);\n\n      boolean result = invokeIsAssignableFrom(from, toType, new HashMap<>());\n      assertFalse(result);\n    }\n  }\n\n  // Helper to invoke private static method isAssignableFrom(Type, ParameterizedType, Map)\n  private boolean invokeIsAssignableFrom(Type from, ParameterizedType to, Map<String, Type> typeVarMap) throws Exception {\n    java.lang.reflect.Method method = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class, ParameterizedType.class, Map.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, from, to, typeVarMap);\n  }\n\n  // Dummy class for interface test\n  interface MyList<E> extends java.util.List<E> {}\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886471,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1305,
+    "prompt_tokens": 827,
+    "total_tokens": 2132,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.76
+  }
+}

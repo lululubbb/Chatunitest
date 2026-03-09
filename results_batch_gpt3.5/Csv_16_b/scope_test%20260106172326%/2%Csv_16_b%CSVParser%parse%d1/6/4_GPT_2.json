@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxawYytWzofWWPOiVcS3mTjeCOFV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    @Test\n    void testParse_InputStreamCharsetFormat_NullInputStream() {\n        CSVFormat format = mock(CSVFormat.class);\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((InputStream) null, StandardCharsets.UTF_8, format);\n        });\n        assertEquals(\"inputStream\", ex.getMessage());\n    }\n\n    @Test\n    void testParse_InputStreamCharsetFormat_NullFormat() {\n        InputStream is = new ByteArrayInputStream(new byte[0]);\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(is, StandardCharsets.UTF_8, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testParse_InputStreamCharsetFormat_ValidInput() throws IOException {\n        String csv = \"a,b,c\\n1,2,3\\n\";\n        InputStream is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));\n        CSVFormat format = CSVFormat.DEFAULT;\n        try (CSVParser parser = CSVParser.parse(is, StandardCharsets.UTF_8, format)) {\n            assertNotNull(parser);\n            assertEquals(2, parser.getRecords().size());\n            assertEquals(\"a\", parser.getRecords().get(0).get(0));\n            assertEquals(\"1\", parser.getRecords().get(1).get(0));\n            assertFalse(parser.isClosed());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691486,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 369,
+    "prompt_tokens": 1064,
+    "total_tokens": 1433,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.97
+  }
+}

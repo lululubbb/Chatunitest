@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvcJUpP7EY2ejPIMifjEXcnneUj6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithHeader_NullMetaData() throws SQLException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(null);\n        assertNotNull(result);\n        assertNotSame(format, result);\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_EmptyMetaData() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(0);\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(metaData);\n\n        assertNotNull(result);\n        assertNotSame(format, result);\n        assertNotNull(result.getHeader());\n        assertEquals(0, result.getHeader().length);\n\n        verify(metaData, times(1)).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    public void testWithHeader_MultipleColumns() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(3);\n        when(metaData.getColumnLabel(1)).thenReturn(\"col1\");\n        when(metaData.getColumnLabel(2)).thenReturn(\"col2\");\n        when(metaData.getColumnLabel(3)).thenReturn(\"col3\");\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(metaData);\n\n        assertNotNull(result);\n        assertNotSame(format, result);\n        String[] header = result.getHeader();\n        assertNotNull(header);\n        assertArrayEquals(new String[]{\"col1\", \"col2\", \"col3\"}, header);\n\n        verify(metaData, times(1)).getColumnCount();\n        verify(metaData, times(1)).getColumnLabel(1);\n        verify(metaData, times(1)).getColumnLabel(2);\n        verify(metaData, times(1)).getColumnLabel(3);\n        verifyNoMoreInteractions(metaData);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683883,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 473,
+    "prompt_tokens": 1603,
+    "total_tokens": 2076,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.21
+  }
+}

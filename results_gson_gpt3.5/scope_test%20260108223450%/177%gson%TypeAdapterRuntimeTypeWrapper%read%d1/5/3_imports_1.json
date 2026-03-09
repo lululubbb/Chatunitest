@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.TypeVariable;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  Gson mockContext;\n  TypeAdapter<Object> mockDelegate;\n  JsonReader mockJsonReader;\n  TypeAdapterRuntimeTypeWrapper<Object> wrapper;\n  Type mockType;\n\n  @BeforeEach\n  void setUp() {\n    mockContext = mock(Gson.class);\n    mockDelegate = mock(TypeAdapter.class);\n    mockJsonReader = mock(JsonReader.class);\n    mockType = Object.class;\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockContext, mockDelegate, mockType);\n  }\n\n  @Test\n  void read_delegatesToDelegateRead() throws IOException {\n    Object expected = new Object();\n    when(mockDelegate.read(mockJsonReader)).thenReturn(expected);\n\n    Object actual = wrapper.read(mockJsonReader);\n\n    verify(mockDelegate).read(mockJsonReader);\n    assertSame(expected, actual);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 327,
+  "completion_tokens": 258,
+  "total_tokens": 585,
+  "llm_elapsed_time_seconds": 4.4,
+  "repair_elapsed_time_seconds": 19.88,
+  "round_total_time_seconds": 19.88
+}

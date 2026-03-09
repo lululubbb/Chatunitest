@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmDzn27ttZqsr8Le86kqIBeXxDev",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void testLongValue_parseLongSuccess() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1234567890\");\n    long result = number.longValue();\n    assertEquals(1234567890L, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_usesBigDecimal() {\n    // Value too large for long parseLong, triggers NumberFormatException\n    String largeValue = \"92233720368547758079223372036854775807\"; // > Long.MAX_VALUE\n    LazilyParsedNumber number = new LazilyParsedNumber(largeValue);\n    long expected = new BigDecimal(largeValue).longValue();\n    long actual = number.longValue();\n    assertEquals(expected, actual);\n  }\n\n  @Test\n  public void testWriteReplace_privateMethod_returnsObject() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(number);\n    assertNotNull(result);\n  }\n\n  @Test\n  public void testReadObject_privateMethod() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", java.io.ObjectInputStream.class);\n    readObject.setAccessible(true);\n    // We cannot easily mock ObjectInputStream fully here, just test invocation does not throw\n    readObject.invoke(number, new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(new byte[0])) {\n      @Override\n      public int read() {\n        return -1; // simulate end of stream\n      }\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886107,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 416,
+    "prompt_tokens": 326,
+    "total_tokens": 742,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.67
+  }
+}

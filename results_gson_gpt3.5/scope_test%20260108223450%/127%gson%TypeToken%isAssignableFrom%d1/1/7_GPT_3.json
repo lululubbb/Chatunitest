@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwrOvW7w0TYJGNGaoF1gzic0uoD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.GenericArrayType;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeToken_isAssignableFrom_Test {\n\n  private TypeToken<Object> typeToken;\n\n  @BeforeEach\n  void setUp() {\n    typeToken = new TypeToken<Object>() {};\n  }\n\n  @Test\n  void isAssignableFrom_withClassAssignable() {\n    // Object is assignable from String.class? Yes\n    TypeToken<Object> objectToken = new TypeToken<Object>() {};\n    assertTrue(objectToken.isAssignableFrom(String.class));\n  }\n\n  @Test\n  void isAssignableFrom_withClassNotAssignable() {\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    assertFalse(stringToken.isAssignableFrom(Object.class));\n  }\n\n  @Test\n  void isAssignableFrom_withNullClass() {\n    assertThrows(NullPointerException.class, () -> typeToken.isAssignableFrom((Class<?>) null));\n  }\n\n  @Test\n  void isAssignableFrom_withTypeAssignable() throws Exception {\n    Type stringType = String.class;\n    // Use reflection to invoke private isAssignableFrom(Type)\n    var method = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class);\n    method.setAccessible(true);\n    Boolean result = (Boolean) method.invoke(typeToken, stringType);\n    assertTrue(result);\n  }\n\n  @Test\n  void isAssignableFrom_withTypeNotAssignable() throws Exception {\n    Type objectType = Object.class;\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    var method = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class);\n    method.setAccessible(true);\n    Boolean result = (Boolean) method.invoke(stringToken, objectType);\n    assertFalse(result);\n  }\n\n  @Test\n  void isAssignableFrom_withTypeTokenAssignable() {\n    TypeToken<Object> objectToken = new TypeToken<Object>() {};\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    assertTrue(objectToken.isAssignableFrom(stringToken));\n  }\n\n  @Test\n  void isAssignableFrom_withTypeTokenNotAssignable() {\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    TypeToken<Object> objectToken = new TypeToken<Object>() {};\n    assertFalse(stringToken.isAssignableFrom(objectToken));\n  }\n\n  @Test\n  void isAssignableFrom_withGenericArrayType() throws Exception {\n    // Create a GenericArrayType mock\n    GenericArrayType genericArrayType = mock(GenericArrayType.class);\n    when(genericArrayType.getGenericComponentType()).thenReturn(String.class);\n\n    var method = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class);\n    method.setAccessible(true);\n    Boolean result = (Boolean) method.invoke(typeToken, genericArrayType);\n    // We can't be sure, but the method should not throw and return boolean\n    assertNotNull(result);\n  }\n\n  @Test\n  void isAssignableFrom_withParameterizedType() throws Exception {\n    ParameterizedType parameterizedType = mock(ParameterizedType.class);\n    when(parameterizedType.getRawType()).thenReturn(Object.class);\n    when(parameterizedType.getActualTypeArguments()).thenReturn(new Type[] {String.class});\n\n    var method = TypeToken.class.getDeclaredMethod(\"isAssignableFrom\", Type.class);\n    method.setAccessible(true);\n    Boolean result = (Boolean) method.invoke(typeToken, parameterizedType);\n    assertNotNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888889,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 747,
+    "prompt_tokens": 2771,
+    "total_tokens": 3518,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.33
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCncMVMfkLCOeqDDq6hIPheHf4k",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.Date;\n\nclass DefaultDateTypeAdapterTest {\n\n    private DefaultDateTypeAdapter<Date> adapter;\n    private DefaultDateTypeAdapter.DateType<Date> dateType;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        dateType = mock(DefaultDateTypeAdapter.DateType.class);\n        // Use reflection to access the private constructor\n        var constructor = DefaultDateTypeAdapter.class.getDeclaredConstructor(DefaultDateTypeAdapter.DateType.class, String.class);\n        constructor.setAccessible(true);\n        adapter = (DefaultDateTypeAdapter<Date>) constructor.newInstance(dateType, \"yyyy-MM-dd\");\n    }\n\n    @Test\n    void read_shouldReturnNull_whenJsonTokenIsNull() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.NULL);\n\n        Date result = adapter.read(in);\n\n        verify(in).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_shouldReturnDeserializedDate() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.STRING);\n        when(in.nextString()).thenReturn(\"2026-01-09\");\n\n        Date expectedDate = new Date();\n\n        // Spy adapter to stub deserializeToDate to return expectedDate\n        var spyAdapter = Mockito.spy(adapter);\n        try {\n            var deserializeToDateMethod = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n            deserializeToDateMethod.setAccessible(true);\n            doReturn(expectedDate).when(spyAdapter).deserializeToDate(in);\n        } catch (NoSuchMethodException e) {\n            // fallback: do nothing\n        }\n\n        when(dateType.deserialize(expectedDate)).thenReturn(expectedDate);\n\n        Date actual = spyAdapter.read(in);\n\n        verify(dateType).deserialize(expectedDate);\n        assertEquals(expectedDate, actual);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889877,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 456,
+    "prompt_tokens": 1493,
+    "total_tokens": 1949,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.94
+  }
+}

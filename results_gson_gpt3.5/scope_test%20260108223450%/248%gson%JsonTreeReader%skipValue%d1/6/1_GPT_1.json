@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn1tWYK9GWrAGwNQ5NaiFXjy6hrb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a JsonElement stub for constructor\n    JsonElement element = mock(JsonElement.class);\n    reader = new JsonTreeReader(element);\n  }\n\n  @Test\n  public void testSkipValue_NAME_invokesNextName() throws Exception {\n    setPeekReturn(JsonToken.NAME);\n\n    // Spy on reader to verify nextName(true) call\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.NAME).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).nextName(true);\n  }\n\n  @Test\n  public void testSkipValue_END_ARRAY_invokesEndArray() throws Exception {\n    setPeekReturn(JsonToken.END_ARRAY);\n\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.END_ARRAY).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).endArray();\n  }\n\n  @Test\n  public void testSkipValue_END_OBJECT_invokesEndObject() throws Exception {\n    setPeekReturn(JsonToken.END_OBJECT);\n\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.END_OBJECT).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader).endObject();\n  }\n\n  @Test\n  public void testSkipValue_END_DOCUMENT_doesNothing() throws Exception {\n    setPeekReturn(JsonToken.END_DOCUMENT);\n\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.END_DOCUMENT).when(spyReader).peek();\n\n    spyReader.skipValue();\n\n    verify(spyReader, never()).popStack();\n  }\n\n  @Test\n  public void testSkipValue_default_stackSizeZero_noIncrement() throws Exception {\n    setPeekReturn(JsonToken.BOOLEAN);\n\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.BOOLEAN).when(spyReader).peek();\n\n    // Set stackSize to 0 via reflection\n    setPrivateField(spyReader, \"stackSize\", 0);\n\n    spyReader.skipValue();\n\n    verify(spyReader).popStack();\n\n    // pathIndices should not be incremented since stackSize == 0\n    int[] pathIndices = getPrivateField(spyReader, \"pathIndices\");\n    assertEquals(0, pathIndices[0]);\n  }\n\n  @Test\n  public void testSkipValue_default_stackSizeGreaterThanZero_incrementsPathIndices() throws Exception {\n    setPeekReturn(JsonToken.STRING);\n\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(JsonToken.STRING).when(spyReader).peek();\n\n    // Set stackSize to 2 and pathIndices[1] = 5\n    setPrivateField(spyReader, \"stackSize\", 2);\n    int[] pathIndices = getPrivateField(spyReader, \"pathIndices\");\n    pathIndices[1] = 5;\n\n    spyReader.skipValue();\n\n    verify(spyReader).popStack();\n\n    // pathIndices[stackSize - 1] should increment by 1\n    assertEquals(6, pathIndices[1]);\n  }\n\n  // Helper to set the return value of peek() using spy and doReturn\n  private void setPeekReturn(JsonToken token) throws Exception {\n    JsonTreeReader spyReader = Mockito.spy(reader);\n    doReturn(token).when(spyReader).peek();\n  }\n\n  // Reflection helpers\n  private void setPrivateField(Object instance, String fieldName, Object value) throws Exception {\n    Field field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getPrivateField(Object instance, String fieldName) throws Exception {\n    Field field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(instance);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889201,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 935,
+    "prompt_tokens": 655,
+    "total_tokens": 1590,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.78
+  }
+}

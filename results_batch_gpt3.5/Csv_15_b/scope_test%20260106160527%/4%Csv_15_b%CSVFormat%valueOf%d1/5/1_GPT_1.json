@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxE3OqlgtmCi2WT3rCvKViyOdWZx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVFormat.Predefined;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testValueOf_withValidFormat() {\n        // Mock Predefined enum to return a mock CSVFormat.Predefined instance\n        Predefined mockPredefined = mock(Predefined.class);\n        CSVFormat expectedFormat = CSVFormat.DEFAULT;\n\n        // Mock valueOf static method of Predefined enum using reflection because it's static final enum\n        // Instead, we use spy on Predefined.values() to check for valid string input and fallback to real method\n\n        // Since Predefined.valueOf is an enum static method, we cannot mock it easily.\n        // So we test with actual valid enum names.\n        for (Predefined predefined : Predefined.values()) {\n            String name = predefined.name();\n            CSVFormat format = CSVFormat.valueOf(name);\n            assertNotNull(format, \"Format should not be null for predefined: \" + name);\n            assertSame(predefined.getFormat(), format, \"Returned format should match predefined.getFormat()\");\n        }\n    }\n\n    @Test\n    public void testValueOf_withInvalidFormat_shouldThrowIllegalArgumentException() {\n        String invalidFormat = \"NON_EXISTENT_FORMAT\";\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(invalidFormat));\n    }\n\n    @Test\n    public void testValueOf_withNull_shouldThrowNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVFormat.valueOf(null));\n    }\n\n    @Test\n    public void testValueOf_reflectionInvoke() throws Exception {\n        Method valueOfMethod = CSVFormat.class.getDeclaredMethod(\"valueOf\", String.class);\n        valueOfMethod.setAccessible(true);\n\n        // Valid input\n        Object result = valueOfMethod.invoke(null, \"DEFAULT\");\n        assertTrue(result instanceof CSVFormat);\n        assertSame(CSVFormat.Predefined.DEFAULT.getFormat(), result);\n\n        // Invalid input should throw InvocationTargetException with cause IllegalArgumentException\n        Executable exec = () -> valueOfMethod.invoke(null, \"INVALID_FORMAT\");\n        Exception thrown = assertThrows(Exception.class, exec);\n        assertTrue(thrown.getCause() instanceof IllegalArgumentException);\n\n        // Null input should throw InvocationTargetException with cause NullPointerException\n        exec = () -> valueOfMethod.invoke(null, (Object) null);\n        thrown = assertThrows(Exception.class, exec);\n        assertTrue(thrown.getCause() instanceof NullPointerException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767690067,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 562,
+    "prompt_tokens": 1788,
+    "total_tokens": 2350,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 6.67
+  }
+}

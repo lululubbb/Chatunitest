@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void remove_Object_presentInDelegate_shouldReturnTrue() {\n    when(delegate.remove(\"element\")).thenReturn(true);\n    boolean result = list.remove(\"element\");\n    assertTrue(result);\n    verify(delegate).remove(\"element\");\n  }\n\n  @Test\n  void remove_Object_notPresentInDelegate_shouldReturnFalse() {\n    when(delegate.remove(\"missing\")).thenReturn(false);\n    boolean result = list.remove(\"missing\");\n    assertFalse(result);\n    verify(delegate).remove(\"missing\");\n  }\n\n  @Test\n  void nonNull_privateMethod_shouldReturnSameElement() throws Exception {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n    String input = \"test\";\n    @SuppressWarnings(\"unchecked\")\n    String result = (String) nonNullMethod.invoke(list, input);\n    assertEquals(input, result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 372,
+  "completion_tokens": 300,
+  "total_tokens": 672,
+  "llm_elapsed_time_seconds": 6.15,
+  "repair_elapsed_time_seconds": 17.96,
+  "round_total_time_seconds": 17.96
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuujC5nOqd3I2hwwgb5mjlUvztHK3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderComments_whenHeaderCommentsIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withHeaderComments((Object[]) null);\n        String[] result = format.getHeaderComments();\n        assertNull(result, \"Expected null when headerComments field is null\");\n    }\n\n    @Test\n    void testGetHeaderComments_whenHeaderCommentsIsEmptyArray() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withHeaderComments();\n        String[] result = format.getHeaderComments();\n        assertNotNull(result, \"Expected non-null when headerComments is empty array\");\n        assertEquals(0, result.length, \"Expected empty array\");\n    }\n\n    @Test\n    void testGetHeaderComments_whenHeaderCommentsHasValues() throws Exception {\n        String[] comments = new String[]{\"Comment1\", \"Comment2\"};\n        CSVFormat format = CSVFormat.DEFAULT.withHeaderComments((Object[]) comments);\n\n        String[] result = format.getHeaderComments();\n        assertNotNull(result, \"Expected non-null when headerComments has values\");\n        assertArrayEquals(comments, result, \"Expected returned array to equal the headerComments array\");\n        assertNotSame(comments, result, \"Expected returned array to be a clone, not the same instance\");\n\n        // Modify returned array and verify original is not affected\n        result[0] = \"Modified\";\n\n        // Use reflection to get the private headerComments field from format\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        String[] originalAfterModification = (String[]) headerCommentsField.get(format);\n\n        assertEquals(\"Comment1\", originalAfterModification[0], \"Original headerComments should not be modified\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680466,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 394,
+    "prompt_tokens": 1603,
+    "total_tokens": 1997,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.26
+  }
+}

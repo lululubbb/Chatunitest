@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1rIWJSJUzhz0WkNcvbRdSH7y89",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  private static Object recordHelperMockInstance;\n\n  private static final class TestRecord {\n    private final String name;\n    private final int age;\n\n    public TestRecord(String name, int age) {\n      this.name = name;\n      this.age = age;\n    }\n  }\n\n  @BeforeAll\n  static void setupRecordHelper() throws Exception {\n    // Get the RecordHelper class via reflection\n    Class<?> reflectionHelperClass = ReflectionHelper.class;\n    Field recordHelperField = reflectionHelperClass.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from RECORD_HELPER field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    Class<?> recordHelperClass = recordHelperField.getType();\n\n    Class<?>[] interfaces = recordHelperClass.getInterfaces();\n    if (interfaces.length == 0) {\n      // No interfaces, create a Proxy implementing the RecordHelper class itself using an interface proxy workaround\n      // Since Proxy requires interfaces, create a dynamic subclass via Proxy with a marker interface\n      // But RecordHelper is private, so fallback to a Mockito mock instead\n      recordHelperMockInstance = mock(recordHelperClass, invocation -> {\n        if (\"getCanonicalRecordConstructor\".equals(invocation.getMethod().getName()) && invocation.getArguments().length == 1) {\n          Class<?> raw = (Class<?>) invocation.getArguments()[0];\n          try {\n            return raw.getDeclaredConstructor(String.class, int.class);\n          } catch (NoSuchMethodException e) {\n            return null;\n          }\n        }\n        return null;\n      });\n    } else {\n      // Interfaces exist, create Proxy instance\n      recordHelperMockInstance = Proxy.newProxyInstance(\n          recordHelperClass.getClassLoader(),\n          interfaces,\n          (proxy, method, args) -> {\n            if (\"getCanonicalRecordConstructor\".equals(method.getName()) && args.length == 1) {\n              Class<?> raw = (Class<?>) args[0];\n              try {\n                return raw.getDeclaredConstructor(String.class, int.class);\n              } catch (NoSuchMethodException e) {\n                return null;\n              }\n            }\n            return null;\n          });\n    }\n\n    recordHelperField.set(null, recordHelperMockInstance);\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_returnsConstructor_whenRecordHasCanonicalConstructor() {\n    Constructor<TestRecord> constructor = ReflectionHelper.getCanonicalRecordConstructor(TestRecord.class);\n    assertNotNull(constructor);\n    assertEquals(TestRecord.class, constructor.getDeclaringClass());\n    Class<?>[] params = constructor.getParameterTypes();\n    assertArrayEquals(new Class<?>[] { String.class, int.class }, params);\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_returnsNull_whenNoSuchMethod() {\n    class NoCanonicalConstructor {\n      private NoCanonicalConstructor() {}\n    }\n\n    Constructor<NoCanonicalConstructor> constructor = ReflectionHelper.getCanonicalRecordConstructor(NoCanonicalConstructor.class);\n    assertNull(constructor);\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_throwsException_whenRecordHelperThrows() throws Exception {\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from RECORD_HELPER field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    Class<?> recordHelperPrivateClass = null;\n    for (Class<?> inner : ReflectionHelper.class.getDeclaredClasses()) {\n      if (inner.getSimpleName().equals(\"RecordHelper\")) {\n        recordHelperPrivateClass = inner;\n        break;\n      }\n    }\n    assertNotNull(recordHelperPrivateClass);\n\n    // Create mock with Answer throwing exception on getCanonicalRecordConstructor\n    Object mockRecordHelper = mock(recordHelperPrivateClass, invocation -> {\n      if (\"getCanonicalRecordConstructor\".equals(invocation.getMethod().getName())\n          && invocation.getArguments().length == 1) {\n        throw new RuntimeException(\"fail\");\n      }\n      return invocation.callRealMethod();\n    });\n\n    recordHelperField.set(null, mockRecordHelper);\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      ReflectionHelper.getCanonicalRecordConstructor(Object.class);\n    });\n    assertEquals(\"fail\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885355,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 999,
+    "prompt_tokens": 2518,
+    "total_tokens": 3517,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.95
+  }
+}

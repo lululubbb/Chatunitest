@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmYiC6jHpYZQQJQ8NJzOas6imCRI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  private static Class<?> recordClassMock;\n\n  // Define a minimal RecordHelper interface for mocking\n  interface RecordHelper {\n    String[] getRecordComponentNames(Class<?> raw);\n  }\n\n  @BeforeAll\n  static void setup() {\n    recordClassMock = RecordClassMock.class;\n  }\n\n  @Test\n  void testGetRecordComponentNames_returnsExpected() {\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class, Mockito.CALLS_REAL_METHODS)) {\n      // Mock the RECORD_HELPER field via reflection to a spy that returns a known array\n      RecordHelper recordHelperSpy = mock(RecordHelper.class);\n      String[] expected = new String[] {\"component1\", \"component2\"};\n      when(recordHelperSpy.getRecordComponentNames(recordClassMock)).thenReturn(expected);\n\n      // Use reflection to set private static final RECORD_HELPER field\n      Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n      recordHelperField.setAccessible(true);\n\n      // Remove final modifier from the field\n      Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n      modifiersField.setAccessible(true);\n      modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n      // Remove the type check by using Unsafe or by setting via reflection without type check\n      // but here, the main problem is that the mocked RecordHelper class is not the same as the original RecordHelper interface\n      // So we need to create a mock of the actual RecordHelper class, not the interface inside the test class.\n\n      // Get the actual RecordHelper class from ReflectionHelper\n      Class<?> recordHelperClass = Class.forName(\"com.google.gson.internal.reflect.ReflectionHelper$RecordHelper\");\n\n      // Create a mock of the actual RecordHelper class\n      Object recordHelperMock = mock(recordHelperClass);\n\n      // Set up the mock to return expected when getRecordComponentNames is called\n      when(recordHelperClass.getMethod(\"getRecordComponentNames\", Class.class)\n          .invoke(recordHelperMock, recordClassMock)).thenReturn(expected);\n\n      // Instead of using 'when' on the proxy, use Mockito's doReturn for the method\n      // But since we have the mock object, we can use Mockito's when on the mock object directly:\n      // However, due to reflection, better to use Mockito's when like this:\n      // But it's complicated; simpler is to use Mockito's Answer or doReturn.\n\n      // So fallback: cast recordHelperMock to the interface and stub\n      // But we don't have the interface at compile time.\n\n      // Instead, use Mockito's doReturn:\n      Mockito.doReturn(expected).when(recordHelperMock).getClass()\n          .getMethod(\"getRecordComponentNames\", Class.class);\n\n      // Actually, better to use Mockito's when on the mock object via reflection:\n      // But this is complicated; instead, use a proxy to implement the interface.\n\n      // Alternative approach: use a dynamic proxy implementing the RecordHelper interface from ReflectionHelper\n      Object proxy = java.lang.reflect.Proxy.newProxyInstance(\n          recordHelperClass.getClassLoader(),\n          new Class<?>[]{recordHelperClass},\n          (proxyObj, method, args) -> {\n            if (\"getRecordComponentNames\".equals(method.getName()) && args.length == 1) {\n              return expected;\n            }\n            return null;\n          });\n\n      // Set the proxy instance to the RECORD_HELPER field\n      recordHelperField.set(null, proxy);\n\n      String[] actual = ReflectionHelper.getRecordComponentNames(recordClassMock);\n      assertArrayEquals(expected, actual);\n    } catch (Exception e) {\n      fail(\"Exception during test: \" + e);\n    }\n  }\n\n  // Dummy record class mock for testing\n  private static class RecordClassMock {\n    // Empty class, just for test\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887392,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 869,
+    "prompt_tokens": 1348,
+    "total_tokens": 2217,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.75
+  }
+}

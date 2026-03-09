@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuqhyPFknKK1O2eEryKR7Ds2Es6AU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private CSVRecord csvRecordWithMapping;\n    private CSVRecord csvRecordWithoutMapping;\n    private Map<String, Integer> mapping;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Prepare mapping with some keys\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n\n        // Create CSVRecord instance with mapping\n        csvRecordWithMapping = new CSVRecord(new String[]{\"value1\", \"value2\"}, mapping, \"comment\", 1L);\n\n        // Create CSVRecord instance without mapping (mapping == null)\n        csvRecordWithoutMapping = new CSVRecord(new String[]{\"value1\", \"value2\"}, null, \"comment\", 2L);\n    }\n\n    @Test\n    void testIsMapped_withMapping_keyPresent() {\n        assertTrue(csvRecordWithMapping.isMapped(\"header1\"));\n        assertTrue(csvRecordWithMapping.isMapped(\"header2\"));\n    }\n\n    @Test\n    void testIsMapped_withMapping_keyAbsent() {\n        assertFalse(csvRecordWithMapping.isMapped(\"absentHeader\"));\n        assertFalse(csvRecordWithMapping.isMapped(null));\n    }\n\n    @Test\n    void testIsMapped_withoutMapping() {\n        assertFalse(csvRecordWithoutMapping.isMapped(\"header1\"));\n        assertFalse(csvRecordWithoutMapping.isMapped(null));\n    }\n\n    @Test\n    void testIsMapped_reflection_onPrivateMappingField() throws Exception {\n        // Create CSVRecord with null mapping first\n        CSVRecord record = new CSVRecord(new String[]{\"v1\"}, null, null, 0L);\n\n        // Use reflection to set private final field 'mapping' to a mock Map\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, Integer> mockMap = mock(Map.class);\n        when(mockMap.containsKey(\"key\")).thenReturn(true);\n        when(mockMap.containsKey(\"other\")).thenReturn(false);\n        when(mockMap.containsKey(null)).thenReturn(false);\n\n        // Remove final modifier via reflection if necessary (optional)\n        // but usually setting accessible true is enough for testing\n\n        mappingField.set(record, mockMap);\n\n        assertTrue(record.isMapped(\"key\"));\n        assertFalse(record.isMapped(\"other\"));\n        assertFalse(record.isMapped(null));\n\n        verify(mockMap).containsKey(\"key\");\n        verify(mockMap).containsKey(\"other\");\n        verify(mockMap).containsKey(null);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767665014,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 579,
+    "prompt_tokens": 971,
+    "total_tokens": 1550,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.86
+  }
+}

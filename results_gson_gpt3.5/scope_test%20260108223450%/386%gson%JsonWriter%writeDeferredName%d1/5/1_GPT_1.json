@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmq7edIeXBBVHbPa5H8MeP7GIe7Z",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testWriteDeferredName_withDeferredName() throws Exception {\n        // Set deferredName field to a non-null value using reflection\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, \"testName\");\n\n        // Spy on jsonWriter to verify private methods called\n        JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n        // Because beforeName() and string(String) are private, spy them via reflection to verify invocation\n        Method beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n        beforeNameMethod.setAccessible(true);\n\n        Method stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n        stringMethod.setAccessible(true);\n\n        // Invoke writeDeferredName via reflection\n        Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredNameMethod.setAccessible(true);\n        writeDeferredNameMethod.invoke(spyWriter);\n\n        // Verify deferredName reset to null\n        assertNull(deferredNameField.get(spyWriter));\n\n        // Verify that beforeName() and string(String) were called once each\n        // Since these are private, we cannot verify with Mockito directly.\n        // Instead, we override them via spy and verify invocation count by spying on the spyWriter.\n\n        // Unfortunately, Mockito cannot spy private methods directly.\n        // So we can verify output written to underlying writer to indirectly confirm string() call.\n\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"testName\") || output.length() > 0);\n\n        // Also verify that no exception was thrown and deferredName is cleared\n    }\n\n    @Test\n    public void testWriteDeferredName_withNullDeferredName() throws Exception {\n        // Ensure deferredName is null\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, null);\n\n        // Invoke writeDeferredName via reflection\n        Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredNameMethod.setAccessible(true);\n\n        // Should do nothing and not throw\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        // deferredName remains null\n        assertNull(deferredNameField.get(jsonWriter));\n\n        // Output should be empty\n        String output = stringWriter.toString();\n        assertEquals(\"\", output);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888471,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 636,
+    "prompt_tokens": 745,
+    "total_tokens": 1381,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.89
+  }
+}

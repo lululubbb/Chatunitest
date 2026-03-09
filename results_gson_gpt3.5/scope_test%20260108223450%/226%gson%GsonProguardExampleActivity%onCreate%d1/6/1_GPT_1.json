@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmIk86IPAmqXzj8Njuz13Dm8WZCr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android;\n\nimport static org.mockito.Mockito.*;\n\nimport android.app.Activity;\nimport android.os.Bundle;\nimport android.widget.TextView;\n\nimport com.google.gson.Gson;\nimport com.google.gson.examples.android.model.Cart;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class GsonProguardExampleActivityTest {\n\n  private GsonProguardExampleActivity activity;\n  private Bundle mockBundle;\n  private TextView mockTextView;\n\n  @BeforeEach\n  public void setUp() {\n    activity = Mockito.spy(new GsonProguardExampleActivity());\n    mockBundle = mock(Bundle.class);\n    mockTextView = mock(TextView.class);\n\n    // Mock findViewById to return our mock TextView\n    doReturn(mockTextView).when(activity).findViewById(R.id.tv);\n    // Mock setContentView to do nothing\n    doNothing().when(activity).setContentView(anyInt());\n  }\n\n  @Test\n  public void testOnCreate() throws Exception {\n    // Because onCreate calls buildCart() which is private, we let it run normally\n\n    // Call onCreate\n    activity.onCreate(mockBundle);\n\n    // Verify super.onCreate called\n    verify(activity).onCreate(mockBundle);\n\n    // Verify setContentView called with R.layout.main\n    verify(activity).setContentView(R.layout.main);\n\n    // Verify findViewById called with R.id.tv\n    verify(activity).findViewById(R.id.tv);\n\n    // Verify that setText and invalidate called on TextView\n    verify(mockTextView).setText(anyString());\n    verify(mockTextView).invalidate();\n  }\n\n  @Test\n  public void testBuildCartViaReflection() throws Exception {\n    Method buildCartMethod = GsonProguardExampleActivity.class.getDeclaredMethod(\"buildCart\");\n    buildCartMethod.setAccessible(true);\n    Cart cart = (Cart) buildCartMethod.invoke(activity);\n    // Assert cart is not null and has expected properties\n    assert cart != null;\n    // Optionally verify some expected content in cart\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886402,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 446,
+    "prompt_tokens": 472,
+    "total_tokens": 918,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.82
+  }
+}

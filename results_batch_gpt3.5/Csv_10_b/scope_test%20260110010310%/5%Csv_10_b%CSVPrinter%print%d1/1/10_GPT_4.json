@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwACm8BZJWRa8RNOiyAG6uwqwI1G1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterPrintTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_Quoting() throws Throwable {\n        // Arrange\n        setField(printer, \"newRecord\", false);\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.isQuoting()).thenReturn(true);\n        when(format.isEscaping()).thenReturn(false);\n\n        CharSequence value = \"value\";\n        Object object = 123; // number to test quoting with number\n\n        // Act\n        invokePrint(printer, object, value, 0, value.length());\n\n        // Assert\n        InOrder inOrder = inOrder(out, format);\n        inOrder.verify(format).getDelimiter();\n        inOrder.verify(out).append(',');\n        // printAndQuote appends quoted value, so verify out.append called at least once\n        verify(out, atLeastOnce()).append(any(CharSequence.class), anyInt(), anyInt());\n        // newRecord is set to false\n        assertField(printer, \"newRecord\", false);\n    }\n\n    @Test\n    void testPrint_NewRecordTrue_Quoting() throws Throwable {\n        // Arrange\n        setField(printer, \"newRecord\", true);\n        when(format.isQuoting()).thenReturn(true);\n        when(format.isEscaping()).thenReturn(false);\n\n        CharSequence value = \"quoted\";\n        Object object = \"text\";\n\n        // Act\n        invokePrint(printer, object, value, 0, value.length());\n\n        // Assert\n        verify(out, never()).append(anyChar());\n        // printAndQuote called and appends something\n        verify(out, atLeastOnce()).append(any(CharSequence.class), anyInt(), anyInt());\n        assertField(printer, \"newRecord\", false);\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_Escaping() throws Throwable {\n        // Arrange\n        setField(printer, \"newRecord\", false);\n        when(format.getDelimiter()).thenReturn(';');\n        when(format.isQuoting()).thenReturn(false);\n        when(format.isEscaping()).thenReturn(true);\n\n        CharSequence value = \"escape\";\n        Object object = \"escape\";\n\n        // Act\n        invokePrint(printer, object, value, 1, 4);\n\n        // Assert\n        InOrder inOrder = inOrder(out, format);\n        inOrder.verify(format).getDelimiter();\n        inOrder.verify(out).append(';');\n        // printAndEscape appends something\n        verify(out, atLeastOnce()).append(any(CharSequence.class), anyInt(), anyInt());\n        assertField(printer, \"newRecord\", false);\n    }\n\n    @Test\n    void testPrint_NewRecordTrue_NoQuotingNoEscaping() throws Throwable {\n        // Arrange\n        setField(printer, \"newRecord\", true);\n        when(format.isQuoting()).thenReturn(false);\n        when(format.isEscaping()).thenReturn(false);\n\n        CharSequence value = \"plain text\";\n        Object object = \"plain text\";\n\n        // Act\n        invokePrint(printer, object, value, 6, 4);\n\n        // Assert\n        verify(out, never()).append(anyChar());\n        verify(out, never()).append(any(CharSequence.class), eq(0), eq(4));\n        verify(out).append(value, 6, 10);\n        assertField(printer, \"newRecord\", false);\n    }\n\n    // Helper method to invoke private print method via reflection\n    private void invokePrint(CSVPrinter printer, Object object, CharSequence value, int offset, int len) throws Throwable {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(printer, object, value, offset, len);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    // Helper method to set private field via reflection\n    private void setField(Object target, String fieldName, Object value) {\n        try {\n            java.lang.reflect.Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            field.set(target, value);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Helper method to assert private field value\n    private void assertField(Object target, String fieldName, Object expected) {\n        try {\n            java.lang.reflect.Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            Object actual = field.get(target);\n            if (expected == null) {\n                if (actual != null) {\n                    throw new AssertionError(fieldName + \" expected null but was \" + actual);\n                }\n            } else if (!expected.equals(actual)) {\n                throw new AssertionError(fieldName + \" expected \" + expected + \" but was \" + actual);\n            }\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978288,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1147,
+    "prompt_tokens": 1739,
+    "total_tokens": 2886,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.16
+  }
+}

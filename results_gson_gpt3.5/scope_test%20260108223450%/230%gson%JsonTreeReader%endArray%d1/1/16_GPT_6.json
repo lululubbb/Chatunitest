@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmPhS7rNz1rgkHXJRMpNbBJ1OsQO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a JsonArray with some elements for the JsonTreeReader\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(new JsonPrimitive(\"one\"));\n    jsonArray.add(new JsonPrimitive(\"two\"));\n\n    // Instantiate JsonTreeReader with the JsonArray\n    jsonTreeReader = new JsonTreeReader(jsonArray);\n\n    // Use reflection to push an iterator of the array and the array itself on the stack\n    Method pushMethod = JsonTreeReader.class.getDeclaredMethod(\"push\", Object.class);\n    pushMethod.setAccessible(true);\n\n    // Clear stack first to avoid residual state\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 0);\n\n    // Push the array itself first (bottom)\n    pushMethod.invoke(jsonTreeReader, jsonArray);\n    // Push the iterator (simulate beginArray call)\n    pushMethod.invoke(jsonTreeReader, jsonArray.iterator());\n\n    // Set stackSize to 2 to reflect the two elements pushed\n    stackSizeField.setInt(jsonTreeReader, 2);\n\n    // Initialize pathIndices array at index 0 and 1 to 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0;\n    pathIndices[1] = 0;\n  }\n\n  @Test\n  public void testEndArray_normal() throws Exception {\n    // Call endArray normally, expecting stackSize to decrease by 2 and pathIndices[0] incremented\n\n    // Before calling endArray, check stackSize and pathIndices\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int beforeStackSize = stackSizeField.getInt(jsonTreeReader);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    int beforePathIndex = pathIndices[beforeStackSize - 2]; // pathIndices corresponds to array, so index before popping\n\n    // Move iterator forward by calling next() to consume first element\n    // This is necessary so that peek() returns END_ARRAY instead of STRING\n    Method peekStackMethod = JsonTreeReader.class.getDeclaredMethod(\"peekStack\");\n    peekStackMethod.setAccessible(true);\n    Object top = peekStackMethod.invoke(jsonTreeReader);\n    if (top instanceof Iterator) {\n      Iterator<?> iterator = (Iterator<?>) top;\n      if (iterator.hasNext()) {\n        iterator.next();\n      }\n    }\n\n    // Invoke endArray\n    jsonTreeReader.endArray();\n\n    // After calling endArray, stackSize should be decreased by 2\n    int afterStackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(beforeStackSize - 2, afterStackSize);\n\n    // pathIndices at new top (stackSize-1) should be incremented by 1 if stackSize > 0\n    if (afterStackSize > 0) {\n      int afterPathIndex = pathIndices[afterStackSize - 1];\n      assertEquals(beforePathIndex + 1, afterPathIndex);\n    }\n  }\n\n  @Test\n  public void testEndArray_stackSizeZero_noIncrement() throws Exception {\n    // Setup: push an array and its iterator, then endArray to empty stack, pathIndices should not increment\n\n    // Create a JsonArray with one element\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(new JsonPrimitive(\"dummy\"));\n\n    // Reset jsonTreeReader with new JsonArray\n    jsonTreeReader = new JsonTreeReader(jsonArray);\n\n    Method pushMethod = JsonTreeReader.class.getDeclaredMethod(\"push\", Object.class);\n    pushMethod.setAccessible(true);\n\n    // Clear stack and push array and iterator\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 0);\n\n    pushMethod.invoke(jsonTreeReader, jsonArray);\n    pushMethod.invoke(jsonTreeReader, jsonArray.iterator());\n    stackSizeField.setInt(jsonTreeReader, 2);\n\n    // Initialize pathIndices\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 5;\n    pathIndices[1] = 0;\n\n    // Move iterator forward by calling next() to consume first element\n    Method peekStackMethod = JsonTreeReader.class.getDeclaredMethod(\"peekStack\");\n    peekStackMethod.setAccessible(true);\n    Object top = peekStackMethod.invoke(jsonTreeReader);\n    if (top instanceof Iterator) {\n      Iterator<?> iterator = (Iterator<?>) top;\n      if (iterator.hasNext()) {\n        iterator.next();\n      }\n    }\n\n    // Call endArray - this should pop iterator and array, making stackSize 0\n    jsonTreeReader.endArray();\n\n    // After endArray, stackSize should be 0\n    int afterStackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(0, afterStackSize);\n\n    // pathIndices should not be incremented since stackSize == 0\n    assertEquals(5, pathIndices[0]);\n  }\n\n  @Test\n  public void testEndArray_expectThrows() throws Exception {\n    // Create an empty JsonTreeReader with empty JsonArray to cause expect to throw IllegalStateException\n\n    JsonArray emptyArray = new JsonArray();\n    JsonTreeReader failingReader = new JsonTreeReader(emptyArray);\n\n    // Clear stack to ensure expect fails expecting END_ARRAY but stack is empty\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(failingReader, 0);\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, failingReader::endArray);\n    assertNotNull(thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886833,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1427,
+    "prompt_tokens": 2424,
+    "total_tokens": 3851,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.73
+  }
+}

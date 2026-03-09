@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0IMYCykOK8cxgqATfAW8XmRlNm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapRemoveTest {\n\n  private LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    // Use default constructor which assumes natural ordering and allowNullValues false\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void remove_existingKey_returnsValueAndRemovesEntry() {\n    map.put(\"key1\", \"value1\");\n    map.put(\"key2\", \"value2\");\n\n    String removedValue = map.remove(\"key1\");\n\n    assertEquals(\"value1\", removedValue);\n    assertFalse(map.containsKey(\"key1\"));\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_nonExistingKey_returnsNull() {\n    map.put(\"key1\", \"value1\");\n\n    String removedValue = map.remove(\"nonExistingKey\");\n\n    assertNull(removedValue);\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_nullKey_whenAllowed_removesEntry() {\n    LinkedTreeMap<String, String> nullAllowedMap = new LinkedTreeMap<>(null, true);\n    nullAllowedMap.put(null, \"nullValue\");\n    assertTrue(nullAllowedMap.containsKey(null));\n\n    String removed = nullAllowedMap.remove(null);\n\n    assertEquals(\"nullValue\", removed);\n    assertFalse(nullAllowedMap.containsKey(null));\n    assertEquals(0, nullAllowedMap.size());\n  }\n\n  @Test\n  void remove_nullKey_whenNotAllowed_returnsNull() {\n    map.put(\"key\", \"value\");\n\n    String removed = map.remove(null);\n\n    assertNull(removed);\n    assertEquals(1, map.size());\n  }\n\n  @Test\n  void remove_internalNodeIsProperlyUnlinked_andRebalanced() {\n    // Insert multiple entries to create a tree with multiple nodes\n    map.put(\"c\", \"3\");\n    map.put(\"a\", \"1\");\n    map.put(\"b\", \"2\");\n    map.put(\"d\", \"4\");\n    map.put(\"e\", \"5\");\n\n    // Remove \"c\" which should trigger internal removal logic and rebalancing\n    String removed = map.remove(\"c\");\n\n    assertEquals(\"3\", removed);\n    assertFalse(map.containsKey(\"c\"));\n    assertEquals(4, map.size());\n\n    // Remove \"a\" to check further rebalancing\n    removed = map.remove(\"a\");\n    assertEquals(\"1\", removed);\n    assertFalse(map.containsKey(\"a\"));\n    assertEquals(3, map.size());\n  }\n\n  @Test\n  void remove_callsRemoveInternalByKey() {\n    // Spy on LinkedTreeMap to verify removeInternalByKey is called\n    LinkedTreeMap<String, String> spyMap = spy(new LinkedTreeMap<>());\n    spyMap.put(\"key\", \"value\");\n\n    spyMap.remove(\"key\");\n\n    verify(spyMap).removeInternalByKey(\"key\");\n  }\n\n  @Test\n  void removeInternalByKey_reflectiveInvocation_removesCorrectly() throws Exception {\n    map.put(\"key\", \"value\");\n\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n\n    Object node = removeInternalByKey.invoke(map, \"key\");\n    assertNotNull(node);\n\n    // Remove again should return null since key no longer exists\n    Object node2 = removeInternalByKey.invoke(map, \"key\");\n    assertNull(node2);\n  }\n\n  @Test\n  void removeInternalNode_removesNodeAndMaintainsHeaderLinks() throws Exception {\n    map.put(\"a\", \"1\");\n    map.put(\"b\", \"2\");\n\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findMethod.setAccessible(true);\n    Object nodeA = findMethod.invoke(map, \"a\");\n    assertNotNull(nodeA);\n\n    Method removeInternalMethod = LinkedTreeMap.class.getDeclaredMethod(\"removeInternal\", nodeA.getClass(), boolean.class);\n    removeInternalMethod.setAccessible(true);\n    removeInternalMethod.invoke(map, nodeA, true);\n\n    assertFalse(map.containsKey(\"a\"));\n    assertEquals(1, map.size());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889102,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 914,
+    "prompt_tokens": 2775,
+    "total_tokens": 3689,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.4
+  }
+}

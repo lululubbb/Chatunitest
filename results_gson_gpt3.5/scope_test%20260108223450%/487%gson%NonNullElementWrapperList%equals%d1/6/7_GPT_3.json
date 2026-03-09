@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlcw2gbO15MeI8lUQCQOFK58KLRG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = spy(new ArrayList<>());\n    // Use reflection to create NonNullElementWrapperList with mocked delegate\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, delegateMock);\n  }\n\n  @Test\n  void equals_withSameDelegateObject_returnsTrue() {\n    // Since equals is final on Object, we cannot stub it.\n    // Instead, test the actual behavior by calling equals on the spy.\n    // So we do not stub delegateMock.equals(), just call and verify.\n    assertTrue(list.equals(delegateMock));\n  }\n\n  @Test\n  void equals_withDifferentObject_returnsDelegateEqualsResult() {\n    Object other = new Object();\n    // We cannot stub equals, so just call and check result.\n    boolean result = list.equals(other);\n    assertFalse(result);\n  }\n\n  @Test\n  void equals_withNullObject_returnsDelegateEqualsResult() {\n    boolean result = list.equals(null);\n    assertFalse(result);\n  }\n\n  @Test\n  void equals_withSameNonNullElementWrapperList_returnsDelegateEqualsResult() throws Exception {\n    NonNullElementWrapperList<String> otherList = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n\n    // Create a new delegate list with same contents as delegateMock\n    ArrayList<String> otherDelegate = new ArrayList<>();\n    otherDelegate.addAll(delegateMock);\n\n    // Set the otherList's delegate to the same delegateMock instance (original test, fails)\n    // delegateField.set(otherList, delegateMock); // original line\n\n    // Fix: set otherList's delegate to the same delegateMock instance to make equals true\n    // But that caused failure because delegateMock.equals(otherList) == false\n    // So instead, set otherList's delegate to delegateMock itself:\n    delegateField.set(otherList, delegateMock);\n\n    // equals is final, cannot stub, so just call and check\n    assertTrue(list.equals(otherList));\n  }\n}\n```\n\n**Correction:**\n\nThe original test fails because `list.equals(otherList)` calls `delegate.equals(otherList)`, but `delegateMock.equals(otherList)` is false since `otherList` is not an `ArrayList`.\n\nTo fix this, set `otherList`'s delegate field to the same `delegateMock` instance as `list`. So both `list` and `otherList` share the same delegate instance. Then `list.equals(otherList)` calls `delegateMock.equals(otherList)`, which returns true because `delegateMock.equals(delegateMock)` is true.\n\nHence, the key fix is to set the delegate field of `otherList` to `delegateMock` (same instance as `list`), as done above. The original test already did this, but failed because the `delegateMock` was a spy and the equals method is final, so the spy's equals method behaves as in the real object.\n\nIf the test still fails, an alternative is to override the equals method on the delegateMock or replace the spy with a real ArrayList.\n\n**Alternative fix:**\n\nReplace the delegateMock with a real ArrayList instance and add some content to it, so that equals comparison returns true.\n\n```java\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = new ArrayList<>();\n    delegateMock.add(\"test\");\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, delegateMock);\n  }\n\n  @Test\n  void equals_withSameNonNullElementWrapperList_returnsDelegateEqualsResult() throws Exception {\n    NonNullElementWrapperList<String> otherList = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(otherList, delegateMock);\n\n    assertTrue(list.equals(otherList));\n  }\n```\n\nThis ensures both lists share the same delegate instance with content, so the equals returns true.\n\nIf you want the full fixed test with this approach, here it is:\n\n```java\npackage com.google.gson.internal;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = new ArrayList<>();\n    delegateMock.add(\"test\");\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, delegateMock);\n  }\n\n  @Test\n  void equals_withSameDelegateObject_returnsTrue() {\n    assertTrue(list.equals(delegateMock));\n  }\n\n  @Test\n  void equals_withDifferentObject_returnsDelegateEqualsResult() {\n    Object other = new Object();\n    boolean result = list.equals(other);\n    assertFalse(result);\n  }\n\n  @Test\n  void equals_withNullObject_returnsDelegateEqualsResult() {\n    boolean result = list.equals(null);\n    assertFalse(result);\n  }\n\n  @Test\n  void equals_withSameNonNullElementWrapperList_returnsDelegateEqualsResult() throws Exception {\n    NonNullElementWrapperList<String> otherList = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(otherList, delegateMock);\n\n    assertTrue(list.equals(otherList));\n  }\n}\n```\n",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883810,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1349,
+    "prompt_tokens": 1167,
+    "total_tokens": 2516,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.9
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlXf3oEmzHA3zhE95pnWRcKnA3N8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.LinkedList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass GsonBuilderTest {\n\n  @Mock\n  private ReflectionAccessFilter mockFilter;\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void addReflectionAccessFilter_NullFilter_ThrowsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> gsonBuilder.addReflectionAccessFilter(null));\n  }\n\n  @Test\n  void addReflectionAccessFilter_ValidFilter_AddsFilterAndReturnsThis() throws Exception {\n    GsonBuilder returned = gsonBuilder.addReflectionAccessFilter(mockFilter);\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to access private field 'reflectionFilters'\n    Field filtersField = GsonBuilder.class.getDeclaredField(\"reflectionFilters\");\n    filtersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedList<ReflectionAccessFilter> filters = (LinkedList<ReflectionAccessFilter>) filtersField.get(gsonBuilder);\n\n    assertNotNull(filters);\n    assertFalse(filters.isEmpty());\n    assertSame(mockFilter, filters.getFirst());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883483,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 293,
+    "prompt_tokens": 1072,
+    "total_tokens": 1365,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 6.19
+  }
+}

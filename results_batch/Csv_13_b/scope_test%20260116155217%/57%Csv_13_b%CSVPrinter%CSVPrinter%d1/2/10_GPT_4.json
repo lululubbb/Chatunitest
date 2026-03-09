@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYx80GrZJmQ1x9hugRcbZ6AEGhpK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable outMock;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        outMock = mock(Appendable.class);\n        formatMock = mock(CSVFormat.class);\n    }\n\n    @Test\n    void constructor_nullOut_throwsException() {\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, formatMock));\n        assertEquals(\"out\", exception.getMessage());\n    }\n\n    @Test\n    void constructor_nullFormat_throwsException() {\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> new CSVPrinter(outMock, null));\n        assertEquals(\"format\", exception.getMessage());\n    }\n\n    @Test\n    void constructor_withHeaderCommentsAndHeader_printsCommentsAndHeader() throws IOException {\n        when(formatMock.getHeaderComments()).thenReturn(new String[] {\"comment1\", \"comment2\"});\n        when(formatMock.getHeader()).thenReturn(new String[] {\"h1\", \"h2\"});\n        when(formatMock.getSkipHeaderRecord()).thenReturn(false);\n\n        // Mock append(CharSequence) to return outMock for chained calls\n        when(outMock.append(any(CharSequence.class))).thenReturn(outMock);\n        // Also mock append(char) to return outMock\n        when(outMock.append(anyChar())).thenReturn(outMock);\n\n        CSVPrinter printer = new CSVPrinter(outMock, formatMock);\n\n        verify(outMock, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void constructor_withNullHeaderCommentsAndSkipHeaderRecord_doesNotPrint() throws IOException {\n        when(formatMock.getHeaderComments()).thenReturn(null);\n        when(formatMock.getHeader()).thenReturn(new String[] {\"h1\", \"h2\"});\n        when(formatMock.getSkipHeaderRecord()).thenReturn(true);\n\n        when(outMock.append(any(CharSequence.class))).thenReturn(outMock);\n        when(outMock.append(anyChar())).thenReturn(outMock);\n\n        new CSVPrinter(outMock, formatMock);\n\n        verify(outMock, never()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void constructor_withNullHeaderAndNullHeaderComments_doesNotPrint() throws IOException {\n        when(formatMock.getHeaderComments()).thenReturn(null);\n        when(formatMock.getHeader()).thenReturn(null);\n\n        when(outMock.append(any(CharSequence.class))).thenReturn(outMock);\n        when(outMock.append(anyChar())).thenReturn(outMock);\n\n        new CSVPrinter(outMock, formatMock);\n\n        verify(outMock, never()).append(any(CharSequence.class));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550074,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 578,
+    "prompt_tokens": 1191,
+    "total_tokens": 1769,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.76
+  }
+}

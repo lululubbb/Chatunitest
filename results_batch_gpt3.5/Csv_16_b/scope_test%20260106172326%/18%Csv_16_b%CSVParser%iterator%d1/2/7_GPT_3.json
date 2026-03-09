@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxi0LBMyHcP9mQbe8Z7zqTV8ozxh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.NoSuchElementException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        parser = spy(new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT));\n    }\n\n    @Test\n    void testIterator_hasNext_and_next_NormalFlow() throws IOException {\n        // Mock nextRecord to return a CSVRecord first, then null\n        CSVRecord record = mock(CSVRecord.class);\n        doReturn(record).doReturn(null).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // First hasNext call triggers getNextRecord and caches record\n        assertTrue(iterator.hasNext());\n        // Second hasNext call returns true without calling nextRecord again\n        assertTrue(iterator.hasNext());\n\n        // next returns cached record and clears it\n        assertSame(record, iterator.next());\n\n        // After next, current is null, hasNext triggers getNextRecord again which returns null\n        assertFalse(iterator.hasNext());\n\n        // next after no more records throws NoSuchElementException\n        NoSuchElementException ex = assertThrows(NoSuchElementException.class, iterator::next);\n        assertEquals(\"No more CSV records available\", ex.getMessage());\n    }\n\n    @Test\n    void testIterator_hasNext_whenClosed() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertFalse(iterator.hasNext());\n    }\n\n    @Test\n    void testIterator_next_whenClosed_throws() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        NoSuchElementException ex = assertThrows(NoSuchElementException.class, iterator::next);\n        assertEquals(\"CSVParser has been closed\", ex.getMessage());\n    }\n\n    @Test\n    void testIterator_next_without_hasNext_calls_nextRecord() throws IOException {\n        CSVRecord record = mock(CSVRecord.class);\n        doReturn(record).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // current is null, so next calls getNextRecord directly\n        assertSame(record, iterator.next());\n    }\n\n    @Test\n    void testIterator_nextRecord_throwsIOException_isWrappedInIllegalStateException() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n        IOException ioException = new IOException(\"io error\");\n        doThrow(ioException).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // Use reflection to access the private 'current' field and set it to null to force getNextRecord call\n        Field currentField = iterator.getClass().getDeclaredField(\"current\");\n        currentField.setAccessible(true);\n        currentField.set(iterator, null);\n\n        // Using reflection to access private getNextRecord method\n        Method getNextRecordMethod = iterator.getClass().getDeclaredMethod(\"getNextRecord\");\n        getNextRecordMethod.setAccessible(true);\n\n        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {\n            try {\n                getNextRecordMethod.invoke(iterator);\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n\n        assertTrue(ex.getMessage().contains(\"IOException reading next record\"));\n        assertSame(ioException, ex.getCause());\n    }\n\n    @Test\n    void testIterator_remove_throwsUnsupportedOperationException() {\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertThrows(UnsupportedOperationException.class, iterator::remove);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691924,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 840,
+    "prompt_tokens": 1705,
+    "total_tokens": 2545,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.5
+  }
+}

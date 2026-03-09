@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaQlU76pGok2al6jhHNI92R1hbPj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private Appendable out;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n        out = mock(Appendable.class);\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordTrue() throws Exception {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class,\n                Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        int offset = 0;\n        int len = value.length();\n        boolean newRecord = true;\n\n        // The print method throws IOException, so wrap invoke call to handle it properly\n        try {\n            printMethod.invoke(csvFormat, null, value, offset, len, out, newRecord);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        verify(out).append(value);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordFalse() throws Exception {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class,\n                Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        int offset = 0;\n        int len = value.length();\n        boolean newRecord = false;\n\n        char delimiter = csvFormat.getDelimiter();\n\n        try {\n            printMethod.invoke(csvFormat, null, value, offset, len, out, newRecord);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        verify(out).append(delimiter);\n        verify(out).append(value);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrint_quoteCharacterSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote('\"');\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class,\n                Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        int offset = 0;\n        int len = value.length();\n        boolean newRecord = true;\n\n        StringBuilder spyOut = spy(new StringBuilder());\n\n        try {\n            printMethod.invoke(format, \"object\", value, offset, len, spyOut, newRecord);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        String output = spyOut.toString();\n        assertTrue(output.startsWith(\"\\\"\"));\n        assertTrue(output.endsWith(\"\\\"\"));\n    }\n\n    @Test\n    void testPrint_escapeCharacterSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\').withQuote(null);\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class,\n                Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        int offset = 0;\n        int len = value.length();\n        boolean newRecord = true;\n\n        StringBuilder sb = new StringBuilder();\n\n        try {\n            printMethod.invoke(format, \"object\", value, offset, len, sb, newRecord);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        String output = sb.toString();\n        assertTrue(output.contains(\"value\"));\n    }\n\n    @Test\n    void testPrint_noQuoteNoEscape() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class,\n                Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value123\";\n        int offset = 1;\n        int len = 4;\n        boolean newRecord = false;\n\n        StringBuilder sb = new StringBuilder();\n\n        try {\n            printMethod.invoke(format, \"obj\", value, offset, len, sb, newRecord);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n\n        char delimiter = format.getDelimiter();\n        assertTrue(sb.toString().startsWith(String.valueOf(delimiter)));\n        assertEquals(\"alue\", sb.toString().substring(1));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555755,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1080,
+    "prompt_tokens": 2256,
+    "total_tokens": 3336,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.4
+  }
+}

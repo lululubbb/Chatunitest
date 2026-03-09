@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7xui9nKspi0FwteP1x9RvCwdxxN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        inMock = mock(ExtendedBufferedReader.class);\n        CSVFormat format = mock(CSVFormat.class);\n\n        lexer = new Lexer(format, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null; // no-op for testing getLineNumber\n            }\n        };\n\n        // Use reflection to set the private final field 'in' to the mock\n        Field inField = Lexer.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n\n        // Remove final modifier via reflection\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(inField, inField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        inField.set(lexer, inMock);\n    }\n\n    @Test\n    void testGetLineNumber() throws IOException {\n        when(inMock.getLineNumber()).thenReturn(42L);\n        long lineNumber = lexer.getLineNumber();\n        assertEquals(42L, lineNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969678,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 306,
+    "prompt_tokens": 741,
+    "total_tokens": 1047,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.66
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  void testCreateExceptionForUnexpectedIllegalAccess_throwsRuntimeExceptionWithCause() throws Throwable {\n    IllegalAccessException illegalAccessException = new IllegalAccessException(\"access denied\");\n\n    // Use reflection to invoke the static method since it's public static, direct call is possible too\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      ReflectionHelper.createExceptionForUnexpectedIllegalAccess(illegalAccessException);\n    });\n\n    String expectedMessageStart = \"Unexpected IllegalAccessException occurred (Gson \";\n    assertEquals(illegalAccessException, thrown.getCause());\n    // Check message contains expected parts\n    String message = thrown.getMessage();\n    assert message.startsWith(expectedMessageStart);\n    assert message.contains(\"Certain ReflectionAccessFilter features require Java >= 9 to work correctly\");\n    assert message.contains(\"If you are not using ReflectionAccessFilter, report this to the Gson maintainers.\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 447,
+  "completion_tokens": 245,
+  "total_tokens": 692,
+  "llm_elapsed_time_seconds": 4.45
+}

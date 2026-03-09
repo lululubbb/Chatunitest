@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm9w71YkImgkXb3jwW3oINbXtEPR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.atomic.AtomicLongArray;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass Gson_atomicLongArrayAdapter_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void atomicLongArrayAdapter_write_and_read() throws Exception {\n    // Arrange\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n\n    // Mock write calls to write long values\n    doAnswer(invocation -> {\n      JsonWriter writer = invocation.getArgument(0);\n      Number value = invocation.getArgument(1);\n      writer.value(value.longValue());\n      return null;\n    }).when(longAdapter).write(any(JsonWriter.class), any(Number.class));\n\n    // Mock read calls to return successive long values\n    when(longAdapter.read(any(JsonReader.class)))\n        .thenAnswer(new org.mockito.stubbing.Answer<Number>() {\n          private final long[] values = {10L, 20L, 30L};\n          private int index = 0;\n\n          @Override\n          public Number answer(org.mockito.invocation.InvocationOnMock invocation) {\n            if (index < values.length) {\n              return values[index++];\n            }\n            return 0L;\n          }\n        });\n\n    // Use reflection to invoke private static method atomicLongArrayAdapter\n    Method method = Gson.class.getDeclaredMethod(\"atomicLongArrayAdapter\", TypeAdapter.class);\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLongArray> adapter = (TypeAdapter<AtomicLongArray>) method.invoke(null, longAdapter);\n\n    // Prepare AtomicLongArray to write\n    AtomicLongArray array = new AtomicLongArray(new long[]{10L, 20L, 30L});\n\n    // Write AtomicLongArray to JSON string\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter jsonWriter = new JsonWriter(stringWriter);\n    adapter.write(jsonWriter, array);\n    jsonWriter.close();\n    String json = stringWriter.toString();\n\n    // Assert JSON output is an array of numbers [10,20,30]\n    assertEquals(\"[10,20,30]\", json);\n\n    // Read AtomicLongArray back from JSON string\n    JsonReader jsonReader = new JsonReader(new StringReader(json));\n    AtomicLongArray readArray = adapter.read(jsonReader);\n\n    // Assert read AtomicLongArray equals original values\n    assertEquals(array.length(), readArray.length());\n    for (int i = 0; i < array.length(); i++) {\n      assertEquals(array.get(i), readArray.get(i));\n    }\n\n    // Verify that longAdapter.write was called exactly 3 times\n    verify(longAdapter, times(3)).write(any(JsonWriter.class), any(Number.class));\n\n    // Verify that longAdapter.read was called exactly 3 times (once per value)\n    verify(longAdapter, times(3)).read(any(JsonReader.class));\n  }\n\n  @Test\n  void atomicLongArrayAdapter_read_emptyArray() throws Exception {\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n\n    // No calls to longAdapter.read expected for empty array\n    when(longAdapter.read(any(JsonReader.class))).thenThrow(new AssertionError(\"Should not read any element\"));\n\n    Method method = Gson.class.getDeclaredMethod(\"atomicLongArrayAdapter\", TypeAdapter.class);\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLongArray> adapter = (TypeAdapter<AtomicLongArray>) method.invoke(null, longAdapter);\n\n    String json = \"[]\";\n    JsonReader jsonReader = new JsonReader(new StringReader(json));\n    AtomicLongArray readArray = adapter.read(jsonReader);\n\n    assertNotNull(readArray);\n    assertEquals(0, readArray.length());\n  }\n\n  @Test\n  void atomicLongArrayAdapter_write_nullSafe() throws Exception {\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n\n    doAnswer(invocation -> {\n      JsonWriter writer = invocation.getArgument(0);\n      Number value = invocation.getArgument(1);\n      writer.value(value.longValue());\n      return null;\n    }).when(longAdapter).write(any(JsonWriter.class), any(Number.class));\n\n    Method method = Gson.class.getDeclaredMethod(\"atomicLongArrayAdapter\", TypeAdapter.class);\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLongArray> adapter = (TypeAdapter<AtomicLongArray>) method.invoke(null, longAdapter);\n\n    StringWriter stringWriter = new StringWriter();\n    JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n    // The adapter returned is nullSafe, so it should handle null values without throwing\n    adapter.write(jsonWriter, null);\n    jsonWriter.close();\n\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  @Test\n  void atomicLongArrayAdapter_read_nullSafe() throws Exception {\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n\n    Method method = Gson.class.getDeclaredMethod(\"atomicLongArrayAdapter\", TypeAdapter.class);\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLongArray> adapter = (TypeAdapter<AtomicLongArray>) method.invoke(null, longAdapter);\n\n    JsonReader jsonReader = new JsonReader(new StringReader(\"null\"));\n    AtomicLongArray result = adapter.read(jsonReader);\n\n    assertNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885856,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1189,
+    "prompt_tokens": 2748,
+    "total_tokens": 3937,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.49
+  }
+}

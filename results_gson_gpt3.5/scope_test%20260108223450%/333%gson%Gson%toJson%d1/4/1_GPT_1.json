@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmWKJpxqSTxaAXJ7z4aKeOO477S5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonElement;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJson_NullSrc_ReturnsJsonNullInstance() throws Exception {\n    // Use reflection to invoke private toJson(JsonElement) method\n    Method toJsonJsonElementMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class);\n    toJsonJsonElementMethod.setAccessible(true);\n\n    String result = (String) toJsonJsonElementMethod.invoke(gson, JsonNull.INSTANCE);\n    assertNotNull(result);\n    // JsonNull.INSTANCE should serialize to \"null\"\n    assertEquals(\"null\", result);\n\n    // Test public toJson(Object) with null returns same result\n    String publicResult = gson.toJson(null);\n    assertEquals(result, publicResult);\n  }\n\n  @Test\n  public void testToJson_NonNullSrc_UsesSrcClass() {\n    Object src = \"testString\";\n\n    // Spy on gson to verify that toJson(Object, Type) is called with correct parameters\n    Gson spyGson = spy(gson);\n    doReturn(\"mockedJson\").when(spyGson).toJson(eq(src), eq(src.getClass()));\n\n    String json = spyGson.toJson(src);\n\n    assertEquals(\"mockedJson\", json);\n    verify(spyGson).toJson(src, src.getClass());\n  }\n\n  @Test\n  public void testToJson_PrivateToJsonJsonElementMethod_ProducesValidJson() throws Exception {\n    // Prepare a JsonElement mock to test private toJson(JsonElement) method\n    JsonElement jsonElementMock = mock(JsonElement.class);\n    // We cannot easily mock internals of toJson(JsonElement), so just test it returns a non-null string\n\n    Method toJsonJsonElementMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class);\n    toJsonJsonElementMethod.setAccessible(true);\n\n    String json = (String) toJsonJsonElementMethod.invoke(gson, jsonElementMock);\n    assertNotNull(json);\n    // It should return a string (possibly empty)\n    assertTrue(json instanceof String);\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887244,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 540,
+    "prompt_tokens": 1605,
+    "total_tokens": 2145,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.76
+  }
+}

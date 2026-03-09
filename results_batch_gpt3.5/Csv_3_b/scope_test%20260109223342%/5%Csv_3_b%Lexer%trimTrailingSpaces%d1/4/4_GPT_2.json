@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7wFabEYgXLHLjwTGRHjxKiHTbd3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass LexerTrimTrailingSpacesTest {\n\n    private Lexer lexer;\n    private Method trimTrailingSpacesMethod;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a concrete subclass of Lexer for testing since Lexer is abstract\n        lexer = new Lexer(Mockito.mock(CSVFormat.class), Mockito.mock(ExtendedBufferedReader.class)) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Access package-private method trimTrailingSpaces via reflection\n        trimTrailingSpacesMethod = Lexer.class.getDeclaredMethod(\"trimTrailingSpaces\", StringBuilder.class);\n        trimTrailingSpacesMethod.setAccessible(true);\n    }\n\n    @Test\n    void testTrimTrailingSpaces_NoTrailingSpaces() throws Exception {\n        StringBuilder buffer = new StringBuilder(\"NoTrailingSpaces\");\n        StringBuilder original = new StringBuilder(buffer.toString());\n\n        trimTrailingSpacesMethod.invoke(lexer, buffer);\n\n        assertEquals(original.toString(), buffer.toString());\n    }\n\n    @Test\n    void testTrimTrailingSpaces_OnlyTrailingSpaces() throws Exception {\n        StringBuilder buffer = new StringBuilder(\"Some text with spaces   \\t\\n\\r\");\n        trimTrailingSpacesMethod.invoke(lexer, buffer);\n        assertEquals(\"Some text with spaces\", buffer.toString());\n    }\n\n    @Test\n    void testTrimTrailingSpaces_AllSpaces() throws Exception {\n        StringBuilder buffer = new StringBuilder(\" \\t\\n\\r\");\n        trimTrailingSpacesMethod.invoke(lexer, buffer);\n        assertEquals(\"\", buffer.toString());\n    }\n\n    @Test\n    void testTrimTrailingSpaces_EmptyBuffer() throws Exception {\n        StringBuilder buffer = new StringBuilder();\n        trimTrailingSpacesMethod.invoke(lexer, buffer);\n        assertEquals(\"\", buffer.toString());\n    }\n\n    @Test\n    void testTrimTrailingSpaces_MixedWhitespace() throws Exception {\n        StringBuilder buffer = new StringBuilder(\"Text with mixed whitespace \\t \\n \");\n        trimTrailingSpacesMethod.invoke(lexer, buffer);\n        assertEquals(\"Text with mixed whitespace\", buffer.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969575,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 467,
+    "prompt_tokens": 1000,
+    "total_tokens": 1467,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.2
+  }
+}

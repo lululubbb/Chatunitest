@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8rZE0nBz4SZfFHBj86aUjhNHn8e",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        formatMock = mock(CSVFormat.class);\n        when(formatMock.getNullString()).thenReturn(null);\n\n        // Using the constructor CSVParser(Reader, CSVFormat)\n        parser = new CSVParser(new java.io.StringReader(\"\"), formatMock);\n    }\n\n    @Test\n    void testAddRecordValue_nullStringNull_addsInput() throws Exception {\n        // Arrange\n        setReusableTokenContent(\"someValue\");\n        clearRecordList();\n\n        when(formatMock.getNullString()).thenReturn(null);\n\n        // Act\n        invokeAddRecordValue();\n\n        // Assert\n        List<String> record = getRecordList();\n        assertEquals(1, record.size());\n        assertEquals(\"someValue\", record.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringNotNull_inputEqualsNullString_addsNull() throws Exception {\n        // Arrange\n        setReusableTokenContent(\"null\");\n        clearRecordList();\n\n        when(formatMock.getNullString()).thenReturn(\"null\");\n\n        // Act\n        invokeAddRecordValue();\n\n        // Assert\n        List<String> record = getRecordList();\n        assertEquals(1, record.size());\n        assertNull(record.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringNotNull_inputNotEqualsNullString_addsInput() throws Exception {\n        // Arrange\n        setReusableTokenContent(\"value\");\n        clearRecordList();\n\n        when(formatMock.getNullString()).thenReturn(\"null\");\n\n        // Act\n        invokeAddRecordValue();\n\n        // Assert\n        List<String> record = getRecordList();\n        assertEquals(1, record.size());\n        assertEquals(\"value\", record.get(0));\n    }\n\n    private void setReusableTokenContent(String content) throws Exception {\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Object token = reusableTokenField.get(parser);\n\n        Field contentField = token.getClass().getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        // Clear existing content and append new content instead of replacing the StringBuilder instance\n        StringBuilder sb = (StringBuilder) contentField.get(token);\n        sb.setLength(0);\n        sb.append(content);\n    }\n\n    private void clearRecordList() throws Exception {\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> record = (List<String>) recordField.get(parser);\n        record.clear();\n    }\n\n    private List<String> getRecordList() throws Exception {\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        return (List<String>) recordField.get(parser);\n    }\n\n    private void invokeAddRecordValue() throws Exception {\n        Method addRecordValueMethod = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValueMethod.setAccessible(true);\n        addRecordValueMethod.invoke(parser);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973129,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1381,
+    "total_tokens": 2081,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.17
+  }
+}

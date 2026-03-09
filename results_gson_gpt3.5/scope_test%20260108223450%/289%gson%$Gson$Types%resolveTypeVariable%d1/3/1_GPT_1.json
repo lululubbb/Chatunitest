@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbMSreCsFx8GNStgNpNYEitnEiL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  private Method resolveTypeVariableMethod;\n  private Method declaringClassOfMethod;\n  private Method getGenericSupertypeMethod;\n  private Method indexOfMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Class<?> clazz = $Gson$Types.class;\n\n    resolveTypeVariableMethod = clazz.getDeclaredMethod(\"resolveTypeVariable\", Type.class, Class.class, TypeVariable.class);\n    resolveTypeVariableMethod.setAccessible(true);\n\n    declaringClassOfMethod = clazz.getDeclaredMethod(\"declaringClassOf\", TypeVariable.class);\n    declaringClassOfMethod.setAccessible(true);\n\n    getGenericSupertypeMethod = clazz.getDeclaredMethod(\"getGenericSupertype\", Type.class, Class.class, Class.class);\n    getGenericSupertypeMethod.setAccessible(true);\n\n    indexOfMethod = clazz.getDeclaredMethod(\"indexOf\", Object[].class, Object.class);\n    indexOfMethod.setAccessible(true);\n  }\n\n  @Test\n  void resolveTypeVariable_declaringClassOfReturnsNull_returnsUnknown() throws Throwable {\n    TypeVariable<?> unknown = mock(TypeVariable.class);\n\n    // Mock declaringClassOf to return null\n    $Gson$Types spy = spy($Gson$Types.class);\n    // Use reflection to override declaringClassOf call is complicated, so we test real behavior with unknown TypeVariable with no declaring class\n    // Instead, create dummy TypeVariable with no declaring class by creating anonymous subclass\n    TypeVariable<?> typeVariable = createTypeVariableWithNoDeclaringClass();\n\n    Object result = resolveTypeVariableMethod.invoke(null, Object.class, Object.class, typeVariable);\n    assertSame(typeVariable, result);\n  }\n\n  @Test\n  void resolveTypeVariable_declaredByRawIsParameterizedType_returnsActualTypeArgument() throws Throwable {\n    // Create a context where declaredByRaw is a generic class with parameters\n    class GenericSuper<T> {}\n    class Concrete extends GenericSuper<String> {}\n\n    TypeVariable<Class<GenericSuper>>[] typeParameters = GenericSuper.class.getTypeParameters();\n    assertEquals(1, typeParameters.length);\n    TypeVariable<?> unknown = typeParameters[0];\n\n    // context is Concrete.class, contextRawType is Concrete.class, unknown is T from GenericSuper\n    Object result = resolveTypeVariableMethod.invoke(null, Concrete.class, Concrete.class, unknown);\n\n    assertEquals(String.class, result);\n  }\n\n  @Test\n  void resolveTypeVariable_declaredByRawIsNotParameterizedType_returnsUnknown() throws Throwable {\n    class NonParameterizedSuper {}\n    class Sub extends NonParameterizedSuper {}\n\n    TypeVariable<Class<NonParameterizedSuper>>[] typeParameters = NonParameterizedSuper.class.getTypeParameters();\n    if (typeParameters.length == 0) {\n      // create dummy TypeVariable via reflection for test\n      // But NonParameterizedSuper has no type parameters, so the method will return unknown anyway\n      TypeVariable<?> unknown = createTypeVariableWithNoDeclaringClass();\n\n      Object result = resolveTypeVariableMethod.invoke(null, Sub.class, Sub.class, unknown);\n      assertSame(unknown, result);\n    } else {\n      // fallback to test with existing type variable\n      TypeVariable<?> unknown = typeParameters[0];\n      Object result = resolveTypeVariableMethod.invoke(null, Sub.class, Sub.class, unknown);\n      assertSame(unknown, result);\n    }\n  }\n\n  private TypeVariable<?> createTypeVariableWithNoDeclaringClass() throws Exception {\n    // Create a proxy TypeVariable whose getGenericDeclaration returns null\n    return new TypeVariable<Class<Object>>() {\n      @Override\n      public Type[] getBounds() {\n        return new Type[] {Object.class};\n      }\n\n      @Override\n      public Class<?> getGenericDeclaration() {\n        return null;\n      }\n\n      @Override\n      public String getName() {\n        return \"T\";\n      }\n\n      @Override\n      public AnnotatedType[] getAnnotatedBounds() {\n        return new AnnotatedType[0];\n      }\n    };\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887556,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 861,
+    "prompt_tokens": 716,
+    "total_tokens": 1577,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.83
+  }
+}

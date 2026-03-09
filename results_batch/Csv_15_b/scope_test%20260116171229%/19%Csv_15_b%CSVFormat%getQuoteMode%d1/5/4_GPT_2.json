@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyabxpaNiNNnR2QPwnUrfBKzVRmH2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormatDefault;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormatDefault = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testGetQuoteMode_Default() {\n        QuoteMode quoteMode = csvFormatDefault.getQuoteMode();\n        assertNotNull(quoteMode);\n        assertEquals(QuoteMode.MINIMAL, quoteMode);\n    }\n\n    @Test\n    public void testGetQuoteMode_WithDifferentQuoteModes() throws Exception {\n        // Use reflection to create CSVFormat instances with different quoteMode values\n        QuoteMode[] modes = QuoteMode.values();\n\n        for (QuoteMode mode : modes) {\n            CSVFormat instance = createCSVFormatWithQuoteMode(mode);\n            assertEquals(mode, instance.getQuoteMode(),\n                    \"QuoteMode should be \" + mode + \" but was \" + instance.getQuoteMode());\n        }\n    }\n\n    private CSVFormat createCSVFormatWithQuoteMode(QuoteMode quoteMode) throws Exception {\n        Class<CSVFormat> clazz = CSVFormat.class;\n\n        Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n\n        constructor.setAccessible(true);\n\n        return constructor.newInstance(\n                ',', // delimiter\n                '\"', // quoteChar\n                quoteMode, // quoteMode\n                null, // commentStart\n                null, // escape\n                false, // ignoreSurroundingSpaces\n                true, // ignoreEmptyLines\n                \"\\r\\n\", // recordSeparator\n                null, // nullString\n                (Object) null, // headerComments (Object[])\n                (String[]) null, // header\n                false, // skipHeaderRecord\n                false, // allowMissingColumnNames\n                false, // ignoreHeaderCase\n                false, // trim\n                false, // trailingDelimiter\n                false  // autoFlush\n        );\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556449,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 480,
+    "prompt_tokens": 2354,
+    "total_tokens": 2834,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.3
+  }
+}

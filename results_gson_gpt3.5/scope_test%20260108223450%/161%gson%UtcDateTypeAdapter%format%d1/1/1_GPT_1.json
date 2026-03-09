@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJwktEoO0gnH5cmi64Zk7d14RYv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.GregorianCalendar;\nimport java.util.Locale;\nimport java.util.TimeZone;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.typeadapters.UtcDateTypeAdapter;\n\npublic class UtcDateTypeAdapterTest {\n\n    private static Method formatMethod;\n\n    @BeforeAll\n    public static void setUp() throws NoSuchMethodException {\n        formatMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"format\", Date.class, boolean.class, TimeZone.class);\n        formatMethod.setAccessible(true);\n    }\n\n    private String invokeFormat(Date date, boolean millis, TimeZone tz) throws IllegalAccessException, InvocationTargetException {\n        return (String) formatMethod.invoke(null, date, millis, tz);\n    }\n\n    @Test\n    public void testFormat_utcWithoutMillis() throws Exception {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = new GregorianCalendar(utc, Locale.US);\n        cal.set(2023, Calendar.JUNE, 15, 13, 45, 30);\n        cal.set(Calendar.MILLISECOND, 0);\n        Date date = cal.getTime();\n\n        String result = invokeFormat(date, false, utc);\n        assertEquals(\"2023-06-15T13:45:30Z\", result);\n    }\n\n    @Test\n    public void testFormat_utcWithMillis() throws Exception {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = new GregorianCalendar(utc, Locale.US);\n        cal.set(2023, Calendar.JUNE, 15, 13, 45, 30);\n        cal.set(Calendar.MILLISECOND, 123);\n        Date date = cal.getTime();\n\n        String result = invokeFormat(date, true, utc);\n        assertEquals(\"2023-06-15T13:45:30.123Z\", result);\n    }\n\n    @Test\n    public void testFormat_nonUtcPositiveOffsetWithoutMillis() throws Exception {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT+02:30\");\n        Calendar cal = new GregorianCalendar(tz, Locale.US);\n        cal.set(2023, Calendar.DECEMBER, 31, 23, 59, 59);\n        cal.set(Calendar.MILLISECOND, 0);\n        Date date = cal.getTime();\n\n        String result = invokeFormat(date, false, tz);\n        assertEquals(\"2023-12-31T23:59:59+02:30\", result);\n    }\n\n    @Test\n    public void testFormat_nonUtcNegativeOffsetWithMillis() throws Exception {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT-05:45\");\n        Calendar cal = new GregorianCalendar(tz, Locale.US);\n        cal.set(2023, Calendar.JANUARY, 1, 0, 0, 0);\n        cal.set(Calendar.MILLISECOND, 999);\n        Date date = cal.getTime();\n\n        String result = invokeFormat(date, true, tz);\n        assertEquals(\"2023-01-01T00:00:00.999-05:45\", result);\n    }\n\n    @Test\n    public void testFormat_monthAndDayPadding() throws Exception {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = new GregorianCalendar(utc, Locale.US);\n        cal.set(2023, Calendar.JANUARY, 5, 7, 8, 9);\n        cal.set(Calendar.MILLISECOND, 5);\n        Date date = cal.getTime();\n\n        String result = invokeFormat(date, true, utc);\n        assertEquals(\"2023-01-05T07:08:09.005Z\", result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890320,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 825,
+    "prompt_tokens": 764,
+    "total_tokens": 1589,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.23
+  }
+}

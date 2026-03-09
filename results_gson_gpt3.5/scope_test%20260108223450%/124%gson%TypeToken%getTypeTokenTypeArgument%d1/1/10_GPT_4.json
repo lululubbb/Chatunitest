@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn3DCMH2CTAhUQJuokmtRKMLpe0E",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenTest {\n\n  // Helper subclass with direct ParameterizedType superclass\n  static class DirectTypeToken<T> extends TypeToken<T> {\n    DirectTypeToken() {\n      super();\n    }\n  }\n\n  // Helper subclass with raw TypeToken superclass (simulate raw usage)\n  static class RawTypeToken extends TypeToken {\n    RawTypeToken() {\n      super();\n    }\n  }\n\n  // Helper subclass that extends DirectTypeToken (indirect subclass)\n  static class IndirectTypeToken<T> extends DirectTypeToken<T> {\n    IndirectTypeToken() {\n      super();\n    }\n  }\n\n  @Test\n  void testGetTypeTokenTypeArgument_withDirectParameterizedType() throws Exception {\n    // Create anonymous subclass with concrete type argument String\n    TypeToken<String> stringToken = new TypeToken<String>() {};\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    Type typeArg = (Type) method.invoke(stringToken);\n    assertNotNull(typeArg);\n    assertEquals(String.class, typeArg);\n  }\n\n  @Test\n  void testGetTypeTokenTypeArgument_withRawTypeToken_throws() throws Exception {\n    RawTypeToken rawTokenInstance = null;\n    try {\n      rawTokenInstance = new RawTypeToken();\n      fail(\"Expected IllegalStateException at RawTypeToken constructor\");\n    } catch (IllegalStateException expected) {\n      // expected exception on construction, so create an anonymous subclass that bypasses constructor check by overriding getClass()\n      rawTokenInstance = new RawTypeToken() {\n        @Override\n        public Class<?> getClass() {\n          return RawTypeToken.class;\n        }\n      };\n    }\n\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    InvocationTargetException ex = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(rawTokenInstance);\n    });\n    // The cause should be IllegalStateException with expected message\n    Throwable cause = ex.getCause();\n    assertTrue(cause instanceof IllegalStateException);\n    assertTrue(cause.getMessage().contains(\"TypeToken must be created with a type argument\"));\n  }\n\n  @Test\n  void testGetTypeTokenTypeArgument_withIndirectSubclass_throws() throws Exception {\n    IndirectTypeToken<String> indirectToken = null;\n    try {\n      indirectToken = new IndirectTypeToken<>();\n      fail(\"Expected IllegalStateException at IndirectTypeToken constructor\");\n    } catch (IllegalStateException expected) {\n      // expected exception on construction, so create an anonymous subclass that bypasses constructor check by overriding getClass()\n      indirectToken = new IndirectTypeToken<String>() {\n        @Override\n        public Class<?> getClass() {\n          return IndirectTypeToken.class;\n        }\n      };\n    }\n\n    Method method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n\n    InvocationTargetException ex = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(indirectToken);\n    });\n\n    Throwable cause = ex.getCause();\n    assertTrue(cause instanceof IllegalStateException);\n    assertEquals(\"Must only create direct subclasses of TypeToken\", cause.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889283,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 722,
+    "prompt_tokens": 2006,
+    "total_tokens": 2728,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.73
+  }
+}

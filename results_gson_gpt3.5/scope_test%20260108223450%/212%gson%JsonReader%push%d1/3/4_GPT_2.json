@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmtjMaQKrgrfUsKVFbB4NeP27lHB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.io.Reader;\n\nclass JsonReaderPushTest {\n\n    private JsonReader jsonReader;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a dummy Reader to pass to the constructor\n        Reader dummyReader = mock(Reader.class);\n        jsonReader = new JsonReader(dummyReader);\n\n        // Reset stack and stackSize fields via reflection\n        setField(jsonReader, \"stack\", new int[32]);\n        setField(jsonReader, \"pathIndices\", new int[32]);\n        setField(jsonReader, \"pathNames\", new String[32]);\n        setField(jsonReader, \"stackSize\", 0);\n    }\n\n    @Test\n    void testPush_whenStackNotFull_shouldAddNewTop() throws Exception {\n        // Arrange\n        int newTop = 42;\n\n        // Act\n        invokePush(jsonReader, newTop);\n\n        // Assert\n        int stackSize = (int) getField(jsonReader, \"stackSize\");\n        assertEquals(1, stackSize);\n\n        int[] stack = (int[]) getField(jsonReader, \"stack\");\n        assertEquals(newTop, stack[0]);\n    }\n\n    @Test\n    void testPush_whenStackFull_shouldResizeAndAddNewTop() throws Exception {\n        // Arrange\n        int initialCapacity = 5;\n        // Set stack arrays with small capacity to test resizing\n        setField(jsonReader, \"stack\", new int[initialCapacity]);\n        setField(jsonReader, \"pathIndices\", new int[initialCapacity]);\n        setField(jsonReader, \"pathNames\", new String[initialCapacity]);\n        setField(jsonReader, \"stackSize\", initialCapacity);\n\n        // Fill stack with dummy values\n        int[] stack = (int[]) getField(jsonReader, \"stack\");\n        for (int i = 0; i < initialCapacity; i++) {\n            stack[i] = i + 1;\n        }\n        setField(jsonReader, \"stack\", stack);\n\n        int newTop = 99;\n\n        // Act\n        invokePush(jsonReader, newTop);\n\n        // Assert\n        int stackSize = (int) getField(jsonReader, \"stackSize\");\n        assertEquals(initialCapacity + 1, stackSize);\n\n        int[] resizedStack = (int[]) getField(jsonReader, \"stack\");\n        int[] resizedPathIndices = (int[]) getField(jsonReader, \"pathIndices\");\n        String[] resizedPathNames = (String[]) getField(jsonReader, \"pathNames\");\n\n        // Capacity should be doubled\n        assertEquals(initialCapacity * 2, resizedStack.length);\n        assertEquals(initialCapacity * 2, resizedPathIndices.length);\n        assertEquals(initialCapacity * 2, resizedPathNames.length);\n\n        // Existing elements preserved\n        for (int i = 0; i < initialCapacity; i++) {\n            assertEquals(i + 1, resizedStack[i]);\n        }\n\n        // New top element added at the end\n        assertEquals(newTop, resizedStack[initialCapacity]);\n    }\n\n    // Helper method to invoke private push(int) method using reflection\n    private void invokePush(JsonReader instance, int newTop) throws Exception {\n        Method pushMethod = JsonReader.class.getDeclaredMethod(\"push\", int.class);\n        pushMethod.setAccessible(true);\n        pushMethod.invoke(instance, newTop);\n    }\n\n    // Helper method to get private field value using reflection\n    private Object getField(Object instance, String fieldName) throws Exception {\n        Field field = findField(instance.getClass(), fieldName);\n        field.setAccessible(true);\n        return field.get(instance);\n    }\n\n    // Helper method to set private field value using reflection\n    private void setField(Object instance, String fieldName, Object value) throws Exception {\n        Field field = findField(instance.getClass(), fieldName);\n        field.setAccessible(true);\n        field.set(instance, value);\n    }\n\n    // Helper method to find field in class hierarchy\n    private Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {\n        Class<?> current = clazz;\n        while (current != null) {\n            try {\n                return current.getDeclaredField(fieldName);\n            } catch (NoSuchFieldException e) {\n                current = current.getSuperclass();\n            }\n        }\n        throw new NoSuchFieldException(\"Field '\" + fieldName + \"' not found in class hierarchy.\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888695,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 963,
+    "prompt_tokens": 2748,
+    "total_tokens": 3711,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.54
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5JB4Rn3MK2SUA9KLmjaKvYUCEc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.File;\nimport java.io.FileOutputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.nio.charset.StandardCharsets;\nimport java.util.zip.ZipEntry;\nimport java.util.zip.ZipFile;\nimport java.util.zip.ZipOutputStream;\n\nimport org.junit.jupiter.api.AfterAll;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class ParseBenchmarkTest {\n\n  private static File testZipFile;\n\n  @BeforeAll\n  static void createTestZip() throws Exception {\n    // Create a temporary zip file with a known entry\n    testZipFile = File.createTempFile(\"ParseBenchmarkData\", \".zip\");\n    try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(testZipFile))) {\n      ZipEntry entry = new ZipEntry(\"testfile.txt\");\n      zos.putNextEntry(entry);\n      String content = \"Hello, world!\";\n      zos.write(content.getBytes(StandardCharsets.UTF_8));\n      zos.closeEntry();\n    }\n  }\n\n  @AfterAll\n  static void cleanup() {\n    if (testZipFile != null && testZipFile.exists()) {\n      testZipFile.delete();\n    }\n  }\n\n  /**\n   * Use reflection to invoke the private static method 'resourceToString' of ParseBenchmark,\n   * but temporarily replace the private static method 'getResourceFile' to return our test zip file.\n   */\n  private static String invokeResourceToString(String fileName) throws Exception {\n    // Use reflection to get the private static resourceToString method\n    Method resourceToStringMethod = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n    resourceToStringMethod.setAccessible(true);\n\n    // Use reflection to replace getResourceFile temporarily by a dynamic proxy or similar is not possible,\n    // so instead we use reflection to replace the private static getResourceFile method by reflection is not possible either.\n    // Therefore, we simulate by temporarily renaming the test zip file to the expected resource path location in the classpath,\n    // but since this is complicated, we instead create a helper method that calls resourceToString but replaces the resource file.\n\n    // Alternative: use reflection to invoke getResourceFile and replace the returned file by a proxy is impossible.\n    // So we hack by temporarily replacing the resource file by a symlink or system property is also complicated.\n\n    // The simplest approach: use reflection to call resourceToString, but before that,\n    // we temporarily replace the file returned by getResourceFile by renaming testZipFile to the expected file path.\n    // But since the method getResourceFile is private static, we cannot override it.\n\n    // Therefore, instead, we invoke resourceToString with the fileName, but before that,\n    // we replace the resource file on disk by copying testZipFile to the expected location.\n\n    // Let's find out what getResourceFile(\"/ParseBenchmarkData.zip\") returns:\n    Method getResourceFileMethod = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    getResourceFileMethod.setAccessible(true);\n    File originalFile = (File) getResourceFileMethod.invoke(null, \"/ParseBenchmarkData.zip\");\n\n    // Backup original file if exists\n    File backupFile = null;\n    if (originalFile != null && originalFile.exists()) {\n      backupFile = new File(originalFile.getAbsolutePath() + \".bak\");\n      if (!originalFile.renameTo(backupFile)) {\n        throw new IllegalStateException(\"Cannot backup original resource file\");\n      }\n    }\n\n    // Copy testZipFile to originalFile location\n    if (originalFile != null) {\n      java.nio.file.Files.copy(testZipFile.toPath(), originalFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);\n    }\n\n    try {\n      return (String) resourceToStringMethod.invoke(null, fileName);\n    } catch (InvocationTargetException e) {\n      // unwrap\n      throw (e.getCause() != null) ? (Exception) e.getCause() : e;\n    } finally {\n      // Restore original file\n      if (backupFile != null && backupFile.exists()) {\n        if (!backupFile.renameTo(originalFile)) {\n          throw new IllegalStateException(\"Cannot restore original resource file\");\n        }\n      }\n    }\n  }\n\n  @Test\n  void testResourceToString_readsContentCorrectly() throws Exception {\n    String content = invokeResourceToString(\"testfile.txt\");\n    assertEquals(\"Hello, world!\", content);\n  }\n\n  @Test\n  void testResourceToString_fileNotFound_throwsException() throws Exception {\n    Exception ex = assertThrows(IllegalArgumentException.class, () -> {\n      invokeResourceToString(\"nonexistent.txt\");\n    });\n    assertEquals(\"File not found in zip: nonexistent.txt\", ex.getMessage());\n  }\n\n  @Test\n  void testResourceToString_nullFileName_throwsNullPointerException() throws Exception {\n    assertThrows(NullPointerException.class, () -> {\n      invokeResourceToString(null);\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885569,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1085,
+    "prompt_tokens": 1645,
+    "total_tokens": 2730,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.02
+  }
+}

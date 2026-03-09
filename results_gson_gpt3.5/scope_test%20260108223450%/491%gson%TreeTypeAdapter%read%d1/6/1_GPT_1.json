@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnAzICetKtCzE9k4O6GZZw3yj4pk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonDeserializationContext;\nimport com.google.gson.JsonDeserializer;\nimport com.google.gson.JsonElement;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.internal.Streams;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class TreeTypeAdapterTest {\n\n  private JsonDeserializer<Object> deserializer;\n  private JsonSerializer<Object> serializer;\n  private Gson gson;\n  private TypeToken<Object> typeToken;\n  private TypeAdapterFactory skipPast;\n  private TreeTypeAdapter<Object> adapter;\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    deserializer = mock(JsonDeserializer.class);\n    serializer = mock(JsonSerializer.class);\n    gson = mock(Gson.class);\n    typeToken = TypeToken.get(Object.class);\n    skipPast = mock(TypeAdapterFactory.class);\n    jsonReader = mock(JsonReader.class);\n  }\n\n  @Test\n  public void read_deserializerNull_delegateReadCalled() throws Exception {\n    adapter = new TreeTypeAdapter<>(serializer, null, gson, typeToken, skipPast, true);\n\n    // Prepare delegate TypeAdapter mock and set it via reflection\n    TypeAdapter<Object> delegate = mock(TypeAdapter.class);\n    when(delegate.read(jsonReader)).thenReturn(\"delegateResult\");\n\n    // Inject delegate into adapter\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(adapter, delegate);\n\n    // Use reflection to invoke private delegate() method to verify it returns the injected delegate\n    Method delegateMethod = TreeTypeAdapter.class.getDeclaredMethod(\"delegate\");\n    delegateMethod.setAccessible(true);\n    Object delegateResult = delegateMethod.invoke(adapter);\n    assertSame(delegate, delegateResult);\n\n    // Call read and verify delegate.read is called and result returned\n    Object result = adapter.read(jsonReader);\n    verify(delegate).read(jsonReader);\n    assertEquals(\"delegateResult\", result);\n  }\n\n  @Test\n  public void read_deserializerNotNull_valueIsJsonNull_nullSafeTrue_returnsNull() throws Exception {\n    adapter = new TreeTypeAdapter<>(serializer, deserializer, gson, typeToken, skipPast, true);\n\n    // Mock Streams.parse to return a JsonElement that isJsonNull returns true\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(jsonElement.isJsonNull()).thenReturn(true);\n\n    try (MockedStatic<Streams> streamsMock = Mockito.mockStatic(Streams.class)) {\n      streamsMock.when(() -> Streams.parse(jsonReader)).thenReturn(jsonElement);\n\n      Object result = adapter.read(jsonReader);\n      assertNull(result);\n      verify(deserializer, never()).deserialize(any(), any(), any());\n    }\n  }\n\n  @Test\n  public void read_deserializerNotNull_valueNotJsonNull_returnsDeserialized() throws Exception {\n    adapter = new TreeTypeAdapter<>(serializer, deserializer, gson, typeToken, skipPast, false);\n\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(jsonElement.isJsonNull()).thenReturn(false);\n\n    try (MockedStatic<Streams> streamsMock = Mockito.mockStatic(Streams.class)) {\n      streamsMock.when(() -> Streams.parse(jsonReader)).thenReturn(jsonElement);\n\n      when(deserializer.deserialize(eq(jsonElement), eq(typeToken.getType()), any())).thenReturn(\"deserializedResult\");\n\n      Object result = adapter.read(jsonReader);\n\n      assertEquals(\"deserializedResult\", result);\n      verify(deserializer).deserialize(eq(jsonElement), eq(typeToken.getType()), any());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889765,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 824,
+    "prompt_tokens": 596,
+    "total_tokens": 1420,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.73
+  }
+}

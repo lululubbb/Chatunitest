@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmQsPZwAOYsO1TMF3wPZaOje3kFj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.text.SimpleDateFormat;\nimport java.util.Date;\nimport java.util.Locale;\n\npublic class DefaultDateTypeAdapterTest {\n\n    private Class<?> adapterClass;\n    private Object adapterInstance;\n    private Class<?> dateTypeClass;\n    private Object dateTypeMock;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        adapterClass = Class.forName(\"com.google.gson.internal.bind.DefaultDateTypeAdapter\");\n        dateTypeClass = Class.forName(\"com.google.gson.internal.bind.DefaultDateTypeAdapter$DateType\");\n\n        // Create a mock DateType<T> proxy instance\n        dateTypeMock = java.lang.reflect.Proxy.newProxyInstance(\n                dateTypeClass.getClassLoader(),\n                new Class<?>[]{dateTypeClass},\n                (proxy, method, args) -> {\n                    if (\"deserialize\".equals(method.getName()) && args.length == 1) {\n                        return args[0]; // return the argument as is for deserialize(Date)\n                    }\n                    if (\"serialize\".equals(method.getName()) && args.length == 1) {\n                        return args[0]; // return the argument as is for serialize(Date)\n                    }\n                    return null;\n                });\n\n        // Get the private constructor DefaultDateTypeAdapter(DateType<T>, String)\n        Constructor<?> constructor = adapterClass.getDeclaredConstructor(dateTypeClass, String.class);\n        constructor.setAccessible(true);\n\n        // Instantiate with pattern \"yyyy-MM-dd\"\n        adapterInstance = constructor.newInstance(dateTypeMock, \"yyyy-MM-dd\");\n    }\n\n    @Test\n    public void testWrite_and_Read() throws Exception {\n        // Prepare JsonWriter mock\n        JsonWriter jsonWriter = mock(JsonWriter.class);\n\n        // Prepare a Date instance\n        SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.US);\n        Date testDate = sdf.parse(\"2023-04-01\");\n\n        // Invoke write method\n        Method writeMethod = adapterClass.getMethod(\"write\", JsonWriter.class, Date.class);\n        writeMethod.invoke(adapterInstance, jsonWriter, testDate);\n\n        // Verify that JsonWriter.value(String) was called with correct formatted date string\n        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);\n        verify(jsonWriter).value(captor.capture());\n        String formattedDate = captor.getValue();\n        assertEquals(\"2023-04-01\", formattedDate);\n\n        // Prepare JsonReader mock for reading a valid date string\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n        when(jsonReader.nextString()).thenReturn(\"2023-04-01\");\n\n        // Invoke read method\n        Method readMethod = adapterClass.getMethod(\"read\", JsonReader.class);\n        Object result = readMethod.invoke(adapterInstance, jsonReader);\n\n        assertNotNull(result);\n        assertTrue(result instanceof Date);\n        Date parsedDate = (Date) result;\n        assertEquals(testDate, parsedDate);\n    }\n\n    @Test\n    public void testRead_nullJsonToken() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n        doNothing().when(jsonReader).nextNull();\n\n        Method readMethod = adapterClass.getMethod(\"read\", JsonReader.class);\n        Object result = readMethod.invoke(adapterInstance, jsonReader);\n\n        assertNull(result);\n        verify(jsonReader).nextNull();\n    }\n\n    @Test\n    public void testDeserializeToDate_validAndInvalid() throws Exception {\n        // Access private method deserializeToDate\n        Method deserializeToDateMethod = adapterClass.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        JsonReader jsonReader = mock(JsonReader.class);\n\n        // Valid date string scenario\n        when(jsonReader.nextString()).thenReturn(\"2023-04-01\");\n        Object dateObj = deserializeToDateMethod.invoke(adapterInstance, jsonReader);\n        assertNotNull(dateObj);\n        assertTrue(dateObj instanceof Date);\n\n        // Invalid date string scenario - should throw JsonSyntaxException\n        when(jsonReader.nextString()).thenReturn(\"invalid-date\");\n        try {\n            deserializeToDateMethod.invoke(adapterInstance, jsonReader);\n            fail(\"Expected JsonSyntaxException\");\n        } catch (java.lang.reflect.InvocationTargetException e) {\n            assertTrue(e.getCause() instanceof com.google.gson.JsonSyntaxException);\n        }\n    }\n\n    @Test\n    public void testToString_containsSimpleName() throws Exception {\n        Method toStringMethod = adapterClass.getMethod(\"toString\");\n        String str = (String) toStringMethod.invoke(adapterInstance);\n        assertNotNull(str);\n        assertTrue(str.contains(\"DefaultDateTypeAdapter\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886906,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1048,
+    "prompt_tokens": 492,
+    "total_tokens": 1540,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.21
+  }
+}

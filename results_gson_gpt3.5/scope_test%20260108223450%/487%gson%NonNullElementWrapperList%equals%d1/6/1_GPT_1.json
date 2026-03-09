@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlc3R978aD57absmnF6AjqmhGKUH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = mock(ArrayList.class);\n    // Use reflection to create NonNullElementWrapperList with mocked delegate\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, delegateMock);\n  }\n\n  @Test\n  void equals_withSameDelegateObject_returnsTrue() {\n    when(delegateMock.equals(delegateMock)).thenReturn(true);\n\n    assertTrue(list.equals(delegateMock));\n    verify(delegateMock).equals(delegateMock);\n  }\n\n  @Test\n  void equals_withDifferentObject_returnsDelegateEqualsResult() {\n    Object other = new Object();\n    when(delegateMock.equals(other)).thenReturn(false);\n\n    boolean result = list.equals(other);\n\n    assertFalse(result);\n    verify(delegateMock).equals(other);\n  }\n\n  @Test\n  void equals_withNullObject_returnsDelegateEqualsResult() {\n    when(delegateMock.equals(null)).thenReturn(false);\n\n    boolean result = list.equals(null);\n\n    assertFalse(result);\n    verify(delegateMock).equals(null);\n  }\n\n  @Test\n  void equals_withSameNonNullElementWrapperList_returnsDelegateEqualsResult() {\n    NonNullElementWrapperList<String> otherList = new NonNullElementWrapperList<>(new ArrayList<>());\n    Field delegateField = null;\n    try {\n      delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n      delegateField.setAccessible(true);\n      delegateField.set(otherList, delegateMock);\n    } catch (Exception e) {\n      fail(\"Reflection failed\");\n    }\n\n    when(delegateMock.equals(otherList)).thenReturn(true);\n\n    boolean result = list.equals(otherList);\n\n    assertTrue(result);\n    verify(delegateMock).equals(otherList);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883755,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 461,
+    "prompt_tokens": 372,
+    "total_tokens": 833,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.84
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxDN8qUjw3vMKjzoF6logpW7VGM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport org.junit.jupiter.api.Test;\n\nfinal class TypeAdapterRuntimeTypeWrapperTest {\n\n  @Test\n  void isReflective_withNonSerializationDelegatingTypeAdapter_returnsFalse() throws Exception {\n    TypeAdapter<?> adapter = mock(TypeAdapter.class);\n\n    boolean result = invokeIsReflective(adapter);\n\n    assertFalse(result);\n  }\n\n  @Test\n  void isReflective_withReflectiveTypeAdapterFactoryAdapter_returnsTrue() throws Exception {\n    TypeAdapter<?> reflectiveAdapter = mockReflectiveTypeAdapterFactoryAdapter();\n\n    boolean result = invokeIsReflective(reflectiveAdapter);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void isReflective_withSerializationDelegatingTypeAdapter_delegatesUntilNonDelegating() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    SerializationDelegatingTypeAdapter<Object> delegatingAdapter1 = mock(SerializationDelegatingTypeAdapter.class);\n    @SuppressWarnings(\"unchecked\")\n    SerializationDelegatingTypeAdapter<Object> delegatingAdapter2 = mock(SerializationDelegatingTypeAdapter.class);\n    TypeAdapter<?> reflectiveAdapter = mockReflectiveTypeAdapterFactoryAdapter();\n\n    // delegatingAdapter1 delegates to delegatingAdapter2\n    when(delegatingAdapter1.getSerializationDelegate()).thenAnswer(invocation -> delegatingAdapter2);\n    // delegatingAdapter2 delegates to reflectiveAdapter\n    when(delegatingAdapter2.getSerializationDelegate()).thenAnswer(invocation -> reflectiveAdapter);\n\n    boolean result = invokeIsReflective(delegatingAdapter1);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void isReflective_withSerializationDelegatingTypeAdapter_delegateIsSelf_breaksLoop() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    SerializationDelegatingTypeAdapter<Object> delegatingAdapter = mock(SerializationDelegatingTypeAdapter.class);\n\n    when(delegatingAdapter.getSerializationDelegate()).thenAnswer(invocation -> delegatingAdapter);\n\n    boolean result = invokeIsReflective(delegatingAdapter);\n\n    // delegatingAdapter is not ReflectiveTypeAdapterFactory.Adapter, so false\n    assertFalse(result);\n  }\n\n  private static boolean invokeIsReflective(TypeAdapter<?> adapter) throws Exception {\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"isReflective\", TypeAdapter.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, adapter);\n  }\n\n  private static TypeAdapter<?> mockReflectiveTypeAdapterFactoryAdapter() {\n    // Create a mock that is instance of ReflectiveTypeAdapterFactory.Adapter\n    TypeAdapter<?> reflectiveAdapter = mock(TypeAdapter.class, withSettings().extraInterfaces(ReflectiveTypeAdapterFactory.Adapter.class));\n    return reflectiveAdapter;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885067,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 571,
+    "prompt_tokens": 1564,
+    "total_tokens": 2135,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.65
+  }
+}

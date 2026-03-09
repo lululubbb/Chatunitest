@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBqE1CrwvIrYnoC8zPIa0gTdHUL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Method;\nimport java.util.List;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsJavaType_class() throws Exception {\n    // Use reflection to invoke private static method isJavaType(String)\n    Method isJavaTypeString = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    isJavaTypeString.setAccessible(true);\n\n    // Test with java.lang.String (should be true)\n    boolean resultTrue = (boolean) isJavaTypeString.invoke(null, \"java.lang.String\");\n    assertTrue(resultTrue);\n\n    // Test with custom class name (should be false)\n    boolean resultFalse = (boolean) isJavaTypeString.invoke(null, \"com.example.MyClass\");\n    assertFalse(resultFalse);\n\n    // Test public isJavaType(Class<?>)\n    assertTrue(ReflectionAccessFilterHelper.isJavaType(String.class));\n    assertFalse(ReflectionAccessFilterHelper.isJavaType(ReflectionAccessFilterHelper.class));\n  }\n\n  @Test\n  void testIsAndroidType_class() throws Exception {\n    // Use reflection to invoke private static method isAndroidType(String)\n    Method isAndroidTypeString = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    isAndroidTypeString.setAccessible(true);\n\n    // Test with android.os.Build (should be true)\n    boolean resultTrue = (boolean) isAndroidTypeString.invoke(null, \"android.os.Build\");\n    assertTrue(resultTrue);\n\n    // Test with custom class name (should be false)\n    boolean resultFalse = (boolean) isAndroidTypeString.invoke(null, \"com.example.MyClass\");\n    assertFalse(resultFalse);\n\n    // Test public isAndroidType(Class<?>)\n    assertTrue(ReflectionAccessFilterHelper.isAndroidType(android.os.Build.class));\n    assertFalse(ReflectionAccessFilterHelper.isAndroidType(ReflectionAccessFilterHelper.class));\n  }\n\n  @Test\n  void testIsAnyPlatformType() {\n    // java type\n    assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(String.class));\n    // android type\n    assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(android.os.Build.class));\n    // neither\n    assertFalse(ReflectionAccessFilterHelper.isAnyPlatformType(ReflectionAccessFilterHelper.class));\n  }\n\n  @Test\n  void testGetFilterResult() {\n    ReflectionAccessFilter filterAllow = (c) -> FilterResult.ALLOW;\n    ReflectionAccessFilter filterDeny = (c) -> FilterResult.DENY;\n    ReflectionAccessFilter filterNeutral = (c) -> FilterResult.NEUTRAL;\n\n    List<ReflectionAccessFilter> filters;\n\n    // No filters returns NEUTRAL\n    filters = List.of();\n    assertEquals(FilterResult.NEUTRAL, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Single ALLOW filter returns ALLOW\n    filters = List.of(filterAllow);\n    assertEquals(FilterResult.ALLOW, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Single DENY filter returns DENY\n    filters = List.of(filterDeny);\n    assertEquals(FilterResult.DENY, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Single NEUTRAL filter returns NEUTRAL\n    filters = List.of(filterNeutral);\n    assertEquals(FilterResult.NEUTRAL, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Multiple filters: ALLOW then DENY returns ALLOW (first ALLOW short-circuits)\n    filters = List.of(filterAllow, filterDeny);\n    assertEquals(FilterResult.ALLOW, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Multiple filters: NEUTRAL then DENY returns DENY\n    filters = List.of(filterNeutral, filterDeny);\n    assertEquals(FilterResult.DENY, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n\n    // Multiple filters: all NEUTRAL returns NEUTRAL\n    filters = List.of(filterNeutral, filterNeutral);\n    assertEquals(FilterResult.NEUTRAL, ReflectionAccessFilterHelper.getFilterResult(filters, String.class));\n  }\n\n  @Test\n  void testCanAccess_true() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    Object obj = new Object();\n\n    // accessibleObject.setAccessible(true) should be called, no exception thrown\n    doNothing().when(accessibleObject).setAccessible(true);\n\n    assertTrue(ReflectionAccessFilterHelper.canAccess(accessibleObject, obj));\n\n    verify(accessibleObject).setAccessible(true);\n  }\n\n  @Test\n  void testCanAccess_false_onSecurityException() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    Object obj = new Object();\n\n    doThrow(new SecurityException(\"forbidden\")).when(accessibleObject).setAccessible(true);\n\n    assertFalse(ReflectionAccessFilterHelper.canAccess(accessibleObject, obj));\n\n    verify(accessibleObject).setAccessible(true);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889818,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1116,
+    "prompt_tokens": 300,
+    "total_tokens": 1416,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.37
+  }
+}

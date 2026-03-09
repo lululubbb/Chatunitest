@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlpyJhCxZv61fuNQeEOgfzXtndZ3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void testPrivateConstructor() throws Exception {\n    var constructor = ReflectionHelper.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    Object instance = constructor.newInstance();\n    assertNotNull(instance);\n    assertTrue(instance instanceof ReflectionHelper);\n  }\n\n  @Test\n  void testMakeAccessible_setsAccessible() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"field\");\n    field.setAccessible(false);\n    ReflectionHelper.makeAccessible(field);\n    assertTrue(field.canAccess(null));\n  }\n\n  @Test\n  void testGetAccessibleObjectDescription_lowercase() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"field\");\n    String desc = ReflectionHelper.getAccessibleObjectDescription(field, false);\n    assertTrue(desc.toLowerCase().contains(\"field\"));\n  }\n\n  @Test\n  void testGetAccessibleObjectDescription_uppercase() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"field\");\n    String desc = ReflectionHelper.getAccessibleObjectDescription(field, true);\n    assertTrue(Character.isUpperCase(desc.charAt(0)));\n  }\n\n  @Test\n  void testFieldToString_containsFieldName() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"field\");\n    String desc = ReflectionHelper.fieldToString(field);\n    assertTrue(desc.contains(\"field\"));\n  }\n\n  @Test\n  void testConstructorToString_containsConstructorName() throws Exception {\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    String desc = ReflectionHelper.constructorToString(constructor);\n    assertTrue(desc.contains(\"SampleClass\"));\n  }\n\n  @Test\n  void testTryMakeAccessible_success() throws Exception {\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void testTryMakeAccessible_failure() throws Exception {\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    Constructor<SampleClass> spyConstructor = spy(constructor);\n    doThrow(new IllegalAccessException(\"denied\")).when(spyConstructor).setAccessible(true);\n    String result;\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class,\n        invocation -> {\n          if (invocation.getMethod().getName().equals(\"createExceptionForUnexpectedIllegalAccess\")) {\n            return new RuntimeException(\"wrapped\");\n          }\n          return invocation.callRealMethod();\n        })) {\n      result = ReflectionHelper.tryMakeAccessible(spyConstructor);\n    }\n    assertNotNull(result);\n  }\n\n  @Test\n  void testIsRecord_trueAndFalse() {\n    assertTrue(ReflectionHelper.isRecord(RecordClass.class));\n    assertFalse(ReflectionHelper.isRecord(SampleClass.class));\n  }\n\n  @Test\n  void testGetRecordComponentNames() {\n    String[] names = ReflectionHelper.getRecordComponentNames(RecordClass.class);\n    assertArrayEquals(new String[] {\"name\", \"age\"}, names);\n  }\n\n  @Test\n  void testGetAccessor_returnsMethod() throws Exception {\n    Field field = RecordClass.class.getDeclaredField(\"name\");\n    Method accessor = ReflectionHelper.getAccessor(RecordClass.class, field);\n    assertNotNull(accessor);\n    assertEquals(\"name\", accessor.getName());\n  }\n\n  @Test\n  void testGetCanonicalRecordConstructor() throws Exception {\n    Constructor<RecordClass> constructor = ReflectionHelper.getCanonicalRecordConstructor(RecordClass.class);\n    assertNotNull(constructor);\n    assertEquals(2, constructor.getParameterCount());\n  }\n\n  @Test\n  void testCreateExceptionForUnexpectedIllegalAccess() {\n    IllegalAccessException iae = new IllegalAccessException(\"test\");\n    RuntimeException ex = ReflectionHelper.createExceptionForUnexpectedIllegalAccess(iae);\n    assertNotNull(ex);\n    assertTrue(ex.getMessage().contains(\"test\"));\n  }\n\n  @Test\n  void testCreateExceptionForRecordReflectionException() throws Exception {\n    var method = ReflectionHelper.class.getDeclaredMethod(\"createExceptionForRecordReflectionException\", ReflectiveOperationException.class);\n    method.setAccessible(true);\n    ReflectiveOperationException roe = new ReflectiveOperationException(\"fail\");\n    RuntimeException ex = (RuntimeException) method.invoke(null, roe);\n    assertNotNull(ex);\n    assertTrue(ex.getMessage().contains(\"fail\"));\n  }\n\n  // Sample classes for testing\n  static class SampleClass {\n    private String field;\n    SampleClass() {}\n  }\n\n  record RecordClass(String name, int age) {}\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884618,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1018,
+    "prompt_tokens": 376,
+    "total_tokens": 1394,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.79
+  }
+}

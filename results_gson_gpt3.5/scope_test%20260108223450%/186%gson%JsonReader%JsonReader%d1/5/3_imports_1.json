@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\nimport com.google.gson.internal.JsonReaderInternalAccess;\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport java.io.Closeable;\nimport java.io.EOFException;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.DisplayName;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n    @Test\n    @DisplayName(\"Constructor should initialize JsonReader with non-null Reader\")\n    void constructor_WithValidReader_ShouldInitialize() throws Exception {\n        Reader mockReader = mock(Reader.class);\n        JsonReader jsonReader = new JsonReader(mockReader);\n\n        // Use reflection to verify private fields\n        var inField = JsonReader.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        Object inValue = inField.get(jsonReader);\n        assertSame(mockReader, inValue);\n\n        var posField = JsonReader.class.getDeclaredField(\"pos\");\n        posField.setAccessible(true);\n        assertEquals(0, posField.getInt(jsonReader));\n\n        var limitField = JsonReader.class.getDeclaredField(\"limit\");\n        limitField.setAccessible(true);\n        assertEquals(0, limitField.getInt(jsonReader));\n\n        var peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n        peekedField.setAccessible(true);\n        assertEquals(0, peekedField.getInt(jsonReader)); // PEEKED_NONE = 0\n    }\n\n    @Test\n    @DisplayName(\"Constructor with null Reader should throw NullPointerException\")\n    void constructor_WithNullReader_ShouldThrow() {\n        NullPointerException npe = assertThrows(NullPointerException.class, () -> new JsonReader(null));\n        assertEquals(\"in == null\", npe.getMessage());\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1005,
+  "completion_tokens": 356,
+  "total_tokens": 1361,
+  "llm_elapsed_time_seconds": 5.82,
+  "repair_elapsed_time_seconds": 24.36,
+  "round_total_time_seconds": 24.36
+}

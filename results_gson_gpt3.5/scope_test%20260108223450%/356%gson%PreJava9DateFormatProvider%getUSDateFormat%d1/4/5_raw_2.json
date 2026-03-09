@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.text.DateFormatSymbols;\nimport java.util.Locale;\nimport org.junit.jupiter.api.Test;\n\npublic class PreJava9DateFormatProviderTest {\n\n  @Test\n  public void testGetUSDateFormat() {\n    for (int style = DateFormat.SHORT; style <= DateFormat.FULL; style++) {\n      DateFormat df = PreJava9DateFormatProvider.getUSDateFormat(style);\n      assertNotNull(df);\n      assertTrue(df instanceof SimpleDateFormat);\n      SimpleDateFormat sdf = (SimpleDateFormat) df;\n\n      // Instead of getLocale() (not available), check that the DateFormatSymbols match Locale.US by comparing months\n      DateFormatSymbols dfs = sdf.getDateFormatSymbols();\n      DateFormatSymbols usDfs = new DateFormatSymbols(Locale.US);\n      assertArrayEquals(usDfs.getMonths(), dfs.getMonths());\n      assertArrayEquals(usDfs.getShortMonths(), dfs.getShortMonths());\n      assertArrayEquals(usDfs.getWeekdays(), dfs.getWeekdays());\n      assertArrayEquals(usDfs.getShortWeekdays(), dfs.getShortWeekdays());\n\n      // Pattern should match the private getDateFormatPattern result\n      try {\n        Method m = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDateFormatPattern\", int.class);\n        m.setAccessible(true);\n        String expectedPattern = (String) m.invoke(null, style);\n        assertEquals(expectedPattern, sdf.toPattern());\n      } catch (Exception e) {\n        fail(\"Reflection error: \" + e.getMessage());\n      }\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 591,
+  "completion_tokens": 358,
+  "total_tokens": 949,
+  "llm_elapsed_time_seconds": 7.19
+}

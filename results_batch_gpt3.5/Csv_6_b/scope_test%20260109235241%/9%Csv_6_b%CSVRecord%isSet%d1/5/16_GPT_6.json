@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9IkEneH2JrdvJYHdQigtUBuyexc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        values = new String[] {\"val0\", \"val1\", \"val2\"};\n        mapping = new HashMap<>();\n        mapping.put(\"key0\", 0);\n        mapping.put(\"key1\", 1);\n        mapping.put(\"key2\", 2);\n        mapping.put(\"key3\", 3); // out of bounds index for values length 3\n\n        // Use constructor via reflection since it is package-private\n        Class<CSVRecord> clazz = CSVRecord.class;\n        Constructor<CSVRecord> constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        csvRecord = constructor.newInstance((Object) values, mapping, \"comment\", 1L);\n    }\n\n    @Test\n    public void testIsSet_MappedAndIndexInBounds() {\n        // key0, key1, key2 are mapped and index < values.length\n        assertTrue(csvRecord.isSet(\"key0\"));\n        assertTrue(csvRecord.isSet(\"key1\"));\n        assertTrue(csvRecord.isSet(\"key2\"));\n    }\n\n    @Test\n    public void testIsSet_MappedButIndexOutOfBounds() {\n        // key3 is mapped but index 3 >= values.length (3), should be false\n        assertFalse(csvRecord.isSet(\"key3\"));\n    }\n\n    @Test\n    public void testIsSet_NotMapped() {\n        // keyNotPresent is not mapped, should be false\n        assertFalse(csvRecord.isSet(\"keyNotPresent\"));\n    }\n\n    @Test\n    public void testIsSet_NullName() {\n        // Passing null should not throw NPE and return false (isMapped returns false)\n        assertFalse(csvRecord.isSet(null));\n    }\n\n    @Test\n    public void testIsSet_EmptyMapping() throws Exception {\n        // Create CSVRecord with empty mapping\n        Map<String, Integer> emptyMap = Collections.emptyMap();\n        Class<CSVRecord> clazz = CSVRecord.class;\n        Constructor<CSVRecord> constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        CSVRecord emptyMappingRecord = constructor.newInstance((Object) values, emptyMap, \"comment\", 1L);\n\n        assertFalse(emptyMappingRecord.isSet(\"anyKey\"));\n    }\n\n    @Test\n    public void testIsSet_PrivateMethodViaReflection() throws Exception {\n        // Use reflection to invoke private method isMapped(String)\n        Method isMappedMethod = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMappedMethod.setAccessible(true);\n\n        Boolean mappedTrue = (Boolean) isMappedMethod.invoke(csvRecord, \"key0\");\n        Boolean mappedFalse = (Boolean) isMappedMethod.invoke(csvRecord, \"unknown\");\n\n        assertTrue(mappedTrue);\n        assertFalse(mappedFalse);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974814,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 697,
+    "prompt_tokens": 1167,
+    "total_tokens": 1864,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.22
+  }
+}

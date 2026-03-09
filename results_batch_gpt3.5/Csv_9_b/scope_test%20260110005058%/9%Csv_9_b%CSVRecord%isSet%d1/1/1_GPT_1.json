@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA2aNAhW1jnkJeyaVLcBqOaMW90q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVRecord;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Prepare mapping and values for constructor\n        mapping = new HashMap<>();\n        values = new String[] {\"value1\", \"value2\"};\n\n        // Use reflection to invoke the package-private constructor\n        csvRecord = createCSVRecord(values, mapping, \"comment\", 1L);\n    }\n\n    private CSVRecord createCSVRecord(String[] values, Map<String, Integer> mapping, String comment, long recordNumber) throws Exception {\n        // CSVRecord constructor is package-private, so use reflection to create instance\n        Class<CSVRecord> clazz = CSVRecord.class;\n        var constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(values, mapping, comment, recordNumber);\n    }\n\n    @Test\n    public void testIsSet_MappedAndIndexInRange_ReturnsTrue() {\n        mapping.put(\"name1\", 1);\n        csvRecord = createCSVRecordWithMappingAndValues(mapping, new String[] {\"v0\", \"v1\", \"v2\"});\n\n        assertTrue(csvRecord.isSet(\"name1\"));\n    }\n\n    @Test\n    public void testIsSet_MappedButIndexOutOfRange_ReturnsFalse() {\n        mapping.put(\"name1\", 3);\n        csvRecord = createCSVRecordWithMappingAndValues(mapping, new String[] {\"v0\", \"v1\"});\n\n        assertFalse(csvRecord.isSet(\"name1\"));\n    }\n\n    @Test\n    public void testIsSet_NotMapped_ReturnsFalse() {\n        mapping.put(\"name1\", 1);\n        csvRecord = createCSVRecordWithMappingAndValues(mapping, new String[] {\"v0\", \"v1\"});\n\n        assertFalse(csvRecord.isSet(\"unknown\"));\n    }\n\n    @Test\n    public void testIsSet_MappingNullValueIndex_ReturnsFalse() {\n        mapping.put(\"name1\", null);\n        csvRecord = createCSVRecordWithMappingAndValues(mapping, new String[] {\"v0\", \"v1\"});\n\n        // This will cause NullPointerException if not handled, but method does not handle null,\n        // so test expects NPE or false? The method calls mapping.get(name).intValue() so NPE will happen.\n        assertThrows(NullPointerException.class, () -> csvRecord.isSet(\"name1\"));\n    }\n\n    private CSVRecord createCSVRecordWithMappingAndValues(Map<String, Integer> mapping, String[] values) {\n        try {\n            return createCSVRecord(values, mapping, \"comment\", 1L);\n        } catch (Exception e) {\n            fail(\"Failed to create CSVRecord instance: \" + e.getMessage());\n            return null;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977656,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 664,
+    "prompt_tokens": 404,
+    "total_tokens": 1068,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.33
+  }
+}

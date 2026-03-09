@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmq6m9pYMV4N2lT2h55WmDNjaHA5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testWriteDeferredName_NullDeferredName() throws Exception {\n        // deferredName is null by default, so just invoke writeDeferredName and expect no exception\n        Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredName.setAccessible(true);\n\n        // Should not throw and output should be empty\n        writeDeferredName.invoke(jsonWriter);\n        assertEquals(\"\", stringWriter.toString());\n    }\n\n    @Test\n    public void testWriteDeferredName_WithDeferredName() throws Exception {\n        // Set deferredName field to a non-null value using reflection\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, \"testName\");\n\n        // Spy on jsonWriter to verify beforeName() and string(String) calls\n        JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n        // Replace deferredName in spyWriter as well\n        deferredNameField.set(spyWriter, \"testName\");\n\n        Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredName.setAccessible(true);\n\n        // Also mock private methods beforeName() and string(String)\n        Method beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n        beforeNameMethod.setAccessible(true);\n        Method stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n        stringMethod.setAccessible(true);\n\n        // We will use spyWriter and invoke writeDeferredName via reflection\n        // But reflection invoke on spyWriter does not intercept calls, so instead we stub private methods on spyWriter directly\n        doNothing().when(spyWriter).beforeName();\n        doNothing().when(spyWriter).string(\"testName\");\n\n        // Invoke writeDeferredName on spyWriter\n        writeDeferredName.invoke(spyWriter);\n\n        // Verify beforeName() and string(\"testName\") called once\n        verify(spyWriter, times(1)).beforeName();\n        verify(spyWriter, times(1)).string(\"testName\");\n\n        // Check deferredName is set to null after invocation\n        assertNull(deferredNameField.get(spyWriter));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888470,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 577,
+    "prompt_tokens": 745,
+    "total_tokens": 1322,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.47
+  }
+}

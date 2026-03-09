@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9p5eeYbnZY8FbU8QWizz4kQhdfs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Constructor;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    @Test\n    void testHashCode_AllFieldsSet() throws Exception {\n        // Arrange\n        Quote mockQuotePolicy = Mockito.mock(Quote.class);\n        Mockito.when(mockQuotePolicy.hashCode()).thenReturn(12345);\n\n        Character quoteChar = Character.valueOf('\\\"');\n        Character commentStart = Character.valueOf('#');\n        Character escape = Character.valueOf('\\\\');\n        String nullString = \"NULL\";\n        String recordSeparator = \"\\n\";\n        String[] header = new String[]{\"a\", \"b\", \"c\"};\n\n        CSVFormat csvFormat = createCSVFormat(\n                ',',\n                quoteChar,\n                mockQuotePolicy,\n                commentStart,\n                escape,\n                true,\n                true,\n                recordSeparator,\n                nullString,\n                header,\n                true\n        );\n\n        // Act\n        int hash1 = csvFormat.hashCode();\n\n        // Assert\n        // Calculate expected hashCode manually\n        final int prime = 31;\n        int expected = 1;\n        expected = prime * expected + ',';\n        expected = prime * expected + mockQuotePolicy.hashCode();\n        expected = prime * expected + quoteChar.hashCode();\n        expected = prime * expected + commentStart.hashCode();\n        expected = prime * expected + escape.hashCode();\n        expected = prime * expected + nullString.hashCode();\n        expected = prime * expected + 1231; // ignoreSurroundingSpaces true\n        expected = prime * expected + 1231; // ignoreEmptyLines true\n        expected = prime * expected + 1231; // skipHeaderRecord true\n        expected = prime * expected + recordSeparator.hashCode();\n        expected = prime * expected + Arrays.hashCode(header);\n\n        assertEquals(expected, hash1);\n    }\n\n    @Test\n    void testHashCode_NullFieldsAndBooleansFalse() throws Exception {\n        // Arrange\n        CSVFormat csvFormat = createCSVFormat(\n                ';',\n                null,\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                null,\n                false\n        );\n\n        // Act\n        int hash = csvFormat.hashCode();\n\n        // Assert\n        final int prime = 31;\n        int expected = 1;\n        expected = prime * expected + ';';\n        expected = prime * expected + 0; // quotePolicy null\n        expected = prime * expected + 0; // quoteChar null\n        expected = prime * expected + 0; // commentStart null\n        expected = prime * expected + 0; // escape null\n        expected = prime * expected + 0; // nullString null\n        expected = prime * expected + 1237; // ignoreSurroundingSpaces false\n        expected = prime * expected + 1237; // ignoreEmptyLines false\n        expected = prime * expected + 1237; // skipHeaderRecord false\n        expected = prime * expected + 0; // recordSeparator null\n        expected = prime * expected + Arrays.hashCode((Object[]) null); // header null (cast to Object[])\n\n        assertEquals(expected, hash);\n    }\n\n    @Test\n    void testHashCode_DifferentHeaders() throws Exception {\n        // Arrange\n        String[] header1 = new String[]{\"x\", \"y\"};\n        String[] header2 = new String[]{\"x\", \"y\", \"z\"};\n\n        CSVFormat csvFormat1 = createCSVFormat(\n                ',',\n                null,\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                header1,\n                false\n        );\n\n        CSVFormat csvFormat2 = createCSVFormat(\n                ',',\n                null,\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                header2,\n                false\n        );\n\n        // Act\n        int hash1 = csvFormat1.hashCode();\n        int hash2 = csvFormat2.hashCode();\n\n        // Assert\n        assertNotEquals(hash1, hash2);\n    }\n\n    @Test\n    void testHashCode_ConsistentForEqualObjects() throws Exception {\n        // Arrange\n        Quote mockQuotePolicy = Mockito.mock(Quote.class);\n        Mockito.when(mockQuotePolicy.hashCode()).thenReturn(9999);\n\n        String[] header = new String[]{\"header\"};\n\n        CSVFormat csvFormat1 = createCSVFormat(\n                ',',\n                '\\\"',\n                mockQuotePolicy,\n                '#',\n                '\\\\',\n                true,\n                false,\n                \"\\r\\n\",\n                \"null\",\n                header,\n                true\n        );\n\n        CSVFormat csvFormat2 = createCSVFormat(\n                ',',\n                '\\\"',\n                mockQuotePolicy,\n                '#',\n                '\\\\',\n                true,\n                false,\n                \"\\r\\n\",\n                \"null\",\n                header,\n                true\n        );\n\n        // Act & Assert\n        assertEquals(csvFormat1.hashCode(), csvFormat2.hashCode());\n    }\n\n    // Helper method to instantiate CSVFormat with reflection since constructor is private\n    private CSVFormat createCSVFormat(\n            char delimiter,\n            Character quoteChar,\n            Quote quotePolicy,\n            Character commentStart,\n            Character escape,\n            boolean ignoreSurroundingSpaces,\n            boolean ignoreEmptyLines,\n            String recordSeparator,\n            String nullString,\n            String[] header,\n            boolean skipHeaderRecord) throws Exception {\n\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class,\n                Character.class,\n                Quote.class,\n                Character.class,\n                Character.class,\n                boolean.class,\n                boolean.class,\n                String.class,\n                String.class,\n                String[].class,\n                boolean.class);\n\n        constructor.setAccessible(true);\n\n        return constructor.newInstance(\n                delimiter,\n                quoteChar,\n                quotePolicy,\n                commentStart,\n                escape,\n                ignoreSurroundingSpaces,\n                ignoreEmptyLines,\n                recordSeparator,\n                nullString,\n                header,\n                skipHeaderRecord);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976819,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1270,
+    "prompt_tokens": 2359,
+    "total_tokens": 3629,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.88
+  }
+}

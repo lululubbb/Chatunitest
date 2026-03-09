@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnHOD0xctN2Yl6B2THy1mkGA3ysQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  private void callExpect(JsonTreeReader reader, JsonToken token) throws Exception {\n    Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n    expectMethod.setAccessible(true);\n    expectMethod.invoke(reader, token);\n  }\n\n  private void mockExpectToDoNothing(JsonTreeReader spyReader) throws Exception {\n    // Using Mockito doAnswer to mock private method expect via reflection\n    // Since expect is private, we cannot mock it directly with Mockito.\n    // Instead, we create a spy and override expect via reflection with a no-op.\n    // But Mockito can't mock private methods directly.\n    // So we replace expect with a no-op by creating a subclass override via proxy or reflection.\n    // Here, we will use reflection to set a flag or patch the method via a dynamic proxy is complicated.\n    // Instead, we will use a workaround: override nextBoolean to skip expect call in tests\n    // but since we want to test nextBoolean, we can't do that.\n    // So the simplest way is to suppress expect by reflection:\n    // We create a new JsonTreeReader subclass that overrides expect to do nothing.\n    // But since we must keep the test as is, we will call expect via reflection in tests where needed.\n    // So in the test, we will NOT mock expect but suppress its effect by calling expect via reflection before nextBoolean call.\n    // So no mocking expect here.\n  }\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a dummy JsonPrimitive Boolean true to push to stack\n    JsonPrimitive truePrimitive = new JsonPrimitive(true);\n\n    // Create JsonTreeReader instance with dummy JsonPrimitive (using constructor)\n    jsonTreeReader = new JsonTreeReader(truePrimitive);\n\n    // Use reflection to set stack and stackSize properly for testing nextBoolean\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = truePrimitive;\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = new int[32];\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Spy on jsonTreeReader to verify calls, but do NOT mock private expect method (private cannot be mocked)\n    jsonTreeReader = spy(jsonTreeReader);\n  }\n\n  @Test\n  public void testNextBoolean_ReturnsBooleanAndIncrementsPathIndices() throws Exception {\n    // Initially pathIndices[0] = 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(0, pathIndices[0]);\n\n    // Call nextBoolean\n    // Since expect is private and cannot be mocked, call nextBoolean directly.\n    boolean result = jsonTreeReader.nextBoolean();\n\n    // Instead of verifying expect call (private method), verify behaviour:\n    // Result should be true (as per JsonPrimitive pushed)\n    assertTrue(result);\n\n    // pathIndices[0] should be incremented by 1\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  public void testNextBoolean_WithStackSizeZero_DoesNotIncrementPathIndices() throws Exception {\n    // Set stackSize to 0 before call\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 0);\n\n    // Setup stack with JsonPrimitive true at index 0\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = new JsonPrimitive(true);\n    stackField.set(jsonTreeReader, stack);\n\n    // Call nextBoolean, should return true and not increment pathIndices (since stackSize == 0)\n    boolean result = jsonTreeReader.nextBoolean();\n\n    // pathIndices should remain unchanged (all zeros)\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    for (int i = 0; i < pathIndices.length; i++) {\n      assertEquals(0, pathIndices[i]);\n    }\n\n    assertTrue(result);\n  }\n\n  @Test\n  public void testNextBoolean_ThrowsIfStackTopNotJsonPrimitive() throws Exception {\n    // Push a non-JsonPrimitive object on stack to cause ClassCastException\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = new Object(); // Not JsonPrimitive\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    // Expect ClassCastException when nextBoolean tries to cast Object to JsonPrimitive\n    assertThrows(ClassCastException.class, () -> jsonTreeReader.nextBoolean());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890162,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1243,
+    "prompt_tokens": 1956,
+    "total_tokens": 3199,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.53
+  }
+}

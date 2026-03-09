@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlR1tTdVCLMEWZepGic1fpMxRXtD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\npublic class ExcluderTest {\n\n  private Excluder excluder;\n  private Gson gsonMock;\n\n  @BeforeEach\n  public void setUp() {\n    excluder = new Excluder();\n    gsonMock = mock(Gson.class);\n  }\n\n  @Test\n  public void testCreate_NoExclusion_ReturnsNull() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    // spy on excluder to override excludeClassChecks and excludeClassInStrategy to false\n    Excluder spyExcluder = spy(excluder);\n    doReturn(false).when(spyExcluder).excludeClassChecks(String.class);\n    doReturn(false).when(spyExcluder).excludeClassInStrategy(String.class, true);\n    doReturn(false).when(spyExcluder).excludeClassInStrategy(String.class, false);\n\n    TypeAdapter<String> adapter = spyExcluder.create(gsonMock, typeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  public void testCreate_ExcludeClassSkipSerializeAndDeserialize() throws IOException {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    Excluder spyExcluder = spy(excluder);\n    doReturn(true).when(spyExcluder).excludeClassChecks(String.class);\n    doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, true);\n    doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, false);\n\n    // Prepare delegate adapter mock to return a known value\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> delegateAdapter = mock(TypeAdapter.class);\n    when(delegateAdapter.read(any(JsonReader.class))).thenReturn(\"delegateRead\");\n    doNothing().when(delegateAdapter).write(any(JsonWriter.class), any());\n\n    // Setup gson.getDelegateAdapter to return delegateAdapter\n    when(gsonMock.getDelegateAdapter(spyExcluder, typeToken)).thenReturn(delegateAdapter);\n\n    TypeAdapter<String> adapter = spyExcluder.create(gsonMock, typeToken);\n    assertNotNull(adapter);\n\n    // Use reflection to access the private delegate field and delegate() method\n    try {\n      JsonReader jsonReaderMock = mock(JsonReader.class);\n      JsonWriter jsonWriterMock = mock(JsonWriter.class);\n\n      // read() should skip value and return null because skipDeserialize = true\n      adapter.read(jsonReaderMock);\n      verify(jsonReaderMock).skipValue();\n\n      // write() should write nullValue because skipSerialize = true\n      adapter.write(jsonWriterMock, \"anyValue\");\n      verify(jsonWriterMock).nullValue();\n\n      // Now test when skipSerialize and skipDeserialize are false individually\n\n      // skipDeserialize false, skipSerialize true\n      doReturn(true).when(spyExcluder).excludeClassChecks(String.class);\n      doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, true);\n      doReturn(false).when(spyExcluder).excludeClassInStrategy(String.class, false);\n      adapter = spyExcluder.create(gsonMock, typeToken);\n      assertNotNull(adapter);\n\n      JsonReader jsonReaderMock2 = mock(JsonReader.class);\n      JsonWriter jsonWriterMock2 = mock(JsonWriter.class);\n      when(gsonMock.getDelegateAdapter(spyExcluder, typeToken)).thenReturn(delegateAdapter);\n\n      // read() should delegate read because skipDeserialize = false\n      adapter.read(jsonReaderMock2);\n      verify(delegateAdapter, atLeastOnce()).read(jsonReaderMock2);\n\n      // write() should write nullValue because skipSerialize = true\n      adapter.write(jsonWriterMock2, \"value\");\n      verify(jsonWriterMock2).nullValue();\n\n      // skipDeserialize true, skipSerialize false\n      doReturn(true).when(spyExcluder).excludeClassChecks(String.class);\n      doReturn(false).when(spyExcluder).excludeClassInStrategy(String.class, true);\n      doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, false);\n      adapter = spyExcluder.create(gsonMock, typeToken);\n      assertNotNull(adapter);\n\n      JsonReader jsonReaderMock3 = mock(JsonReader.class);\n      JsonWriter jsonWriterMock3 = mock(JsonWriter.class);\n      when(gsonMock.getDelegateAdapter(spyExcluder, typeToken)).thenReturn(delegateAdapter);\n\n      // read() should skip value because skipDeserialize = true\n      adapter.read(jsonReaderMock3);\n      verify(jsonReaderMock3, atLeastOnce()).skipValue();\n\n      // write() should delegate write because skipSerialize = false\n      adapter.write(jsonWriterMock3, \"value\");\n      verify(delegateAdapter, atLeastOnce()).write(jsonWriterMock3, \"value\");\n\n    } catch (IOException e) {\n      fail(\"IOException should not be thrown\");\n    }\n  }\n\n  @Test\n  public void testCreate_DelegateLazyInitialization() throws Exception {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    Excluder spyExcluder = spy(excluder);\n    doReturn(true).when(spyExcluder).excludeClassChecks(String.class);\n    doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, true);\n    doReturn(true).when(spyExcluder).excludeClassInStrategy(String.class, false);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> delegateAdapter = mock(TypeAdapter.class);\n    when(delegateAdapter.read(any(JsonReader.class))).thenReturn(\"readValue\");\n    doNothing().when(delegateAdapter).write(any(JsonWriter.class), any());\n\n    when(gsonMock.getDelegateAdapter(spyExcluder, typeToken)).thenReturn(delegateAdapter);\n\n    TypeAdapter<String> adapter = spyExcluder.create(gsonMock, typeToken);\n    assertNotNull(adapter);\n\n    // Use reflection to get the private delegate() method\n    Method delegateMethod = adapter.getClass().getDeclaredMethod(\"delegate\");\n    delegateMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> firstDelegate = (TypeAdapter<String>) delegateMethod.invoke(adapter);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> secondDelegate = (TypeAdapter<String>) delegateMethod.invoke(adapter);\n\n    assertSame(firstDelegate, secondDelegate);\n    verify(gsonMock, times(1)).getDelegateAdapter(spyExcluder, typeToken);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883071,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1443,
+    "prompt_tokens": 1369,
+    "total_tokens": 2812,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.8
+  }
+}

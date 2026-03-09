@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmRMzL7WaKLldUURLhPzGE9LtyRi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method readEscapeCharacterMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    // Use a dummy Reader since we won't read from it in these tests\n    jsonReader = new JsonReader(new java.io.StringReader(\"\"));\n\n    // Access the private method readEscapeCharacter using reflection\n    readEscapeCharacterMethod = JsonReader.class.getDeclaredMethod(\"readEscapeCharacter\");\n    readEscapeCharacterMethod.setAccessible(true);\n  }\n\n  private char invokeReadEscapeCharacter() throws Throwable {\n    try {\n      return (char) readEscapeCharacterMethod.invoke(jsonReader);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  private void setField(String fieldName, Object value) throws Exception {\n    var field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(jsonReader, value);\n  }\n\n  @Test\n  public void testReadEscapeCharacter_ThrowsOnUnterminatedEscapeSequence() throws Exception {\n    setField(\"pos\", 0);\n    setField(\"limit\", 0);\n    // fillBuffer(1) will be called and should return false to simulate EOF\n    // We mock fillBuffer using a spy on jsonReader\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(false).when(spyReader).fillBuffer(1);\n\n    // Replace jsonReader with spyReader in this test\n    readEscapeCharacterMethod.setAccessible(true);\n    var method = readEscapeCharacterMethod;\n\n    try {\n      method.invoke(spyReader);\n      fail(\"Expected IOException\");\n    } catch (InvocationTargetException e) {\n      assertTrue(e.getCause() instanceof IOException);\n      assertEquals(\"Unterminated escape sequence\", e.getCause().getMessage());\n    }\n  }\n\n  @Test\n  public void testReadEscapeCharacter_UnicodeEscape_ValidLowerCase() throws Throwable {\n    // Setup buffer with 'u' + 4 hex digits \"abcd\"\n    char[] buffer = new char[1024];\n    buffer[0] = 'u';\n    buffer[1] = 'a';\n    buffer[2] = 'b';\n    buffer[3] = 'c';\n    buffer[4] = 'd';\n\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 5);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(true).when(spyReader).fillBuffer(4);\n\n    // Use reflection on spyReader\n    Method method = JsonReader.class.getDeclaredMethod(\"readEscapeCharacter\");\n    method.setAccessible(true);\n    char result = (char) method.invoke(spyReader);\n\n    int expected = Integer.parseInt(\"abcd\", 16);\n    assertEquals((char) expected, result);\n    assertEquals(5, spyReader.pos);\n  }\n\n  @Test\n  public void testReadEscapeCharacter_UnicodeEscape_ValidUpperCase() throws Throwable {\n    char[] buffer = new char[1024];\n    buffer[0] = 'u';\n    buffer[1] = 'A';\n    buffer[2] = 'B';\n    buffer[3] = 'C';\n    buffer[4] = 'D';\n\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 5);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(true).when(spyReader).fillBuffer(4);\n\n    Method method = JsonReader.class.getDeclaredMethod(\"readEscapeCharacter\");\n    method.setAccessible(true);\n    char result = (char) method.invoke(spyReader);\n\n    int expected = Integer.parseInt(\"ABCD\", 16);\n    assertEquals((char) expected, result);\n    assertEquals(5, spyReader.pos);\n  }\n\n  @Test\n  public void testReadEscapeCharacter_UnicodeEscape_InvalidHex_ThrowsNumberFormatException() throws Throwable {\n    char[] buffer = new char[1024];\n    buffer[0] = 'u';\n    buffer[1] = 'g'; // invalid hex char\n    buffer[2] = 'h';\n    buffer[3] = 'i';\n    buffer[4] = 'j';\n\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 5);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(true).when(spyReader).fillBuffer(4);\n\n    Method method = JsonReader.class.getDeclaredMethod(\"readEscapeCharacter\");\n    method.setAccessible(true);\n\n    try {\n      method.invoke(spyReader);\n      fail(\"Expected NumberFormatException\");\n    } catch (InvocationTargetException e) {\n      assertTrue(e.getCause() instanceof NumberFormatException);\n      assertEquals(\"\\\\ughij\", e.getCause().getMessage());\n    }\n  }\n\n  @Test\n  public void testReadEscapeCharacter_SingleCharacterEscapes() throws Throwable {\n    char[] escapes = {'t', 'b', 'n', 'r', 'f'};\n    char[] expected = {'\\t', '\\b', '\\n', '\\r', '\\f'};\n\n    for (int i = 0; i < escapes.length; i++) {\n      char esc = escapes[i];\n      char exp = expected[i];\n\n      char[] buffer = new char[1024];\n      buffer[0] = esc;\n\n      setField(\"buffer\", buffer);\n      setField(\"pos\", 0);\n      setField(\"limit\", 1);\n\n      char result = invokeReadEscapeCharacter();\n      assertEquals(exp, result);\n      assertEquals(1, jsonReader.pos);\n    }\n  }\n\n  @Test\n  public void testReadEscapeCharacter_SpecialEscape_NewlineIncrementsLineNumber() throws Throwable {\n    char[] buffer = new char[1024];\n    buffer[0] = '\\n';\n\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 1);\n    setField(\"lineNumber\", 5);\n    setField(\"lineStart\", 3);\n\n    char result = invokeReadEscapeCharacter();\n\n    assertEquals('\\n', result);\n    assertEquals(1, jsonReader.pos);\n    assertEquals(6, jsonReader.lineNumber);\n    assertEquals(1, jsonReader.lineStart);\n  }\n\n  @Test\n  public void testReadEscapeCharacter_SpecialEscape_OtherChars() throws Throwable {\n    char[] specialChars = {'\\'', '\"', '\\\\', '/'};\n\n    for (char c : specialChars) {\n      char[] buffer = new char[1024];\n      buffer[0] = c;\n\n      setField(\"buffer\", buffer);\n      setField(\"pos\", 0);\n      setField(\"limit\", 1);\n\n      char result = invokeReadEscapeCharacter();\n\n      assertEquals(c, result);\n      assertEquals(1, jsonReader.pos);\n    }\n  }\n\n  @Test\n  public void testReadEscapeCharacter_InvalidEscapeSequence_ThrowsIOException() throws Throwable {\n    char[] buffer = new char[1024];\n    buffer[0] = 'z';\n\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", 1);\n\n    try {\n      invokeReadEscapeCharacter();\n      fail(\"Expected IOException\");\n    } catch (IOException e) {\n      assertEquals(\"Invalid escape sequence\", e.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886936,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1615,
+    "prompt_tokens": 1368,
+    "total_tokens": 2983,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 28.36
+  }
+}

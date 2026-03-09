@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJ1Nd4tRQ6tf1XjxHhZv6onIbRe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.common.collect.MapMaker;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.ConcurrentMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ProtoTypeAdapterTest {\n\n  private static class DummyClass {\n    public String dummyMethod(String input) {\n      return input;\n    }\n  }\n\n  @BeforeEach\n  void setUp() {\n    // Clear the static cache before each test via reflection\n    try {\n      var field = ProtoTypeAdapter.class.getDeclaredField(\"mapOfMapOfMethods\");\n      field.setAccessible(true);\n      ConcurrentMap<String, ConcurrentMap<Class<?>, Method>> map =\n          (ConcurrentMap<String, ConcurrentMap<Class<?>, Method>>) field.get(null);\n      map.clear();\n    } catch (Exception e) {\n      fail(\"Failed to clear mapOfMapOfMethods before test: \" + e);\n    }\n  }\n\n  @Test\n  void testGetCachedMethod_NewCacheAndMethodRetrieved() throws Exception {\n    // Use reflection to access private static method\n    Method getCachedMethod = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"getCachedMethod\", Class.class, String.class, Class[].class);\n    getCachedMethod.setAccessible(true);\n\n    // Call method first time - cache miss, method retrieved by reflection and cached\n    Method method = (Method) getCachedMethod.invoke(null, DummyClass.class, \"dummyMethod\", new Class[]{String.class});\n    assertNotNull(method);\n    assertEquals(\"dummyMethod\", method.getName());\n\n    // Call method second time - cache hit, same method returned\n    Method cachedMethod = (Method) getCachedMethod.invoke(null, DummyClass.class, \"dummyMethod\", new Class[]{String.class});\n    assertSame(method, cachedMethod);\n  }\n\n  @Test\n  void testGetCachedMethod_ConcurrentMapPutIfAbsentRaceCondition() throws Exception {\n    try (MockedStatic<MapMaker> mockedMapMaker = Mockito.mockStatic(MapMaker.class)) {\n      // Mock MapMaker to return a ConcurrentMap that simulates putIfAbsent race\n      ConcurrentMap<Class<?>, Method> firstMap = new java.util.concurrent.ConcurrentHashMap<>();\n      ConcurrentMap<Class<?>, Method> secondMap = new java.util.concurrent.ConcurrentHashMap<>();\n\n      ConcurrentMap<String, ConcurrentMap<Class<?>, Method>> outerMap = new java.util.concurrent.ConcurrentHashMap<>();\n\n      // When MapMaker.new() is called, return a MapMaker whose makeMap() returns firstMap\n      MapMaker fakeMapMaker = mock(MapMaker.class);\n      when(fakeMapMaker.<Class<?>, Method>makeMap()).thenReturn(firstMap);\n      mockedMapMaker.when(MapMaker::new).thenReturn(fakeMapMaker);\n\n      // Replace mapOfMapOfMethods with our own map to simulate race\n      var mapField = ProtoTypeAdapter.class.getDeclaredField(\"mapOfMapOfMethods\");\n      mapField.setAccessible(true);\n      mapField.set(null, outerMap);\n\n      // Put a map for methodName before calling to simulate race condition on putIfAbsent\n      outerMap.put(\"dummyMethod\", secondMap);\n\n      Method getCachedMethod = ProtoTypeAdapter.class.getDeclaredMethod(\n          \"getCachedMethod\", Class.class, String.class, Class[].class);\n      getCachedMethod.setAccessible(true);\n\n      // The method should be retrieved from secondMap (the existing map)\n      Method method = (Method) getCachedMethod.invoke(null, DummyClass.class, \"dummyMethod\", new Class[]{String.class});\n      assertNotNull(method);\n      assertEquals(\"dummyMethod\", method.getName());\n\n      // The method should be cached in secondMap, not in firstMap\n      assertFalse(firstMap.containsKey(DummyClass.class));\n      assertTrue(secondMap.containsKey(DummyClass.class));\n    }\n  }\n\n  @Test\n  void testGetCachedMethod_NoSuchMethodException() throws Exception {\n    Method getCachedMethod = ProtoTypeAdapter.class.getDeclaredMethod(\n        \"getCachedMethod\", Class.class, String.class, Class[].class);\n    getCachedMethod.setAccessible(true);\n\n    // Call with a method name that does not exist on DummyClass to trigger NoSuchMethodException\n    Throwable thrown = assertThrows(Exception.class, () ->\n        getCachedMethod.invoke(null, DummyClass.class, \"nonExistentMethod\", new Class[]{})\n    );\n    // InvocationTargetException wraps the NoSuchMethodException, unwrap it\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof NoSuchMethodException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886419,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 966,
+    "prompt_tokens": 2028,
+    "total_tokens": 2994,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.74
+  }
+}

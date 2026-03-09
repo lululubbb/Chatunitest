@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlORXUwQMP4n73Q6IFihzmKiEyUo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass JsonElementTest {\n\n  private JsonElement jsonElement;\n\n  @BeforeEach\n  void setUp() {\n    jsonElement = new JsonElement() {\n      @Override\n      public JsonElement deepCopy() {\n        return this;\n      }\n    };\n  }\n\n  @Test\n  void toString_returnsJsonString_whenNoException() throws IOException {\n    // Arrange\n    try (MockedStatic<Streams> streamsMockedStatic = mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(jsonElement), any(JsonWriter.class)))\n          .thenAnswer(invocation -> {\n            JsonWriter writer = invocation.getArgument(1);\n            writer.jsonValue(\"{\\\"mocked\\\":true}\");\n            return null;\n          });\n\n      // Act\n      String result = jsonElement.toString();\n\n      // Assert\n      assertNotNull(result);\n      assertTrue(result.contains(\"mocked\"));\n      streamsMockedStatic.verify(() -> Streams.write(eq(jsonElement), any(JsonWriter.class)));\n    }\n  }\n\n  @Test\n  void toString_throwsAssertionError_whenIOExceptionOccurs() throws IOException {\n    // Arrange\n    try (MockedStatic<Streams> streamsMockedStatic = mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(jsonElement), any(JsonWriter.class)))\n          .thenThrow(new IOException(\"mock IO error\"));\n\n      // Act & Assert\n      AssertionError error = assertThrows(AssertionError.class, () -> jsonElement.toString());\n      assertTrue(error.getCause() instanceof IOException);\n      assertEquals(\"mock IO error\", error.getCause().getMessage());\n      streamsMockedStatic.verify(() -> Streams.write(eq(jsonElement), any(JsonWriter.class)));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882911,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 428,
+    "prompt_tokens": 427,
+    "total_tokens": 855,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.7
+  }
+}

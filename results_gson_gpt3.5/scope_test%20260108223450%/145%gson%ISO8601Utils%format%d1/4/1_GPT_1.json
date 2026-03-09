@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmvI1qid4tyzUa1uBBj9s0Of2Om0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind.util;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.ParseException;\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ISO8601UtilsTest {\n\n    private static Method padIntMethod;\n\n    @BeforeAll\n    static void setUp() throws NoSuchMethodException {\n        padIntMethod = ISO8601Utils.class.getDeclaredMethod(\"padInt\", StringBuilder.class, int.class, int.class);\n        padIntMethod.setAccessible(true);\n    }\n\n    @Test\n    void testFormat_withMillis_UTC() {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = Calendar.getInstance(utc);\n        cal.clear();\n        cal.set(2023, Calendar.MARCH, 15, 10, 20, 30);\n        cal.set(Calendar.MILLISECOND, 123);\n        Date date = cal.getTime();\n\n        String formatted = ISO8601Utils.format(date, true, utc);\n        assertEquals(\"2023-03-15T10:20:30.123Z\", formatted);\n    }\n\n    @Test\n    void testFormat_withoutMillis_UTC() {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Calendar cal = Calendar.getInstance(utc);\n        cal.clear();\n        cal.set(2023, Calendar.MARCH, 15, 10, 20, 30);\n        cal.set(Calendar.MILLISECOND, 999);\n        Date date = cal.getTime();\n\n        String formatted = ISO8601Utils.format(date, false, utc);\n        assertEquals(\"2023-03-15T10:20:30Z\", formatted);\n    }\n\n    @Test\n    void testFormat_withMillis_nonZeroOffsetPositive() {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT+02:30\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2023, Calendar.JANUARY, 1, 5, 6, 7);\n        cal.set(Calendar.MILLISECOND, 5);\n        Date date = cal.getTime();\n\n        String formatted = ISO8601Utils.format(date, true, tz);\n        // Offset +02:30\n        assertTrue(formatted.startsWith(\"2023-01-01T05:06:07.005+02:30\"));\n    }\n\n    @Test\n    void testFormat_withoutMillis_nonZeroOffsetNegative() {\n        TimeZone tz = TimeZone.getTimeZone(\"GMT-05:45\");\n        Calendar cal = Calendar.getInstance(tz);\n        cal.clear();\n        cal.set(2023, Calendar.DECEMBER, 31, 23, 59, 59);\n        cal.set(Calendar.MILLISECOND, 999);\n        Date date = cal.getTime();\n\n        String formatted = ISO8601Utils.format(date, false, tz);\n        // Offset -05:45\n        assertTrue(formatted.startsWith(\"2023-12-31T23:59:59-05:45\"));\n    }\n\n    @Test\n    void testFormat_epochZero_UTC() {\n        TimeZone utc = TimeZone.getTimeZone(\"UTC\");\n        Date date = new Date(0L);\n\n        String formatted = ISO8601Utils.format(date, true, utc);\n        assertEquals(\"1970-01-01T00:00:00.000Z\", formatted);\n    }\n\n    @Test\n    void testPadInt_privateMethod() throws IllegalAccessException, InvocationTargetException {\n        StringBuilder sb = new StringBuilder();\n        // pad 5 to length 3 -> \"005\"\n        padIntMethod.invoke(null, sb, 5, 3);\n        assertEquals(\"005\", sb.toString());\n\n        sb.setLength(0);\n        // pad 123 to length 3 -> \"123\"\n        padIntMethod.invoke(null, sb, 123, 3);\n        assertEquals(\"123\", sb.toString());\n\n        sb.setLength(0);\n        // pad 1234 to length 3 -> \"1234\" (no truncation)\n        padIntMethod.invoke(null, sb, 1234, 3);\n        assertEquals(\"1234\", sb.toString());\n\n        sb.setLength(0);\n        // pad 0 to length 2 -> \"00\"\n        padIntMethod.invoke(null, sb, 0, 2);\n        assertEquals(\"00\", sb.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888792,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 957,
+    "prompt_tokens": 729,
+    "total_tokens": 1686,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.87
+  }
+}

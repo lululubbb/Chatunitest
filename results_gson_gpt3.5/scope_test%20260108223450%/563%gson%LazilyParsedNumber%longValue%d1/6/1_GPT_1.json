@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmE7KbKr5U1Atx2xRmklD33gI99l",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void testLongValue_parseLongSuccess() throws Exception {\n    // value that can be parsed by Long.parseLong without exception\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123456789\");\n    long result = number.longValue();\n    assertEquals(123456789L, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_bigDecimalUsed() throws Exception {\n    // value that causes Long.parseLong to throw NumberFormatException but BigDecimal can parse\n    // e.g. a number too big for long but valid decimal number\n    String bigValue = \"92233720368547758079223372036854775807\"; // bigger than Long.MAX_VALUE\n    LazilyParsedNumber number = new LazilyParsedNumber(bigValue);\n    long expected = new java.math.BigDecimal(bigValue).longValue();\n    long result = number.longValue();\n    assertEquals(expected, result);\n  }\n\n  @Test\n  public void testLongValue_parseLongFails_invalidNumber() throws Exception {\n    // value that is not a valid number at all\n    // This will cause BigDecimal constructor to throw NumberFormatException,\n    // but the focal method does not catch that, so test expects exception\n    String invalidValue = \"notANumber\";\n    LazilyParsedNumber number = new LazilyParsedNumber(invalidValue);\n    try {\n      number.longValue();\n    } catch (NumberFormatException e) {\n      // expected exception\n      return;\n    }\n    throw new AssertionError(\"Expected NumberFormatException was not thrown\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886115,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 372,
+    "prompt_tokens": 326,
+    "total_tokens": 698,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.45
+  }
+}

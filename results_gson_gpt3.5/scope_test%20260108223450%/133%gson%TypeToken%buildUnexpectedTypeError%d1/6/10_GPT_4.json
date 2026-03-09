@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmBO4UbsxY2u9JCwIf1HXBcFamGD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenBuildUnexpectedTypeErrorTest {\n\n  @Test\n  void testBuildUnexpectedTypeError_singleExpectedClass() throws Exception {\n    Type token = String.class;\n\n    Class<?>[] expected = new Class<?>[] { Integer.class };\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, (Object) expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: java.lang.Integer, but got: java.lang.Class, for type token: class java.lang.String.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_multipleExpectedClasses() throws Exception {\n    Type token = Double.class;\n\n    Class<?>[] expected = new Class<?>[] { Integer.class, String.class };\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, (Object) expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: java.lang.Integer, java.lang.String, but got: java.lang.Class, for type token: class java.lang.Double.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_noExpectedClasses() throws Exception {\n    Type token = Float.class;\n\n    Class<?>[] expected = new Class<?>[] {};\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, (Object) expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: but got: java.lang.Class, for type token: class java.lang.Float.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_withParameterizedType() throws Exception {\n    Type token = new ParameterizedType() {\n      @Override\n      public java.lang.reflect.Type[] getActualTypeArguments() {\n        return new java.lang.reflect.Type[] { String.class };\n      }\n\n      @Override\n      public java.lang.reflect.Type getRawType() {\n        return java.util.Map.class;\n      }\n\n      @Override\n      public java.lang.reflect.Type getOwnerType() {\n        return null;\n      }\n\n      @Override\n      public String toString() {\n        return \"java.util.Map<java.lang.String>\";\n      }\n    };\n\n    Class<?>[] expected = new Class<?>[] { java.util.Map.class };\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, (Object) expected);\n\n    String expectedMessage = \"Unexpected type. Expected one of: java.util.Map, but got: \" + token.getClass().getName() + \", for type token: java.util.Map<java.lang.String>.\";\n    assertEquals(expectedMessage, error.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885946,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 714,
+    "prompt_tokens": 2758,
+    "total_tokens": 3472,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.92
+  }
+}

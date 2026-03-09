@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void indexOf_existingElement_returnsIndex() {\n    when(delegate.indexOf(\"test\")).thenReturn(3);\n    int index = list.indexOf(\"test\");\n    assertEquals(3, index);\n    verify(delegate).indexOf(\"test\");\n  }\n\n  @Test\n  void indexOf_nonExistingElement_returnsMinusOne() {\n    when(delegate.indexOf(\"absent\")).thenReturn(-1);\n    int index = list.indexOf(\"absent\");\n    assertEquals(-1, index);\n    verify(delegate).indexOf(\"absent\");\n  }\n\n  @Test\n  void indexOf_nullElement() {\n    when(delegate.indexOf(null)).thenReturn(-1);\n    int index = list.indexOf(null);\n    assertEquals(-1, index);\n    verify(delegate).indexOf(null);\n  }\n\n  @Test\n  void testNonNullPrivateMethod() throws Exception {\n    // Using reflection to test private method nonNull(E element)\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    String input = \"hello\";\n    Object result = nonNullMethod.invoke(list, input);\n    assertEquals(input, result);\n\n    Exception exception = assertThrows(Exception.class, () -> {\n      nonNullMethod.invoke(list, (Object) null);\n    });\n    assertTrue(exception.getCause() instanceof NullPointerException);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 374,
+  "completion_tokens": 403,
+  "total_tokens": 777,
+  "llm_elapsed_time_seconds": 5.71,
+  "repair_elapsed_time_seconds": 24.61,
+  "round_total_time_seconds": 24.61
+}

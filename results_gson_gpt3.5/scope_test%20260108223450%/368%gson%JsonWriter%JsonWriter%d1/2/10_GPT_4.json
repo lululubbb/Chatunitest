@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlTqR24yGxYllZjxNpEUWnsNtH4v",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void constructor_nullWriter_throwsNullPointerException() {\n    NullPointerException e = assertThrows(NullPointerException.class, () -> new JsonWriter(null));\n    assertEquals(\"out == null\", e.getMessage());\n  }\n\n  @Test\n  void setIndent_and_getIndent_behavior() {\n    jsonWriter.setIndent(\"  \");\n    // Cannot directly get indent because field is private and no getter, use reflection\n    String indent = getPrivateField(jsonWriter, \"indent\", String.class);\n    assertEquals(\"  \", indent);\n  }\n\n  @Test\n  void setLenient_and_isLenient() {\n    jsonWriter.setLenient(true);\n    assertTrue(jsonWriter.isLenient());\n    jsonWriter.setLenient(false);\n    assertFalse(jsonWriter.isLenient());\n  }\n\n  @Test\n  void setHtmlSafe_and_isHtmlSafe() {\n    jsonWriter.setHtmlSafe(true);\n    assertTrue(jsonWriter.isHtmlSafe());\n    jsonWriter.setHtmlSafe(false);\n    assertFalse(jsonWriter.isHtmlSafe());\n  }\n\n  @Test\n  void setSerializeNulls_and_getSerializeNulls() {\n    jsonWriter.setSerializeNulls(false);\n    assertFalse(jsonWriter.getSerializeNulls());\n    jsonWriter.setSerializeNulls(true);\n    assertTrue(jsonWriter.getSerializeNulls());\n  }\n\n  @Test\n  void beginArray_endArray_writesBrackets() throws IOException {\n    jsonWriter.beginArray();\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    assertEquals(\"[]\", stringWriter.toString());\n  }\n\n  @Test\n  void beginObject_endObject_writesBraces() throws IOException {\n    jsonWriter.beginObject();\n    jsonWriter.endObject();\n    jsonWriter.flush();\n    assertEquals(\"{}\", stringWriter.toString());\n  }\n\n  @Test\n  void name_value_nullValue_and_jsonValue() throws IOException {\n    jsonWriter.beginObject();\n    jsonWriter.name(\"string\").value(\"value\");\n    jsonWriter.name(\"null\").nullValue();\n    jsonWriter.name(\"json\").jsonValue(\"{\\\"a\\\":true}\");\n    jsonWriter.endObject();\n    jsonWriter.flush();\n    String result = stringWriter.toString();\n    assertTrue(result.startsWith(\"{\"));\n    assertTrue(result.contains(\"\\\"string\\\":\\\"value\\\"\"));\n    assertTrue(result.contains(\"\\\"null\\\":null\"));\n    assertTrue(result.contains(\"\\\"json\\\":{\\\"a\\\":true}\"));\n  }\n\n  @Test\n  void value_boolean_and_Boolean() throws IOException {\n    jsonWriter.beginArray();\n    jsonWriter.value(true);\n    jsonWriter.value(Boolean.FALSE);\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    assertEquals(\"[true,false]\", stringWriter.toString());\n  }\n\n  @Test\n  void value_float_double_long_Number() throws IOException {\n    jsonWriter.beginArray();\n    jsonWriter.value(1.2f);\n    jsonWriter.value(3.4d);\n    jsonWriter.value(123L);\n    jsonWriter.value(new BigDecimal(\"5.6\"));\n    jsonWriter.value(new BigInteger(\"7\"));\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    assertEquals(\"[1.2,3.4,123,5.6,7]\", stringWriter.toString());\n  }\n\n  @Test\n  void value_Number_invalidNumber_throws() {\n    assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Double.NaN));\n    assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Double.NEGATIVE_INFINITY));\n    assertThrows(IllegalArgumentException.class, () -> jsonWriter.value(Double.POSITIVE_INFINITY));\n  }\n\n  @Test\n  void flush_and_close() throws IOException {\n    jsonWriter.beginArray();\n    jsonWriter.value(\"test\");\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    assertFalse(stringWriter.toString().isEmpty());\n    jsonWriter.close();\n    IllegalStateException e = assertThrows(IllegalStateException.class, () -> jsonWriter.value(\"after close\"));\n    assertEquals(\"JsonWriter is closed.\", e.getMessage());\n  }\n\n  @Test\n  void privateMethod_string_invocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n    Method stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n    jsonWriter.beginArray();\n    stringMethod.invoke(jsonWriter, \"testString\");\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    assertEquals(\"[\\\"testString\\\"]\", stringWriter.toString());\n  }\n\n  @Test\n  void privateMethod_newline_invocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n    jsonWriter.setIndent(\"  \");\n    jsonWriter.beginObject();\n    Method newlineMethod = JsonWriter.class.getDeclaredMethod(\"newline\");\n    newlineMethod.setAccessible(true);\n    newlineMethod.invoke(jsonWriter);\n    jsonWriter.name(\"a\").value(\"b\");\n    jsonWriter.endObject();\n    jsonWriter.flush();\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"\\n\"));\n  }\n\n  @Test\n  void privateMethod_beforeName_invocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n    jsonWriter.beginObject();\n    Method beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n    beforeNameMethod.setAccessible(true);\n    beforeNameMethod.invoke(jsonWriter);\n    jsonWriter.name(\"n\");\n    jsonWriter.value(\"v\");\n    jsonWriter.endObject();\n    jsonWriter.flush();\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"\\\"n\\\"\"));\n  }\n\n  @Test\n  void privateMethod_beforeValue_invocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n    jsonWriter.beginArray();\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n    beforeValueMethod.invoke(jsonWriter);\n    jsonWriter.value(\"v\");\n    jsonWriter.endArray();\n    jsonWriter.flush();\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"\\\"v\\\"\"));\n  }\n\n  private <T> T getPrivateField(Object obj, String fieldName, Class<T> type) {\n    try {\n      var field = obj.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return type.cast(field.get(obj));\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883246,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1450,
+    "prompt_tokens": 2488,
+    "total_tokens": 3938,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.48
+  }
+}

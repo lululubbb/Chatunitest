@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxfJ9XXt3qbgyQhbfao2TZUsbaf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport org.junit.jupiter.api.Test;\n\nclass StreamsTest {\n\n  @Test\n  void write_callsTypeAdaptersJsonElementWrite() throws Exception {\n    JsonElement element = mock(JsonElement.class);\n    JsonWriter writer = mock(JsonWriter.class);\n\n    // Get original JSON_ELEMENT adapter\n    Object jsonElementAdapter = getStaticField(TypeAdapters.class, \"JSON_ELEMENT\");\n\n    // Create a spy on the adapter's actual class\n    Object spyAdapter = spy(jsonElementAdapter);\n\n    // Replace the static final field with the spy using Unsafe\n    setStaticFinalField(TypeAdapters.class, \"JSON_ELEMENT\", spyAdapter);\n\n    // Call the method under test\n    Streams.write(element, writer);\n\n    // Verify that write(writer, element) was called on the spy\n    verify(spyAdapter).write(writer, element);\n\n    // Restore original JSON_ELEMENT field value\n    setStaticFinalField(TypeAdapters.class, \"JSON_ELEMENT\", jsonElementAdapter);\n  }\n\n  @Test\n  void privateConstructor_coverage() throws Exception {\n    var constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    try {\n      constructor.newInstance();\n    } catch (UnsupportedOperationException e) {\n      // Expected exception - ignore for coverage\n    }\n  }\n\n  private static Object getStaticField(Class<?> clazz, String fieldName) throws Exception {\n    var field = clazz.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(null);\n  }\n\n  private static void setStaticFinalField(Class<?> clazz, String fieldName, Object value) throws Exception {\n    Field field = clazz.getDeclaredField(fieldName);\n    field.setAccessible(true);\n\n    // Remove final modifier using reflection\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    field.set(null, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885095,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 451,
+    "prompt_tokens": 1523,
+    "total_tokens": 1974,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.79
+  }
+}

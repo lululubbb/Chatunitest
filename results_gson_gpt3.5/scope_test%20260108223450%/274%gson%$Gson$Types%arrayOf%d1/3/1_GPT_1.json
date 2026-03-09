@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4nFer9RAcGqMeVtZv1PlYCWwoO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.GenericArrayType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.Array;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.TypeVariable;\nimport java.lang.reflect.WildcardType;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void arrayOf_withClassComponentType_returnsGenericArrayType() {\n    Type componentType = String.class;\n    GenericArrayType genericArrayType = $Gson$Types.arrayOf(componentType);\n    assertNotNull(genericArrayType);\n    assertEquals(componentType, genericArrayType.getGenericComponentType());\n    // The class of returned GenericArrayType is internal, test its toString and class type indirectly\n    assertTrue(genericArrayType.toString().contains(\"java.lang.String[]\"));\n  }\n\n  @Test\n  void arrayOf_withParameterizedTypeComponentType_returnsGenericArrayType() {\n    ParameterizedType parameterizedType = new ParameterizedType() {\n      @Override public Type[] getActualTypeArguments() { return new Type[] {String.class}; }\n      @Override public Type getRawType() { return java.util.Collection.class; }\n      @Override public Type getOwnerType() { return null; }\n      @Override public String toString() { return \"java.util.Collection<java.lang.String>\"; }\n    };\n    GenericArrayType genericArrayType = $Gson$Types.arrayOf(parameterizedType);\n    assertNotNull(genericArrayType);\n    assertEquals(parameterizedType, genericArrayType.getGenericComponentType());\n    assertTrue(genericArrayType.toString().contains(\"java.util.Collection<java.lang.String>[]\"));\n  }\n\n  @Test\n  void arrayOf_withGenericArrayTypeComponentType_returnsGenericArrayType() {\n    GenericArrayType innerGenericArrayType = $Gson$Types.arrayOf(String.class);\n    GenericArrayType genericArrayType = $Gson$Types.arrayOf(innerGenericArrayType);\n    assertNotNull(genericArrayType);\n    assertEquals(innerGenericArrayType, genericArrayType.getGenericComponentType());\n    // toString should reflect nested array types\n    String s = genericArrayType.toString();\n    assertTrue(s.contains(\"java.lang.String[][]\"));\n  }\n\n  @Test\n  void arrayOf_withTypeVariableComponentType_returnsGenericArrayType() throws Exception {\n    // Create a TypeVariable from a dummy generic class\n    class GenericClass<T> {}\n    TypeVariable<?> typeVariable = GenericClass.class.getTypeParameters()[0];\n    GenericArrayType genericArrayType = $Gson$Types.arrayOf(typeVariable);\n    assertNotNull(genericArrayType);\n    assertEquals(typeVariable, genericArrayType.getGenericComponentType());\n  }\n\n  @Test\n  void arrayOf_withWildcardTypeComponentType_returnsGenericArrayType() {\n    WildcardType wildcardType = new WildcardType() {\n      @Override public Type[] getUpperBounds() { return new Type[] {Number.class}; }\n      @Override public Type[] getLowerBounds() { return new Type[] {}; }\n      @Override public String toString() { return \"? extends java.lang.Number\"; }\n    };\n    GenericArrayType genericArrayType = $Gson$Types.arrayOf(wildcardType);\n    assertNotNull(genericArrayType);\n    assertEquals(wildcardType, genericArrayType.getGenericComponentType());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885537,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 708,
+    "prompt_tokens": 618,
+    "total_tokens": 1326,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.71
+  }
+}

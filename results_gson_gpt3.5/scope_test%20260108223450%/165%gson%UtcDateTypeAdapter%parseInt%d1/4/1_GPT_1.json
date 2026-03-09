@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmacGlbvFG5AmPuGsXiZUiA4USQY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static Method parseIntMethod;\n\n  @BeforeAll\n  public static void setUp() throws NoSuchMethodException {\n    parseIntMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n    parseIntMethod.setAccessible(true);\n  }\n\n  private int invokeParseInt(String value, int beginIndex, int endIndex) throws Throwable {\n    try {\n      return (int) parseIntMethod.invoke(null, value, beginIndex, endIndex);\n    } catch (InvocationTargetException e) {\n      // unwrap the underlying exception\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  public void testParseInt_validFullString() throws Throwable {\n    assertEquals(12345, invokeParseInt(\"12345\", 0, 5));\n  }\n\n  @Test\n  public void testParseInt_validPartialString() throws Throwable {\n    assertEquals(234, invokeParseInt(\"12345\", 1, 4));\n  }\n\n  @Test\n  public void testParseInt_singleDigit() throws Throwable {\n    assertEquals(7, invokeParseInt(\"7\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_zero() throws Throwable {\n    assertEquals(0, invokeParseInt(\"0\", 0, 1));\n  }\n\n  @Test\n  public void testParseInt_leadingZeros() throws Throwable {\n    assertEquals(7, invokeParseInt(\"007\", 0, 3));\n  }\n\n  @Test\n  public void testParseInt_invalidNegativeIndices_beginIndexLessThanZero() {\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"123\", -1, 2));\n    assertEquals(\"123\", thrown.getMessage());\n  }\n\n  @Test\n  public void testParseInt_invalidIndices_endIndexGreaterThanLength() {\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"123\", 0, 4));\n    assertEquals(\"123\", thrown.getMessage());\n  }\n\n  @Test\n  public void testParseInt_invalidIndices_beginIndexGreaterThanEndIndex() {\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"123\", 3, 2));\n    assertEquals(\"123\", thrown.getMessage());\n  }\n\n  @Test\n  public void testParseInt_invalidNonDigitCharacterAtStart() {\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"a123\", 0, 4));\n    assertEquals(\"Invalid number: a123\", thrown.getMessage());\n  }\n\n  @Test\n  public void testParseInt_invalidNonDigitCharacterInMiddle() {\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"12a3\", 0, 4));\n    assertEquals(\"Invalid number: 12a3\", thrown.getMessage());\n  }\n\n  @Test\n  public void testParseInt_emptySubstring() throws Throwable {\n    // beginIndex == endIndex means empty substring, should throw because digit check fails (no digits)\n    NumberFormatException thrown = assertThrows(NumberFormatException.class,\n        () -> invokeParseInt(\"123\", 1, 1));\n    assertEquals(\"Invalid number: 123\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887510,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 766,
+    "prompt_tokens": 578,
+    "total_tokens": 1344,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.37
+  }
+}

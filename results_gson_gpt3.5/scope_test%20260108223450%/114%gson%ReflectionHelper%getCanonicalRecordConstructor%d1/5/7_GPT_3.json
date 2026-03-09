@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm03BMtvrfZJQrAKu5ev2jkxinzI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  // A sample class to simulate a record-like structure (since 'record' keyword is not recognized)\n  static class SampleRecord {\n    private final String name;\n    private final int age;\n\n    public SampleRecord(String name, int age) {\n      this.name = name;\n      this.age = age;\n    }\n  }\n\n  // A sample non-record class for negative testing\n  static class NonRecord {\n    NonRecord() {}\n  }\n\n  @BeforeAll\n  static void setup() {\n    // No setup needed since RECORD_HELPER is static final and used internally\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_whenRecordClass_returnsConstructor() {\n    Constructor<SampleRecord> constructor = ReflectionHelper.getCanonicalRecordConstructor(SampleRecord.class);\n    assertNotNull(constructor);\n    assertEquals(SampleRecord.class, constructor.getDeclaringClass());\n    assertEquals(2, constructor.getParameterCount());\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_whenNonRecordClass_throwsException() {\n    RuntimeException exception = assertThrows(RuntimeException.class,\n        () -> ReflectionHelper.getCanonicalRecordConstructor(NonRecord.class));\n    assertNotNull(exception.getMessage());\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_nullClass_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> ReflectionHelper.getCanonicalRecordConstructor(null));\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_internalRecordHelperThrowsReflectiveOperationException() throws Exception {\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n    Object originalRecordHelper = recordHelperField.get(null);\n\n    Object mockRecordHelper = mock(originalRecordHelper.getClass());\n    when(mockRecordHelper.getClass().getMethod(\"getCanonicalRecordConstructor\", Class.class)\n        .invoke(mockRecordHelper, SampleRecord.class))\n        .thenThrow(new ReflectiveOperationException(\"mocked exception\"));\n\n    // Since we cannot mock the method via reflection easily, we use a proxy mock with Mockito's doThrow:\n    // So instead, mock the method directly on the mockRecordHelper object:\n    // But because getCanonicalRecordConstructor is called on RECORD_HELPER, which is of type RecordHelper,\n    // and we only have Object, we can use Mockito's doThrow on the mockRecordHelper:\n\n    // To do this, cast mockRecordHelper to the proper interface using reflection proxy:\n    // But simpler is to use Mockito's when().thenThrow() on the mockRecordHelper's method call:\n    // So we do:\n    // when(mockRecordHelper.getCanonicalRecordConstructor(SampleRecord.class)).thenThrow(...);\n    // But mockRecordHelper is Object, so cast:\n    // The below works if we cast to the class of originalRecordHelper:\n\n    Object recordHelperClass = originalRecordHelper.getClass();\n    // Create a spy of originalRecordHelper to override the method behavior:\n    Object spyRecordHelper = spy(originalRecordHelper);\n    when(spyRecordHelper.getClass().getMethod(\"getCanonicalRecordConstructor\", Class.class)\n        .invoke(spyRecordHelper, SampleRecord.class))\n        .thenThrow(new ReflectiveOperationException(\"mocked exception\"));\n\n    // But above is complicated, simpler approach is:\n    // Use Mockito's doThrow on spyRecordHelper:\n    // But doThrow requires method call, so we do reflection invoke inside lambda:\n\n    // So we do:\n    doAnswer(invocation -> {\n      throw new ReflectiveOperationException(\"mocked exception\");\n    }).when(spyRecordHelper).getClass().getMethod(\"getCanonicalRecordConstructor\", Class.class)\n        .invoke(spyRecordHelper, SampleRecord.class);\n\n    // This is complicated due to reflection and Mockito limitations.\n    // Instead, use a dynamic proxy or simply create a subclass that throws exception.\n    // But since RecordHelper is private/internal, we do the following:\n\n    // Directly set the RECORD_HELPER field to a mock of the same type that throws exception when getCanonicalRecordConstructor is called:\n    Object proxyRecordHelper = java.lang.reflect.Proxy.newProxyInstance(\n        recordHelperField.getType().getClassLoader(),\n        new Class[]{recordHelperField.getType()},\n        (proxy, method, args) -> {\n          if (method.getName().equals(\"getCanonicalRecordConstructor\")) {\n            throw new ReflectiveOperationException(\"mocked exception\");\n          }\n          return method.invoke(originalRecordHelper, args);\n        });\n\n    recordHelperField.set(null, proxyRecordHelper);\n\n    RuntimeException ex = assertThrows(RuntimeException.class,\n        () -> ReflectionHelper.getCanonicalRecordConstructor(SampleRecord.class));\n    assertTrue(ex.getMessage().contains(\"mocked exception\"));\n\n    // Restore original RECORD_HELPER\n    recordHelperField.set(null, originalRecordHelper);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885243,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1059,
+    "prompt_tokens": 1341,
+    "total_tokens": 2400,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.3
+  }
+}

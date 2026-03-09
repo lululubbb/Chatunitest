@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnGvpP204yNXQS6l5cjIF75ZFFlx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nclass TypeAdapterFromJsonTest {\n\n  private TypeAdapter<String> typeAdapter;\n\n  @BeforeEach\n  void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(com.google.gson.stream.JsonWriter out, String value) {\n        // no-op for this test\n      }\n\n      @Override\n      public String read(JsonReader in) {\n        try {\n          // Simple read implementation for testing: read next string token\n          if (in.peek() == com.google.gson.stream.JsonToken.STRING) {\n            return in.nextString();\n          }\n          return null;\n        } catch (IOException e) {\n          return null;\n        }\n      }\n    };\n  }\n\n  @Test\n  void fromJson_shouldReturnValue_whenValidJsonProvided() throws IOException {\n    String json = \"\\\"testValue\\\"\";\n    Reader reader = new StringReader(json);\n\n    String result = typeAdapter.fromJson(reader);\n\n    assertEquals(\"testValue\", result);\n  }\n\n  @Test\n  void fromJson_shouldReturnNull_whenJsonIsNull() throws IOException {\n    String json = \"null\";\n    Reader reader = new StringReader(json);\n\n    String result = typeAdapter.fromJson(reader);\n\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_shouldThrowIOException_whenReaderThrows() throws IOException {\n    Reader reader = mock(Reader.class);\n    when(reader.read(any(char[].class), anyInt(), anyInt())).thenThrow(new IOException(\"read error\"));\n\n    IOException thrown = assertThrows(IOException.class, () -> typeAdapter.fromJson(reader));\n    assertEquals(\"read error\", thrown.getMessage());\n  }\n\n  @Test\n  void fromJson_invokesReadMethodUsingReflection() throws Exception {\n    Reader reader = new StringReader(\"\\\"reflectionTest\\\"\");\n    Method fromJsonMethod = TypeAdapter.class.getDeclaredMethod(\"fromJson\", Reader.class);\n    fromJsonMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    String result = (String) fromJsonMethod.invoke(typeAdapter, reader);\n\n    assertEquals(\"reflectionTest\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890133,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 502,
+    "prompt_tokens": 347,
+    "total_tokens": 849,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.71
+  }
+}

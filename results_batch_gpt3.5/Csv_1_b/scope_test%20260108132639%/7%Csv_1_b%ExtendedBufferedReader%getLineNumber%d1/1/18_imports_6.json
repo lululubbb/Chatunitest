@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport java.io.BufferedReader;\nimport java.io.IOException;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        Reader reader = new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                return -1; // simulate end of stream\n            }\n            @Override\n            public void close() {\n            }\n        };\n        extendedBufferedReader = new ExtendedBufferedReader(reader);\n    }\n\n    @Test\n    void testGetLineNumber_DefaultValue() throws Exception {\n        // Using reflection to access getLineNumber method\n        Method getLineNumberMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"getLineNumber\");\n        getLineNumberMethod.setAccessible(true);\n\n        // Default lineCounter is 0\n        int lineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(0, lineNumber);\n    }\n\n    @Test\n    void testGetLineNumber_AfterSettingLineCounter() throws Exception {\n        // Set lineCounter to a specific value via reflection\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        lineCounterField.setInt(extendedBufferedReader, 42);\n\n        Method getLineNumberMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"getLineNumber\");\n        getLineNumberMethod.setAccessible(true);\n\n        int lineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(42, lineNumber);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_1_b/scope_test%20260108132639%/7%Csv_1_b%ExtendedBufferedReader%getLineNumber%d1/1/runtemp/Csv_1_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 710,
+  "completion_tokens": 368,
+  "total_tokens": 1078,
+  "llm_elapsed_time_seconds": 5.2,
+  "repair_elapsed_time_seconds": 27.7,
+  "round_total_time_seconds": 27.7
+}

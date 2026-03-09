@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmrGFWe1TMAa5NeSS7egVfBCrpcx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    private Method writeDeferredNameMethod;\n    private Method beforeNameMethod;\n    private Method stringMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException, IOException, Exception {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n\n        // Begin an object to set correct internal state (stack) and avoid nesting problem\n        jsonWriter.beginObject();\n\n        // Access private methods via reflection\n        writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredNameMethod.setAccessible(true);\n\n        beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n        beforeNameMethod.setAccessible(true);\n\n        stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n        stringMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testWriteDeferredName_whenDeferredNameIsNull() throws Throwable {\n        // deferredName is null by default\n        // invoke private method writeDeferredName\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        // Since deferredName is null, nothing should be written to the output except '{' from beginObject\n        // So output should be just \"{\"\n        assertEquals(\"{\", stringWriter.toString());\n    }\n\n    @Test\n    public void testWriteDeferredName_whenDeferredNameIsSet() throws Throwable {\n        // Set deferredName via reflection\n        setDeferredName(\"testName\");\n\n        // Invoke writeDeferredName on jsonWriter via reflection\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        // After invocation, deferredName should be null\n        assertNull(getDeferredName(jsonWriter));\n\n        // The output should contain the string representation of deferredName (quoted)\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"\\\"testName\\\"\"));\n    }\n\n    @Test\n    public void testWriteDeferredName_callsBeforeNameAndString() throws Throwable {\n        // Set deferredName to a known value\n        setDeferredName(\"myName\");\n\n        // Invoke writeDeferredName on jsonWriter\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        // Verify deferredName is null\n        assertNull(getDeferredName(jsonWriter));\n\n        // Verify output contains the deferredName string (quoted)\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"\\\"myName\\\"\"));\n    }\n\n    // Helper method to set private deferredName field via reflection\n    private void setDeferredName(String name) throws Exception {\n        java.lang.reflect.Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, name);\n    }\n\n    // Helper method to get private deferredName field via reflection\n    private String getDeferredName(JsonWriter writer) throws Exception {\n        java.lang.reflect.Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        return (String) deferredNameField.get(writer);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888542,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 702,
+    "prompt_tokens": 2060,
+    "total_tokens": 2762,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.47
+  }
+}

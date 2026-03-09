@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.FieldAttributes;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.annotations.Expose;\nimport com.google.gson.annotations.Since;\nimport com.google.gson.annotations.Until;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  void testIsInnerClass_withStaticMemberClass() throws Exception {\n    class Outer {\n      static class StaticMember {}\n    }\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, Outer.StaticMember.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonStaticMemberClass() throws Exception {\n    class Outer {\n      class NonStaticMember {}\n    }\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, Outer.NonStaticMember.class);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonMemberClass() throws Exception {\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, String.class);\n    assertFalse(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/454%gson%Excluder%isInnerClass%d1/5/temp/Excluder_454_5Test.java:32: 错误: 此处不允许使用修饰符static\n      static class StaticMember {}\n             ^\n1 个错误\n",
+  "prompt_tokens": 1240,
+  "completion_tokens": 307,
+  "total_tokens": 1547,
+  "llm_elapsed_time_seconds": 5.59,
+  "repair_elapsed_time_seconds": 9.5,
+  "round_total_time_seconds": 9.5
+}

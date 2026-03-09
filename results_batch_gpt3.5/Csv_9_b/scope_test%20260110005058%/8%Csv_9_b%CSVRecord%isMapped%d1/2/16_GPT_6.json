@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA4xklH9LsXcDTi1fEZvQwE23Hoo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nclass CSVRecordTest {\n\n    @Test\n    void testIsMapped_mappingNull() throws Exception {\n        CSVRecord record = createCSVRecord(null);\n        Method isMapped = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMapped.setAccessible(true);\n\n        boolean result = (boolean) isMapped.invoke(record, \"anyName\");\n        assertFalse(result);\n    }\n\n    @Test\n    void testIsMapped_mappingEmpty() throws Exception {\n        CSVRecord record = createCSVRecord(Collections.emptyMap());\n        Method isMapped = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMapped.setAccessible(true);\n\n        boolean result = (boolean) isMapped.invoke(record, \"anyName\");\n        assertFalse(result);\n    }\n\n    @Test\n    void testIsMapped_mappingContainsKey() throws Exception {\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        CSVRecord record = createCSVRecord(mapping);\n        Method isMapped = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMapped.setAccessible(true);\n\n        boolean result = (boolean) isMapped.invoke(record, \"header1\");\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsMapped_mappingDoesNotContainKey() throws Exception {\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        CSVRecord record = createCSVRecord(mapping);\n        Method isMapped = CSVRecord.class.getDeclaredMethod(\"isMapped\", String.class);\n        isMapped.setAccessible(true);\n\n        boolean result = (boolean) isMapped.invoke(record, \"header2\");\n        assertFalse(result);\n    }\n\n    private CSVRecord createCSVRecord(Map<String, Integer> mapping) throws Exception {\n        String[] values = new String[]{\"val1\", \"val2\"};\n        String comment = null;\n        long recordNumber = 1L;\n\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance((Object) values, mapping, comment, recordNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977803,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 502,
+    "prompt_tokens": 965,
+    "total_tokens": 1467,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.54
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlg1lxpU2p6PHJnmZDKZ87C33V4i",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.Iterator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n    private JsonArray jsonArray;\n\n    @BeforeEach\n    void setUp() {\n        jsonArray = new JsonArray();\n    }\n\n    @Test\n    void testConstructorWithCapacity() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n        Constructor<JsonArray> constructor = JsonArray.class.getDeclaredConstructor(int.class);\n        constructor.setAccessible(true);\n        JsonArray arrayWithCapacity = constructor.newInstance(5);\n        assertNotNull(arrayWithCapacity);\n        assertEquals(0, arrayWithCapacity.size());\n    }\n\n    @Test\n    void testDefaultConstructorCreatesEmptyArray() {\n        assertNotNull(jsonArray);\n        assertEquals(0, jsonArray.size());\n        assertTrue(jsonArray.isEmpty());\n    }\n\n    @Test\n    void testAddAndGetElements() {\n        jsonArray.add(Boolean.TRUE);\n        jsonArray.add('a');\n        jsonArray.add(123);\n        jsonArray.add(\"test\");\n        JsonPrimitive primitive = new JsonPrimitive(\"elem\");\n        jsonArray.add(primitive);\n\n        assertEquals(5, jsonArray.size());\n        assertTrue(jsonArray.get(0).getAsBoolean());\n        assertEquals('a', jsonArray.get(1).getAsCharacter());\n        assertEquals(123, jsonArray.get(2).getAsInt());\n        assertEquals(\"test\", jsonArray.get(3).getAsString());\n        assertEquals(primitive, jsonArray.get(4));\n    }\n\n    @Test\n    void testAddAllAndContains() {\n        JsonArray other = new JsonArray();\n        other.add(new JsonPrimitive(1));\n        other.add(new JsonPrimitive(2));\n\n        jsonArray.add(new JsonPrimitive(0));\n        jsonArray.addAll(other);\n\n        assertEquals(3, jsonArray.size());\n        assertTrue(jsonArray.contains(new JsonPrimitive(0)));\n        assertTrue(jsonArray.contains(new JsonPrimitive(1)));\n        assertTrue(jsonArray.contains(new JsonPrimitive(2)));\n    }\n\n    @Test\n    void testSetAndRemoveByIndexAndElement() {\n        jsonArray.add(new JsonPrimitive(\"one\"));\n        jsonArray.add(new JsonPrimitive(\"two\"));\n        jsonArray.add(new JsonPrimitive(\"three\"));\n\n        JsonPrimitive newElem = new JsonPrimitive(\"new\");\n        JsonElement old = jsonArray.set(1, newElem);\n        assertEquals(\"two\", old.getAsString());\n        assertEquals(newElem, jsonArray.get(1));\n\n        boolean removed = jsonArray.remove(newElem);\n        assertTrue(removed);\n        assertEquals(2, jsonArray.size());\n\n        JsonElement removedByIndex = jsonArray.remove(0);\n        assertEquals(\"one\", removedByIndex.getAsString());\n        assertEquals(1, jsonArray.size());\n    }\n\n    @Test\n    void testIterator() {\n        jsonArray.add(new JsonPrimitive(1));\n        jsonArray.add(new JsonPrimitive(2));\n        jsonArray.add(new JsonPrimitive(3));\n\n        Iterator<JsonElement> iterator = jsonArray.iterator();\n        int count = 0;\n        while (iterator.hasNext()) {\n            JsonElement elem = iterator.next();\n            assertNotNull(elem);\n            count++;\n        }\n        assertEquals(jsonArray.size(), count);\n    }\n\n    @Test\n    void testDeepCopy() {\n        jsonArray.add(new JsonPrimitive(\"value\"));\n        JsonArray copy = jsonArray.deepCopy();\n        assertNotSame(jsonArray, copy);\n        assertEquals(jsonArray.size(), copy.size());\n        assertEquals(jsonArray.get(0), copy.get(0));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884001,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 784,
+    "prompt_tokens": 484,
+    "total_tokens": 1268,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.97
+  }
+}

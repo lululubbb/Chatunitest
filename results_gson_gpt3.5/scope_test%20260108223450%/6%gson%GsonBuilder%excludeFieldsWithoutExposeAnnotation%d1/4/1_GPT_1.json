@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmI5jprMFLO0yKyMFQgRCrqEPA0z",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertSame;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testExcludeFieldsWithoutExposeAnnotation() throws Exception {\n    // Access the private field 'excluder' before invocation\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder excluderBefore = (Excluder) excluderField.get(gsonBuilder);\n\n    GsonBuilder returned = gsonBuilder.excludeFieldsWithoutExposeAnnotation();\n\n    // Verify the method returns the same GsonBuilder instance (this)\n    assertSame(gsonBuilder, returned);\n\n    // Verify that excluder field is updated to a new Excluder instance\n    Excluder excluderAfter = (Excluder) excluderField.get(gsonBuilder);\n    // The excluder should not be the same instance as before\n    // but should be the result of excluder.excludeFieldsWithoutExposeAnnotation()\n    // Since Excluder.DEFAULT.excludeFieldsWithoutExposeAnnotation() returns a new Excluder,\n    // the field should be different from the original one.\n    assertSame(false, excluderBefore == excluderAfter);\n\n    // Further, check that excluderAfter is not null\n    assertSame(false, excluderAfter == null);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886361,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 342,
+    "prompt_tokens": 1126,
+    "total_tokens": 1468,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.29
+  }
+}

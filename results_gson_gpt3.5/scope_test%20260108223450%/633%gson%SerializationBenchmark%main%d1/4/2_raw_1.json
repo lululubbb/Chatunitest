@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class SerializationBenchmarkTest {\n\n  @Test\n  void testMain_invokesNonUploadingCaliperRunnerRun() {\n    try (MockedStatic<NonUploadingCaliperRunner> mockedRunner = Mockito.mockStatic(NonUploadingCaliperRunner.class)) {\n      String[] args = new String[] {\"arg1\", \"arg2\"};\n\n      SerializationBenchmark.main(args);\n\n      mockedRunner.verify(() -> NonUploadingCaliperRunner.run(SerializationBenchmark.class, args));\n    }\n  }\n\n  @Test\n  void testSetUp_andTimeObjectSerialization_reflection() throws Exception {\n    SerializationBenchmark benchmark = new SerializationBenchmark();\n\n    // Invoke private setUp method via reflection\n    Method setUpMethod = SerializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    setUpMethod.setAccessible(true);\n    setUpMethod.invoke(benchmark);\n\n    // Prepare to invoke timeObjectSerialization\n    Method timeMethod = SerializationBenchmark.class.getDeclaredMethod(\"timeObjectSerialization\", int.class);\n    timeMethod.setAccessible(true);\n\n    // Call with reps = 1\n    timeMethod.invoke(benchmark, 1);\n\n    // Call with reps = 0 to cover branch if any\n    timeMethod.invoke(benchmark, 0);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 249,
+  "completion_tokens": 290,
+  "total_tokens": 539,
+  "llm_elapsed_time_seconds": 7.55
+}

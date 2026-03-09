@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxVRCrqAGlqanB6ipXrr2vVWs78",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass StreamsTest {\n\n  @Test\n  void write_callsTypeAdaptersJsonElementWrite() throws IOException, ReflectiveOperationException {\n    JsonElement element = mock(JsonElement.class);\n    JsonWriter writer = mock(JsonWriter.class);\n\n    try (MockedStatic<TypeAdapters> mockedTypeAdapters = Mockito.mockStatic(TypeAdapters.class)) {\n      // Use reflection to get the JSON_ELEMENT field type (TypeAdapter<JsonElement>)\n      java.lang.reflect.Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n      jsonElementField.setAccessible(true);\n      Object jsonElementAdapterMock = mock(jsonElementField.getType());\n\n      // Mock the static field JSON_ELEMENT to return our mock\n      mockedTypeAdapters.when(() -> jsonElementField.get(null)).thenReturn(jsonElementAdapterMock);\n\n      // Use reflection to get the write method and stub it\n      java.lang.reflect.Method writeMethod = jsonElementAdapterMock.getClass().getMethod(\"write\", JsonWriter.class, JsonElement.class);\n      doNothing().when(jsonElementAdapterMock).write(writer, element);\n\n      // Call the method under test\n      Streams.write(element, writer);\n\n      // Verify that write was called\n      verify(jsonElementAdapterMock).write(writer, element);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885085,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 319,
+    "prompt_tokens": 936,
+    "total_tokens": 1255,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.22
+  }
+}

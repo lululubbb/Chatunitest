@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlkRghCBsbBLEY0sgaDNYg0revMV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.GsonBuilder;\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSetExclusionStrategies_withSingleStrategy() throws Exception {\n    ExclusionStrategy strategy = mock(ExclusionStrategy.class);\n\n    GsonBuilder returned = gsonBuilder.setExclusionStrategies(strategy);\n\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to get private field excluder\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder excluder = (Excluder) excluderField.get(gsonBuilder);\n\n    // The excluder should not be the default instance, indicating withExclusionStrategy was called\n    assertNotNull(excluder);\n    assertNotSame(Excluder.DEFAULT, excluder);\n  }\n\n  @Test\n  public void testSetExclusionStrategies_withMultipleStrategies() throws Exception {\n    ExclusionStrategy strategy1 = mock(ExclusionStrategy.class);\n    ExclusionStrategy strategy2 = mock(ExclusionStrategy.class);\n\n    GsonBuilder returned = gsonBuilder.setExclusionStrategies(strategy1, strategy2);\n\n    assertSame(gsonBuilder, returned);\n\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder excluder = (Excluder) excluderField.get(gsonBuilder);\n\n    assertNotNull(excluder);\n    assertNotSame(Excluder.DEFAULT, excluder);\n  }\n\n  @Test\n  public void testSetExclusionStrategies_withNoStrategies() {\n    ExclusionStrategy[] empty = new ExclusionStrategy[0];\n\n    assertThrows(NullPointerException.class, () -> gsonBuilder.setExclusionStrategies((ExclusionStrategy[]) null));\n\n    // Setting with empty array should succeed and return this\n    GsonBuilder returned = gsonBuilder.setExclusionStrategies(empty);\n    assertSame(gsonBuilder, returned);\n  }\n\n  @Test\n  public void testSetExclusionStrategies_nullStrategyInArray() {\n    ExclusionStrategy strategy = mock(ExclusionStrategy.class);\n    ExclusionStrategy[] strategies = new ExclusionStrategy[] {strategy, null};\n\n    assertThrows(NullPointerException.class, () -> gsonBuilder.setExclusionStrategies(strategies));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884275,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 573,
+    "prompt_tokens": 1728,
+    "total_tokens": 2301,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.11
+  }
+}

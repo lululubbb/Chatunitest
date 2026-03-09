@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmOK4NuQwonNBiTrcBpqtKED73bj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Mock JsonElement input for constructor (can be null since we won't use it directly)\n    reader = new JsonTreeReader(null);\n\n    // Setup internal state for testing endArray\n    // stackSize = 2 (to allow stack pops and pathIndices increment)\n    setField(reader, \"stackSize\", 2);\n\n    // Initialize stack with dummy objects (not null) to avoid NullPointerException on popStack\n    Object[] stack = new Object[32];\n    stack[0] = new Object();\n    stack[1] = new Object();\n    setField(reader, \"stack\", stack);\n\n    // Initialize pathIndices with zeroes\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 0;\n    setField(reader, \"pathIndices\", pathIndices);\n  }\n\n  @Test\n  public void testEndArray_normal() throws Exception {\n    // Setup stack and stackSize again to ensure popStack works\n    Object[] stack = new Object[32];\n    stack[0] = new Object();\n    stack[1] = new Object();\n    setField(reader, \"stack\", stack);\n    setField(reader, \"stackSize\", 2);\n\n    // Call endArray via reflection\n    invokePrivateVoidMethod(reader, \"endArray\");\n\n    // Verify pathIndices[stackSize - 1] incremented by 1\n    int[] pathIndices = getField(reader, \"pathIndices\");\n    int stackSize = getField(reader, \"stackSize\");\n    assertEquals(1, pathIndices[stackSize - 1]);\n  }\n\n  @Test\n  public void testEndArray_stackSizeZero_noIncrement() throws Exception {\n    // Set stackSize to 0 to test no increment branch\n    setField(reader, \"stackSize\", 0);\n\n    // Setup stack with dummy objects so popStack does not fail\n    Object[] stack = new Object[32];\n    stack[0] = new Object();\n    setField(reader, \"stack\", stack);\n\n    // Call endArray via reflection\n    invokePrivateVoidMethod(reader, \"endArray\");\n\n    int[] pathIndices = getField(reader, \"pathIndices\");\n    // Since stackSize is 0, no increment should occur, all zeros\n    for (int i = 0; i < pathIndices.length; i++) {\n      assertEquals(0, pathIndices[i]);\n    }\n  }\n\n  @Test\n  public void testEndArray_expectThrows() throws Exception {\n    // Instead of subclassing final JsonTreeReader, use a spy-like approach by reflection to replace expect method\n    // Since expect is private, we cannot override it, so we create a helper class to invoke endArray but simulate expect throwing\n\n    JsonTreeReader throwingReader = new JsonTreeReader(null);\n\n    // Setup stack and stackSize so popStack would work if called\n    Object[] stack = new Object[32];\n    stack[0] = new Object();\n    stack[1] = new Object();\n    setField(throwingReader, \"stack\", stack);\n    setField(throwingReader, \"stackSize\", 2);\n\n    // Use a proxy approach: replace the expect method temporarily by reflection to throw exception\n    // Since expect is private and final class, we can't override, so we replace the method to throw via java.lang.reflect.Proxy is not possible\n    // Instead, we can use a subclass of JsonReader and a custom JsonTreeReader that delegates and overrides expect - but class is final\n    // So, we use reflection to replace the method temporarily via MethodHandles or use a wrapper method to simulate expect throwing\n\n    // Instead, we can test that endArray throws if expect throws by invoking expect method directly with wrong token\n    // So call expect with a wrong token that will throw\n\n    // Call expect with wrong token via reflection to throw\n    Exception thrown = assertThrows(Exception.class, () -> {\n      invokePrivateVoidMethod(throwingReader, \"expect\", JsonToken.BEGIN_OBJECT);\n    });\n\n    // Now test that endArray throws as well by invoking endArray after setting expect to throw\n    // We simulate expect throwing by temporarily replacing expect method via reflection is complex,\n    // so we just test that when expect throws, endArray throws as well by invoking endArray with corrupted state.\n\n    // To simulate expect throwing inside endArray, we can use a subclass of JsonReader with overridden expect - but class is final, so not possible.\n\n    // So, as a workaround, we invoke endArray and expect it to throw if expect throws.\n    // We will forcibly corrupt the stack so expect throws.\n\n    // For example, set stackSize to 0 and call endArray, expect it to throw MalformedJsonException or IllegalStateException\n\n    setField(throwingReader, \"stackSize\", 0);\n    setField(throwingReader, \"stack\", new Object[32]);\n\n    IllegalStateException thrown2 = assertThrows(IllegalStateException.class, () -> {\n      invokePrivateVoidMethod(throwingReader, \"endArray\");\n    });\n\n    // The exact message may vary; just check exception type\n    assertNotNull(thrown2);\n  }\n\n  // Helper to get private field via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object target, String name) throws Exception {\n    Field field = JsonTreeReader.class.getDeclaredField(name);\n    field.setAccessible(true);\n    return (T) field.get(target);\n  }\n\n  // Helper to set private field via reflection\n  private void setField(Object target, String name, Object value) throws Exception {\n    Field field = JsonTreeReader.class.getDeclaredField(name);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  // Helper to invoke private void method with one parameter\n  private void invokePrivateVoidMethod(Object target, String methodName, Object param) throws Exception {\n    Method method = JsonTreeReader.class.getDeclaredMethod(methodName, param.getClass());\n    method.setAccessible(true);\n    method.invoke(target, param);\n  }\n\n  // Helper to invoke private void method with no parameters\n  private void invokePrivateVoidMethod(Object target, String methodName) throws Exception {\n    Method method = JsonTreeReader.class.getDeclaredMethod(methodName);\n    method.setAccessible(true);\n    method.invoke(target);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886748,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1407,
+    "prompt_tokens": 1828,
+    "total_tokens": 3235,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.46
+  }
+}

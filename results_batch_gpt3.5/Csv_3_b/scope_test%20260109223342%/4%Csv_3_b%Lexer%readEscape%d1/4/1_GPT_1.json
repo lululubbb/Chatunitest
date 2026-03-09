@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7qZISOlgB72TYLN5Su2kxyD0zk1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.BACKSPACE;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.END_OF_STREAM;\nimport static org.apache.commons.csv.Constants.FF;\nimport static org.apache.commons.csv.Constants.LF;\nimport static org.apache.commons.csv.Constants.TAB;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass LexerReadEscapeTest {\n\n    @Mock\n    private ExtendedBufferedReader inMock;\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() {\n        MockitoAnnotations.openMocks(this);\n        // Create anonymous subclass since Lexer is abstract\n        lexer = new Lexer(CSVFormat.DEFAULT, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testReadEscapeReturnsCR() throws IOException {\n        when(inMock.read()).thenReturn((int) 'r');\n        int result = lexer.readEscape();\n        assertEquals(CR, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsLF() throws IOException {\n        when(inMock.read()).thenReturn((int) 'n');\n        int result = lexer.readEscape();\n        assertEquals(LF, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsTAB() throws IOException {\n        when(inMock.read()).thenReturn((int) 't');\n        int result = lexer.readEscape();\n        assertEquals(TAB, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsBACKSPACE() throws IOException {\n        when(inMock.read()).thenReturn((int) 'b');\n        int result = lexer.readEscape();\n        assertEquals(BACKSPACE, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsFF() throws IOException {\n        when(inMock.read()).thenReturn((int) 'f');\n        int result = lexer.readEscape();\n        assertEquals(FF, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsCRChar() throws IOException {\n        when(inMock.read()).thenReturn(CR);\n        int result = lexer.readEscape();\n        assertEquals(CR, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsLFChar() throws IOException {\n        when(inMock.read()).thenReturn(LF);\n        int result = lexer.readEscape();\n        assertEquals(LF, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsFFChar() throws IOException {\n        when(inMock.read()).thenReturn(FF);\n        int result = lexer.readEscape();\n        assertEquals(FF, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsTABChar() throws IOException {\n        when(inMock.read()).thenReturn(TAB);\n        int result = lexer.readEscape();\n        assertEquals(TAB, result);\n    }\n\n    @Test\n    void testReadEscapeReturnsBACKSPACEChar() throws IOException {\n        when(inMock.read()).thenReturn(BACKSPACE);\n        int result = lexer.readEscape();\n        assertEquals(BACKSPACE, result);\n    }\n\n    @Test\n    void testReadEscapeThrowsIOExceptionOnEOF() throws IOException {\n        when(inMock.read()).thenReturn(END_OF_STREAM);\n        IOException thrown = assertThrows(IOException.class, () -> lexer.readEscape());\n        assertEquals(\"EOF whilst processing escape sequence\", thrown.getMessage());\n    }\n\n    @Test\n    void testReadEscapeReturnsDefaultChar() throws IOException {\n        int arbitraryChar = 'x';\n        when(inMock.read()).thenReturn(arbitraryChar);\n        int result = lexer.readEscape();\n        assertEquals(arbitraryChar, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969223,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 787,
+    "prompt_tokens": 588,
+    "total_tokens": 1375,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.49
+  }
+}

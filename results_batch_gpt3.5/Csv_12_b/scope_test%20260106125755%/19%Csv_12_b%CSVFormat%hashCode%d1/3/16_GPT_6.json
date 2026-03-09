@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutZBCFmeWXVIU1o2mEt8u1yRukX0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Constructor;\nimport java.util.Arrays;\n\nclass CSVFormatHashCodeTest {\n\n    @Test\n    void testHashCode_AllFieldsSet() throws Exception {\n        String[] header = new String[] {\"a\", \"b\"};\n        Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        CSVFormat format = ctor.newInstance(\n                ';',\n                '\\\"',\n                QuoteMode.ALL,\n                '#',\n                '\\\\',\n                true,\n                false,\n                \"\\r\\n\",\n                \"NULL\",\n                header,\n                true,\n                false);\n\n        int expected = 1;\n        int prime = 31;\n        expected = prime * expected + ';';\n        expected = prime * expected + QuoteMode.ALL.hashCode();\n        expected = prime * expected + Character.valueOf('\\\"').hashCode();\n        expected = prime * expected + Character.valueOf('#').hashCode();\n        expected = prime * expected + Character.valueOf('\\\\').hashCode();\n        expected = prime * expected + \"NULL\".hashCode();\n        expected = prime * expected + (true ? 1231 : 1237);\n        expected = prime * expected + (false ? 1231 : 1237);\n        expected = prime * expected + (true ? 1231 : 1237);\n        expected = prime * expected + \"\\r\\n\".hashCode();\n        expected = prime * expected + Arrays.hashCode(header);\n\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_NullableFieldsNull() throws Exception {\n        Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        CSVFormat format = ctor.newInstance(\n                ',',\n                null,\n                null,\n                null,\n                null,\n                false,\n                true,\n                null,\n                null,\n                null,\n                false,\n                false);\n\n        int expected = 1;\n        int prime = 31;\n        expected = prime * expected + ',';\n        expected = prime * expected + 0;\n        expected = prime * expected + 0;\n        expected = prime * expected + 0;\n        expected = prime * expected + 0;\n        expected = prime * expected + 0;\n        expected = prime * expected + (false ? 1231 : 1237);\n        expected = prime * expected + (true ? 1231 : 1237);\n        expected = prime * expected + (false ? 1231 : 1237);\n        expected = prime * expected + 0;\n        expected = prime * expected + 0;\n\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_DifferentHeaders() throws Exception {\n        String[] header1 = new String[] {\"x\"};\n        String[] header2 = new String[] {\"y\"};\n\n        Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        CSVFormat format1 = ctor.newInstance(\n                ',',\n                '\\\"',\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                header1,\n                false,\n                false);\n\n        CSVFormat format2 = ctor.newInstance(\n                ',',\n                '\\\"',\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                header2,\n                false,\n                false);\n\n        assertNotEquals(format1.hashCode(), format2.hashCode());\n    }\n\n    @Test\n    void testHashCode_Consistency() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        int first = format.hashCode();\n        int second = format.hashCode();\n        assertEquals(first, second);\n    }\n\n    @Test\n    void testHashCode_PrivateConstructorAndFields() throws Exception {\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Constructor<CSVFormat> ctor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        String[] header = new String[] {\"h1\", \"h2\"};\n        CSVFormat format = ctor.newInstance(\n                '|',\n                'q',\n                QuoteMode.NON_NUMERIC,\n                '!',\n                '*',\n                true,\n                true,\n                \"\\n\",\n                \"nullStr\",\n                header,\n                false,\n                false);\n\n        Method hashCodeMethod = clazz.getDeclaredMethod(\"hashCode\");\n        hashCodeMethod.setAccessible(true);\n        int hash = (int) hashCodeMethod.invoke(format);\n\n        int expected = 1;\n        int prime = 31;\n        expected = prime * expected + '|';\n        expected = prime * expected + QuoteMode.NON_NUMERIC.hashCode();\n        expected = prime * expected + Character.valueOf('q').hashCode();\n        expected = prime * expected + Character.valueOf('!').hashCode();\n        expected = prime * expected + Character.valueOf('*').hashCode();\n        expected = prime * expected + \"nullStr\".hashCode();\n        expected = prime * expected + (true ? 1231 : 1237);\n        expected = prime * expected + (true ? 1231 : 1237);\n        expected = prime * expected + (false ? 1231 : 1237);\n        expected = prime * expected + \"\\n\".hashCode();\n        expected = prime * expected + Arrays.hashCode(header);\n\n        assertEquals(expected, hash);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676001,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1313,
+    "prompt_tokens": 2289,
+    "total_tokens": 3602,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.39
+  }
+}

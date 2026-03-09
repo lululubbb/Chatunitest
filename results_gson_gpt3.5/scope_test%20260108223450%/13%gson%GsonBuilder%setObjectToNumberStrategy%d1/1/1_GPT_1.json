@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnLLiMkzTbpeHtw1X0XcqleasRWh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Objects;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void setObjectToNumberStrategy_shouldSetStrategyAndReturnThis() throws Exception {\n    // Arrange\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n\n    // Act\n    GsonBuilder returned = gsonBuilder.setObjectToNumberStrategy(mockStrategy);\n\n    // Assert returned this\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to check private field objectToNumberStrategy\n    Field field = GsonBuilder.class.getDeclaredField(\"objectToNumberStrategy\");\n    field.setAccessible(true);\n    Object actualStrategy = field.get(gsonBuilder);\n    assertSame(mockStrategy, actualStrategy);\n  }\n\n  @Test\n  void setObjectToNumberStrategy_shouldThrowNPEWhenNull() {\n    // Act & Assert\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.setObjectToNumberStrategy(null);\n    });\n    assertEquals(\"strategy == null\", thrown.getMessage());\n  }\n\n  @Test\n  void setObjectToNumberStrategy_reflectiveInvocation_shouldSetStrategy() throws Exception {\n    // Arrange\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n    Method method = GsonBuilder.class.getDeclaredMethod(\"setObjectToNumberStrategy\", ToNumberStrategy.class);\n    method.setAccessible(true);\n\n    // Act\n    Object returned = method.invoke(gsonBuilder, mockStrategy);\n\n    // Assert\n    assertSame(gsonBuilder, returned);\n    Field field = GsonBuilder.class.getDeclaredField(\"objectToNumberStrategy\");\n    field.setAccessible(true);\n    assertSame(mockStrategy, field.get(gsonBuilder));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890407,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 425,
+    "prompt_tokens": 1075,
+    "total_tokens": 1500,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.55
+  }
+}

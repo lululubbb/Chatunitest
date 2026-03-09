@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZTiI6W9X46fkLGFLwvBydgaIFb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind.util;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ISO8601UtilsTest {\n\n    @Test\n    public void testParseInt_ValidInput() throws Throwable {\n        Method parseIntMethod = ISO8601Utils.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n        parseIntMethod.setAccessible(true);\n\n        // \"12345\" from index 0 to 5 -> 12345\n        int result = (int) parseIntMethod.invoke(null, \"12345\", 0, 5);\n        assertEquals(12345, result);\n\n        // \"0\" from index 0 to 1 -> 0\n        result = (int) parseIntMethod.invoke(null, \"0\", 0, 1);\n        assertEquals(0, result);\n\n        // \"007\" from index 0 to 3 -> 7\n        result = (int) parseIntMethod.invoke(null, \"007\", 0, 3);\n        assertEquals(7, result);\n\n        // \"987654321\" from index 0 to 9 -> 987654321\n        result = (int) parseIntMethod.invoke(null, \"987654321\", 0, 9);\n        assertEquals(987654321, result);\n\n        // substring \"234\" from \"12345\" index 1 to 4 -> 234\n        result = (int) parseIntMethod.invoke(null, \"12345\", 1, 4);\n        assertEquals(234, result);\n    }\n\n    @Test\n    public void testParseInt_InvalidIndexes() throws Throwable {\n        Method parseIntMethod = ISO8601Utils.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n        parseIntMethod.setAccessible(true);\n\n        // beginIndex < 0\n        InvocationTargetException ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"12345\", -1, 3));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"12345\", ex.getCause().getMessage());\n\n        // endIndex > length\n        ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"12345\", 0, 10));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"12345\", ex.getCause().getMessage());\n\n        // beginIndex > endIndex\n        ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"12345\", 4, 3));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"12345\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testParseInt_InvalidCharacters() throws Throwable {\n        Method parseIntMethod = ISO8601Utils.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n        parseIntMethod.setAccessible(true);\n\n        // Non-digit character at start\n        InvocationTargetException ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"a123\", 0, 4));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"Invalid number: a123\", ex.getCause().getMessage());\n\n        // Non-digit character in middle\n        ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"12b3\", 0, 4));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"Invalid number: 12b3\", ex.getCause().getMessage());\n\n        // Non-digit character at end\n        ex = assertThrows(InvocationTargetException.class,\n                () -> parseIntMethod.invoke(null, \"123c\", 0, 4));\n        assertTrue(ex.getCause() instanceof NumberFormatException);\n        assertEquals(\"Invalid number: 123c\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testParseInt_EmptySubstring() throws Throwable {\n        Method parseIntMethod = ISO8601Utils.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n        parseIntMethod.setAccessible(true);\n\n        // beginIndex == endIndex, empty substring -> should NOT throw exception, returns 0\n        int result = (int) parseIntMethod.invoke(null, \"12345\", 2, 2);\n        assertEquals(0, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887439,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 962,
+    "prompt_tokens": 1889,
+    "total_tokens": 2851,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.75
+  }
+}

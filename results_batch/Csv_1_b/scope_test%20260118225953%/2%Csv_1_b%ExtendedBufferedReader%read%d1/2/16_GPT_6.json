@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOcIeycUZR05UCgJUJEy7PBvvZTG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testRead_returnsCharNotNewline() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        // Use reflection to access the private 'in' field of BufferedReader\n        Reader inReader = getInReader(spyReader);\n        Reader spyInReader = Mockito.spy(inReader);\n\n        // Replace the 'in' field with the spy\n        setInReader(spyReader, spyInReader);\n\n        when(spyInReader.read()).thenReturn((int) 'A');\n\n        int result = spyReader.read();\n\n        assertEquals('A', result);\n        assertEquals('A', getLastChar(spyReader));\n        assertEquals(0, getLineCounter(spyReader));\n    }\n\n    @Test\n    void testRead_returnsNewlineIncrementsLineCounter() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        Reader inReader = getInReader(spyReader);\n        Reader spyInReader = Mockito.spy(inReader);\n        setInReader(spyReader, spyInReader);\n\n        when(spyInReader.read()).thenReturn((int) '\\n');\n\n        int result = spyReader.read();\n\n        assertEquals('\\n', result);\n        assertEquals('\\n', getLastChar(spyReader));\n        assertEquals(1, getLineCounter(spyReader));\n    }\n\n    @Test\n    void testRead_returnsEndOfStream() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        Reader inReader = getInReader(spyReader);\n        Reader spyInReader = Mockito.spy(inReader);\n        setInReader(spyReader, spyInReader);\n\n        when(spyInReader.read()).thenReturn(ExtendedBufferedReader.END_OF_STREAM);\n\n        int result = spyReader.read();\n\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, getLastChar(spyReader));\n        assertEquals(0, getLineCounter(spyReader));\n    }\n\n    // Helper method to access private 'lastChar' field via reflection\n    private int getLastChar(ExtendedBufferedReader reader) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n            field.setAccessible(true);\n            return field.getInt(reader);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Helper method to access private 'lineCounter' field via reflection\n    private int getLineCounter(ExtendedBufferedReader reader) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n            field.setAccessible(true);\n            return field.getInt(reader);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Helper method to access private 'in' field of BufferedReader via reflection\n    private Reader getInReader(ExtendedBufferedReader reader) {\n        try {\n            Field inField = BufferedReader.class.getDeclaredField(\"in\");\n            inField.setAccessible(true);\n            return (Reader) inField.get(reader);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Helper method to set the private 'in' field of BufferedReader via reflection\n    private void setInReader(ExtendedBufferedReader reader, Reader newIn) {\n        try {\n            Field inField = BufferedReader.class.getDeclaredField(\"in\");\n            inField.setAccessible(true);\n            inField.set(reader, newIn);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748670,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 893,
+    "prompt_tokens": 1263,
+    "total_tokens": 2156,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.99
+  }
+}

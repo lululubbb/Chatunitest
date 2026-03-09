@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwRvqlXYk0hdmcR6NAafuIVQiXg5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.BufferedWriter;\nimport java.io.IOException;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setup() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testPrintWithPathAndCharset() throws IOException {\n        Path mockPath = mock(Path.class);\n        BufferedWriter mockWriter = mock(BufferedWriter.class);\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        try (MockedStatic<Files> filesStatic = Mockito.mockStatic(Files.class)) {\n            filesStatic.when(() -> Files.newBufferedWriter(mockPath, StandardCharsets.UTF_8)).thenReturn(mockWriter);\n\n            CSVFormat spyFormat = spy(csvFormat);\n            doReturn(mockPrinter).when(spyFormat).print(mockWriter);\n\n            CSVPrinter printer = spyFormat.print(mockPath, StandardCharsets.UTF_8);\n\n            assertNotNull(printer);\n            assertEquals(mockPrinter, printer);\n\n            filesStatic.verify(() -> Files.newBufferedWriter(mockPath, StandardCharsets.UTF_8));\n            verify(spyFormat).print(mockWriter);\n        }\n    }\n\n    @Test\n    public void testPrintWithNullPathThrowsException() {\n        assertThrows(NullPointerException.class, () -> {\n            csvFormat.print((Path) null, StandardCharsets.UTF_8);\n        });\n    }\n\n    @Test\n    public void testPrintWithNullCharsetThrowsException() {\n        Path mockPath = mock(Path.class);\n        assertThrows(NullPointerException.class, () -> {\n            csvFormat.print(mockPath, null);\n        });\n    }\n\n    @Test\n    public void testPrintWithRealPathAndCharset() throws IOException {\n        Path tempFile = Files.createTempFile(\"csvformattest\", \".csv\");\n        tempFile.toFile().deleteOnExit();\n\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVPrinter printer = format.print(tempFile, StandardCharsets.UTF_8);\n        assertNotNull(printer);\n\n        printer.close();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687083,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 482,
+    "prompt_tokens": 2558,
+    "total_tokens": 3040,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.17
+  }
+}

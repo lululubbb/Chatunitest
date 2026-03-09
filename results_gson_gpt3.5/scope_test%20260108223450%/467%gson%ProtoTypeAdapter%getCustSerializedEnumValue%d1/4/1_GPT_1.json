@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpIzStHNXezkluvp1PigdEiDDrn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.EnumValueOptions;\nimport com.google.protobuf.Extension;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashSet;\nimport java.util.Set;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapter;\n  private Set<Extension<EnumValueOptions, String>> serializedEnumValueExtensions;\n\n  @BeforeEach\n  void setUp() {\n    serializedEnumValueExtensions = new HashSet<>();\n    // We create a ProtoTypeAdapter instance via reflection since constructor is private\n    try {\n      Method newBuilderMethod = ProtoTypeAdapter.class.getDeclaredMethod(\"newBuilder\");\n      newBuilderMethod.setAccessible(true);\n      Object builder = newBuilderMethod.invoke(null);\n\n      // Builder class is not given, so we create ProtoTypeAdapter instance by reflection\n      // We assume the constructor is accessible (or else use reflection to make accessible)\n      var constructor = ProtoTypeAdapter.class.getDeclaredConstructor(\n          EnumSerialization.class,\n          com.google.common.base.CaseFormat.class,\n          com.google.common.base.CaseFormat.class,\n          Set.class,\n          Set.class);\n      constructor.setAccessible(true);\n      protoTypeAdapter = constructor.newInstance(\n          null,\n          null,\n          null,\n          Collections.emptySet(),\n          serializedEnumValueExtensions);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsExtensionValue_whenExtensionPresent() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    Extension<EnumValueOptions, String> extension = mock(Extension.class);\n    serializedEnumValueExtensions.add(extension);\n\n    EnumValueOptions options = mock(EnumValueOptions.class);\n    when(options.hasExtension(extension)).thenReturn(true);\n    when(options.getExtension(extension)).thenReturn(\"customValue\");\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\",\n        EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultValue\");\n\n    assertEquals(\"customValue\", result);\n    verify(options).hasExtension(extension);\n    verify(options).getExtension(extension);\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsDefaultValue_whenNoExtensionPresent() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    Extension<EnumValueOptions, String> extension = mock(Extension.class);\n    serializedEnumValueExtensions.add(extension);\n\n    EnumValueOptions options = mock(EnumValueOptions.class);\n    when(options.hasExtension(extension)).thenReturn(false);\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\",\n        EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultValue\");\n\n    assertEquals(\"defaultValue\", result);\n    verify(options).hasExtension(extension);\n    verify(options, never()).getExtension(extension);\n  }\n\n  @Test\n  void getCustSerializedEnumValue_returnsDefaultValue_whenExtensionSetEmpty() throws Exception {\n    EnumValueOptions options = mock(EnumValueOptions.class);\n\n    // Clear extensions set\n    serializedEnumValueExtensions.clear();\n\n    Method method = ProtoTypeAdapter.class.getDeclaredMethod(\"getCustSerializedEnumValue\",\n        EnumValueOptions.class, String.class);\n    method.setAccessible(true);\n\n    String result = (String) method.invoke(protoTypeAdapter, options, \"defaultValue\");\n\n    assertEquals(\"defaultValue\", result);\n    verify(options, never()).hasExtension(any());\n    verify(options, never()).getExtension(any());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888420,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 788,
+    "prompt_tokens": 736,
+    "total_tokens": 1524,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.33
+  }
+}

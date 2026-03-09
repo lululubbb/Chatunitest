@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutWGbONbjSAlh5F84YhfLkeIWmZc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_NullQuoteChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat result = original.withQuote((Character) null);\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n        // Original should remain unchanged\n        assertEquals(original.getQuoteCharacter(), CSVFormat.DEFAULT.getQuoteCharacter());\n    }\n\n    @Test\n    public void testWithQuote_ValidQuoteChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char quoteChar = '\\'';\n        CSVFormat result = original.withQuote(Character.valueOf(quoteChar));\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        // Original should remain unchanged\n        assertEquals(original.getQuoteCharacter(), CSVFormat.DEFAULT.getQuoteCharacter());\n    }\n\n    @Test\n    public void testWithQuote_LineBreakQuoteChar_Throws() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Using reflection to access private static method isLineBreak(char)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test line break characters that should cause exception\n        Character[] lineBreaks = new Character[] { '\\n', '\\r' };\n\n        for (Character lb : lineBreaks) {\n            // Confirm isLineBreak returns true for these characters\n            boolean isLineBreak = (boolean) isLineBreakMethod.invoke(null, lb.charValue());\n            assertTrue(isLineBreak);\n\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                format.withQuote(lb);\n            });\n            assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675820,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 405,
+    "prompt_tokens": 1516,
+    "total_tokens": 1921,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.61
+  }
+}

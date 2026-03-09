@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.typeadapters.RuntimeTypeAdapterFactory;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass RuntimeTypeAdapterFactoryTest {\n\n  private RuntimeTypeAdapterFactory<Object> factory;\n\n  @BeforeEach\n  void setUp() {\n    factory = RuntimeTypeAdapterFactory.of(Object.class, \"type\");\n  }\n\n  @Test\n  void registerSubtype_withClass_registersSubtypeWithSimpleNameLabel() {\n    class Subtype {}\n\n    RuntimeTypeAdapterFactory<Object> returned = factory.registerSubtype(Subtype.class);\n\n    assertSame(factory, returned);\n    // Use reflection to verify private maps contain the subtype and label\n    try {\n      var subtypeToLabelField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"subtypeToLabel\");\n      subtypeToLabelField.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      var subtypeToLabel = (java.util.Map<Class<?>, String>) subtypeToLabelField.get(factory);\n      assertTrue(subtypeToLabel.containsKey(Subtype.class));\n      assertEquals(\"Subtype\", subtypeToLabel.get(Subtype.class));\n\n      var labelToSubtypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"labelToSubtype\");\n      labelToSubtypeField.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      var labelToSubtype = (java.util.Map<String, Class<?>>) labelToSubtypeField.get(factory);\n      assertTrue(labelToSubtype.containsKey(\"Subtype\"));\n      assertEquals(Subtype.class, labelToSubtype.get(\"Subtype\"));\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 485,
+  "completion_tokens": 355,
+  "total_tokens": 840,
+  "llm_elapsed_time_seconds": 5.03
+}

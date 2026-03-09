@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnRjVvkL228qRfYu0QSNGuxbe1zh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonParserTest {\n\n  @Test\n  public void testParseString_validJson_returnsJsonElement() throws IOException {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonElement element = JsonParser.parseString(json);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testParseString_emptyJson_throwsException() {\n    String json = \"\";\n    try (MockedStatic<JsonParser> mocked = Mockito.mockStatic(JsonParser.class, invocation -> {\n      if (invocation.getMethod().getName().equals(\"parseString\")) {\n        throw new JsonParseException(\"Empty JSON\");\n      }\n      return invocation.callRealMethod();\n    })) {\n      assertThrows(JsonParseException.class, () -> JsonParser.parseString(json));\n    }\n  }\n\n  @Test\n  public void testParseReader_Reader_validJson_returnsJsonElement() throws IOException {\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n    JsonElement element = JsonParser.parseReader(reader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testParseReader_Reader_emptyJson_throwsException() {\n    Reader reader = new StringReader(\"\");\n    try (MockedStatic<JsonParser> mocked = Mockito.mockStatic(JsonParser.class, invocation -> {\n      if (invocation.getMethod().getName().equals(\"parseReader\") && invocation.getArguments().length == 1 && invocation.getArguments()[0] instanceof Reader) {\n        throw new JsonParseException(\"Empty JSON\");\n      }\n      return invocation.callRealMethod();\n    })) {\n      assertThrows(JsonParseException.class, () -> JsonParser.parseReader(reader));\n    }\n  }\n\n  @Test\n  public void testParseReader_JsonReader_validJson_returnsJsonElement() throws IOException {\n    JsonReader jsonReader = new JsonReader(new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    JsonElement element = JsonParser.parseReader(jsonReader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testParseReader_JsonReader_emptyJson_throwsException() throws IOException {\n    JsonReader jsonReader = new JsonReader(new StringReader(\"\"));\n    try (MockedStatic<JsonParser> mocked = Mockito.mockStatic(JsonParser.class, invocation -> {\n      if (invocation.getMethod().getName().equals(\"parseReader\") && invocation.getArguments().length == 1 && invocation.getArguments()[0] instanceof JsonReader) {\n        throw new JsonParseException(\"Empty JSON\");\n      }\n      return invocation.callRealMethod();\n    })) {\n      assertThrows(JsonParseException.class, () -> JsonParser.parseReader(jsonReader));\n    }\n  }\n\n  @Test\n  public void testDeprecatedParse_String_validJson() {\n    JsonParser parser = new JsonParser();\n    JsonElement element = parser.parse(\"{\\\"key\\\":\\\"value\\\"}\");\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testDeprecatedParse_Reader_validJson() {\n    JsonParser parser = new JsonParser();\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n    JsonElement element = parser.parse(reader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testDeprecatedParse_JsonReader_validJson() throws IOException {\n    JsonParser parser = new JsonParser();\n    JsonReader jsonReader = new JsonReader(new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    JsonElement element = parser.parse(jsonReader);\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testDeprecatedParse_JsonReader_emptyJson_throwsException() throws IOException {\n    JsonParser parser = new JsonParser();\n    JsonReader jsonReader = new JsonReader(new StringReader(\"\"));\n    JsonParser spyParser = spy(parser);\n    try {\n      doThrow(new JsonParseException(\"Empty JSON\")).when(spyParser).parse(jsonReader);\n      assertThrows(JsonParseException.class, () -> spyParser.parse(jsonReader));\n    } finally {\n      Mockito.reset(spyParser);\n    }\n  }\n\n  @Test\n  public void testPrivateParseInternalMethodUsingReflection() throws Throwable {\n    JsonParser parser = new JsonParser();\n    Method method = JsonParser.class.getDeclaredMethod(\"parse\", JsonReader.class);\n    method.setAccessible(true);\n\n    JsonReader jsonReader = new JsonReader(new StringReader(\"{\\\"key\\\":\\\"value\\\"}\"));\n    Object result = method.invoke(parser, jsonReader);\n\n    assertNotNull(result);\n    assertTrue(result instanceof JsonElement);\n    JsonElement element = (JsonElement) result;\n    assertTrue(element.isJsonObject());\n    assertEquals(\"value\", element.getAsJsonObject().get(\"key\").getAsString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890803,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1212,
+    "prompt_tokens": 2406,
+    "total_tokens": 3618,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.29
+  }
+}

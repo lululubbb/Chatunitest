@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmA2PcBCWAb4eo6fX5W79vzc6mpR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapPutTest {\n\n  LinkedTreeMap<String, String> mapAllowNull;\n  LinkedTreeMap<String, String> mapDisallowNull;\n\n  @BeforeEach\n  void setUp() {\n    mapAllowNull = new LinkedTreeMap<>(true);\n    mapDisallowNull = new LinkedTreeMap<>(false);\n  }\n\n  @Test\n  void put_nullKey_throwsNullPointerException() {\n    NullPointerException ex = assertThrows(NullPointerException.class, () -> mapAllowNull.put(null, \"value\"));\n    assertEquals(\"key == null\", ex.getMessage());\n  }\n\n  @Test\n  void put_nullValueAllowed_acceptsNullValue() {\n    String previous = mapAllowNull.put(\"key\", null);\n    assertNull(previous);\n    assertNull(mapAllowNull.get(\"key\"));\n  }\n\n  @Test\n  void put_nullValueDisallowed_throwsNullPointerException() {\n    NullPointerException ex = assertThrows(NullPointerException.class, () -> mapDisallowNull.put(\"key\", null));\n    assertEquals(\"value == null\", ex.getMessage());\n  }\n\n  @Test\n  void put_newKey_returnsNullAndAddsEntry() {\n    String previous = mapDisallowNull.put(\"key1\", \"value1\");\n    assertNull(previous);\n    assertEquals(\"value1\", mapDisallowNull.get(\"key1\"));\n    assertEquals(1, mapDisallowNull.size());\n  }\n\n  @Test\n  void put_existingKey_returnsOldValueAndReplaces() {\n    mapDisallowNull.put(\"key1\", \"value1\");\n    String previous = mapDisallowNull.put(\"key1\", \"value2\");\n    assertEquals(\"value1\", previous);\n    assertEquals(\"value2\", mapDisallowNull.get(\"key1\"));\n    assertEquals(1, mapDisallowNull.size());\n  }\n\n  @Test\n  void put_reflectiveAccessToFindMethod() throws Exception {\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n    findMethod.setAccessible(true);\n\n    // Using reflection to invoke private find method with create = true\n    Object node = findMethod.invoke(mapDisallowNull, \"reflectKey\", true);\n    assertNotNull(node);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885862,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 526,
+    "prompt_tokens": 769,
+    "total_tokens": 1295,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.95
+  }
+}

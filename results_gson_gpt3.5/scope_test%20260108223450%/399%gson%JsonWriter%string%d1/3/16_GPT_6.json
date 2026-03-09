@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBsrY9OxkTNHvTGpgwJ88EEUe2W",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n\n  private Method stringMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n    // Access private method string(String)\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testString_noSpecialChars_writesQuotedString() throws Throwable {\n    String input = \"simpleString\";\n    invokeString(input);\n    // Expect writes: '\"' + input + '\"'\n    verify(mockWriter, times(2)).write('\\\"');\n    verify(mockWriter).write(input, 0, input.length());\n    verifyNoMoreInteractions(mockWriter);\n  }\n\n  @Test\n  public void testString_withAsciiReplacementChars() throws Throwable {\n    // Characters < 128 that have replacements:\n    // From Gson source, REPLACEMENT_CHARS for control chars and quotes/backslash:\n    // We'll test with a string containing '\"' (quote), '\\\\' (backslash), '\\n' (newline)\n    String input = \"a\\\"b\\\\c\\nd\";\n    invokeString(input);\n\n    // Verify writes:\n    // '\"' at start and end\n    verify(mockWriter, times(2)).write('\\\"');\n    // Portions of string and replacements:\n    // 'a' no replacement\n    verify(mockWriter).write(input, 0, 1);\n    // '\"' replaced by \\\"\n    verify(mockWriter).write(\"\\\\\\\"\", 0, 2);\n    // 'b' no replacement\n    verify(mockWriter).write(input, 3, 1);\n    // '\\' replaced by \\\\\n    verify(mockWriter).write(\"\\\\\\\\\", 0, 2);\n    // 'c' no replacement\n    verify(mockWriter).write(input, 5, 1);\n    // '\\n' replaced by \\n\n    verify(mockWriter).write(\"\\\\n\", 0, 2);\n    // 'd' no replacement\n    verify(mockWriter).write(input, 7, 1);\n\n    verifyNoMoreInteractions(mockWriter);\n  }\n\n  @Test\n  public void testString_withUnicode2028And2029_replacements() throws Throwable {\n    // \\u2028 and \\u2029 must be replaced by their unicode escapes\n    String input = \"line\\u2028separator\\u2029end\";\n    invokeString(input);\n\n    // Only two writes of '\"' expected, so verify exactly twice\n    verify(mockWriter, times(2)).write('\\\"');\n\n    // \"line\" no replacement\n    verify(mockWriter).write(input, 0, 4);\n    // \\u2028 replaced by \"\\\\u2028\"\n    verify(mockWriter).write(\"\\\\u2028\");\n    // \"separator\" no replacement\n    verify(mockWriter).write(input, 5, 9);\n    // \\u2029 replaced by \"\\\\u2029\"\n    verify(mockWriter).write(\"\\\\u2029\");\n    // \"end\" no replacement\n    verify(mockWriter).write(input, 15, 3);\n\n    verifyNoMoreInteractions(mockWriter);\n  }\n\n  @Test\n  public void testString_emptyString_writesQuotesOnly() throws Throwable {\n    String input = \"\";\n    invokeString(input);\n    verify(mockWriter, times(2)).write('\\\"');\n    verify(mockWriter, never()).write(anyString(), anyInt(), anyInt());\n    verifyNoMoreInteractions(mockWriter);\n  }\n\n  @Test\n  public void testString_htmlSafeTrue_usesHtmlSafeReplacements() throws Throwable {\n    // Enable htmlSafe\n    jsonWriter.setHtmlSafe(true);\n    // input with characters that differ in htmlSafe replacements: < > & = '\n    String input = \"<>&='\";\n    invokeString(input);\n\n    verify(mockWriter, times(2)).write('\\\"');\n\n    // Expected replacements from HTML_SAFE_REPLACEMENT_CHARS:\n    // '<' -> \\u003c\n    verify(mockWriter).write(\"\\\\u003c\", 0, 6);\n    // '>' -> \\u003e\n    verify(mockWriter).write(\"\\\\u003e\", 0, 6);\n    // '&' -> \\u0026\n    verify(mockWriter).write(\"\\\\u0026\", 0, 6);\n    // '=' -> \\u003d\n    verify(mockWriter).write(\"\\\\u003d\", 0, 6);\n    // '\\'' -> \\u0027\n    verify(mockWriter).write(\"\\\\u0027\", 0, 6);\n\n    verifyNoMoreInteractions(mockWriter);\n  }\n\n  // Helper to invoke private string method and unwrap exceptions\n  private void invokeString(String input) throws Throwable {\n    try {\n      stringMethod.invoke(jsonWriter, input);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889820,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1099,
+    "prompt_tokens": 2702,
+    "total_tokens": 3801,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.69
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYzgcUxpGSN88bGxmCejgmAHHTN4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private Reader readerMock;\n\n    @BeforeEach\n    public void setUp() {\n        readerMock = mock(Reader.class);\n    }\n\n    @Test\n    public void testParseReturnsCSVParserInstance() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to create a spy of CSVParser to verify constructor call\n        Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        CSVParser parserSpy = spy(constructor.newInstance(readerMock, format));\n\n        // Because we cannot mock construction, we test parse normally and verify type\n        CSVParser parser = format.parse(readerMock);\n\n        assertNotNull(parser);\n        assertEquals(CSVParser.class, parser.getClass());\n        // We cannot assertSame with parserSpy because parse creates a new instance internally\n    }\n\n    @Test\n    public void testParseThrowsIOException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Create a Reader that throws IOException on read to simulate IOException during parsing\n        Reader throwingReader = new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) throws IOException {\n                throw new IOException(\"Mock IOException\");\n            }\n\n            @Override\n            public void close() throws IOException {\n                // no-op\n            }\n        };\n\n        assertThrows(IOException.class, () -> {\n            format.parse(throwingReader);\n        });\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550232,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 381,
+    "prompt_tokens": 1882,
+    "total_tokens": 2263,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.61
+  }
+}

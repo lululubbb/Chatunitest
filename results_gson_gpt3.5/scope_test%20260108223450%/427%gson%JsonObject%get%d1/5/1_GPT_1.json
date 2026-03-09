@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmxPskjTWTpTsUpEguwmV3VOGG4l",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonObject = new JsonObject();\n\n    // Use reflection to inject a mock LinkedTreeMap into the private final field 'members'\n    LinkedTreeMap<String, JsonElement> membersMock = mock(LinkedTreeMap.class);\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    membersField.set(jsonObject, membersMock);\n  }\n\n  @Test\n  public void testGet_existingMember_returnsElement() {\n    LinkedTreeMap<String, JsonElement> members = getMembersMap(jsonObject);\n    JsonElement expectedElement = mock(JsonElement.class);\n    when(members.get(\"key\")).thenReturn(expectedElement);\n\n    JsonElement actualElement = jsonObject.get(\"key\");\n\n    assertSame(expectedElement, actualElement);\n    verify(members).get(\"key\");\n  }\n\n  @Test\n  public void testGet_nonExistingMember_returnsNull() {\n    LinkedTreeMap<String, JsonElement> members = getMembersMap(jsonObject);\n    when(members.get(\"absentKey\")).thenReturn(null);\n\n    JsonElement actualElement = jsonObject.get(\"absentKey\");\n\n    assertNull(actualElement);\n    verify(members).get(\"absentKey\");\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private LinkedTreeMap<String, JsonElement> getMembersMap(JsonObject obj) {\n    try {\n      Field membersField = JsonObject.class.getDeclaredField(\"members\");\n      membersField.setAccessible(true);\n      return (LinkedTreeMap<String, JsonElement>) membersField.get(obj);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888923,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 422,
+    "prompt_tokens": 391,
+    "total_tokens": 813,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.06
+  }
+}

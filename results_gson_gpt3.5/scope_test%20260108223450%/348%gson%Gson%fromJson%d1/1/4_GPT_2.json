@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbujjPsYVVOjuUEhC0sVwP7AI02",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nclass Gson_FromJson_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_validJson_shouldReturnObject() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    TestClass result = gson.fromJson(reader, typeToken);\n\n    assertNotNull(result);\n    assertEquals(\"test\", result.name);\n  }\n\n  @Test\n  public void fromJson_emptyJson_shouldReturnNull() throws Exception {\n    String json = \"\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      gson.fromJson(reader, typeToken);\n    });\n\n    assertNotNull(thrown.getMessage());\n  }\n\n  @Test\n  public void fromJson_nullReader_shouldThrowNullPointerException() {\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n    assertThrows(NullPointerException.class, () -> gson.fromJson((Reader) null, typeToken));\n  }\n\n  @Test\n  public void fromJson_assertFullConsumptionThrows_shouldThrowJsonSyntaxException() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    // Spy on Gson instance\n    Gson spyGson = spy(gson);\n    JsonReader jsonReader = spyGson.newJsonReader(reader);\n\n    doReturn(new TestClass(\"test\")).when(spyGson).fromJson(any(JsonReader.class), eq(typeToken));\n\n    // Use reflection to get assertFullConsumption method\n    Method assertFullConsumption = Gson.class.getDeclaredMethod(\"assertFullConsumption\", Object.class, JsonReader.class);\n    assertFullConsumption.setAccessible(true);\n\n    // Mock assertFullConsumption to throw exception when called\n    doAnswer(invocation -> {\n      throw new JsonSyntaxException(\"Not fully consumed\");\n    }).when(spyGson).getClass()\n        .getDeclaredMethod(\"assertFullConsumption\", Object.class, JsonReader.class);\n\n    // Instead of mocking private static method directly (which is not possible here),\n    // invoke fromJson and catch the JsonSyntaxException thrown by assertFullConsumption\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      // We call the real method, but since we cannot mock the private static method easily,\n      // we use reflection to replace the call temporarily by invoking it manually here.\n      // So we call fromJson on spyGson, which calls our mocked fromJson(JsonReader, TypeToken).\n      spyGson.fromJson(reader, typeToken);\n    });\n\n    assertTrue(thrown.getMessage().contains(\"Not fully consumed\") || thrown.getMessage().contains(\"Expected EOF\"));\n  }\n\n  // Helper class for deserialization test\n  public static class TestClass {\n    public String name;\n\n    public TestClass() {}\n\n    public TestClass(String name) {\n      this.name = name;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887590,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 758,
+    "prompt_tokens": 2013,
+    "total_tokens": 2771,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.87
+  }
+}

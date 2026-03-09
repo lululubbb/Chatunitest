@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw98gQV3PjUq3zrTjQ9wbmvLhchAu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nfinal class CSVRecordTest {\n\n    private String[] values;\n    private Map<String, Integer> mapping;\n    private String comment;\n    private long recordNumber;\n\n    @BeforeEach\n    void setUp() {\n        values = new String[] {\"val1\", \"val2\", \"val3\"};\n        mapping = new HashMap<>();\n        mapping.put(\"col1\", 0);\n        mapping.put(\"col2\", 1);\n        mapping.put(\"col3\", 2);\n        comment = \"This is a comment\";\n        recordNumber = 42L;\n    }\n\n    @Test\n    void testConstructorNormal() throws Exception {\n        CSVRecord record = new CSVRecord(values, mapping, comment, recordNumber);\n\n        // verify fields via reflection\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        assertArrayEquals(values, (String[]) valuesField.get(record));\n\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n        assertEquals(mapping, mappingField.get(record));\n\n        Field commentField = CSVRecord.class.getDeclaredField(\"comment\");\n        commentField.setAccessible(true);\n        assertEquals(comment, commentField.get(record));\n\n        Field recordNumberField = CSVRecord.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        assertEquals(recordNumber, recordNumberField.getLong(record));\n    }\n\n    @Test\n    void testConstructorNullValues() throws Exception {\n        CSVRecord record = new CSVRecord(null, mapping, comment, recordNumber);\n\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        String[] valuesArr = (String[]) valuesField.get(record);\n\n        Field emptyStringArrayField = CSVRecord.class.getDeclaredField(\"EMPTY_STRING_ARRAY\");\n        emptyStringArrayField.setAccessible(true);\n        String[] emptyArray = (String[]) emptyStringArrayField.get(null);\n\n        assertSame(emptyArray, valuesArr);\n    }\n\n    @Test\n    void testConstructorNullMapping() throws Exception {\n        CSVRecord record = new CSVRecord(values, null, comment, recordNumber);\n\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n        assertNull(mappingField.get(record));\n    }\n\n    @Test\n    void testConstructorNullComment() throws Exception {\n        CSVRecord record = new CSVRecord(values, mapping, null, recordNumber);\n\n        Field commentField = CSVRecord.class.getDeclaredField(\"comment\");\n        commentField.setAccessible(true);\n        assertNull(commentField.get(record));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974190,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 586,
+    "prompt_tokens": 1071,
+    "total_tokens": 1657,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.97
+  }
+}

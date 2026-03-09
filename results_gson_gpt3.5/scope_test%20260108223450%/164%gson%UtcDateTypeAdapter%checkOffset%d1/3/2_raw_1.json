@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static Method checkOffsetMethod;\n\n  @BeforeAll\n  public static void setUp() throws NoSuchMethodException {\n    checkOffsetMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"checkOffset\", String.class, int.class, char.class);\n    checkOffsetMethod.setAccessible(true);\n  }\n\n  private boolean invokeCheckOffset(String value, int offset, char expected) {\n    try {\n      return (boolean) checkOffsetMethod.invoke(null, value, offset, expected);\n    } catch (IllegalAccessException | InvocationTargetException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  @Test\n  public void testCheckOffset_OffsetOutOfBounds() {\n    assertFalse(invokeCheckOffset(\"abc\", 3, 'a')); // offset == length\n    assertFalse(invokeCheckOffset(\"abc\", 4, 'a')); // offset > length\n  }\n\n  @Test\n  public void testCheckOffset_CharMatches() {\n    assertTrue(invokeCheckOffset(\"abc\", 0, 'a'));\n    assertTrue(invokeCheckOffset(\"abc\", 1, 'b'));\n    assertTrue(invokeCheckOffset(\"abc\", 2, 'c'));\n  }\n\n  @Test\n  public void testCheckOffset_CharDoesNotMatch() {\n    assertFalse(invokeCheckOffset(\"abc\", 0, 'b'));\n    assertFalse(invokeCheckOffset(\"abc\", 1, 'a'));\n    assertFalse(invokeCheckOffset(\"abc\", 2, 'a'));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 397,
+  "completion_tokens": 377,
+  "total_tokens": 774,
+  "llm_elapsed_time_seconds": 5.64
+}

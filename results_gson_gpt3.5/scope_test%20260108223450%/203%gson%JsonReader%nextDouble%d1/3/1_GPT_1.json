@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1KVmkIiKxikT4PrmrDu45nNUsS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void nextDouble_peekedNone_callsDoPeekAndParsesDouble() throws Exception {\n    // Arrange\n    setField(jsonReader, \"peeked\", 0); // PEEKED_NONE\n    // We mock doPeek to return PEEKED_NUMBER (16)\n    Method doPeekMethod = JsonReader.class.getDeclaredMethod(\"doPeek\");\n    doPeekMethod.setAccessible(true);\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(16).when(spyReader).doPeek();\n\n    // Setup fields for PEEKED_NUMBER branch\n    char[] buffer = \"123.456extra\".toCharArray();\n    setField(spyReader, \"buffer\", buffer);\n    setField(spyReader, \"pos\", 0);\n    setField(spyReader, \"peekedNumberLength\", 7); // \"123.456\"\n    setField(spyReader, \"peeked\", 16);\n    setField(spyReader, \"pathIndices\", new int[32]);\n    setField(spyReader, \"stackSize\", 1);\n    setField(spyReader, \"lenient\", false);\n\n    // Act\n    double result = spyReader.nextDouble();\n\n    // Assert\n    assertEquals(123.456, result, 0.000001);\n    assertEquals(7, getField(spyReader, \"pos\"));\n    assertEquals(0, getField(spyReader, \"peeked\"));\n    assertNull(getField(spyReader, \"peekedString\"));\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextDouble_peekedLong_returnsPeekedLongAsDouble() throws IOException {\n    setField(jsonReader, \"peeked\", 15); // PEEKED_LONG\n    setField(jsonReader, \"peekedLong\", 42L);\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n\n    double result = jsonReader.nextDouble();\n\n    assertEquals(42.0, result, 0.0);\n    assertEquals(0, getField(jsonReader, \"peeked\"));\n    int[] pathIndices = getField(jsonReader, \"pathIndices\");\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextDouble_peekedSingleQuoted_returnsParsedDouble() throws Exception {\n    setField(jsonReader, \"peeked\", 8); // PEEKED_SINGLE_QUOTED\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"lenient\", false);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(\"3.14\").when(spyReader).nextQuotedValue('\\'');\n\n    double result = spyReader.nextDouble();\n\n    assertEquals(3.14, result, 0.000001);\n    assertEquals(0, getField(spyReader, \"peeked\"));\n    assertNull(getField(spyReader, \"peekedString\"));\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextDouble_peekedDoubleQuoted_returnsParsedDouble() throws Exception {\n    setField(jsonReader, \"peeked\", 9); // PEEKED_DOUBLE_QUOTED\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"lenient\", false);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(\"2.718\").when(spyReader).nextQuotedValue('\"');\n\n    double result = spyReader.nextDouble();\n\n    assertEquals(2.718, result, 0.000001);\n    assertEquals(0, getField(spyReader, \"peeked\"));\n    assertNull(getField(spyReader, \"peekedString\"));\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextDouble_peekedUnquoted_returnsParsedDouble() throws Exception {\n    setField(jsonReader, \"peeked\", 10); // PEEKED_UNQUOTED\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"lenient\", false);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(\"0.57721\").when(spyReader).nextUnquotedValue();\n\n    double result = spyReader.nextDouble();\n\n    assertEquals(0.57721, result, 0.000001);\n    assertEquals(0, getField(spyReader, \"peeked\"));\n    assertNull(getField(spyReader, \"peekedString\"));\n    int[] pathIndices = getField(spyReader, \"pathIndices\");\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextDouble_peekedInvalid_throwsIllegalStateException() throws Exception {\n    setField(jsonReader, \"peeked\", 5); // PEEKED_TRUE (invalid for double)\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(JsonToken.TRUE).when(spyReader).peek();\n    doReturn(\" at path $\").when(spyReader, \"locationString\");\n\n    IllegalStateException ex = assertThrows(IllegalStateException.class, spyReader::nextDouble);\n    assertTrue(ex.getMessage().contains(\"Expected a double but was TRUE\"));\n  }\n\n  @Test\n  void nextDouble_nanOrInfiniteLenientFalse_throwsMalformedJsonException() throws Exception {\n    setField(jsonReader, \"peeked\", 10); // PEEKED_UNQUOTED\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"lenient\", false);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(\"NaN\").when(spyReader).nextUnquotedValue();\n    doReturn(\" at path $\").when(spyReader, \"locationString\");\n\n    MalformedJsonException ex = assertThrows(MalformedJsonException.class, spyReader::nextDouble);\n    assertTrue(ex.getMessage().contains(\"JSON forbids NaN and infinities\"));\n  }\n\n  @Test\n  void nextDouble_nanOrInfiniteLenientTrue_allowsResult() throws Exception {\n    setField(jsonReader, \"peeked\", 10); // PEEKED_UNQUOTED\n    setField(jsonReader, \"pathIndices\", new int[32]);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"lenient\", true);\n\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(\"NaN\").when(spyReader).nextUnquotedValue();\n\n    double result = spyReader.nextDouble();\n\n    assertTrue(Double.isNaN(result));\n    assertEquals(0, getField(spyReader, \"peeked\"));\n  }\n\n  // Helper to set private fields via reflection\n  private static <T> void setField(Object target, String fieldName, T value) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get private fields via reflection\n  @SuppressWarnings(\"unchecked\")\n  private static <T> T getField(Object target, String fieldName) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return (T) field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885322,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1797,
+    "prompt_tokens": 1313,
+    "total_tokens": 3110,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 68.69
+  }
+}

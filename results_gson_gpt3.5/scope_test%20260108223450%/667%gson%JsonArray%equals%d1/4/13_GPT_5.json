@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmlM0KzOSwGYwJh4jwq8uaopz8ku",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport org.mockito.Mockito;\nimport java.util.ArrayList;\nimport java.lang.reflect.Field;\n\nclass JsonArrayEqualsTest {\n\n  // Helper to create a JsonArray with given elements\n  private JsonArray createJsonArrayWithElements(JsonElement... elements) throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    // Use reflection to access private final field \"elements\"\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> internalList = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    internalList.clear(); // clear any existing elements\n    for (JsonElement elem : elements) {\n      internalList.add(elem);\n    }\n    return jsonArray;\n  }\n\n  @Test\n  public void testEquals_sameReference() {\n    JsonArray jsonArray = new JsonArray();\n    assertTrue(jsonArray.equals(jsonArray));\n  }\n\n  @Test\n  public void testEquals_null() {\n    JsonArray jsonArray = new JsonArray();\n    assertFalse(jsonArray.equals(null));\n  }\n\n  @Test\n  public void testEquals_differentClass() {\n    JsonArray jsonArray = new JsonArray();\n    String other = \"not a JsonArray\";\n    assertFalse(jsonArray.equals(other));\n  }\n\n  @Test\n  public void testEquals_emptyArrays() throws Exception {\n    JsonArray jsonArray1 = createJsonArrayWithElements();\n    JsonArray jsonArray2 = createJsonArrayWithElements();\n    assertTrue(jsonArray1.equals(jsonArray2));\n  }\n\n  @Test\n  public void testEquals_sameElements() throws Exception {\n    JsonElement elem1 = Mockito.mock(JsonElement.class);\n    JsonElement elem2 = Mockito.mock(JsonElement.class);\n\n    // Mock equals to behave correctly for elem1 and elem2\n    Mockito.when(elem1.equals(elem1)).thenReturn(true);\n    Mockito.when(elem2.equals(elem2)).thenReturn(true);\n    Mockito.when(elem1.equals(elem2)).thenReturn(false);\n    Mockito.when(elem2.equals(elem1)).thenReturn(false);\n\n    // Also mock hashCode to avoid possible issues in collections\n    Mockito.when(elem1.hashCode()).thenReturn(1);\n    Mockito.when(elem2.hashCode()).thenReturn(2);\n\n    JsonArray jsonArray1 = createJsonArrayWithElements(elem1, elem2);\n    JsonArray jsonArray2 = createJsonArrayWithElements(elem1, elem2);\n    assertTrue(jsonArray1.equals(jsonArray2));\n  }\n\n  @Test\n  public void testEquals_differentElements() throws Exception {\n    JsonElement elem1 = Mockito.mock(JsonElement.class);\n    JsonElement elem2 = Mockito.mock(JsonElement.class);\n    JsonElement elem3 = Mockito.mock(JsonElement.class);\n\n    // Mock equals behavior\n    Mockito.when(elem1.equals(elem1)).thenReturn(true);\n    Mockito.when(elem2.equals(elem2)).thenReturn(true);\n    Mockito.when(elem3.equals(elem3)).thenReturn(true);\n\n    Mockito.when(elem2.equals(elem3)).thenReturn(false);\n    Mockito.when(elem3.equals(elem2)).thenReturn(false);\n\n    // Also mock hashCode to avoid possible issues in collections\n    Mockito.when(elem1.hashCode()).thenReturn(1);\n    Mockito.when(elem2.hashCode()).thenReturn(2);\n    Mockito.when(elem3.hashCode()).thenReturn(3);\n\n    JsonArray jsonArray1 = createJsonArrayWithElements(elem1, elem2);\n    JsonArray jsonArray2 = createJsonArrayWithElements(elem1, elem3);\n    assertFalse(jsonArray1.equals(jsonArray2));\n  }\n\n  @Test\n  public void testEquals_differentSize() throws Exception {\n    JsonElement elem1 = Mockito.mock(JsonElement.class);\n    Mockito.when(elem1.equals(elem1)).thenReturn(true);\n    Mockito.when(elem1.hashCode()).thenReturn(1);\n\n    JsonArray jsonArray1 = createJsonArrayWithElements(elem1);\n    JsonArray jsonArray2 = createJsonArrayWithElements();\n    assertFalse(jsonArray1.equals(jsonArray2));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888176,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 875,
+    "prompt_tokens": 2745,
+    "total_tokens": 3620,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.67
+  }
+}

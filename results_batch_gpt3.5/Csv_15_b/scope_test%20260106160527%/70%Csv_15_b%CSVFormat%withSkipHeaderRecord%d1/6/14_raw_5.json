@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithSkipHeaderRecord_noArg() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat result = original.withSkipHeaderRecord();\n\n        // The returned format should be different if skipHeaderRecord was false originally\n        assertNotNull(result);\n        assertTrue(result.getSkipHeaderRecord());\n\n        // Original should remain unchanged (immutable style)\n        assertFalse(original.getSkipHeaderRecord());\n\n        // Using reflection to invoke public withSkipHeaderRecord(boolean)\n        Method method = CSVFormat.class.getMethod(\"withSkipHeaderRecord\", boolean.class);\n\n        CSVFormat invokedTrue = (CSVFormat) method.invoke(original, true);\n        assertTrue(invokedTrue.getSkipHeaderRecord());\n\n        CSVFormat invokedFalse = (CSVFormat) method.invoke(original, false);\n        assertFalse(invokedFalse.getSkipHeaderRecord());\n\n        // If the flag is already set, withSkipHeaderRecord(true) should return the same instance\n        CSVFormat sameInstance = (CSVFormat) method.invoke(result, true);\n        assertSame(result, sameInstance);\n\n        // If the flag is changed, a new instance should be returned\n        CSVFormat newInstance = (CSVFormat) method.invoke(result, false);\n        assertNotSame(result, newInstance);\n        assertFalse(newInstance.getSkipHeaderRecord());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260106160527%/70%Csv_15_b%CSVFormat%withSkipHeaderRecord%d1/6/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2161,
+  "completion_tokens": 307,
+  "total_tokens": 2468,
+  "llm_elapsed_time_seconds": 4.28
+}

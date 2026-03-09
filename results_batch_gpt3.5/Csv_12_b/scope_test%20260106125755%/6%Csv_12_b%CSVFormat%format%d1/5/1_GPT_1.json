@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutQjFIZQKEnoGBmhi7PYAxI6o031",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withValidValues_returnsFormattedString() throws IOException {\n        String[] values = {\"a\", \"b\", \"c\"};\n        String result = csvFormat.format((Object[]) values);\n        // The default delimiter is comma, default quote is double quote, default record separator is CRLF\n        // So expected output is: \"a\",\"b\",\"c\"\n        assertEquals(\"\\\"a\\\",\\\"b\\\",\\\"c\\\"\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues_returnsEmptyString() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_withNullValue_includesNullString() {\n        CSVFormat formatWithNullString = csvFormat.withNullString(\"NULL\");\n        String result = formatWithNullString.format(\"value\", null);\n        assertEquals(\"\\\"value\\\",NULL\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateException_whenCSVPrinterThrowsIOException() {\n        Object[] values = {\"a\", \"b\"};\n\n        try (MockedConstruction<CSVPrinter> mocked = mockConstruction(CSVPrinter.class,\n                (mock, context) -> {\n                    doThrow(new IOException(\"forced\")).when(mock).printRecord(values);\n                })) {\n\n            IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {\n                csvFormat.format(values);\n            });\n            assertTrue(ex.getCause() instanceof IOException);\n            assertEquals(\"forced\", ex.getCause().getMessage());\n        }\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675477,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 422,
+    "prompt_tokens": 1028,
+    "total_tokens": 1450,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.94
+  }
+}

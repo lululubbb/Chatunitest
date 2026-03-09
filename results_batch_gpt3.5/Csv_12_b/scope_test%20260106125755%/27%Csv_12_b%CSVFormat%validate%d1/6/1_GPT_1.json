@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutQj8RAyJzcqLVCFrZpK5GvvIXvF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatValidateTest {\n\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Exception {\n        validateMethod.invoke(format);\n    }\n\n    @Test\n    public void testValidate_noException_defaultFormat() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                Character.valueOf(','),\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"quoteChar character and the delimiter cannot be the same\");\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ';',\n                Character.valueOf('\"'),\n                QuoteMode.MINIMAL,\n                null,\n                Character.valueOf(';'),\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"escape character and the delimiter cannot be the same\");\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = new CSVFormat(\n                '#',\n                Character.valueOf('\"'),\n                QuoteMode.MINIMAL,\n                Character.valueOf('#'),\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"comment start character and the delimiter cannot be the same\");\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsQuoteChar_throws() throws Exception {\n        Character qc = Character.valueOf('\"');\n        CSVFormat format = new CSVFormat(\n                ',',\n                qc,\n                QuoteMode.MINIMAL,\n                qc,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"comment start character and the quoteChar cannot be the same\");\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsEscapeChar_throws() throws Exception {\n        Character cm = Character.valueOf('#');\n        CSVFormat format = new CSVFormat(\n                ',',\n                Character.valueOf('\"'),\n                QuoteMode.MINIMAL,\n                cm,\n                cm,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"comment start and the escape character cannot be the same\");\n    }\n\n    @Test\n    public void testValidate_escapeCharacterNullAndQuoteModeNone_throws() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                null,\n                QuoteMode.NONE,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assert ex.getMessage().contains(\"No quotes mode set but no escape character is set\");\n    }\n\n    @Test\n    public void testValidate_escapeCharacterNullAndQuoteModeNotNone_noThrow() throws Exception {\n        CSVFormat format = new CSVFormat(\n                ',',\n                null,\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675477,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 955,
+    "prompt_tokens": 1230,
+    "total_tokens": 2185,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.34
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testGetAsCharacter_nonEmptyString() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"hello\");\n\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsCharacter\");\n    method.setAccessible(true);\n    char result = (char) method.invoke(jsonPrimitive);\n\n    assertEquals('h', result);\n  }\n\n  @Test\n  public void testGetAsCharacter_emptyString_throwsException() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"\");\n\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsCharacter\");\n    method.setAccessible(true);\n\n    Throwable thrown = assertThrows(\n      Throwable.class,\n      () -> method.invoke(jsonPrimitive),\n      \"Expected getAsCharacter() to throw, but it didn't\"\n    );\n\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof UnsupportedOperationException);\n    assertEquals(\"String value is empty\", cause.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1367,
+  "completion_tokens": 237,
+  "total_tokens": 1604,
+  "llm_elapsed_time_seconds": 4.24,
+  "repair_elapsed_time_seconds": 10.04,
+  "round_total_time_seconds": 10.04
+}

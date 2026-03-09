@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn3E5nztTQaH65GoBh6dvH7C3SCL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void getAsJsonObject_whenIsJsonObjectTrue_returnsThisCastToJsonObject() {\n    JsonElement jsonElement = mock(JsonElement.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonElement.isJsonObject()).thenReturn(true);\n    // Cast to JsonObject to simulate the actual return type\n    JsonObject jsonObject = mock(JsonObject.class);\n    // When cast, return the mocked JsonObject\n    // Since jsonElement is mocked, cast works as expected in test context\n    // Override toString so exception message is meaningful if needed\n    when(jsonElement.toString()).thenReturn(\"{\\\"mocked\\\":true}\");\n\n    // Use spy to allow casting this mock to JsonObject\n    JsonElement spyElement = spy(jsonObject);\n    doReturn(true).when(spyElement).isJsonObject();\n\n    JsonObject result = spyElement.getAsJsonObject();\n    assertSame(spyElement, result);\n  }\n\n  @Test\n  void getAsJsonObject_whenIsJsonObjectFalse_throwsIllegalStateException() {\n    JsonElement jsonElement = mock(JsonElement.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonElement.isJsonObject()).thenReturn(false);\n    when(jsonElement.toString()).thenReturn(\"jsonElementToString\");\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElement::getAsJsonObject);\n    assertEquals(\"Not a JSON Object: jsonElementToString\", exception.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889284,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 358,
+    "prompt_tokens": 396,
+    "total_tokens": 754,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.64
+  }
+}

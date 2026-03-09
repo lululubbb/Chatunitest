@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8ts1xD4lJjpWSKGFy4soL9JcVMt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withIterable_callsPrintAndPrintln() throws IOException {\n        Iterable<Object> values = Arrays.asList(\"val1\", 123, null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withEmptyIterable_callsPrintlnOnly() throws IOException {\n        Iterable<Object> values = Collections.emptyList();\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrivatePrint_Object_CharSequence_offset_len() throws Throwable {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"testValue\";\n        // Call with offset 0 and length = value length\n        printMethod.invoke(printer, \"object\", value, 0, value.length());\n    }\n\n    @Test\n    void testPrivatePrintAndEscape() throws Throwable {\n        Method printAndEscapeMethod = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscapeMethod.setAccessible(true);\n\n        CharSequence value = \"escape,me\";\n        printAndEscapeMethod.invoke(printer, value, 0, value.length());\n    }\n\n    @Test\n    void testPrivatePrintAndQuote() throws Throwable {\n        Method printAndQuoteMethod = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        printAndQuoteMethod.setAccessible(true);\n\n        CharSequence value = \"quote\\\"me\";\n        printAndQuoteMethod.invoke(printer, \"object\", value, 0, value.length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973272,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 549,
+    "prompt_tokens": 435,
+    "total_tokens": 984,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.61
+  }
+}

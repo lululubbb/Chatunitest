@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Map;\nimport java.util.Set;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonObject = new JsonObject();\n\n    // Use reflection to inject a mock LinkedTreeMap into the private final field 'members'\n    LinkedTreeMap<String, JsonElement> membersMock = mock(LinkedTreeMap.class);\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    membersField.set(jsonObject, membersMock);\n  }\n\n  @Test\n  public void testGet_existingMember_returnsElement() {\n    LinkedTreeMap<String, JsonElement> members = getMembersMap(jsonObject);\n    JsonElement expectedElement = mock(JsonElement.class);\n    when(members.get(\"key\")).thenReturn(expectedElement);\n\n    JsonElement actualElement = jsonObject.get(\"key\");\n\n    assertSame(expectedElement, actualElement);\n    verify(members).get(\"key\");\n  }\n\n  @Test\n  public void testGet_nonExistingMember_returnsNull() {\n    LinkedTreeMap<String, JsonElement> members = getMembersMap(jsonObject);\n    when(members.get(\"absentKey\")).thenReturn(null);\n\n    JsonElement actualElement = jsonObject.get(\"absentKey\");\n\n    assertNull(actualElement);\n    verify(members).get(\"absentKey\");\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private LinkedTreeMap<String, JsonElement> getMembersMap(JsonObject obj) {\n    try {\n      Field membersField = JsonObject.class.getDeclaredField(\"members\");\n      membersField.setAccessible(true);\n      return (LinkedTreeMap<String, JsonElement>) membersField.get(obj);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 391,
+  "completion_tokens": 422,
+  "total_tokens": 813,
+  "llm_elapsed_time_seconds": 7.06,
+  "repair_elapsed_time_seconds": 17.58,
+  "round_total_time_seconds": 17.58
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaKeIOUhxKJJJCSft50sjzGAHY8M",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withMultipleValues() throws IOException {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    void testFormat_withNullValue() throws IOException {\n        String result = csvFormat.format(\"a\", null, \"c\");\n        // The default nullString is null, so null is printed as empty\n        assertEquals(\"a,,c\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format(\"\", \"\", \"\");\n        assertEquals(\",,,\", result); // trailingDelimiter is false by default, so no trailing comma\n    }\n\n    @Test\n    void testFormat_withEmptyArray() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_ioExceptionWrappedInIllegalStateException() {\n        try (MockedConstruction<CSVPrinter> mocked = mockConstruction(CSVPrinter.class,\n                (mock, context) -> {\n                    doThrow(new IOException(\"mocked IO exception\")).when(mock).printRecord(any());\n                    doNothing().when(mock).close();\n                })) {\n            IllegalStateException ex = assertThrows(IllegalStateException.class,\n                    () -> csvFormat.format(\"a\"));\n            assertTrue(ex.getCause() instanceof IOException);\n            assertEquals(\"mocked IO exception\", ex.getCause().getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555376,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 411,
+    "prompt_tokens": 1849,
+    "total_tokens": 2260,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.17
+  }
+}

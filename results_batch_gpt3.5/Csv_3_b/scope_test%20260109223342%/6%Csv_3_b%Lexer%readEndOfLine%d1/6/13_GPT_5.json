@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw823a0Ot37fzSbXFwTx7u8zc6AiO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        inMock = mock(ExtendedBufferedReader.class);\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Create anonymous subclass to instantiate abstract Lexer\n        lexer = new Lexer(format, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n\n            @Override\n            boolean isWhitespace(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isStartOfLine(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEndOfFile(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isDelimiter(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEscape(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isQuoteChar(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isCommentStart(int c) {\n                return false;\n            }\n        };\n\n        // Inject the mocked ExtendedBufferedReader into the private final field 'in' of Lexer\n        Field inField = Lexer.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        inField.set(lexer, inMock);\n    }\n\n    @Test\n    void testReadEndOfLine_withCRFollowedByLF() throws Exception {\n        // Arrange\n        when(inMock.lookAhead()).thenReturn((int) '\\n');\n        when(inMock.read()).thenReturn((int) '\\n');\n\n        // Act\n        boolean result = invokeReadEndOfLine('\\r');\n\n        // Assert\n        verify(inMock).lookAhead();\n        verify(inMock).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_withCRNotFollowedByLF() throws Exception {\n        // Arrange\n        when(inMock.lookAhead()).thenReturn((int) 'x'); // not LF\n\n        // Act\n        boolean result = invokeReadEndOfLine('\\r');\n\n        // Assert\n        verify(inMock).lookAhead();\n        verify(inMock, never()).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_withLF() throws Exception {\n        // Act\n        boolean result = invokeReadEndOfLine('\\n');\n\n        // Assert\n        verify(inMock, never()).lookAhead();\n        verify(inMock, never()).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_withOtherChar() throws Exception {\n        // Act\n        boolean result = invokeReadEndOfLine('x');\n\n        // Assert\n        verify(inMock, never()).lookAhead();\n        verify(inMock, never()).read();\n        assertFalse(result);\n    }\n\n    private boolean invokeReadEndOfLine(int c) throws Exception {\n        Method method = Lexer.class.getDeclaredMethod(\"readEndOfLine\", int.class);\n        method.setAccessible(true);\n        try {\n            return (boolean) method.invoke(lexer, c);\n        } catch (Exception e) {\n            // Unwrap invocation target exception if present\n            Throwable cause = e.getCause();\n            if (cause instanceof IOException) {\n                throw (IOException) cause;\n            }\n            throw e;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969935,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 751,
+    "prompt_tokens": 1239,
+    "total_tokens": 1990,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.24
+  }
+}

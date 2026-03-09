@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmv4diwM6FoyvqK2itDX27scwytp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n\n    @BeforeEach\n    public void setUp() {\n        jsonTreeWriter = new JsonTreeWriter();\n    }\n\n    @Test\n    public void close_whenStackIsEmpty_addsSentinelClosed() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Ensure stack is empty\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<?> stack = (List<?>) stackField.get(jsonTreeWriter);\n        stack.clear();\n\n        jsonTreeWriter.close();\n\n        // Verify stack contains SENTINEL_CLOSED\n        assertEquals(1, stack.size());\n        Object sentinel = stack.get(0);\n        Field sentinelField = JsonTreeWriter.class.getDeclaredField(\"SENTINEL_CLOSED\");\n        sentinelField.setAccessible(true);\n        JsonPrimitive expectedSentinel = (JsonPrimitive) sentinelField.get(null);\n        assertSame(expectedSentinel, sentinel);\n    }\n\n    @Test\n    public void close_whenStackIsNotEmpty_throwsIOException() throws NoSuchFieldException, IllegalAccessException {\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<Object> stack = (List<Object>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(new JsonPrimitive(\"not empty\"));\n\n        IOException thrown = assertThrows(IOException.class, () -> jsonTreeWriter.close());\n        assertEquals(\"Incomplete document\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888778,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 381,
+    "prompt_tokens": 530,
+    "total_tokens": 911,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.84
+  }
+}

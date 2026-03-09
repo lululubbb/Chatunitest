@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5pwEZC5KPDup2Pi3dCrVWgsOkZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.File;\nimport java.io.FileOutputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.util.zip.ZipEntry;\nimport java.util.zip.ZipOutputStream;\n\nimport org.junit.jupiter.api.AfterAll;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class ParseBenchmarkTest {\n\n  private static File testZipFile;\n\n  @BeforeAll\n  static void createTestZip() throws Exception {\n    // Create a temporary zip file with a known entry\n    testZipFile = File.createTempFile(\"ParseBenchmarkData\", \".zip\");\n    try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(testZipFile))) {\n      ZipEntry entry = new ZipEntry(\"testfile.txt\");\n      zos.putNextEntry(entry);\n      String content = \"Hello, world!\";\n      zos.write(content.getBytes(StandardCharsets.UTF_8));\n      zos.closeEntry();\n    }\n  }\n\n  @AfterAll\n  static void cleanup() {\n    if (testZipFile != null && testZipFile.exists()) {\n      testZipFile.delete();\n    }\n  }\n\n  /**\n   * Use reflection to invoke the private static method 'resourceToString' of ParseBenchmark,\n   * but temporarily override the private static method 'getResourceFile' to return our test zip file.\n   */\n  private static String invokeResourceToString(String fileName) throws Exception {\n    // Get the resourceToString method\n    Method resourceToStringMethod = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n    resourceToStringMethod.setAccessible(true);\n\n    // Create a dynamic proxy for getResourceFile by using a subclass with reflection to replace the method\n    // Since we can't override private static methods, we use a trick:\n    // We create a new File object pointing to our testZipFile and temporarily replace the resource file on classpath\n\n    // Instead of invoking getResourceFile, we invoke resourceToString but patch getResourceFile via reflection\n    // We'll do this by temporarily replacing the returned File from getResourceFile by patching the method via reflection\n\n    // To do this, we first get the getResourceFile method\n    Method getResourceFileMethod = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    getResourceFileMethod.setAccessible(true);\n\n    // We cannot replace the method, so we simulate by replacing the resource file on disk\n\n    // Get the original file returned by getResourceFile\n    File originalFile = null;\n    try {\n      originalFile = (File) getResourceFileMethod.invoke(null, \"/ParseBenchmarkData.zip\");\n    } catch (InvocationTargetException e) {\n      // If getResourceFile throws, fallback to null\n      originalFile = null;\n    }\n\n    File backupFile = null;\n    if (originalFile != null && originalFile.exists()) {\n      backupFile = new File(originalFile.getAbsolutePath() + \".bak\");\n      if (!originalFile.renameTo(backupFile)) {\n        throw new IllegalStateException(\"Cannot backup original resource file\");\n      }\n    }\n\n    if (originalFile != null) {\n      Files.copy(testZipFile.toPath(), originalFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);\n    }\n\n    try {\n      return (String) resourceToStringMethod.invoke(null, fileName);\n    } catch (InvocationTargetException e) {\n      throw (e.getCause() != null) ? (Exception) e.getCause() : e;\n    } finally {\n      if (backupFile != null && backupFile.exists()) {\n        if (!backupFile.renameTo(originalFile)) {\n          throw new IllegalStateException(\"Cannot restore original resource file\");\n        }\n      }\n    }\n  }\n\n  @Test\n  void testResourceToString_readsContentCorrectly() throws Exception {\n    String content = invokeResourceToString(\"testfile.txt\");\n    assertEquals(\"Hello, world!\", content);\n  }\n\n  @Test\n  void testResourceToString_fileNotFound_throwsException() throws Exception {\n    Exception ex = assertThrows(IllegalArgumentException.class, () -> {\n      invokeResourceToString(\"nonexistent.txt\");\n    });\n    assertEquals(\"File not found in zip: nonexistent.txt\", ex.getMessage());\n  }\n\n  @Test\n  void testResourceToString_nullFileName_throwsNullPointerException() throws Exception {\n    Exception ex = assertThrows(NullPointerException.class, () -> {\n      invokeResourceToString(null);\n    });\n    // No need to check message, just ensure NPE is thrown\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885601,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1002,
+    "prompt_tokens": 2714,
+    "total_tokens": 3716,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.61
+  }
+}

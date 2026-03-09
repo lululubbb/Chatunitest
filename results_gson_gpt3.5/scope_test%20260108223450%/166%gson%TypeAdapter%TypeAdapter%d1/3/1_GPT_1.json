@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnGXeRLM2Uc30EOhLFC5cwzYD0RK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapterTest {\n\n    private TypeAdapter<String> typeAdapter;\n\n    @BeforeEach\n    void setUp() {\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                if (value == null) {\n                    out.nullValue();\n                } else {\n                    out.value(value);\n                }\n            }\n\n            @Override\n            public String read(JsonReader in) throws IOException {\n                JsonToken token = in.peek();\n                if (token == JsonToken.NULL) {\n                    in.nextNull();\n                    return null;\n                }\n                return in.nextString();\n            }\n        };\n    }\n\n    @Test\n    void testToJson_withNonNullValue() throws IOException {\n        StringWriter writer = new StringWriter();\n        typeAdapter.toJson(writer, \"test\");\n        assertEquals(\"\\\"test\\\"\", writer.toString());\n    }\n\n    @Test\n    void testToJson_withNullValue() throws IOException {\n        StringWriter writer = new StringWriter();\n        typeAdapter.toJson(writer, null);\n        assertEquals(\"null\", writer.toString());\n    }\n\n    @Test\n    void testToJson_returnString_nonNull() {\n        String json = typeAdapter.toJson(\"hello\");\n        assertEquals(\"\\\"hello\\\"\", json);\n    }\n\n    @Test\n    void testToJson_returnString_null() {\n        String json = typeAdapter.toJson(null);\n        assertEquals(\"null\", json);\n    }\n\n    @Test\n    void testToJsonTree_nonNull() {\n        JsonElement jsonElement = typeAdapter.toJsonTree(\"abc\");\n        assertTrue(jsonElement.isJsonPrimitive());\n        assertEquals(\"abc\", jsonElement.getAsString());\n    }\n\n    @Test\n    void testToJsonTree_null() {\n        JsonElement jsonElement = typeAdapter.toJsonTree(null);\n        assertTrue(jsonElement.isJsonNull());\n    }\n\n    @Test\n    void testFromJsonReader_nonNull() throws IOException {\n        StringReader reader = new StringReader(\"\\\"value\\\"\");\n        String result = typeAdapter.fromJson(reader);\n        assertEquals(\"value\", result);\n    }\n\n    @Test\n    void testFromJsonReader_null() throws IOException {\n        StringReader reader = new StringReader(\"null\");\n        String result = typeAdapter.fromJson(reader);\n        assertNull(result);\n    }\n\n    @Test\n    void testFromJsonString_nonNull() {\n        String json = \"\\\"stringValue\\\"\";\n        String result = typeAdapter.fromJson(json);\n        assertEquals(\"stringValue\", result);\n    }\n\n    @Test\n    void testFromJsonString_null() {\n        String json = \"null\";\n        String result = typeAdapter.fromJson(json);\n        assertNull(result);\n    }\n\n    @Test\n    void testFromJsonTree_nonNull() {\n        JsonElement jsonElement = new JsonPrimitive(\"treeValue\");\n        String result = typeAdapter.fromJsonTree(jsonElement);\n        assertEquals(\"treeValue\", result);\n    }\n\n    @Test\n    void testFromJsonTree_null() {\n        JsonElement jsonElement = JsonNull.INSTANCE;\n        String result = typeAdapter.fromJsonTree(jsonElement);\n        assertNull(result);\n    }\n\n    @Test\n    void testNullSafe_withNonNullValue() throws IOException {\n        TypeAdapter<String> nullSafeAdapter = typeAdapter.nullSafe();\n        StringWriter writer = new StringWriter();\n        nullSafeAdapter.write(new JsonWriter(writer), \"safe\");\n        assertEquals(\"\\\"safe\\\"\", writer.toString());\n    }\n\n    @Test\n    void testNullSafe_withNullValue() throws IOException {\n        TypeAdapter<String> nullSafeAdapter = typeAdapter.nullSafe();\n        StringWriter writer = new StringWriter();\n        nullSafeAdapter.write(new JsonWriter(writer), null);\n        assertEquals(\"null\", writer.toString());\n    }\n\n    @Test\n    void testInvokePrivateToJsonUsingReflection() throws Exception {\n        Method toJsonMethod = TypeAdapter.class.getDeclaredMethod(\"toJson\", Writer.class, Object.class);\n        toJsonMethod.setAccessible(true);\n\n        StringWriter writer = new StringWriter();\n        toJsonMethod.invoke(typeAdapter, writer, \"reflect\");\n        assertEquals(\"\\\"reflect\\\"\", writer.toString());\n    }\n\n    @Test\n    void testInvokePrivateToJson_nullUsingReflection() throws Exception {\n        Method toJsonMethod = TypeAdapter.class.getDeclaredMethod(\"toJson\", Writer.class, Object.class);\n        toJsonMethod.setAccessible(true);\n\n        StringWriter writer = new StringWriter();\n        toJsonMethod.invoke(typeAdapter, writer, null);\n        assertEquals(\"null\", writer.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890109,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1057,
+    "prompt_tokens": 329,
+    "total_tokens": 1386,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.68
+  }
+}

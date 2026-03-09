@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmysH1ugb7YmGPW71OkQN3F7WK9z",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  @Test\n  public void testGetMajorJavaVersion_returnsStaticField() {\n    int majorVersion = JavaVersion.getMajorJavaVersion();\n    // majorJavaVersion is initialized by determineMajorJavaVersion, which is static final\n    // We expect majorVersion to be positive (Java versions are positive)\n    assertTrue(majorVersion > 0);\n  }\n\n  @Test\n  public void testDetermineMajorJavaVersion_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"determineMajorJavaVersion\");\n    method.setAccessible(true);\n    int version = (int) method.invoke(null);\n    assertTrue(version > 0);\n  }\n\n  @Test\n  public void testGetMajorJavaVersion_StringParameter_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    assertEquals(8, ((Integer) method.invoke(null, \"1.8.0_131\")).intValue());\n    assertEquals(9, ((Integer) method.invoke(null, \"9\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(17, ((Integer) method.invoke(null, \"17\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, null)).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc\")).intValue());\n  }\n\n  @Test\n  public void testParseDotted_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    method.setAccessible(true);\n    assertEquals(8, ((Integer) method.invoke(null, \"1.8.0_131\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc\")).intValue());\n  }\n\n  @Test\n  public void testExtractBeginningInt_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"extractBeginningInt\", String.class);\n    method.setAccessible(true);\n    assertEquals(1, ((Integer) method.invoke(null, \"1.8.0_131\")).intValue());\n    assertEquals(11, ((Integer) method.invoke(null, \"11.0.2\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"abc\")).intValue());\n    assertEquals(-1, ((Integer) method.invoke(null, \"\")).intValue());\n  }\n\n  @Test\n  public void testIsJava9OrLater() {\n    boolean result = JavaVersion.isJava9OrLater();\n    // isJava9OrLater returns true if majorJavaVersion >= 9\n    if (JavaVersion.getMajorJavaVersion() >= 9) {\n      assertTrue(result);\n    } else {\n      assertFalse(result);\n    }\n  }\n\n  @Test\n  public void testPrivateConstructor() throws Exception {\n    var constructor = JavaVersion.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    Object instance = constructor.newInstance();\n    assertNotNull(instance);\n    assertTrue(instance instanceof JavaVersion);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889014,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 807,
+    "prompt_tokens": 1380,
+    "total_tokens": 2187,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.81
+  }
+}

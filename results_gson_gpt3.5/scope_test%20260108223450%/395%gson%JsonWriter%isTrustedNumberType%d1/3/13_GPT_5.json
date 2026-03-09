@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlse8t7cWKqtj55qnSerD1FY8FRp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.atomic.AtomicInteger;\nimport java.util.concurrent.atomic.AtomicLong;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_isTrustedNumberType_Test {\n\n  private static Method isTrustedNumberTypeMethod;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    isTrustedNumberTypeMethod = JsonWriter.class.getDeclaredMethod(\"isTrustedNumberType\", Class.class);\n    isTrustedNumberTypeMethod.setAccessible(true);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private boolean invokeIsTrustedNumberType(Class<?> clazz) throws Exception {\n    return (boolean) isTrustedNumberTypeMethod.invoke(null, clazz);\n  }\n\n  @Test\n  void testTrustedTypes() throws Exception {\n    assertTrue(invokeIsTrustedNumberType(Integer.class));\n    assertTrue(invokeIsTrustedNumberType(Long.class));\n    assertTrue(invokeIsTrustedNumberType(Double.class));\n    assertTrue(invokeIsTrustedNumberType(Float.class));\n    assertTrue(invokeIsTrustedNumberType(Byte.class));\n    assertTrue(invokeIsTrustedNumberType(Short.class));\n    assertTrue(invokeIsTrustedNumberType(BigDecimal.class));\n    assertTrue(invokeIsTrustedNumberType(BigInteger.class));\n    assertTrue(invokeIsTrustedNumberType(AtomicInteger.class));\n    assertTrue(invokeIsTrustedNumberType(AtomicLong.class));\n  }\n\n  @Test\n  void testUntrustedTypes() throws Exception {\n    // Common Number subclasses not trusted\n    assertFalse(invokeIsTrustedNumberType(Number.class));\n    assertFalse(invokeIsTrustedNumberType(java.util.concurrent.atomic.AtomicLongArray.class));\n    assertFalse(invokeIsTrustedNumberType(java.util.concurrent.atomic.AtomicIntegerArray.class));\n    assertFalse(invokeIsTrustedNumberType(java.math.MathContext.class));\n    // Null class should throw NPE, but method expects non-null, so skip null test\n  }\n\n  @Test\n  void testCustomNumberSubclass() throws Exception {\n    class CustomNumber extends Number {\n      private static final long serialVersionUID = 1L;\n      @Override public int intValue() { return 0; }\n      @Override public long longValue() { return 0L; }\n      @Override public float floatValue() { return 0f; }\n      @Override public double doubleValue() { return 0d; }\n    }\n    assertFalse(invokeIsTrustedNumberType(CustomNumber.class));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884784,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 533,
+    "prompt_tokens": 2707,
+    "total_tokens": 3240,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.65
+  }
+}

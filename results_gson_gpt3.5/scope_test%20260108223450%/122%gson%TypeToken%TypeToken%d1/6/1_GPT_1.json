@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmh27zlKLEfQKkvypzWr5ocTnDIQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nclass TypeTokenTest {\n\n  @Test\n  void testProtectedConstructor_setsTypeRawTypeAndHashCode() throws Exception {\n    // Create anonymous subclass to capture generic type argument\n    TypeToken<String> token = new TypeToken<String>() {};\n\n    // Use reflection to access private fields\n    var typeField = TypeToken.class.getDeclaredField(\"type\");\n    typeField.setAccessible(true);\n    Type type = (Type) typeField.get(token);\n    assertNotNull(type);\n\n    var rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n    rawTypeField.setAccessible(true);\n    Class<?> rawType = (Class<?>) rawTypeField.get(token);\n    assertEquals(String.class, rawType);\n\n    var hashCodeField = TypeToken.class.getDeclaredField(\"hashCode\");\n    hashCodeField.setAccessible(true);\n    int hashCode = hashCodeField.getInt(token);\n    assertEquals(type.hashCode(), hashCode);\n  }\n\n  @Test\n  void testPrivateConstructor_setsFieldsCorrectly() throws Exception {\n    Type stringType = String.class;\n    var ctor = TypeToken.class.getDeclaredConstructor(Type.class);\n    ctor.setAccessible(true);\n    TypeToken<?> token = (TypeToken<?>) ctor.newInstance(stringType);\n\n    var typeField = TypeToken.class.getDeclaredField(\"type\");\n    typeField.setAccessible(true);\n    Type type = (Type) typeField.get(token);\n    assertEquals(stringType, type);\n\n    var rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n    rawTypeField.setAccessible(true);\n    Class<?> rawType = (Class<?>) rawTypeField.get(token);\n    assertEquals(String.class, rawType);\n\n    var hashCodeField = TypeToken.class.getDeclaredField(\"hashCode\");\n    hashCodeField.setAccessible(true);\n    int expectedHashCode = stringType.hashCode();\n    assertEquals(expectedHashCode, hashCodeField.getInt(token));\n  }\n\n  @Test\n  void testGetTypeTokenTypeArgument_returnsType() throws Exception {\n    TypeToken<String> token = new TypeToken<String>() {};\n    var method = TypeToken.class.getDeclaredMethod(\"getTypeTokenTypeArgument\");\n    method.setAccessible(true);\n    Type result = (Type) method.invoke(token);\n    assertNotNull(result);\n    assertEquals(String.class, $Gson$Types.getRawType(result));\n  }\n\n  @Test\n  void testGetRawType_returnsRawType() throws Exception {\n    TypeToken<Integer> token = new TypeToken<Integer>() {};\n    Class<?> rawType = token.getRawType();\n    assertEquals(Integer.class, rawType);\n  }\n\n  @Test\n  void testGetType_returnsType() throws Exception {\n    TypeToken<Double> token = new TypeToken<Double>() {};\n    Type type = token.getType();\n    assertEquals(Double.class, $Gson$Types.getRawType(type));\n  }\n\n  @Test\n  void testEqualsAndHashCode() {\n    TypeToken<String> token1 = new TypeToken<String>() {};\n    TypeToken<String> token2 = new TypeToken<String>() {};\n    TypeToken<Integer> token3 = new TypeToken<Integer>() {};\n\n    assertEquals(token1, token2);\n    assertEquals(token1.hashCode(), token2.hashCode());\n    assertNotEquals(token1, token3);\n    assertNotEquals(token1.hashCode(), token3.hashCode());\n  }\n\n  @Test\n  void testToString_containsTypeName() {\n    TypeToken<String> token = new TypeToken<String>() {};\n    String str = token.toString();\n    assertTrue(str.contains(\"java.lang.String\"));\n  }\n\n  @Test\n  void testStaticGet_withType() {\n    TypeToken<?> token = TypeToken.get(String.class);\n    assertEquals(String.class, token.getRawType());\n  }\n\n  @Test\n  void testStaticGet_withClass() {\n    TypeToken<String> token = TypeToken.get(String.class);\n    assertEquals(String.class, token.getRawType());\n  }\n\n  @Test\n  void testStaticGetParameterized() {\n    TypeToken<?> token = TypeToken.getParameterized(Map.class, String.class, Integer.class);\n    assertEquals(Map.class, token.getRawType());\n  }\n\n  @Test\n  void testStaticGetArray() {\n    TypeToken<?> token = TypeToken.getArray(String.class);\n    assertTrue(token.getType().getTypeName().contains(\"[]\"));\n  }\n\n  @Test\n  void testDeprecatedIsAssignableFrom_withClass() {\n    TypeToken<Number> token = new TypeToken<Number>() {};\n    assertTrue(token.isAssignableFrom(Integer.class));\n    assertFalse(token.isAssignableFrom(String.class));\n  }\n\n  @Test\n  void testDeprecatedIsAssignableFrom_withType() {\n    TypeToken<Number> token = new TypeToken<Number>() {};\n    assertTrue(token.isAssignableFrom(Integer.class));\n    assertFalse(token.isAssignableFrom(String.class));\n  }\n\n  @Test\n  void testDeprecatedIsAssignableFrom_withToken() {\n    TypeToken<Number> token = new TypeToken<Number>() {};\n    TypeToken<Integer> intToken = new TypeToken<Integer>() {};\n    TypeToken<String> strToken = new TypeToken<String>() {};\n    assertTrue(token.isAssignableFrom(intToken));\n    assertFalse(token.isAssignableFrom(strToken));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887908,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1144,
+    "prompt_tokens": 534,
+    "total_tokens": 1678,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.75
+  }
+}

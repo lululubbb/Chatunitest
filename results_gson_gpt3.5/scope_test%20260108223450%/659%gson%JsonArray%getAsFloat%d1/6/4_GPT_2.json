@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnL9Jn61xicYFRF9lkd8abiLPf4m",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArrayMock;\n  private JsonElement jsonElementMock;\n\n  @BeforeEach\n  void setUp() {\n    jsonArrayMock = Mockito.spy(new JsonArray());\n    jsonElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  void getAsFloat_singleElement_returnsFloat() throws Exception {\n    // Arrange\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    doReturn(jsonElementMock).when(jsonArrayMock).getAsFloat(); // stub getAsFloat on jsonElementMock below\n\n    // Instead of mocking getAsSingleElement directly (private), mock getAsFloat on the returned element\n    // So we mock getAsSingleElement via reflection to return jsonElementMock\n\n    // To mock the private method getAsSingleElement, we use doAnswer:\n    doAnswer(invocation -> jsonElementMock).when(jsonArrayMock, \"getAsSingleElement\");\n\n    when(jsonElementMock.getAsFloat()).thenReturn(3.14f);\n\n    // Act\n    float result = jsonArrayMock.getAsFloat();\n\n    // Assert\n    assertEquals(3.14f, result, 0.0001f);\n    verify(jsonElementMock).getAsFloat();\n  }\n\n  @Test\n  void getAsSingleElement_privateMethod_returnsFirstElement() throws Exception {\n    // Arrange\n    JsonArray jsonArray = new JsonArray();\n    JsonElement first = mock(JsonElement.class);\n    JsonElement second = mock(JsonElement.class);\n    jsonArray.add(first);\n    jsonArray.add(second);\n\n    // Use reflection to invoke private method getAsSingleElement\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    // Act\n    JsonElement result = (JsonElement) method.invoke(jsonArray);\n\n    // Assert\n    assertSame(first, result);\n  }\n\n  @Test\n  void getAsSingleElement_privateMethod_emptyList_throwsException() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    assertThrows(IndexOutOfBoundsException.class, () -> {\n      method.invoke(jsonArray);\n    });\n  }\n\n  @Test\n  void getAsFloat_withRealJsonArray_returnsFloat() {\n    JsonArray jsonArray = new JsonArray();\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(5.5f);\n    jsonArray.add(jsonPrimitive);\n\n    float result = jsonArray.getAsFloat();\n\n    assertEquals(5.5f, result, 0.0001f);\n  }\n}\n```\n\n---\n\n**Note:** Since Mockito cannot mock private methods directly, the original calls to `doReturn(jsonElementMock).when(jsonArrayMock).getAsSingleElement()` and `verify(jsonArrayMock).getAsSingleElement()` cause compile errors.\n\nTo fix this:\n\n- Removed direct mocking/verification of the private method `getAsSingleElement`.\n- Instead, used `doAnswer` with the method name string to mock the private method call.\n- Verified interactions on the returned mock `jsonElementMock` only.\n\nIf your Mockito version does not support `doAnswer(invocation -> ...)` with method name string (this is a Mockito-inline or advanced feature), you can alternatively use reflection to replace the private method or test via public API only.\n\nIf you want a simpler approach without mocking the private method, just mock the returned element's `getAsFloat()` and call the public method.",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890395,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 798,
+    "prompt_tokens": 1134,
+    "total_tokens": 1932,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.64
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlwquUej8tQApQ8JChlbHDyB5FSe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectInputStream;\nimport java.io.ObjectStreamClass;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void testCreate_withUnsafe() throws Exception {\n    // Mock sun.misc.Unsafe class and its behavior via reflection\n    Class<?> unsafeClass = Class.forName(\"sun.misc.Unsafe\");\n    Field theUnsafeField = unsafeClass.getDeclaredField(\"theUnsafe\");\n    theUnsafeField.setAccessible(true);\n    Object unsafeInstance = theUnsafeField.get(null);\n    Method allocateInstanceMethod = unsafeClass.getMethod(\"allocateInstance\", Class.class);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    // Test newInstance returns an instance of String (or any class)\n    String s = allocator.newInstance(String.class);\n    assertNotNull(s);\n    assertEquals(String.class, s.getClass());\n  }\n\n  @Test\n  void testCreate_withObjectStreamClassMethods() throws Exception {\n    // Use reflection to simulate second try block\n    Method getConstructorId = ObjectStreamClass.class.getDeclaredMethod(\"getConstructorId\", Class.class);\n    getConstructorId.setAccessible(true);\n    int constructorId = (int) getConstructorId.invoke(null, Object.class);\n    Method newInstance = ObjectStreamClass.class.getDeclaredMethod(\"newInstance\", Class.class, int.class);\n    newInstance.setAccessible(true);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    // Test newInstance returns an instance of String (or any class)\n    String s = allocator.newInstance(String.class);\n    assertNotNull(s);\n    assertEquals(String.class, s.getClass());\n  }\n\n  @Test\n  void testCreate_withObjectInputStreamNewInstance() throws Exception {\n    Method newInstance = ObjectInputStream.class.getDeclaredMethod(\"newInstance\", Class.class, Class.class);\n    newInstance.setAccessible(true);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    // Test newInstance returns an instance of String (or any class)\n    String s = allocator.newInstance(String.class);\n    assertNotNull(s);\n    assertEquals(String.class, s.getClass());\n  }\n\n  @Test\n  void testCreate_fallbackThrows() {\n    UnsafeAllocator allocator = invokeCreate();\n\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,\n        () -> allocator.newInstance(String.class));\n    assertTrue(thrown.getMessage().contains(\"Cannot allocate\"));\n  }\n\n  @Test\n  void testAssertInstantiable_private() throws Exception {\n    // Use reflection to access private method assertInstantiable\n    Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiable.setAccessible(true);\n\n    // Should not throw for Object.class\n    assertInstantiable.invoke(null, Object.class);\n\n    // Should throw for interface\n    Class<?> interfaceClass = Runnable.class;\n    Exception ex = assertThrows(Exception.class, () -> assertInstantiable.invoke(null, interfaceClass));\n    assertTrue(ex.getCause() instanceof UnsupportedOperationException);\n\n    // Should throw for abstract class\n    Class<?> abstractClass = Number.class;\n    ex = assertThrows(Exception.class, () -> assertInstantiable.invoke(null, abstractClass));\n    assertTrue(ex.getCause() instanceof UnsupportedOperationException);\n  }\n\n  // Helper method to invoke private static create() method via reflection\n  private UnsafeAllocator invokeCreate() {\n    try {\n      Method createMethod = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n      createMethod.setAccessible(true);\n      return (UnsafeAllocator) createMethod.invoke(null);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885044,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 775,
+    "prompt_tokens": 830,
+    "total_tokens": 1605,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.18
+  }
+}

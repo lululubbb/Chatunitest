@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwoM61eHOM3LNtxCNg7gr9cKX89w",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setup() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testParseReturnsCSVParser() throws Exception {\n        Reader reader = mock(Reader.class);\n\n        // Use reflection to create a mock CSVParser instance\n        CSVParser mockParser = mock(CSVParser.class);\n\n        // Use reflection to replace constructor call\n        CSVFormat spyFormat = spy(csvFormat);\n        doReturn(mockParser).when(spyFormat).parseInternal(any());\n\n        CSVParser parser = spyFormat.parse(reader);\n\n        assertNotNull(parser);\n        assertEquals(mockParser, parser);\n    }\n\n    @Test\n    void testParseWithNullReaderThrowsNPE() {\n        assertThrows(NullPointerException.class, () -> csvFormat.parse(null));\n    }\n\n    @Test\n    void testParseCreatesCSVParserWithThisInstance() throws Exception {\n        Reader reader = mock(Reader.class);\n\n        // Use reflection to intercept CSVParser creation\n        Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class);\n        constructor.setAccessible(true);\n\n        CSVParser parser = constructor.newInstance(reader, csvFormat);\n        assertNotNull(parser);\n    }\n\n    // Add a helper method in CSVFormatTest to simulate parseInternal for mocking\n    private CSVParser parseInternal(Reader in) throws IOException {\n        return new CSVParser(in, csvFormat);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688474,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 360,
+    "prompt_tokens": 2401,
+    "total_tokens": 2761,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.56
+  }
+}

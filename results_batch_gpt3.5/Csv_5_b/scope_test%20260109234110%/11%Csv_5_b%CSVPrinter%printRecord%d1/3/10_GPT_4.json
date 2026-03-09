@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90s2VYZGxX9cCoaWSUZXF10niwk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Object[] values = {\"value1\", 123, null, 45.67};\n\n        // Spy on printer to verify print(Object) calls\n        CSVPrinter spyPrinter = spy(printer);\n\n        // Replace 'out' field in spyPrinter with a mock to avoid side effects\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(spyPrinter, mock(Appendable.class));\n\n        // Use doNothing() to avoid calling real print method implementation which may throw IOException\n        doNothing().when(spyPrinter).print(any());\n\n        // Use doNothing() for println as well\n        doNothing().when(spyPrinter).println();\n\n        spyPrinter.printRecord(values);\n\n        // Verify print called for each value\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n\n        // Verify println called once after printing all values\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNoValues() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Object[] values = new Object[0];\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        // Replace 'out' field in spyPrinter with a mock to avoid side effects\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(spyPrinter, mock(Appendable.class));\n\n        doNothing().when(spyPrinter).print(any());\n        doNothing().when(spyPrinter).println();\n\n        spyPrinter.printRecord(values);\n\n        // print should never be called\n        verify(spyPrinter, never()).print(any());\n\n        // println should be called once\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNullValuesArray() {\n        assertThrows(NullPointerException.class, () -> printer.printRecord((Object[]) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973706,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 545,
+    "prompt_tokens": 971,
+    "total_tokens": 1516,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.54
+  }
+}

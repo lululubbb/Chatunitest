@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmgVM2J87oYtUXLNKVNIoFB5pMHb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n  private Method popStackMethod;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a JsonElement mock to pass to the constructor since it requires one\n    // We can use a JsonNull instance as a simple JsonElement\n    jsonTreeReader = new JsonTreeReader(com.google.gson.JsonNull.INSTANCE);\n\n    // Access private popStack method via reflection\n    popStackMethod = JsonTreeReader.class.getDeclaredMethod(\"popStack\");\n    popStackMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testPopStack_whenStackHasOneElement() throws Exception {\n    // Use reflection to push an element onto the stack by directly manipulating fields\n    // stackSize = 1; stack[0] = \"testElement\"\n    setStackField(new Object[]{\"testElement\"});\n    setStackSizeField(1);\n\n    Object popped = popStackMethod.invoke(jsonTreeReader);\n\n    assertEquals(\"testElement\", popped);\n\n    // stackSize should be decremented to 0\n    int stackSize = getStackSizeField();\n    assertEquals(0, stackSize);\n\n    // stack[0] should be null after pop\n    Object[] stack = getStackField();\n    assertNull(stack[0]);\n  }\n\n  @Test\n  public void testPopStack_whenStackHasMultipleElements() throws Exception {\n    // Prepare stack with multiple elements: {\"a\", \"b\", \"c\"}, stackSize = 3\n    setStackField(new Object[]{\"a\", \"b\", \"c\"});\n    setStackSizeField(3);\n\n    Object popped1 = popStackMethod.invoke(jsonTreeReader);\n    assertEquals(\"c\", popped1);\n    assertEquals(2, getStackSizeField());\n    assertNull(getStackField()[2]);\n\n    Object popped2 = popStackMethod.invoke(jsonTreeReader);\n    assertEquals(\"b\", popped2);\n    assertEquals(1, getStackSizeField());\n    assertNull(getStackField()[1]);\n\n    Object popped3 = popStackMethod.invoke(jsonTreeReader);\n    assertEquals(\"a\", popped3);\n    assertEquals(0, getStackSizeField());\n    assertNull(getStackField()[0]);\n  }\n\n  // Helper methods to access private fields via reflection\n\n  private void setStackField(Object[] stackContent) throws Exception {\n    var stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    // Create a new array of length 32 and copy stackContent in front\n    Object[] newStack = new Object[32];\n    System.arraycopy(stackContent, 0, newStack, 0, stackContent.length);\n    stackField.set(jsonTreeReader, newStack);\n  }\n\n  private Object[] getStackField() throws Exception {\n    var stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    return (Object[]) stackField.get(jsonTreeReader);\n  }\n\n  private void setStackSizeField(int size) throws Exception {\n    var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, size);\n  }\n\n  private int getStackSizeField() throws Exception {\n    var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    return stackSizeField.getInt(jsonTreeReader);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887875,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 769,
+    "prompt_tokens": 568,
+    "total_tokens": 1337,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.01
+  }
+}

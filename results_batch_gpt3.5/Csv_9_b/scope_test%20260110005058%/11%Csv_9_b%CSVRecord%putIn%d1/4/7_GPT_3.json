@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA0asAVMIfnVVYtojgpNHMKPTbwo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordPutInTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Prepare mapping with entries, some with valid index, some out of bounds\n        mapping = new HashMap<>();\n        mapping.put(\"A\", 0);\n        mapping.put(\"B\", 1);\n        mapping.put(\"C\", 2);\n        mapping.put(\"D\", 5); // out of bounds index\n\n        // Values array with length 3\n        values = new String[] { \"val0\", \"val1\", \"val2\" };\n\n        // Create CSVRecord instance via reflection since constructor is package-private\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class,\n                long.class);\n        constructor.setAccessible(true);\n        csvRecord = constructor.newInstance(values, mapping, \"comment\", 1L);\n    }\n\n    @Test\n    void testPutIn_withValidAndInvalidIndices() throws Exception {\n        Map<String, String> map = new HashMap<>();\n        // Use reflection to get putIn method (package-private)\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        // Verify map contains keys with valid indices\n        assertEquals(\"val0\", result.get(\"A\"));\n        assertEquals(\"val1\", result.get(\"B\"));\n        assertEquals(\"val2\", result.get(\"C\"));\n        // Key with out of bounds index should not be present\n        assertFalse(result.containsKey(\"D\"));\n        // The returned map is the same instance passed in\n        assertSame(map, result);\n    }\n\n    @Test\n    void testPutIn_withEmptyMapping() throws Exception {\n        // Create CSVRecord with empty mapping\n        Map<String, Integer> emptyMapping = new HashMap<>();\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class,\n                long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(values, emptyMapping, null, 2L);\n\n        Map<String, String> map = new HashMap<>();\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(record, map);\n\n        // Map should remain empty\n        assertTrue(result.isEmpty());\n        assertSame(map, result);\n    }\n\n    @Test\n    void testPutIn_withEmptyValues() throws Exception {\n        // Values array empty\n        String[] emptyValues = new String[0];\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class,\n                long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(emptyValues, mapping, null, 3L);\n\n        Map<String, String> map = new HashMap<>();\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(record, map);\n\n        // No keys should be added because all indices are out of bounds\n        assertTrue(result.isEmpty());\n        assertSame(map, result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977532,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 820,
+    "prompt_tokens": 1340,
+    "total_tokens": 2160,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.11
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlhf3a0qeksLyWt0zKWJZSXytPWF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nfinal class TypeAdapterRuntimeTypeWrapperTest {\n\n  Gson mockGson;\n  TypeAdapter<Object> mockDelegate;\n  JsonWriter mockJsonWriter;\n\n  static class DummyReflectiveAdapter extends Adapter<Object, Object> {\n    DummyReflectiveAdapter() {\n      super(null, null);\n      // Use reflection to set the enclosing instance fields to avoid NullPointerException if needed\n      try {\n        Field boundFields = Adapter.class.getDeclaredField(\"boundFields\");\n        boundFields.setAccessible(true);\n        boundFields.set(this, null);\n      } catch (Exception ignored) {\n      }\n    }\n\n    @Override\n    public void write(JsonWriter out, Object value) throws IOException {}\n\n    @Override\n    public Object read(com.google.gson.stream.JsonReader in) throws IOException {\n      return null;\n    }\n  }\n\n  @BeforeEach\n  void setUp() {\n    mockGson = mock(Gson.class);\n    mockDelegate = mock(TypeAdapter.class);\n    mockJsonWriter = mock(JsonWriter.class);\n  }\n\n  @Test\n  void write_runtimeTypeEqualsDeclaredType_usesDelegateWrite() throws IOException {\n    Object value = new Object();\n    Type declaredType = Object.class;\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper =\n        new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declaredType);\n\n    // runtimeType == declaredType, so getAdapter should not be called\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegate).write(mockJsonWriter, value);\n    verifyNoInteractions(mockGson);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_nonReflectiveRuntimeTypeAdapter_usesRuntimeTypeAdapter() throws IOException {\n    Object value = \"test\";\n    Type declaredType = Object.class;\n    Type runtimeType = String.class;\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<?> mockRuntimeTypeAdapter = mock(TypeAdapter.class);\n\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(mockRuntimeTypeAdapter);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> delegate = mock(TypeAdapter.class);\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper =\n        new TypeAdapterRuntimeTypeWrapper<>(mockGson, delegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    InOrder inOrder = inOrder(mockGson, mockRuntimeTypeAdapter, delegate);\n    inOrder.verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    inOrder.verify(mockRuntimeTypeAdapter).write(mockJsonWriter, value);\n    verifyNoMoreInteractions(delegate);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_reflectiveRuntimeTypeAdapter_delegateIsNotReflective_usesDelegate() throws IOException {\n    Object value = \"test\";\n    Type declaredType = Object.class;\n    Type runtimeType = String.class;\n\n    Adapter<Object, Object> reflectiveAdapter = new DummyReflectiveAdapter();\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(reflectiveAdapter);\n\n    // delegate is NOT reflective - use a mock TypeAdapter whose class is not ReflectiveTypeAdapterFactory.Adapter\n    TypeAdapter<Object> nonReflectiveDelegate = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper =\n        new TypeAdapterRuntimeTypeWrapper<>(mockGson, nonReflectiveDelegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    verify(nonReflectiveDelegate).write(mockJsonWriter, value);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_reflectiveRuntimeTypeAdapter_delegateIsReflective_usesRuntimeTypeAdapter() throws IOException {\n    Object value = \"test\";\n    Type declaredType = Object.class;\n    Type runtimeType = String.class;\n\n    Adapter<Object, Object> reflectiveAdapter = new DummyReflectiveAdapter();\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(reflectiveAdapter);\n\n    // delegate is reflective - use spy of reflectiveAdapter\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> reflectiveDelegate = spy(reflectiveAdapter);\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper =\n        new TypeAdapterRuntimeTypeWrapper<>(mockGson, reflectiveDelegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    verify(reflectiveDelegate, never()).write(any(), any());\n    verify(reflectiveAdapter).write(mockJsonWriter, value);\n  }\n\n  @Test\n  void write_valueNull_usesDelegateWrite() throws IOException {\n    Object value = null;\n    Type declaredType = Object.class;\n\n    TypeAdapterRuntimeTypeWrapper<Object> wrapper =\n        new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegate).write(mockJsonWriter, null);\n    verifyNoInteractions(mockGson);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884103,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1120,
+    "prompt_tokens": 2400,
+    "total_tokens": 3520,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.7
+  }
+}

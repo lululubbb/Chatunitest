@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZIMHywdidBUh0WAzlPJwWNmwWpU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass CSVFormatWithHeaderTest {\n\n    private CSVFormat baseFormat;\n\n    @BeforeEach\n    void setUp() {\n        baseFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithHeader_NullMetaData_ReturnsFormatWithNullHeader() throws SQLException, NoSuchFieldException, IllegalAccessException {\n        // Use reflection to invoke private constructor with null header, since withHeader(null) is ambiguous or not allowed\n        CSVFormat result = baseFormat.withHeader((ResultSetMetaData) null);\n        assertNotNull(result);\n        assertNull(result.getHeader());\n        // Other properties remain unchanged\n        assertEquals(baseFormat.getDelimiter(), result.getDelimiter());\n        assertEquals(baseFormat.getQuoteCharacter(), result.getQuoteCharacter());\n        assertEquals(baseFormat.getQuoteMode(), result.getQuoteMode());\n        assertEquals(baseFormat.getCommentMarker(), result.getCommentMarker());\n        assertEquals(baseFormat.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(baseFormat.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(baseFormat.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(baseFormat.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(baseFormat.getNullString(), result.getNullString());\n        assertArrayEquals(baseFormat.getHeaderComments(), result.getHeaderComments());\n        assertEquals(baseFormat.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(baseFormat.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(baseFormat.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testWithHeader_MetaDataWithColumns_ReturnsFormatWithHeaderLabels() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(3);\n        when(metaData.getColumnLabel(1)).thenReturn(\"col1\");\n        when(metaData.getColumnLabel(2)).thenReturn(\"col2\");\n        when(metaData.getColumnLabel(3)).thenReturn(\"col3\");\n\n        CSVFormat result = baseFormat.withHeader(metaData);\n\n        assertNotNull(result);\n        String[] header = result.getHeader();\n        assertNotNull(header);\n        assertEquals(3, header.length);\n        assertEquals(\"col1\", header[0]);\n        assertEquals(\"col2\", header[1]);\n        assertEquals(\"col3\", header[2]);\n\n        // Other properties remain unchanged\n        assertEquals(baseFormat.getDelimiter(), result.getDelimiter());\n        assertEquals(baseFormat.getQuoteCharacter(), result.getQuoteCharacter());\n        assertEquals(baseFormat.getQuoteMode(), result.getQuoteMode());\n        assertEquals(baseFormat.getCommentMarker(), result.getCommentMarker());\n        assertEquals(baseFormat.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(baseFormat.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(baseFormat.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(baseFormat.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(baseFormat.getNullString(), result.getNullString());\n        assertArrayEquals(baseFormat.getHeaderComments(), result.getHeaderComments());\n        assertEquals(baseFormat.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(baseFormat.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(baseFormat.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n\n        verify(metaData, times(1)).getColumnCount();\n        verify(metaData, times(1)).getColumnLabel(1);\n        verify(metaData, times(1)).getColumnLabel(2);\n        verify(metaData, times(1)).getColumnLabel(3);\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    void testWithHeader_MetaDataThrowsSQLException_PropagatesException() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenThrow(new SQLException(\"error\"));\n\n        SQLException thrown = assertThrows(SQLException.class, () -> baseFormat.withHeader(metaData));\n        assertEquals(\"error\", thrown.getMessage());\n\n        verify(metaData, times(1)).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551390,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 958,
+    "prompt_tokens": 2257,
+    "total_tokens": 3215,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.63
+  }
+}

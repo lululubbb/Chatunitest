@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0WsEH1Orp87ETj1kyevxiZm0v5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterOpenTest {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  void open_shouldPushEmptyAndWriteOpenBracket_andReturnThis() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n    openMethod.setAccessible(true);\n\n    // Call open with EMPTY_ARRAY (1) and '['\n    JsonWriter returned = (JsonWriter) openMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, '[');\n\n    // Verify beforeValue() caused stack push and out.write called\n    verify(mockWriter).write('[');\n    assertSame(jsonWriter, returned);\n\n    // The stack should have one element with value EMPTY_ARRAY (1)\n    Method peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    int top = (int) peekMethod.invoke(jsonWriter);\n    assertEquals(JsonScope.EMPTY_ARRAY, top);\n  }\n\n  @Test\n  void open_shouldCallBeforeValueAndPushMultipleScopes() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n    Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n    openMethod.setAccessible(true);\n\n    // Call open with EMPTY_OBJECT (3) and '{'\n    JsonWriter returned = (JsonWriter) openMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, '{');\n    verify(mockWriter).write('{');\n    assertSame(jsonWriter, returned);\n\n    Method peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    int top = (int) peekMethod.invoke(jsonWriter);\n    assertEquals(JsonScope.EMPTY_OBJECT, top);\n\n    // Call open again with EMPTY_ARRAY to check stack increments\n    returned = (JsonWriter) openMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, '[');\n    verify(mockWriter).write('[');\n    assertSame(jsonWriter, returned);\n\n    top = (int) peekMethod.invoke(jsonWriter);\n    assertEquals(JsonScope.EMPTY_ARRAY, top);\n\n    // Stack size should be 2 now, verify by reflection on stackSize field\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = (int) stackSizeField.get(jsonWriter);\n    assertEquals(2, stackSize);\n  }\n\n  @Test\n  void open_shouldThrowIOException_whenWriteFails() throws NoSuchMethodException {\n    try {\n      doThrow(new IOException(\"write failed\")).when(mockWriter).write('[');\n      Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n      openMethod.setAccessible(true);\n      openMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, '[');\n      fail(\"Expected InvocationTargetException caused by IOException\");\n    } catch (InvocationTargetException e) {\n      assertTrue(e.getCause() instanceof IOException);\n      assertEquals(\"write failed\", e.getCause().getMessage());\n    } catch (Exception e) {\n      fail(\"Expected InvocationTargetException but got \" + e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889116,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 760,
+    "prompt_tokens": 1536,
+    "total_tokens": 2296,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.8
+  }
+}

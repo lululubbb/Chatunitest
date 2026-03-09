@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaKqCnAZC88yA68Bo4zaS5ku4p1U",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormatWithNormalValues() {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    void testFormatWithNullValue() {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\");\n        String result = format.format(\"a\", null, \"c\");\n        assertEquals(\"a,NULL,c\", result);\n    }\n\n    @Test\n    void testFormatWithEmptyValues() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormatWithValuesContainingComma() {\n        String result = csvFormat.format(\"a,b\", \"c\");\n        assertEquals(\"\\\"a,b\\\",c\", result);\n    }\n\n    @Test\n    void testFormatThrowsIllegalStateExceptionOnIOException() throws IOException {\n        // Use Mockito to mock CSVPrinter to throw IOException on printRecord\n        try (MockedConstruction<CSVPrinter> mocked = mockConstruction(CSVPrinter.class,\n                (mock, context) -> {\n                    doThrow(new IOException(\"IO error\")).when(mock).printRecord(any());\n                })) {\n            CSVFormat format = CSVFormat.DEFAULT;\n            IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n                format.format(\"a\", \"b\");\n            });\n            assertTrue(exception.getCause() instanceof IOException);\n            assertEquals(\"IO error\", exception.getCause().getMessage());\n        }\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555388,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 400,
+    "prompt_tokens": 1849,
+    "total_tokens": 2249,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.78
+  }
+}

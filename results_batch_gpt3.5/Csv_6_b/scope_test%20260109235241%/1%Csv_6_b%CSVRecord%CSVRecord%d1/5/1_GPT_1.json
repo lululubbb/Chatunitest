@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw951RTVW1CqzvVmbz6HD05S0INJ1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private String[] values;\n    private Map<String, Integer> mapping;\n    private String comment;\n    private long recordNumber;\n\n    private CSVRecord record;\n\n    @BeforeEach\n    void setUp() {\n        values = new String[]{\"val0\", \"val1\", \"val2\"};\n        mapping = new HashMap<>();\n        mapping.put(\"col0\", 0);\n        mapping.put(\"col1\", 1);\n        mapping.put(\"col2\", 2);\n        comment = \"a comment\";\n        recordNumber = 42L;\n\n        record = new CSVRecord(values, mapping, comment, recordNumber);\n    }\n\n    @Test\n    void testConstructorNullValues() throws Exception {\n        CSVRecord r = new CSVRecord(null, mapping, comment, recordNumber);\n\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        String[] vals = (String[]) valuesField.get(r);\n        assertNotNull(vals);\n        assertEquals(0, vals.length);\n    }\n\n    @Test\n    void testGetByIndex() {\n        assertEquals(\"val0\", record.get(0));\n        assertEquals(\"val1\", record.get(1));\n        assertEquals(\"val2\", record.get(2));\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> record.get(-1));\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> record.get(3));\n    }\n\n    @Test\n    void testGetByName() {\n        assertEquals(\"val0\", record.get(\"col0\"));\n        assertEquals(\"val1\", record.get(\"col1\"));\n        assertEquals(\"val2\", record.get(\"col2\"));\n        assertThrows(IllegalArgumentException.class, () -> record.get(\"unknown\"));\n        assertThrows(IllegalArgumentException.class, () -> record.get(null));\n    }\n\n    private enum TestEnum {\n        col0, col1\n    }\n\n    @Test\n    void testGetByEnum() {\n        assertEquals(\"val0\", record.get(TestEnum.col0));\n        assertEquals(\"val1\", record.get(TestEnum.col1));\n        assertThrows(IllegalArgumentException.class, () -> record.get((Enum<?>) null));\n    }\n\n    @Test\n    void testGetComment() {\n        assertEquals(comment, record.getComment());\n        CSVRecord r = new CSVRecord(values, mapping, null, recordNumber);\n        assertNull(r.getComment());\n    }\n\n    @Test\n    void testGetRecordNumber() {\n        assertEquals(recordNumber, record.getRecordNumber());\n    }\n\n    @Test\n    void testIsConsistent() {\n        assertTrue(record.isConsistent());\n\n        // Create inconsistent record: values length != mapping size\n        Map<String, Integer> map2 = new HashMap<>();\n        map2.put(\"a\", 0);\n        map2.put(\"b\", 1);\n        CSVRecord inconsistent = new CSVRecord(new String[] {\"v0\"}, map2, null, 1);\n        assertFalse(inconsistent.isConsistent());\n    }\n\n    @Test\n    void testIsMapped() {\n        assertTrue(record.isMapped(\"col0\"));\n        assertFalse(record.isMapped(\"unknown\"));\n        assertFalse(record.isMapped(null));\n    }\n\n    @Test\n    void testIsSet() {\n        assertTrue(record.isSet(\"col0\"));\n        assertFalse(record.isSet(\"unknown\"));\n        assertFalse(record.isSet(null));\n\n        CSVRecord r = new CSVRecord(new String[] {null}, mapping, null, 1);\n        assertFalse(r.isSet(\"col0\"));\n    }\n\n    @Test\n    void testIterator() {\n        Iterator<String> it = record.iterator();\n        List<String> list = new ArrayList<>();\n        while (it.hasNext()) {\n            list.add(it.next());\n        }\n        assertEquals(Arrays.asList(values), list);\n    }\n\n    @Test\n    void testPutIn() {\n        Map<String, String> target = new HashMap<>();\n        Map<String, String> returned = record.putIn(target);\n        assertSame(target, returned);\n        assertEquals(3, target.size());\n        assertEquals(\"val0\", target.get(\"col0\"));\n        assertEquals(\"val1\", target.get(\"col1\"));\n        assertEquals(\"val2\", target.get(\"col2\"));\n    }\n\n    @Test\n    void testSize() {\n        assertEquals(values.length, record.size());\n        CSVRecord empty = new CSVRecord(new String[0], mapping, null, 1);\n        assertEquals(0, empty.size());\n    }\n\n    @Test\n    void testToList() throws Exception {\n        Method toListMethod = CSVRecord.class.getDeclaredMethod(\"toList\");\n        toListMethod.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<String> list = (List<String>) toListMethod.invoke(record);\n        assertEquals(Arrays.asList(values), list);\n    }\n\n    @Test\n    void testToMap() {\n        Map<String, String> map = record.toMap();\n        assertEquals(mapping.size(), map.size());\n        for (Map.Entry<String, Integer> e : mapping.entrySet()) {\n            assertEquals(values[e.getValue().intValue()], map.get(e.getKey()));\n        }\n    }\n\n    @Test\n    void testToString() {\n        String s = record.toString();\n        assertTrue(s.contains(\"val0\"));\n        assertTrue(s.contains(\"val1\"));\n        assertTrue(s.contains(\"val2\"));\n    }\n\n    @Test\n    void testValuesMethod() throws Exception {\n        Method valuesMethod = CSVRecord.class.getDeclaredMethod(\"values\");\n        valuesMethod.setAccessible(true);\n        String[] vals = (String[]) valuesMethod.invoke(record);\n        assertArrayEquals(values, vals);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973963,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1252,
+    "prompt_tokens": 419,
+    "total_tokens": 1671,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.26
+  }
+}

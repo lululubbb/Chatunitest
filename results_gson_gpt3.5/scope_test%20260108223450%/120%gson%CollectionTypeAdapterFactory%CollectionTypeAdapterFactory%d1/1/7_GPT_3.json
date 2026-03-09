@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvltW1VrXnxn8jsi8qzTSmQT0BgTz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.internal.$Gson$Types;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Type;\nimport java.util.ArrayList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CollectionTypeAdapterFactoryTest {\n\n  @Mock ConstructorConstructor constructorConstructor;\n  @Mock Gson gson;\n  @Mock ObjectConstructor<?> objectConstructor;\n\n  CollectionTypeAdapterFactory factory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    factory = new CollectionTypeAdapterFactory(constructorConstructor);\n  }\n\n  @Test\n  void create_withCollectionType_returnsTypeAdapter() {\n    TypeToken<ArrayList<String>> typeToken = new TypeToken<ArrayList<String>>() {};\n    Type elementType = $Gson$Types.getCollectionElementType(typeToken.getType(), typeToken.getRawType());\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> elementAdapter = (TypeAdapter<String>) mock(TypeAdapter.class);\n\n    when(constructorConstructor.get(typeToken)).thenReturn((ObjectConstructor) objectConstructor);\n    when(objectConstructor.construct()).thenReturn(new ArrayList<>());\n\n    // Fix: use a generic helper method to avoid type capture issues\n    when(gson.getAdapter(any(TypeToken.class))).thenAnswer(invocation -> {\n      TypeToken<?> token = invocation.getArgument(0);\n      if ($Gson$Types.equals(token.getType(), elementType)) {\n        return elementAdapter;\n      }\n      return null;\n    });\n\n    TypeAdapter<?> adapter = factory.create(gson, typeToken);\n\n    assertNotNull(adapter);\n    String expectedClassName = factory.getClass().getName() + \"$Adapter\";\n    String actualClassName = adapter.getClass().getName();\n    assertTrue(actualClassName.contains(\"Adapter\"), \"Adapter class name should contain 'Adapter'\");\n  }\n\n  @Test\n  void create_withNonCollectionType_returnsNull() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    TypeAdapter<?> adapter = factory.create(gson, typeToken);\n    assertNull(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884838,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 499,
+    "prompt_tokens": 1074,
+    "total_tokens": 1573,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.62
+  }
+}

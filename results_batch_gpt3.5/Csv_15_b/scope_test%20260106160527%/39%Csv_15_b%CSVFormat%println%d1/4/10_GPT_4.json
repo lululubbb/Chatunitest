@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cux2Yq019hB4CKT3M7BhKVUvXBUUg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVFormatPrintlnTest {\n\n    private CSVFormat csvFormatTrailingDelimiterTrue;\n    private CSVFormat csvFormatTrailingDelimiterFalse;\n    private Appendable mockAppendable;\n\n    @BeforeEach\n    void setUp() {\n        csvFormatTrailingDelimiterTrue = CSVFormat.DEFAULT.withTrailingDelimiter(true);\n        csvFormatTrailingDelimiterFalse = CSVFormat.DEFAULT.withTrailingDelimiter(false);\n        mockAppendable = mock(Appendable.class);\n    }\n\n    @Test\n    void println_trailingDelimiterTrue_withRecordSeparator_appendsDelimiterAndRecordSeparator() throws IOException {\n        CSVFormat format = csvFormatTrailingDelimiterTrue;\n\n        format.println(mockAppendable);\n\n        InOrder inOrder = inOrder(mockAppendable);\n        inOrder.verify(mockAppendable).append(format.getDelimiter());\n        inOrder.verify(mockAppendable).append(format.getRecordSeparator());\n        verifyNoMoreInteractions(mockAppendable);\n    }\n\n    @Test\n    void println_trailingDelimiterTrue_withNullRecordSeparator_appendsOnlyDelimiter() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrailingDelimiter(true).withRecordSeparator((String) null);\n\n        format.println(mockAppendable);\n\n        verify(mockAppendable).append(format.getDelimiter());\n        verifyNoMoreInteractions(mockAppendable);\n    }\n\n    @Test\n    void println_trailingDelimiterFalse_withRecordSeparator_appendsOnlyRecordSeparator() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrailingDelimiter(false);\n\n        format.println(mockAppendable);\n\n        verify(mockAppendable).append(format.getRecordSeparator());\n        verifyNoMoreInteractions(mockAppendable);\n    }\n\n    @Test\n    void println_trailingDelimiterFalse_withNullRecordSeparator_appendsNothing() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrailingDelimiter(false).withRecordSeparator((String) null);\n\n        format.println(mockAppendable);\n\n        verify(mockAppendable, never()).append(any());\n    }\n\n    @Test\n    void println_appendsThrowsIOException_propagates() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrailingDelimiter(true).withRecordSeparator(\"X\");\n        doThrow(new IOException(\"append failed\")).when(mockAppendable).append(anyChar());\n\n        IOException thrown = assertThrows(IOException.class, () -> format.println(mockAppendable));\n        assertEquals(\"append failed\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689354,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 520,
+    "prompt_tokens": 2312,
+    "total_tokens": 2832,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.37
+  }
+}

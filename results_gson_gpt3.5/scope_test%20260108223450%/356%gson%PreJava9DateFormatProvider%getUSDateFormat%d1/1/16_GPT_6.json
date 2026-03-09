@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn2az11ZUd1bv6QCUHkNYIrg1aVO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\nimport org.junit.jupiter.api.Test;\n\nclass PreJava9DateFormatProviderTest {\n\n  @Test\n  void testGetUSDateFormat_withValidStyles() {\n    // Test with styles 0, 1, 2, 3 (commonly DateFormat constants: DEFAULT, SHORT, MEDIUM, LONG)\n    int[] styles = {DateFormat.DEFAULT, DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG};\n    for (int style : styles) {\n      DateFormat df = PreJava9DateFormatProvider.getUSDateFormat(style);\n      assertNotNull(df);\n      assertTrue(df instanceof SimpleDateFormat);\n      SimpleDateFormat sdf = (SimpleDateFormat) df;\n      // Locale is not accessible from SimpleDateFormat, so check pattern and other properties instead\n      String expectedPattern = invokeGetDateFormatPattern(style);\n      assertEquals(expectedPattern, sdf.toPattern());\n    }\n  }\n\n  @Test\n  void testGetUSDateFormat_withInvalidStyle() {\n    // Test with an invalid style (e.g. negative or large number)\n    int invalidStyle = -1;\n    // Expect IllegalArgumentException to be thrown\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      PreJava9DateFormatProvider.getUSDateFormat(invalidStyle);\n    });\n    assertTrue(thrown.getMessage().contains(\"Unknown DateFormat style\"));\n  }\n\n  private String invokeGetDateFormatPattern(int style) {\n    try {\n      Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDateFormatPattern\", int.class);\n      method.setAccessible(true);\n      return (String) method.invoke(null, style);\n    } catch (InvocationTargetException e) {\n      // Unwrap and rethrow cause if it's a runtime exception\n      Throwable cause = e.getCause();\n      if (cause instanceof RuntimeException) {\n        throw (RuntimeException) cause;\n      }\n      fail(\"Reflection failed to invoke getDateFormatPattern: \" + e.getMessage());\n      return null;\n    } catch (NoSuchMethodException | IllegalAccessException e) {\n      fail(\"Reflection failed to invoke getDateFormatPattern: \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889244,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 511,
+    "prompt_tokens": 1096,
+    "total_tokens": 1607,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.01
+  }
+}

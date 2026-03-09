@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvcpyZlneJWqfzsEGRtvM4ZLYhVex",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    private Reader mockReader;\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testConstructor() {\n        assertNotNull(extendedBufferedReader);\n    }\n\n    @Test\n    void testReadDelegatesToSuper() throws IOException {\n        // Using spy to verify call to super.read()\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n        when(spyReader.read()).thenCallRealMethod();\n        when(mockReader.read()).thenReturn(65); // 'A'\n\n        int result = spyReader.read();\n\n        assertEquals(65, result);\n    }\n\n    @Test\n    void testReadCharArray() throws IOException {\n        char[] buf = new char[10];\n        int offset = 2;\n        int length = 5;\n\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n        doReturn(5).when(spyReader).read(buf, offset, length);\n\n        int readCount = spyReader.read(buf, offset, length);\n\n        assertEquals(5, readCount);\n    }\n\n    @Test\n    void testReadLine() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n        doReturn(\"line1\").when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"line1\", line);\n    }\n\n    @Test\n    void testLookAhead() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {\n        Method lookAheadMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"lookAhead\");\n        lookAheadMethod.setAccessible(true);\n\n        // Setup mockReader to return 100\n        when(mockReader.read()).thenReturn(100);\n\n        int result = (int) lookAheadMethod.invoke(extendedBufferedReader);\n\n        assertEquals(100, result);\n    }\n\n    @Test\n    void testReadAgain() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        // Setup mockReader to return 101\n        when(mockReader.read()).thenReturn(101);\n\n        int result = (int) readAgainMethod.invoke(extendedBufferedReader);\n\n        assertEquals(101, result);\n    }\n\n    @Test\n    void testGetLineNumber() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {\n        Method getLineNumberMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"getLineNumber\");\n        getLineNumberMethod.setAccessible(true);\n\n        // Initially lineCounter is 0\n        int lineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(0, lineNumber);\n\n        // Use reflection to set lineCounter to a value and test again\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        lineCounterField.setInt(extendedBufferedReader, 5);\n\n        int updatedLineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(5, updatedLineNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850022,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 797,
+    "prompt_tokens": 1371,
+    "total_tokens": 2168,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.49
+  }
+}

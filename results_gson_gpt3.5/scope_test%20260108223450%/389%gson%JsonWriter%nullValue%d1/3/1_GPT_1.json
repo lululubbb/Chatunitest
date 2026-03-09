@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvltl4yMntlsoXelLTFKFGUblEgaP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void testNullValue_noDeferredName_serializesNull() throws IOException {\n    // deferredName == null, serializeNulls true by default\n    jsonWriter.nullValue();\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  @Test\n  public void testNullValue_deferredNameNullsTrue_writesDeferredNameAndNull() throws IOException, Exception {\n    // Set deferredName to non-null and serializeNulls true\n    setField(jsonWriter, \"deferredName\", \"key\");\n    jsonWriter.setSerializeNulls(true);\n\n    // Spy on jsonWriter to verify writeDeferredName is called\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Call nullValue on spy\n    spyWriter.nullValue();\n\n    // Verify writeDeferredName called once\n    verify(spyWriter, times(1)).writeDeferredName();\n\n    // The output should contain the deferredName and \"null\"\n    // Because writeDeferredName writes the name and resets deferredName\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"null\"));\n    // deferredName should be null after writeDeferredName\n    assertNull(getField(spyWriter, \"deferredName\"));\n  }\n\n  @Test\n  public void testNullValue_deferredNameNullsFalse_skipsNameAndWritesNull() throws IOException {\n    setField(jsonWriter, \"deferredName\", \"key\");\n    jsonWriter.setSerializeNulls(false);\n\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    spyWriter.nullValue();\n\n    // Verify writeDeferredName never called\n    verify(spyWriter, never()).writeDeferredName();\n\n    // deferredName should be null after skipping\n    assertNull(getField(spyWriter, \"deferredName\"));\n\n    // Output should contain only \"null\"\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  @Test\n  public void testNullValue_beforeValueCalled() throws IOException, Exception {\n    // Spy on jsonWriter to verify private beforeValue() is called\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // We cannot directly verify private method call with Mockito, so we use reflection to invoke nullValue and check side effect\n\n    // Call nullValue\n    spyWriter.nullValue();\n\n    // The output should be \"null\"\n    assertEquals(\"null\", stringWriter.toString());\n  }\n\n  // Utility method to set private fields via reflection\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      var field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Utility method to get private field value via reflection\n  private static Object getField(Object target, String fieldName) {\n    try {\n      var field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884853,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 760,
+    "prompt_tokens": 779,
+    "total_tokens": 1539,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.76
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmsX2Y5SYEqzieMl8Koaafz8HUCx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nclass ExcluderWithExclusionStrategyTest {\n\n  private Excluder excluder;\n  private ExclusionStrategy mockStrategy;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n    mockStrategy = mock(ExclusionStrategy.class);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationFalse_addsToSerializationStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, true, false);\n\n    // Original excluder strategies remain empty\n    assertTrue(getField(excluder, \"serializationStrategies\").isEmpty());\n    assertTrue(getField(excluder, \"deserializationStrategies\").isEmpty());\n\n    // Result strategies contain the added strategy only in serializationStrategies\n    List<ExclusionStrategy> serializationStrategies = getField(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getField(result, \"deserializationStrategies\");\n\n    assertNotNull(serializationStrategies);\n    assertNotNull(deserializationStrategies);\n\n    assertEquals(1, serializationStrategies.size());\n    assertSame(mockStrategy, serializationStrategies.get(0));\n\n    assertTrue(deserializationStrategies.isEmpty());\n\n    // The result is a different instance\n    assertNotSame(excluder, result);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationTrue_addsToDeserializationStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, false, true);\n\n    // Original excluder strategies remain empty\n    assertTrue(getField(excluder, \"serializationStrategies\").isEmpty());\n    assertTrue(getField(excluder, \"deserializationStrategies\").isEmpty());\n\n    List<ExclusionStrategy> serializationStrategies = getField(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getField(result, \"deserializationStrategies\");\n\n    assertNotNull(serializationStrategies);\n    assertNotNull(deserializationStrategies);\n\n    assertTrue(serializationStrategies.isEmpty());\n\n    assertEquals(1, deserializationStrategies.size());\n    assertSame(mockStrategy, deserializationStrategies.get(0));\n\n    assertNotSame(excluder, result);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationTrue_addsToBothStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, true, true);\n\n    assertTrue(getField(excluder, \"serializationStrategies\").isEmpty());\n    assertTrue(getField(excluder, \"deserializationStrategies\").isEmpty());\n\n    List<ExclusionStrategy> serializationStrategies = getField(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getField(result, \"deserializationStrategies\");\n\n    assertNotNull(serializationStrategies);\n    assertNotNull(deserializationStrategies);\n\n    assertEquals(1, serializationStrategies.size());\n    assertSame(mockStrategy, serializationStrategies.get(0));\n\n    assertEquals(1, deserializationStrategies.size());\n    assertSame(mockStrategy, deserializationStrategies.get(0));\n\n    assertNotSame(excluder, result);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationFalse_returnsCloneWithoutChanges() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, false, false);\n\n    // Strategies remain empty\n    assertTrue(getField(result, \"serializationStrategies\").isEmpty());\n    assertTrue(getField(result, \"deserializationStrategies\").isEmpty());\n\n    // The result is a different instance\n    assertNotSame(excluder, result);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private List<ExclusionStrategy> getField(Excluder excluderInstance, String fieldName) {\n    try {\n      Field field = Excluder.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return (List<ExclusionStrategy>) field.get(excluderInstance);\n    } catch (Exception e) {\n      fail(\"Reflection failed to get field: \" + fieldName);\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888621,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 898,
+    "prompt_tokens": 2189,
+    "total_tokens": 3087,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.73
+  }
+}

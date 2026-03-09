@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonExcluderTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    gson = new Gson();\n\n    // Use reflection to set the private final excluder field if null (for coverage)\n    Field excluderField = Gson.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder excluderInstance = (Excluder) excluderField.get(gson);\n    if (excluderInstance == null) {\n      Excluder mockExcluder = mock(Excluder.class);\n      excluderField.set(gson, mockExcluder);\n    }\n  }\n\n  @Test\n  public void testExcluderReturnsExcluderInstance() {\n    Excluder excluder = gson.excluder();\n    assertNotNull(excluder, \"excluder() should not return null\");\n  }\n\n  @Test\n  public void testExcluderIsSameOnMultipleCalls() {\n    Excluder first = gson.excluder();\n    Excluder second = gson.excluder();\n    assertSame(first, second, \"excluder() should return the same instance on multiple calls\");\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/318%gson%Gson%excluder%d1/5/temp/Gson_318_5Test.java:14: 错误: 类 GsonExcluderTest 是公共的, 应在名为 GsonExcluderTest.java 的文件中声明\npublic class GsonExcluderTest {\n       ^\n注: /home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/318%gson%Gson%excluder%d1/5/temp/Gson_318_5Test.java使用或覆盖了已过时的 API。\n注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。\n1 个错误\n",
+  "prompt_tokens": 2133,
+  "completion_tokens": 320,
+  "total_tokens": 2453,
+  "llm_elapsed_time_seconds": 4.95
+}

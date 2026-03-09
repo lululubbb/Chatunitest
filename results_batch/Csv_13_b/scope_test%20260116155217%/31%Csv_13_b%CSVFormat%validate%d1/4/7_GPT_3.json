@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOfx11ADZ3ndGG6KkjbtglV627E",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatValidateTest {\n\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Throwable {\n        try {\n            validateMethod.invoke(format);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    private CSVFormat createFormat(char delimiter, Character quoteChar, Character escapeChar, Character commentMarker,\n            QuoteMode quoteMode, String[] header) throws Exception {\n        // Use reflection to invoke private constructor\n        return CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class)\n                .newInstance(delimiter, quoteChar, quoteMode, commentMarker, escapeChar, false, false, \"\\n\", null, null,\n                        header, false, false, false);\n    }\n\n    @Test\n    public void testValidate_validDefault() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT;\n        invokeValidate(format);\n    }\n\n    @Test\n    public void testValidate_delimiterIsLineBreak_throws() throws Throwable {\n        CSVFormat format = createFormat('\\n', null, null, null, QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The delimiter cannot be a line break\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_quoteCharSameAsDelimiter_throws() throws Throwable {\n        CSVFormat format = createFormat(';', ';', null, null, QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getMessage().contains(\"The quoteChar character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_escapeCharSameAsDelimiter_throws() throws Throwable {\n        CSVFormat format = createFormat(',', '\"', ',', null, QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getMessage().contains(\"The escape character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_commentMarkerSameAsDelimiter_throws() throws Throwable {\n        CSVFormat format2 = createFormat('#', '\"', '\\\\', '#', QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format2));\n        assertTrue(ex.getMessage().contains(\"The comment start character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_commentMarkerSameAsQuoteChar_throws() throws Throwable {\n        CSVFormat format = createFormat(',', '\"', '\\\\', '\"', QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getMessage().contains(\"The comment start character and the quoteChar cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_commentMarkerSameAsEscapeChar_throws() throws Throwable {\n        CSVFormat format = createFormat(',', '\"', '#', '#', QuoteMode.MINIMAL, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getMessage().contains(\"The comment start and the escape character cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_escapeNullQuoteModeNone_throws() throws Throwable {\n        CSVFormat format = createFormat(',', '\"', null, null, QuoteMode.NONE, null);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"No quotes mode set but no escape character is set\", ex.getMessage());\n    }\n\n    @Test\n    public void testValidate_headerWithDuplicates_throws() throws Throwable {\n        String[] header = new String[] { \"a\", \"b\", \"a\" };\n        CSVFormat format = createFormat(',', '\"', '\\\\', '#', QuoteMode.MINIMAL, header);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getMessage().contains(\"The header contains a duplicate entry\"));\n        assertTrue(ex.getMessage().contains(\"a\"));\n        assertTrue(ex.getMessage().contains(Arrays.toString(header)));\n    }\n\n    @Test\n    public void testValidate_headerWithoutDuplicates_passes() throws Throwable {\n        String[] header = new String[] { \"a\", \"b\", \"c\" };\n        CSVFormat format = createFormat(',', '\"', '\\\\', '#', QuoteMode.MINIMAL, header);\n        invokeValidate(format);\n    }\n\n    @Test\n    public void testValidate_nullHeader_passes() throws Throwable {\n        CSVFormat format = createFormat(',', '\"', '\\\\', '#', QuoteMode.MINIMAL, null);\n        invokeValidate(format);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551781,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1152,
+    "prompt_tokens": 2313,
+    "total_tokens": 3465,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.88
+  }
+}

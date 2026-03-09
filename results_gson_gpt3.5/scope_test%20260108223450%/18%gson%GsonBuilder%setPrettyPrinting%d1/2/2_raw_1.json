@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass GsonBuilderTest {\n\n  @Test\n  void testSetPrettyPrinting() throws Exception {\n    GsonBuilder builder = new GsonBuilder();\n\n    // Check default value of prettyPrinting (should be DEFAULT_PRETTY_PRINT)\n    Field prettyPrintingField = GsonBuilder.class.getDeclaredField(\"prettyPrinting\");\n    prettyPrintingField.setAccessible(true);\n    boolean defaultPrettyPrinting = prettyPrintingField.getBoolean(builder);\n\n    // Call setPrettyPrinting and verify return value is the same instance\n    GsonBuilder returned = builder.setPrettyPrinting();\n    assertSame(builder, returned, \"setPrettyPrinting should return the same GsonBuilder instance\");\n\n    // Verify prettyPrinting field is set to true after calling setPrettyPrinting\n    boolean prettyPrintingValue = prettyPrintingField.getBoolean(builder);\n    assertTrue(prettyPrintingValue, \"prettyPrinting field should be true after setPrettyPrinting\");\n\n    // If default was already true, then the field remains true; if false, it changed to true\n    if (!defaultPrettyPrinting) {\n      assertNotEquals(defaultPrettyPrinting, prettyPrintingValue, \"prettyPrinting field should change from default to true\");\n    } else {\n      assertEquals(defaultPrettyPrinting, prettyPrintingValue, \"prettyPrinting field remains true\");\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1063,
+  "completion_tokens": 285,
+  "total_tokens": 1348,
+  "llm_elapsed_time_seconds": 5.83
+}

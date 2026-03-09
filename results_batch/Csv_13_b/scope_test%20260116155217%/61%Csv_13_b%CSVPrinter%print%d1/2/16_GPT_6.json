@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZFMmAa2vtnDsdYDnwR9nJ0LIlCi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    private void invokePrivatePrint(CSVPrinter spyPrinter, Object expectedObject, CharSequence expectedValue, int expectedOffset, int expectedLen) throws Exception {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n        printMethod.invoke(spyPrinter, expectedObject, expectedValue, expectedOffset, expectedLen);\n    }\n\n    @Test\n    void testPrint_withNullValue_andNullStringNull() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        String expectedValue = \"\";\n        invokePrivatePrint(spyPrinter, null, expectedValue, 0, expectedValue.length());\n    }\n\n    @Test\n    void testPrint_withNullValue_andNullStringNotNull() throws Exception {\n        String nullString = \"NULL\";\n        when(format.getNullString()).thenReturn(nullString);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        invokePrivatePrint(spyPrinter, null, nullString, 0, nullString.length());\n    }\n\n    @Test\n    void testPrint_withNonNullValue() throws Exception {\n        String value = \"testValue\";\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(value);\n\n        invokePrivatePrint(spyPrinter, value, value, 0, value.length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551204,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 424,
+    "prompt_tokens": 1006,
+    "total_tokens": 1430,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.9
+  }
+}

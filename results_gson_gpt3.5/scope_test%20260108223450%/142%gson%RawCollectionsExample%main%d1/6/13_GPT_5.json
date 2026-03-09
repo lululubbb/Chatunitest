@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn2KxrhCh1BxWwTtM9vsjbk1lDHn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.extras.examples.rawcollections;\n\nimport static org.mockito.Mockito.mockStatic;\nimport static org.mockito.Mockito.when;\nimport static org.mockito.Mockito.mock;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.PrintStream;\nimport java.lang.reflect.Constructor;\nimport java.util.ArrayList;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonParser;\n\nclass RawCollectionsExampleTest {\n\n  private final PrintStream originalOut = System.out;\n  private ByteArrayOutputStream outContent;\n\n  private MockedStatic<JsonParser> jsonParserStatic;\n\n  private Object eventInstance;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    outContent = new ByteArrayOutputStream();\n    System.setOut(new PrintStream(outContent));\n    jsonParserStatic = mockStatic(JsonParser.class);\n\n    // Instead of loading Event class via reflection (which fails), create a dummy Event instance using a dynamic proxy or a mock\n    // But since Event is a simple POJO with constructor(String, String), create a minimal implementation here via reflection on RawCollectionsExample\n\n    // Create eventInstance by invoking the constructor of Event from RawCollectionsExample's classloader\n    Class<?> rawCollectionsExampleClass = Class.forName(\"com.google.gson.extras.examples.rawcollections.RawCollectionsExample\");\n    ClassLoader classLoader = rawCollectionsExampleClass.getClassLoader();\n\n    // Load Event class from the same classloader as RawCollectionsExample\n    Class<?> eventClass = classLoader.loadClass(\"com.google.gson.extras.examples.rawcollections.Event\");\n    Constructor<?> constructor = eventClass.getConstructor(String.class, String.class);\n    eventInstance = constructor.newInstance(\"GREETINGS\", \"guest\");\n  }\n\n  @AfterEach\n  void tearDown() {\n    System.setOut(originalOut);\n    jsonParserStatic.close();\n  }\n\n  @Test\n  void testMain() throws Exception {\n    Gson gson = new Gson();\n\n    Collection<Object> collection = new ArrayList<>();\n    collection.add(\"hello\");\n    collection.add(5);\n    collection.add(eventInstance);\n    String json = gson.toJson(collection);\n\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(gson.toJsonTree(\"hello\"));\n    jsonArray.add(gson.toJsonTree(5));\n    jsonArray.add(gson.toJsonTree(eventInstance));\n\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(jsonElement.getAsJsonArray()).thenReturn(jsonArray);\n    jsonParserStatic.when(() -> JsonParser.parseString(json)).thenReturn(jsonElement);\n\n    RawCollectionsExample.main(new String[0]);\n\n    String output = outContent.toString();\n\n    assert output.contains(\"Using Gson.toJson() on a raw collection:\");\n    assert output.contains(\"[\\\"hello\\\",5,{\\\"type\\\":\\\"GREETINGS\\\",\\\"guestName\\\":\\\"guest\\\"}]\");\n\n    assert output.contains(\"Using Gson.fromJson() to get: hello, 5,\");\n    assert output.contains(\"Event@\") || output.contains(\"GREETINGS\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889228,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 660,
+    "prompt_tokens": 1368,
+    "total_tokens": 2028,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.91
+  }
+}

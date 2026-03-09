@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmOTeGAAOOqRyMZurMxa7Wz9EZIe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonWriter_newline_Test {\n\n    private Writer mockWriter;\n    private JsonWriter jsonWriter;\n    private Method newlineMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        mockWriter = mock(Writer.class);\n        jsonWriter = new JsonWriter(mockWriter);\n        newlineMethod = JsonWriter.class.getDeclaredMethod(\"newline\");\n        newlineMethod.setAccessible(true);\n    }\n\n    @Test\n    void newline_indentIsNull_noWrite() throws IOException, InvocationTargetException, IllegalAccessException {\n        // indent is null by default, so newline should do nothing.\n        // Just invoke and verify no interactions with writer.\n        newlineMethod.invoke(jsonWriter);\n        verifyNoInteractions(mockWriter);\n    }\n\n    @Test\n    void newline_indentNotNull_writesNewlineAndIndent() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {\n        // Set indent to a string\n        String indentValue = \"  \";\n        // Use reflection to set private field indent\n        var indentField = JsonWriter.class.getDeclaredField(\"indent\");\n        indentField.setAccessible(true);\n        indentField.set(jsonWriter, indentValue);\n\n        // Set stackSize to 4 (so loop from i=1 to 3)\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 4);\n\n        // Invoke newline\n        newlineMethod.invoke(jsonWriter);\n\n        // Verify write('\\n') called once\n        verify(mockWriter).write('\\n');\n\n        // Verify indent string written 3 times (i=1 to 3)\n        verify(mockWriter, times(3)).write(indentValue);\n\n        // Verify no more interactions\n        verifyNoMoreInteractions(mockWriter);\n    }\n\n    @Test\n    void newline_indentEmptyString_writesNewlineOnly() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n        // indent empty string\n        var indentField = JsonWriter.class.getDeclaredField(\"indent\");\n        indentField.setAccessible(true);\n        indentField.set(jsonWriter, \"\");\n\n        // stackSize 5 (loop 1 to 4)\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 5);\n\n        newlineMethod.invoke(jsonWriter);\n\n        verify(mockWriter).write('\\n');\n        // indent is empty string, so write(\"\") called 4 times\n        verify(mockWriter, times(4)).write(\"\");\n        verifyNoMoreInteractions(mockWriter);\n    }\n\n    @Test\n    void newline_stackSizeOne_writesOnlyNewline() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n        var indentField = JsonWriter.class.getDeclaredField(\"indent\");\n        indentField.setAccessible(true);\n        indentField.set(jsonWriter, \"  \");\n\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 1);\n\n        // loop from i=1 to size(1) => i<1 no iteration, so only newline written\n        newlineMethod.invoke(jsonWriter);\n\n        verify(mockWriter).write('\\n');\n        verifyNoMoreInteractions(mockWriter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886757,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 769,
+    "prompt_tokens": 762,
+    "total_tokens": 1531,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.19
+  }
+}

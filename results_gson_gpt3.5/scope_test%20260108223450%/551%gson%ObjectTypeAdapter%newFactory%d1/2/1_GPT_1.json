@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIcnw2y2qpWSdp9ZoE1XZ6O5xTF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class ObjectTypeAdapterTest {\n\n  @Test\n  void testNewFactoryCreatesFactoryThatReturnsObjectTypeAdapterForObjectClass() throws Exception {\n    ToNumberStrategy toNumberStrategy = ToNumberPolicy.DOUBLE;\n    // Use reflection to access private static newFactory method\n    Method newFactoryMethod = ObjectTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n\n    TypeAdapterFactory factory = (TypeAdapterFactory) newFactoryMethod.invoke(null, toNumberStrategy);\n    assertNotNull(factory);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> objectTypeToken = TypeToken.get(Object.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> adapter = (TypeAdapter<Object>) factory.create(gson, objectTypeToken);\n    assertNotNull(adapter);\n    assertEquals(ObjectTypeAdapter.class, adapter.getClass());\n\n    // Confirm factory returns null for other types\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    TypeAdapter<String> stringAdapter = factory.create(gson, stringTypeToken);\n    assertNull(stringAdapter);\n  }\n\n  @Test\n  void testDoubleFactoryFieldHasExpectedBehavior() throws Exception {\n    // Access private static field DOUBLE_FACTORY\n    java.lang.reflect.Field doubleFactoryField = ObjectTypeAdapter.class.getDeclaredField(\"DOUBLE_FACTORY\");\n    doubleFactoryField.setAccessible(true);\n    TypeAdapterFactory doubleFactory = (TypeAdapterFactory) doubleFactoryField.get(null);\n\n    assertNotNull(doubleFactory);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<Object> objectTypeToken = TypeToken.get(Object.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> adapter = (TypeAdapter<Object>) doubleFactory.create(gson, objectTypeToken);\n    assertNotNull(adapter);\n    assertEquals(ObjectTypeAdapter.class, adapter.getClass());\n\n    TypeToken<Integer> intTypeToken = TypeToken.get(Integer.class);\n    TypeAdapter<Integer> intAdapter = doubleFactory.create(gson, intTypeToken);\n    assertNull(intAdapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890238,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 522,
+    "prompt_tokens": 488,
+    "total_tokens": 1010,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.06
+  }
+}

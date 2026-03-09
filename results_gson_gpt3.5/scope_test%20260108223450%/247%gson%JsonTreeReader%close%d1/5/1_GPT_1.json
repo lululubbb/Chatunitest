@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmym7ICSUUpCAPUdeEWxn6R34NSg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a minimal JsonElement mock because constructor requires it\n    JsonElement element = mock(JsonElement.class);\n    jsonTreeReader = new JsonTreeReader(element);\n  }\n\n  @Test\n  public void testClose_setsStackToSentinelClosedAndStackSizeToOne() throws Exception {\n    // Use reflection to set stack and stackSize to non-default values first\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n\n    // Set stack to a new Object array with some dummy content and stackSize > 1\n    Object[] dummyStack = new Object[32];\n    dummyStack[0] = new Object();\n    dummyStack[1] = new Object();\n    stackField.set(jsonTreeReader, dummyStack);\n    stackSizeField.setInt(jsonTreeReader, 2);\n\n    // Call close\n    jsonTreeReader.close();\n\n    // Get updated stack and stackSize\n    Object[] updatedStack = (Object[]) stackField.get(jsonTreeReader);\n    int updatedStackSize = stackSizeField.getInt(jsonTreeReader);\n\n    // Access SENTINEL_CLOSED via reflection\n    Field sentinelClosedField = JsonTreeReader.class.getDeclaredField(\"SENTINEL_CLOSED\");\n    sentinelClosedField.setAccessible(true);\n    Object sentinelClosed = sentinelClosedField.get(null);\n\n    // Assertions\n    assertNotNull(updatedStack);\n    assertEquals(1, updatedStackSize);\n    assertEquals(sentinelClosed, updatedStack[0]);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889008,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 439,
+    "prompt_tokens": 566,
+    "total_tokens": 1005,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.2
+  }
+}

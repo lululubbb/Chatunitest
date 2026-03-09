@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA0L1IQYbXZJrt5AbcSgQW0PxOwr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private Constructor<CSVRecord> constructor;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException, SecurityException {\n        constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n    }\n\n    @Test\n    public void testToStringWithValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        String[] values = new String[] { \"value1\", \"value2\", \"value3\" };\n        Map<String, Integer> mapping = new HashMap<>();\n        CSVRecord record = constructor.newInstance((Object) values, mapping, null, 1L);\n\n        String expected = \"[value1, value2, value3]\";\n        String actual = record.toString();\n\n        assertEquals(expected, actual);\n    }\n\n    @Test\n    public void testToStringWithEmptyValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        String[] values = new String[0];\n        Map<String, Integer> mapping = new HashMap<>();\n        CSVRecord record = constructor.newInstance((Object) values, mapping, null, 0L);\n\n        String expected = \"[]\";\n        String actual = record.toString();\n\n        assertEquals(expected, actual);\n    }\n\n    @Test\n    public void testToStringWithNullValuesArray() throws Exception {\n        // Defensive test: CSVRecord constructor does not accept null for values, so create instance by reflection and set 'values' to null\n        CSVRecord record = constructor.newInstance((Object) new String[0], new HashMap<>(), null, 0L);\n\n        // Use reflection to set private final field 'values' to null\n        java.lang.reflect.Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        valuesField.set(record, null);\n\n        String expected = \"null\";\n        String actual = record.toString();\n\n        assertEquals(expected, actual);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977517,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 486,
+    "prompt_tokens": 918,
+    "total_tokens": 1404,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.34
+  }
+}

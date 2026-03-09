@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuugRaQ2DRthBB9aUorKEndO97ZAw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderCommentsWhenNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // Using reflection to set private field headerComments to null explicitly\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        headerCommentsField.set(format, null);\n\n        String[] result = format.getHeaderComments();\n        assertNull(result, \"Expected null when headerComments field is null\");\n    }\n\n    @Test\n    void testGetHeaderCommentsReturnsClone() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        String[] originalComments = new String[] {\"comment1\", \"comment2\"};\n        // Using reflection to set private field headerComments\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        headerCommentsField.set(format, originalComments);\n\n        String[] result = format.getHeaderComments();\n\n        assertNotNull(result, \"Expected non-null array when headerComments field is set\");\n        assertArrayEquals(originalComments, result, \"Expected returned array to match original comments\");\n        assertNotSame(originalComments, result, \"Expected returned array to be a clone, not the same instance\");\n\n        // Modifying returned array should not affect original\n        result[0] = \"modified\";\n        String[] afterModification = (String[]) headerCommentsField.get(format);\n        assertEquals(\"comment1\", afterModification[0], \"Original headerComments should not be affected by modifications to returned array\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680295,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 360,
+    "prompt_tokens": 1142,
+    "total_tokens": 1502,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.06
+  }
+}

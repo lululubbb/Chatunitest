@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxd5y9cm9B0FTolJi25IqBAtgtaf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserIsClosedTest {\n\n    CSVParser csvParser;\n    Lexer lexerMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a dummy Reader and CSVFormat to construct CSVParser instance\n        Reader reader = mock(Reader.class);\n        // Use a real CSVFormat instead of null to avoid NPE in constructor\n        CSVFormat format = CSVFormat.DEFAULT;\n        csvParser = new CSVParser(reader, format);\n\n        // Create a mock Lexer\n        lexerMock = mock(Lexer.class);\n\n        // Use reflection to set private final field 'lexer' in CSVParser to lexerMock\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // In Java 12+, the 'modifiers' field is not accessible or does not exist.\n        // Setting final fields can be done directly via reflection on accessible fields.\n        // So just set the field directly without removing final modifier.\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @Test\n    void testIsClosedReturnsTrue() {\n        when(lexerMock.isClosed()).thenReturn(true);\n\n        boolean result = csvParser.isClosed();\n\n        assertTrue(result);\n        verify(lexerMock).isClosed();\n    }\n\n    @Test\n    void testIsClosedReturnsFalse() {\n        when(lexerMock.isClosed()).thenReturn(false);\n\n        boolean result = csvParser.isClosed();\n\n        assertFalse(result);\n        verify(lexerMock).isClosed();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691619,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 362,
+    "prompt_tokens": 1043,
+    "total_tokens": 1405,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.45
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmegfxgF8NOGO7n69P3aCHNAuawJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ParseBenchmarkTest {\n\n  private ParseBenchmark parseBenchmark;\n\n  @BeforeEach\n  void init() {\n    parseBenchmark = new ParseBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Mock Document enum instance via reflection\n    Class<?> documentClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Document\");\n    Object documentMock = mock(documentClass);\n    when(documentMock.toString()).thenReturn(\"testdoc\");\n    when(documentMock.name()).thenReturn(\"testdoc\");\n    setField(parseBenchmark, \"document\", documentMock);\n\n    // Mock Api with newParser() via reflection\n    Class<?> apiClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Api\");\n    Object apiMock = mock(apiClass);\n    Class<?> parserClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Parser\");\n    Object parserMock = mock(parserClass);\n    when(apiClass.getMethod(\"newParser\").invoke(apiMock)).thenReturn(parserMock);\n    // Since above line won't work directly, use Mockito.when for method newParser\n    when(apiMock.getClass().getMethod(\"newParser\").invoke(apiMock)).thenReturn(parserMock);\n    // Instead, better to use Mockito's when with doReturn:\n    doReturn(parserMock).when(apiMock).getClass().getMethod(\"newParser\").invoke(apiMock);\n    // But reflection and Mockito don't mix well here; better to use Mockito.when with mock's class directly:\n    // So use Mockito's when on the mock with Answers:\n    when(apiMock.getClass().getMethod(\"newParser\").invoke(apiMock)).thenReturn(parserMock);\n    // Instead, simpler:\n    when(apiMock.getClass().getMethod(\"newParser\").invoke(apiMock)).thenReturn(parserMock);\n    // Because this is complicated, just use Mockito's when(apiMock.newParser()) won't compile because apiMock is Object.\n    // So use Mockito's when with Mockito.mockingDetails and Answer is complicated.\n    // Alternative: create a dynamic proxy or use reflection to set the field, then stub the method via Mockito's mock with RETURNS_MOCKS:\n    // Instead, cast apiMock to the interface:\n    // But Api is private, so impossible.\n    // So use Mockito's when(apiMock.newParser()) via reflection:\n    // Use Mockito's doReturn(parserMock).when(apiMock).newParser(); but can't call newParser() on Object.\n    // So use Mockito's when with Mockito's spy and Mockito's doReturn:\n    // So let's do this:\n    // Use Mockito's when with reflection:\n    // Use Mockito's when with Answer:\n    // Instead, use Mockito's doAnswer:\n    // Since the method is no-arg, public, we can do:\n    when(apiMock.getClass().getMethod(\"newParser\").invoke(apiMock)).thenReturn(parserMock);\n    // But this throws exception;\n    // So better to create a mock with Answers.RETURNS_SMART_NULLS or RETURNS_DEEP_STUBS:\n    // So create apiMock with RETURNS_DEEP_STUBS:\n    Object apiMock2 = mock(apiClass, RETURNS_DEEP_STUBS);\n    when(apiClass.getMethod(\"newParser\").invoke(apiMock2)).thenReturn(parserMock);\n    // This is complicated; better to use Mockito's when with the mock and suppress the exception.\n    // Alternative: use reflection to set the api field to a proxy that returns parserMock for newParser().\n    // Implement a simple proxy:\n    Object apiProxy = java.lang.reflect.Proxy.newProxyInstance(\n        apiClass.getClassLoader(),\n        new Class<?>[]{apiClass},\n        (proxy, method, args) -> {\n          if (method.getName().equals(\"newParser\") && (args == null || args.length == 0)) {\n            return parserMock;\n          }\n          return null;\n        });\n    setField(parseBenchmark, \"api\", apiProxy);\n\n    // Mock static method resourceToString(String)\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class, Mockito.CALLS_REAL_METHODS)) {\n      mockedStatic.when(() -> {\n        try {\n          Method m = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n          m.setAccessible(true);\n          return m.invoke(null, \"testdoc.json\");\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }).thenReturn(\"jsoncontent\");\n\n      // Access private setUp method\n      Method setUpMethod = ParseBenchmark.class.getDeclaredMethod(\"setUp\");\n      setUpMethod.setAccessible(true);\n      setUpMethod.invoke(parseBenchmark);\n\n      // Validate text field set correctly\n      char[] expectedChars = \"jsoncontent\".toCharArray();\n      char[] actualChars = (char[]) getField(parseBenchmark, \"text\");\n      assertArrayEquals(expectedChars, actualChars);\n\n      // Validate parser field set correctly\n      Object parser = getField(parseBenchmark, \"parser\");\n      assertSame(parserMock, parser);\n    }\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      fail(\"Failed to set field \" + fieldName + \": \" + e.getMessage());\n    }\n  }\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      fail(\"Failed to get field \" + fieldName + \": \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887762,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1259,
+    "prompt_tokens": 1402,
+    "total_tokens": 2661,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 28.12
+  }
+}

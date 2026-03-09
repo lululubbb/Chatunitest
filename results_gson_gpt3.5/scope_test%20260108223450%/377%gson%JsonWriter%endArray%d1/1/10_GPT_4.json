@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrkQeNHoZDro1IIkwBlaDabho6j",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n        // Initialize stackSize to 0 explicitly (should be by constructor, but just in case)\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 0);\n    }\n\n    @Test\n    public void testEndArray_EmptyArray() throws Exception {\n        // Begin an array to push EMPTY_ARRAY on stack\n        jsonWriter.beginArray();\n\n        // Use reflection to call private peek method to check stack state before endArray\n        Method peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n        int topBefore = (int) peekMethod.invoke(jsonWriter);\n        assertEquals(1, topBefore);\n\n        // Call endArray\n        JsonWriter returned = jsonWriter.endArray();\n        assertSame(jsonWriter, returned);\n\n        // After endArray stack size should be 0\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = (int) stackSizeField.get(jsonWriter);\n        assertEquals(0, stackSize);\n\n        // The output should contain ']'\n        assertEquals(\"]\", stringWriter.toString());\n    }\n\n    @Test\n    public void testEndArray_NonEmptyArray() throws IOException, NoSuchFieldException, IllegalAccessException {\n        jsonWriter = new JsonWriter(stringWriter); // recreate to reset closed flag\n        jsonWriter.beginArray();\n        jsonWriter.value(\"value\");\n\n        // endArray should close NONEMPTY_ARRAY with ']'\n        JsonWriter returned = jsonWriter.endArray();\n        assertSame(jsonWriter, returned);\n\n        // The output should contain the value and then ']'\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"value\"));\n        assertTrue(output.endsWith(\"]\"));\n\n        // stackSize should be 0 after endArray\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = (int) stackSizeField.get(jsonWriter);\n        assertEquals(0, stackSize);\n    }\n\n    @Test\n    public void testEndArray_ThrowsIOExceptionWhenStackIsEmpty() throws Exception {\n        // The stack is empty initially, calling endArray should cause IllegalStateException internally in close\n        Exception exception = assertThrows(IllegalStateException.class, () -> {\n            jsonWriter.endArray();\n        });\n        assertNotNull(exception.getMessage());\n    }\n\n    @Test\n    public void testPrivateCloseMethod_EmptyArray() throws Exception {\n        jsonWriter = new JsonWriter(stringWriter); // recreate to reset closed flag\n        // Use reflection to invoke private close method with EMPTY_ARRAY\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        jsonWriter.beginArray();\n\n        // close(EMPTY_ARRAY, NONEMPTY_ARRAY, ']') should remove the array from stack and write ']'\n        JsonWriter returned = (JsonWriter) closeMethod.invoke(jsonWriter, 1 /* EMPTY_ARRAY */, 2 /* NONEMPTY_ARRAY */, ']');\n        assertSame(jsonWriter, returned);\n\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = (int) stackSizeField.get(jsonWriter);\n        assertEquals(0, stackSize);\n\n        assertEquals(\"]\", stringWriter.toString());\n    }\n\n    @Test\n    public void testPrivateCloseMethod_NonEmptyArray() throws Exception {\n        jsonWriter = new JsonWriter(stringWriter); // recreate to reset closed flag\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        jsonWriter.beginArray();\n        jsonWriter.value(\"v\");\n\n        JsonWriter returned = (JsonWriter) closeMethod.invoke(jsonWriter, 2 /* NONEMPTY_ARRAY */, 2 /* NONEMPTY_ARRAY */, ']');\n        assertSame(jsonWriter, returned);\n\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = (int) stackSizeField.get(jsonWriter);\n        assertEquals(0, stackSize);\n\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"v\"));\n        assertTrue(output.endsWith(\"]\"));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884728,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1042,
+    "prompt_tokens": 2746,
+    "total_tokens": 3788,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.57
+  }
+}

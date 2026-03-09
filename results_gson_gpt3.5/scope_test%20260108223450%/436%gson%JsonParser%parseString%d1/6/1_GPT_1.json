@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpOMljC75LD0Hpt3vEFsh9DYBj5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonParserTest {\n\n  @Test\n  public void testParseString_validJson_returnsJsonElement() {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonElement element = JsonParser.parseString(json);\n    assertNotNull(element);\n  }\n\n  @Test\n  public void testParseString_emptyJson_throwsJsonSyntaxException() {\n    String json = \"\";\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      JsonParser.parseString(json);\n    });\n    assertNotNull(thrown.getMessage());\n  }\n\n  @Test\n  public void testParseString_invalidJson_throwsJsonSyntaxException() {\n    String json = \"{key:value\"; // malformed json\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n      JsonParser.parseString(json);\n    });\n    assertNotNull(thrown.getMessage());\n  }\n\n  @Test\n  public void testParseReader_withMockedReader_invokesPrivateParseReader() throws Exception {\n    String json = \"{\\\"mock\\\":\\\"test\\\"}\";\n    StringReader stringReader = spy(new StringReader(json));\n\n    // Use reflection to get the private static parseReader(Reader) method\n    Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parseReader\", Reader.class);\n    parseReaderMethod.setAccessible(true);\n\n    // Invoke the private static method\n    Object result = parseReaderMethod.invoke(null, stringReader);\n    assertNotNull(result);\n    assertTrue(result instanceof JsonElement);\n  }\n\n  @Test\n  public void testParseReader_JsonReader_mockedBehavior() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT, JsonToken.END_DOCUMENT);\n    when(mockReader.nextName()).thenReturn(\"key\");\n    when(mockReader.nextString()).thenReturn(\"value\");\n    doNothing().when(mockReader).beginObject();\n    doNothing().when(mockReader).endObject();\n\n    // Use reflection to get the public static parseReader(JsonReader) method\n    Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parseReader\", JsonReader.class);\n    parseReaderMethod.setAccessible(true);\n\n    try {\n      Object element = parseReaderMethod.invoke(null, mockReader);\n      assertNotNull(element);\n      assertTrue(element instanceof JsonElement);\n    } catch (InvocationTargetException e) {\n      // If underlying code throws IOException or MalformedJsonException, test should fail\n      fail(\"Invocation threw exception: \" + e.getCause());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888426,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 614,
+    "prompt_tokens": 294,
+    "total_tokens": 908,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.23
+  }
+}

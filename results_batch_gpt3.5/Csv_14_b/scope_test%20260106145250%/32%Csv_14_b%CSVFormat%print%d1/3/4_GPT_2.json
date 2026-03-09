@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvtO4Wcid3tJvZsngZihUuG5XLSG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.Charset;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrint_PathToFile_Success() throws IOException {\n        Path mockPath = mock(Path.class);\n        File mockFile = mock(File.class);\n        Charset charset = Charset.defaultCharset();\n\n        when(mockPath.toFile()).thenReturn(mockFile);\n\n        CSVFormat spyFormat = spy(csvFormat);\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        // Use doReturn().when() to stub final method print(File, Charset)\n        doReturn(mockPrinter).when(spyFormat).print(eq(mockFile), eq(charset));\n\n        CSVPrinter printer = spyFormat.print(mockPath, charset);\n\n        assertNotNull(printer);\n        assertEquals(mockPrinter, printer);\n\n        verify(mockPath).toFile();\n        verify(spyFormat).print(mockFile, charset);\n    }\n\n    @Test\n    void testPrint_FileCharset_Success() throws IOException {\n        File tempFile = File.createTempFile(\"test\", \".csv\");\n        tempFile.deleteOnExit();\n        Charset charset = Charset.defaultCharset();\n\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(';').withQuote('\\'');\n        CSVPrinter printer = format.print(tempFile, charset);\n\n        assertNotNull(printer);\n        printer.close();\n    }\n\n    @Test\n    void testPrint_FileCharset_IOException() {\n        File nonWritableFile = new File(\"/invalid_path/test.csv\");\n        Charset charset = Charset.defaultCharset();\n\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        assertThrows(IOException.class, () -> format.print(nonWritableFile, charset));\n    }\n\n    @Test\n    void testPrint_Appendable_Success() throws IOException {\n        Appendable appendable = new StringBuilder();\n\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',');\n        CSVPrinter printer = format.print(appendable);\n\n        assertNotNull(printer);\n        printer.close();\n    }\n\n    @Test\n    void testPrint_ObjectValue_NewRecordFalse() throws IOException {\n        Appendable appendable = new StringBuilder();\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        format.print(\"value\", appendable, false);\n\n        assertTrue(appendable.toString().contains(\"value\"));\n    }\n\n    @Test\n    void testPrint_ObjectValue_NewRecordTrue() throws IOException {\n        Appendable appendable = new StringBuilder();\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        format.print(\"value\", appendable, true);\n\n        assertTrue(appendable.toString().contains(\"value\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684942,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 599,
+    "prompt_tokens": 2189,
+    "total_tokens": 2788,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.97
+  }
+}

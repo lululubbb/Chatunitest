@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlUtvs7diwrkH48WpVk0ZbkH40kQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  public void setUp() {\n    jsonPrimitive = new JsonPrimitive(\"0\"); // initial dummy value\n  }\n\n  @Test\n  public void testGetAsByte_whenNumber_returnsNumberByteValue() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    Number number = (byte) 123;\n    doReturn(true).when(spyPrimitive).isNumber();\n    doReturn(number).when(spyPrimitive).getAsNumber();\n\n    // Act\n    byte result = spyPrimitive.getAsByte();\n\n    // Assert\n    assertEquals((byte) 123, result);\n  }\n\n  @Test\n  public void testGetAsByte_whenNotNumber_parsesString() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    String stringValue = \"42\";\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(stringValue).when(spyPrimitive).getAsString();\n\n    // Act\n    byte result = spyPrimitive.getAsByte();\n\n    // Assert\n    assertEquals((byte) 42, result);\n  }\n\n  @Test\n  public void testGetAsByte_whenNotNumber_parsesNegativeByte() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    String stringValue = \"-128\";\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(stringValue).when(spyPrimitive).getAsString();\n\n    // Act\n    byte result = spyPrimitive.getAsByte();\n\n    // Assert\n    assertEquals((byte) -128, result);\n  }\n\n  @Test\n  public void testGetAsByte_whenNotNumber_parsesByteMaxValue() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    String stringValue = \"127\";\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(stringValue).when(spyPrimitive).getAsString();\n\n    // Act\n    byte result = spyPrimitive.getAsByte();\n\n    // Assert\n    assertEquals(Byte.MAX_VALUE, result);\n  }\n\n  @Test\n  public void testGetAsByte_whenNotNumber_invalidString_throwsNumberFormatException() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    String stringValue = \"not_a_byte\";\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(stringValue).when(spyPrimitive).getAsString();\n\n    // Act & Assert\n    assertThrows(NumberFormatException.class, spyPrimitive::getAsByte);\n  }\n\n  @Test\n  public void testGetAsByte_reflectionInvocation() throws Exception {\n    // Arrange\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(true).when(spyPrimitive).isNumber();\n    doReturn((byte) 10).when(spyPrimitive).getAsNumber();\n\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsByte\");\n    method.setAccessible(true);\n\n    // Act\n    byte result = (byte) method.invoke(spyPrimitive);\n\n    // Assert\n    assertEquals((byte) 10, result);\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883311,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 722,
+    "prompt_tokens": 426,
+    "total_tokens": 1148,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.45
+  }
+}

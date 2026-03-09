@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwAHaR9pI9qx4SpDyNShUfXacPa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class RuntimeTypeAdapterFactoryTest {\n\n    static class Base {}\n    static class SubTypeA extends Base {}\n    static class SubTypeB extends Base {}\n\n    RuntimeTypeAdapterFactory<Base> factory;\n\n    @BeforeEach\n    void setup() {\n        factory = RuntimeTypeAdapterFactory.of(Base.class, \"type\", true);\n    }\n\n    @Test\n    void testOf_nullBaseType_throws() {\n        assertThrows(NullPointerException.class, () -> RuntimeTypeAdapterFactory.of(null, \"type\", true));\n    }\n\n    @Test\n    void testOf_nullTypeFieldName_throws() {\n        assertThrows(NullPointerException.class, () -> RuntimeTypeAdapterFactory.of(Base.class, null, true));\n    }\n\n    @Test\n    void testRegisterSubtype_and_recognizeSubtypes() throws Exception {\n        RuntimeTypeAdapterFactory<Base> f = RuntimeTypeAdapterFactory.of(Base.class, \"type\");\n        f.registerSubtype(SubTypeA.class, \"A\");\n        f.registerSubtype(SubTypeB.class);\n        f.recognizeSubtypes();\n\n        // Access private fields via reflection to verify\n        Field labelToSubtypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"labelToSubtype\");\n        labelToSubtypeField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        var labelToSubtype = (java.util.Map<String, Class<?>>) labelToSubtypeField.get(f);\n        assertEquals(SubTypeA.class, labelToSubtype.get(\"A\"));\n        assertTrue(labelToSubtype.containsKey(\"SubTypeB\"));\n\n        Field subtypeToLabelField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"subtypeToLabel\");\n        subtypeToLabelField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        var subtypeToLabel = (java.util.Map<Class<?>, String>) subtypeToLabelField.get(f);\n        assertEquals(\"A\", subtypeToLabel.get(SubTypeA.class));\n        assertNotNull(subtypeToLabel.get(SubTypeB.class));\n\n        Field recognizeSubtypesField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"recognizeSubtypes\");\n        recognizeSubtypesField.setAccessible(true);\n        assertTrue(recognizeSubtypesField.getBoolean(f));\n    }\n\n    @Test\n    void testCreate_withRegisteredSubtype() throws IOException {\n        RuntimeTypeAdapterFactory<Base> f = RuntimeTypeAdapterFactory.of(Base.class, \"type\");\n        f.registerSubtype(SubTypeA.class, \"A\");\n\n        Gson gson = mock(Gson.class);\n        TypeToken<Base> typeToken = TypeToken.get(Base.class);\n\n        TypeAdapter<Base> adapter = f.create(gson, typeToken);\n        assertNotNull(adapter);\n    }\n\n    @Test\n    void testCreate_withUnregisteredSubtype_returnsNull() {\n        RuntimeTypeAdapterFactory<Base> f = RuntimeTypeAdapterFactory.of(Base.class, \"type\");\n        Gson gson = mock(Gson.class);\n        TypeToken<String> typeToken = TypeToken.get(String.class);\n\n        TypeAdapter<?> adapter = f.create(gson, typeToken);\n        assertNull(adapter);\n    }\n\n    @Test\n    void testPrivateConstructor_andFields() throws Exception {\n        // Use reflection to invoke private constructor\n        var ctor = RuntimeTypeAdapterFactory.class.getDeclaredConstructor(Class.class, String.class, boolean.class);\n        ctor.setAccessible(true);\n        RuntimeTypeAdapterFactory<Base> instance = (RuntimeTypeAdapterFactory<Base>) ctor.newInstance(Base.class, \"type\", false);\n        assertNotNull(instance);\n\n        Field baseTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"baseType\");\n        baseTypeField.setAccessible(true);\n        assertEquals(Base.class, baseTypeField.get(instance));\n\n        Field typeFieldNameField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"typeFieldName\");\n        typeFieldNameField.setAccessible(true);\n        assertEquals(\"type\", typeFieldNameField.get(instance));\n\n        Field maintainTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"maintainType\");\n        maintainTypeField.setAccessible(true);\n        assertFalse(maintainTypeField.getBoolean(instance));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888846,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 943,
+    "prompt_tokens": 527,
+    "total_tokens": 1470,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.05
+  }
+}

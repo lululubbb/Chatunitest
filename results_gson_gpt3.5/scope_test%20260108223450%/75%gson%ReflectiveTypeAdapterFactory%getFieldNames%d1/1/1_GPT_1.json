@@ -1,0 +1,46 @@
+{
+  "id": "chatcmpl-CvlyNp83V0zLziiewUi3zmCpW2LtZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.annotations.SerializedName;\nimport com.google.gson.FieldNamingStrategy;\nimport java.lang.reflect.Field;\nimport java.util.List;\nimport java.util.Collections;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass ReflectiveTypeAdapterFactoryTest {\n\n  private ReflectiveTypeAdapterFactory factory;\n\n  @Mock\n  private FieldNamingStrategy fieldNamingStrategy;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    // Provide mocks or nulls for other constructor params not used in getFieldNames\n    factory = new ReflectiveTypeAdapterFactory(\n        null,\n        fieldNamingStrategy,\n        null,\n        null,\n        Collections.emptyList()\n    );\n  }\n\n  @Test\n  void getFieldNames_noSerializedNameAnnotation_returnsTranslatedName() throws Exception {\n    Field field = TestClass.class.getDeclaredField(\"fieldWithoutAnnotation\");\n    String translatedName = \"translatedFieldName\";\n    when(fieldNamingStrategy.translateName(field)).thenReturn(translatedName);\n\n    List<String> result = invokeGetFieldNames(field);\n\n    assertNotNull(result);\n    assertEquals(1, result.size());\n    assertEquals(translatedName, result.get(0));\n  }\n\n  @Test\n  void getFieldNames_withSerializedName_noAlternates_returnsSerializedName() throws Exception {\n    Field field = TestClass.class.getDeclaredField(\"fieldWithSerializedNameNoAlternates\");\n\n    List<String> result = invokeGetFieldNames(field);\n\n    assertNotNull(result);\n    assertEquals(1, result.size());\n    assertEquals(\"primaryName\", result.get(0));\n  }\n\n  @Test\n  void getFieldNames_withSerializedName_withAlternates_returnsSerializedNameAndAlternates() throws Exception {\n    Field field = TestClass.class.getDeclaredField(\"fieldWithSerializedNameWithAlternates\");\n\n    List<String> result = invokeGetFieldNames(field);\n\n    assertNotNull(result);\n    assertEquals(3, result.size());\n    assertEquals(\"primaryName\", result.get(0));\n    assertTrue(result.containsAll(Arrays.asList(\"alternate1\", \"alternate2\")));\n  }\n\n  // Utility method to invoke private getFieldNames via reflection\n  @SuppressWarnings(\"unchecked\")\n  private List<String> invokeGetFieldNames(Field field) throws Exception {\n    java.lang.reflect.Method method = ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"getFieldNames\", Field.class);\n    method.setAccessible(true);\n    return (List<String>) method.invoke(factory, field);\n  }\n\n  // Test class with fields to cover different SerializedName annotation cases\n  private static class TestClass {\n    String fieldWithoutAnnotation;\n\n    @SerializedName(\"primaryName\")\n    String fieldWithSerializedNameNoAlternates;\n\n    @SerializedName(value = \"primaryName\", alternate = {\"alternate1\", \"alternate2\"})\n    String fieldWithSerializedNameWithAlternates;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      },
+      "content_filter_result": {
+        "error": {
+          "code": "content_filter_error",
+          "message": "The contents are not filtered"
+        }
+      }
+    }
+  ],
+  "created": 1767885139,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 636,
+    "prompt_tokens": 805,
+    "total_tokens": 1441,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.77
+  }
+}

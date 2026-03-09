@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlTr9crdOLUtioHIXO5HWiUDZKj7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    // Should be accessible after tryMakeAccessible\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws NoSuchMethodException {\n    // Create a spy of Constructor to throw exception on setAccessible\n    Constructor<SampleClass> constructor = SampleClass.class.getDeclaredConstructor();\n    Constructor<?> spyConstructor = Mockito.spy(constructor);\n    Mockito.doThrow(new SecurityException(\"not allowed\")).when(spyConstructor).setAccessible(true);\n\n    String result = ReflectionHelper.tryMakeAccessible(spyConstructor);\n    assertNotNull(result);\n    assertTrue(result.contains(\"Failed making constructor\"));\n    assertTrue(result.contains(\"not allowed\"));\n  }\n\n  static class SampleClass {\n    private SampleClass() {}\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883247,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 255,
+    "prompt_tokens": 465,
+    "total_tokens": 720,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 3.82
+  }
+}

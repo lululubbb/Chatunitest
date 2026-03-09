@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuOU2v14nUvmJqg7OPv3R1l6rTmC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithQuoteTest {\n\n    @Test\n    void testWithQuote_withPrimitiveChar() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        char quoteChar = '\\'';\n        CSVFormat newFormat = format.withQuote(quoteChar);\n        assertNotNull(newFormat);\n        assertEquals(Character.valueOf(quoteChar), newFormat.getQuoteCharacter());\n        // Original format remains unchanged (immutable)\n        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), format.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_withNullCharacter() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        java.lang.reflect.Method method = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        method.setAccessible(true);\n        CSVFormat result = (CSVFormat) method.invoke(format, new Object[] { null });\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_withSameQuoteCharacterReturnsSameInstance() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Character quoteChar = format.getQuoteCharacter();\n        java.lang.reflect.Method method = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        method.setAccessible(true);\n        CSVFormat result = (CSVFormat) method.invoke(format, quoteChar);\n        // Should return same instance if quoteChar is unchanged\n        assertSame(format, result);\n    }\n\n    @Test\n    void testWithQuote_withDifferentQuoteCharacterReturnsNewInstance() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Character newQuoteChar = '\\'';\n        // If DEFAULT's quoteCharacter is already '\\'', pick a different one to ensure new instance\n        if (newQuoteChar.equals(format.getQuoteCharacter())) {\n            newQuoteChar = '\"';\n        }\n        java.lang.reflect.Method method = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        method.setAccessible(true);\n        CSVFormat result = (CSVFormat) method.invoke(format, newQuoteChar);\n        assertNotNull(result);\n        assertEquals(newQuoteChar, result.getQuoteCharacter());\n        assertNotSame(format, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679182,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 465,
+    "prompt_tokens": 1669,
+    "total_tokens": 2134,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.82
+  }
+}

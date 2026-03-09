@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWcY9iswp4qYY7LCvFZDCG1a7OU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = spy(new JsonObject());\n  }\n\n  @Test\n  public void testAddProperty_withNonNullNumber_addsJsonPrimitive() {\n    Number number = 123;\n\n    jsonObject.addProperty(\"key\", number);\n\n    ArgumentCaptor<JsonElement> captor = ArgumentCaptor.forClass(JsonElement.class);\n    verify(jsonObject).add(eq(\"key\"), captor.capture());\n\n    JsonElement addedElement = captor.getValue();\n    assertNotNull(addedElement);\n    assertTrue(addedElement instanceof JsonPrimitive);\n    assertEquals(number, ((JsonPrimitive) addedElement).getAsNumber());\n  }\n\n  @Test\n  public void testAddProperty_withNullNumber_addsJsonNullInstance() {\n    jsonObject.addProperty(\"key\", (Number) null);\n\n    ArgumentCaptor<JsonElement> captor = ArgumentCaptor.forClass(JsonElement.class);\n    verify(jsonObject).add(eq(\"key\"), captor.capture());\n\n    JsonElement addedElement = captor.getValue();\n    assertNotNull(addedElement);\n    assertSame(JsonNull.INSTANCE, addedElement);\n  }\n\n  @Test\n  public void testAdd_invokedByAddProperty_addsToMembersMap() throws Exception {\n    // Use real JsonObject instance instead of spy to test add method effect\n    JsonObject realJsonObject = new JsonObject();\n\n    // Use reflection to access private members field\n    var membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(realJsonObject);\n\n    // Invoke addProperty to add a property\n    realJsonObject.addProperty(\"key\", 42);\n\n    // Confirm that members map contains the key and correct JsonElement\n    assertTrue(members.containsKey(\"key\"));\n    JsonElement element = members.get(\"key\");\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(42, ((JsonPrimitive) element).getAsInt());\n  }\n\n  @Test\n  public void testPrivateAddMethod_invocationUsingReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n    addMethod.setAccessible(true);\n\n    JsonPrimitive primitive = new JsonPrimitive(99);\n    addMethod.invoke(jsonObject, \"reflectKey\", primitive);\n\n    // Verify that addProperty returns expected value by checking members map via reflection\n    var membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertTrue(members.containsKey(\"reflectKey\"));\n    assertEquals(primitive, members.get(\"reflectKey\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883418,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 699,
+    "prompt_tokens": 402,
+    "total_tokens": 1101,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.8
+  }
+}

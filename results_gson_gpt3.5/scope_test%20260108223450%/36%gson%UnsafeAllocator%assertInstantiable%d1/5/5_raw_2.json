@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void assertInstantiable_whenCheckInstantiableReturnsNull_doesNotThrow() throws Exception {\n    // Arrange\n    Class<?> clazz = String.class;\n\n    // Use reflection to get UnsafeAllocator.assertInstantiable\n    Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiable.setAccessible(true);\n\n    // Act & Assert: no exception thrown\n    assertDoesNotThrow(() -> assertInstantiable.invoke(null, clazz));\n  }\n\n  @Test\n  void assertInstantiable_whenCheckInstantiableReturnsMessage_throwsAssertionError() throws Exception {\n    // Arrange\n    Class<?> nonInstantiableClass = Runnable.class;\n\n    // Use reflection to get UnsafeAllocator.assertInstantiable\n    Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiable.setAccessible(true);\n\n    // Act & Assert: AssertionError is thrown with expected message\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class,\n        () -> assertInstantiable.invoke(null, nonInstantiableClass));\n\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof AssertionError);\n\n    String expectedMessageStart = \"UnsafeAllocator is used for non-instantiable type: \";\n    assertTrue(cause.getMessage().startsWith(expectedMessageStart));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1253,
+  "completion_tokens": 343,
+  "total_tokens": 1596,
+  "llm_elapsed_time_seconds": 11.38
+}

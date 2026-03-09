@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmX1ykBz6UQbSVCYzFoSlt9KEh6s",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.Primitives;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.Reader;\nimport java.io.StringReader;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_validJson_returnsObject() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Reader reader = new StringReader(json);\n    Class<DummyClass> clazz = DummyClass.class;\n    DummyClass dummy = new DummyClass();\n\n    // Spy on gson to mock fromJson(Reader, TypeToken<T>)\n    Gson spyGson = Mockito.spy(gson);\n    TypeToken<DummyClass> typeToken = TypeToken.get(clazz);\n\n    // Use doAnswer to call real method for fromJson(Reader, Class) to avoid recursion\n    doReturn(dummy).when(spyGson).fromJson(any(Reader.class), eq(typeToken));\n\n    // Mock Primitives.wrap to return the class itself (as DummyClass is not primitive)\n    try (MockedStatic<Primitives> primitivesMockedStatic = Mockito.mockStatic(Primitives.class)) {\n      primitivesMockedStatic.when(() -> Primitives.wrap(clazz)).thenReturn(clazz);\n\n      DummyClass result = spyGson.fromJson(reader, clazz);\n\n      assertNotNull(result);\n      assertSame(dummy, result);\n\n      // Verify fromJson(Reader, TypeToken<T>) was called with any Reader and typeToken\n      verify(spyGson).fromJson(any(Reader.class), eq(typeToken));\n\n      // Verify Primitives.wrap was called with classOfT\n      primitivesMockedStatic.verify(() -> Primitives.wrap(clazz));\n    }\n  }\n\n  @Test\n  public void fromJson_nullJson_throwsNullPointerException() {\n    Reader reader = null;\n    Class<DummyClass> clazz = DummyClass.class;\n\n    assertThrows(NullPointerException.class, () -> gson.fromJson(reader, clazz));\n  }\n\n  @Test\n  public void fromJson_nullClass_throwsNullPointerException() {\n    Reader reader = new StringReader(\"{}\");\n    Class<?> clazz = null;\n\n    assertThrows(NullPointerException.class, () -> gson.fromJson(reader, clazz));\n  }\n\n  // Dummy class for deserialization target\n  private static class DummyClass {\n    String name;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887287,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 547,
+    "prompt_tokens": 2758,
+    "total_tokens": 3305,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.7
+  }
+}

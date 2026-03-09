@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuFjIzyOtr6SlvEoe7JDbNZR93rO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVPrinterTest {\n\n    @Mock\n    private Appendable out;\n    @Mock\n    private CSVFormat format;\n\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        MockitoAnnotations.openMocks(this);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingObjectArray() throws IOException {\n        Object[] record1 = new Object[] {\"a\", \"b\"};\n        Iterable<Object[]> iterable = Collections.singletonList(record1);\n\n        CSVPrinter spyPrinter = spy(printer);\n        doNothing().when(spyPrinter).printRecord((Object[]) any());\n        doNothing().when(spyPrinter).printRecord((Iterable<?>) any());\n        doNothing().when(spyPrinter).printRecord(any());\n\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter, times(1)).printRecord(record1);\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord(any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingIterable() throws IOException {\n        Iterable<String> innerIterable = Arrays.asList(\"x\", \"y\");\n        Iterable<Iterable<String>> iterable = Collections.singletonList(innerIterable);\n\n        CSVPrinter spyPrinter = spy(printer);\n        doNothing().when(spyPrinter).printRecord((Object[]) any());\n        doNothing().when(spyPrinter).printRecord((Iterable<?>) any());\n        doNothing().when(spyPrinter).printRecord(any());\n\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, times(1)).printRecord(innerIterable);\n        verify(spyPrinter, never()).printRecord(any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingOtherObject() throws IOException {\n        Iterable<Object> iterable = Collections.singletonList(\"singleValue\");\n\n        CSVPrinter spyPrinter = spy(printer);\n        doNothing().when(spyPrinter).printRecord((Object[]) any());\n        doNothing().when(spyPrinter).printRecord((Iterable<?>) any());\n        doNothing().when(spyPrinter).printRecord(any());\n\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, times(1)).printRecord(\"singleValue\");\n    }\n\n    @Test\n    void testPrintRecords_withEmptyIterable() throws IOException {\n        Iterable<Object> iterable = Collections.emptyList();\n\n        CSVPrinter spyPrinter = spy(printer);\n        spyPrinter.printRecords(iterable);\n\n        // No calls to printRecord expected\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord(any());\n    }\n\n    @Test\n    void testPrintRecords_reflectionInvocation() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Iterable<Object> iterable = Collections.singletonList(\"value\");\n\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printRecords\", Iterable.class);\n        method.setAccessible(true);\n\n        CSVPrinter spyPrinter = spy(printer);\n        doNothing().when(spyPrinter).printRecord(any());\n\n        method.invoke(spyPrinter, iterable);\n\n        verify(spyPrinter, times(1)).printRecord(\"value\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678639,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 792,
+    "prompt_tokens": 476,
+    "total_tokens": 1268,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.73
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmiXYRAHsLC02DMUdRdvFX5fXHNc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\n\nclass TypeAdapterNullSafeTest {\n\n    private TypeAdapter<String> originalAdapter;\n    private TypeAdapter<String> nullSafeAdapter;\n    private JsonWriter mockWriter;\n    private JsonReader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        originalAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                out.value(\"written:\" + value);\n            }\n\n            @Override\n            public String read(JsonReader in) throws IOException {\n                return \"read:\" + in.nextString();\n            }\n        };\n        nullSafeAdapter = originalAdapter.nullSafe();\n        mockWriter = mock(JsonWriter.class);\n        mockReader = mock(JsonReader.class);\n    }\n\n    @Test\n    void write_withNonNullValue_callsOriginalWrite() throws IOException {\n        String value = \"testValue\";\n\n        nullSafeAdapter.write(mockWriter, value);\n\n        InOrder inOrder = inOrder(mockWriter);\n        inOrder.verify(mockWriter, never()).nullValue();\n        inOrder.verify(mockWriter).value(\"written:\" + value);\n    }\n\n    @Test\n    void write_withNullValue_callsNullValue() throws IOException {\n        nullSafeAdapter.write(mockWriter, null);\n\n        verify(mockWriter).nullValue();\n        verify(mockWriter, never()).value(anyString());\n    }\n\n    @Test\n    void read_withNullToken_returnsNull() throws IOException {\n        when(mockReader.peek()).thenReturn(JsonToken.NULL);\n\n        String result = nullSafeAdapter.read(mockReader);\n\n        verify(mockReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_withNonNullToken_callsOriginalRead() throws IOException {\n        when(mockReader.peek()).thenReturn(JsonToken.STRING);\n        when(mockReader.nextString()).thenReturn(\"input\");\n\n        String result = nullSafeAdapter.read(mockReader);\n\n        assertEquals(\"read:input\", result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888001,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 466,
+    "prompt_tokens": 2711,
+    "total_tokens": 3177,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.22
+  }
+}

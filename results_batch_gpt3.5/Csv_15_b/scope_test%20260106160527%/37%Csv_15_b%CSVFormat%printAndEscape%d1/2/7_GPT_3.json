@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxLsrulIPHaV4SR9WQiiTLzGohVC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private Method printAndEscapeMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        csvFormat = CSVFormat.DEFAULT.withEscape('\\\\'); // ensure escape character is set\n        printAndEscapeMethod = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class, Appendable.class);\n        printAndEscapeMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testPrintAndEscape_noSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, input.length(), out);\n        assertEquals(\"simpletext\", out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_withDelimiter() throws Throwable {\n        char delim = csvFormat.getDelimiter();\n        char escape = csvFormat.getEscapeCharacter();\n        String input = \"abc\" + delim + \"def\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, input.length(), out);\n        String expected = \"abc\" + escape + delim + \"def\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_withEscapeChar() throws Throwable {\n        char escape = csvFormat.getEscapeCharacter();\n        String input = \"abc\" + escape + \"def\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, input.length(), out);\n        String expected = \"abc\" + escape + escape + \"def\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_withCR() throws Throwable {\n        char escape = csvFormat.getEscapeCharacter();\n        String input = \"abc\\rdef\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, input.length(), out);\n        String expected = \"abc\" + escape + 'r' + \"def\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_withLF() throws Throwable {\n        char escape = csvFormat.getEscapeCharacter();\n        String input = \"abc\\ndef\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, input.length(), out);\n        String expected = \"abc\" + escape + 'n' + \"def\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_partialOffsetAndLength() throws Throwable {\n        String input = \"xyz,abc,def\";\n        StringBuilder out = new StringBuilder();\n        // offset 4, len 7 -> \"abc,def\"\n        invokePrintAndEscape(input, 4, 7, out);\n        char escape = csvFormat.getEscapeCharacter();\n        char delim = csvFormat.getDelimiter();\n        String expected = \"abc\" + escape + delim + \"def\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_emptyInput() throws Throwable {\n        String input = \"\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 0, 0, out);\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_offsetEqualsLength() throws Throwable {\n        String input = \"abc\";\n        StringBuilder out = new StringBuilder();\n        invokePrintAndEscape(input, 1, 0, out);\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape_outAppendableThrowsIOException() {\n        CharSequence input = \"abc\";\n        Appendable out = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) throws IOException {\n                throw new IOException(\"append(CharSequence) failed\");\n            }\n\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) throws IOException {\n                throw new IOException(\"append(CharSequence, int, int) failed\");\n            }\n\n            @Override\n            public Appendable append(char c) throws IOException {\n                throw new IOException(\"append(char) failed\");\n            }\n        };\n\n        Throwable thrown = assertThrows(InvocationTargetException.class, () -> {\n            printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n        });\n        Throwable cause = thrown.getCause();\n        assertEquals(IOException.class, cause.getClass());\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len, Appendable out) throws Throwable {\n        try {\n            printAndEscapeMethod.invoke(csvFormat, value, offset, len, out);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767690552,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1077,
+    "prompt_tokens": 2373,
+    "total_tokens": 3450,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.71
+  }
+}

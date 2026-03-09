@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn9ldF8Ixdmkgz3Zw7qjVm0ayAfd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_string_Test {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n  private Method stringMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  void string_basicNoReplacement() throws Throwable {\n    String input = \"simpletext123\";\n    invokeString(input);\n    String expected = \"\\\"\" + input + \"\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_withControlCharsReplaced() throws Throwable {\n    // The REPLACEMENT_CHARS array replaces control chars < 0x20 with escape sequences.\n    // We test a string containing some control chars (\\b \\t \\n \\f \\r and quotes, backslash)\n    String input = \"a\\b\\t\\n\\f\\r\\\"\\\\z\";\n    // Expected output: quotes around string and escaped control chars replaced\n    // According to Gson source REPLACEMENT_CHARS:\n    // \\b -> \\\\b\n    // \\t -> \\\\t\n    // \\n -> \\\\n\n    // \\f -> \\\\f\n    // \\r -> \\\\r\n    // \" -> \\\"\n    // \\ -> \\\\\n    String expected = \"\\\"a\\\\b\\\\t\\\\n\\\\f\\\\r\\\\\\\"\\\\\\\\z\\\"\";\n    invokeString(input);\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_withUnicode2028and2029() throws Throwable {\n    String input = \"line\\u2028separator\\u2029end\";\n    // \\u2028 and \\u2029 replaced with unicode escapes\n    String expected = \"\\\"line\\\\u2028separator\\\\u2029end\\\"\";\n    invokeString(input);\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_withHtmlSafeTrue_usesHtmlSafeReplacements() throws Throwable {\n    // Set htmlSafe to true via reflection\n    setField(jsonWriter, \"htmlSafe\", true);\n    // The HTML_SAFE_REPLACEMENT_CHARS escapes &, <, >, =, and '\n    // Let's test a string containing these\n    String input = \"a&<>=\\'b\";\n    // Expected output escapes these chars:\n    // & -> \\u0026\n    // < -> \\u003c\n    // > -> \\u003e\n    // = -> \\u003d\n    // ' -> \\u0027\n    String expected = \"\\\"a\\\\u0026\\\\u003c\\\\u003e\\\\u003d\\\\u0027b\\\"\";\n    invokeString(input);\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_emptyString() throws Throwable {\n    String input = \"\";\n    String expected = \"\\\"\\\"\";\n    invokeString(input);\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_allCharsReplaced() throws Throwable {\n    // Compose a string containing all control chars 0-31 and special html safe chars\n    StringBuilder sb = new StringBuilder();\n    for (char c = 0; c < 32; c++) {\n      sb.append(c);\n    }\n    sb.append(\"&<>='\\\"\");\n    String input = sb.toString();\n\n    // Set htmlSafe true to test HTML_SAFE_REPLACEMENT_CHARS\n    setField(jsonWriter, \"htmlSafe\", true);\n\n    // We can't hardcode expected easily, so we test that output starts and ends with quotes\n    // and contains replacement sequences for control chars and html safe chars\n    invokeString(input);\n    String output = stringWriter.toString();\n    assertTrue(output.startsWith(\"\\\"\"));\n    assertTrue(output.endsWith(\"\\\"\"));\n    // Check that control chars replaced by backslash escapes or unicode escapes\n    for (char c = 0; c < 32; c++) {\n      String replacement = getReplacementChar(c, true);\n      if (replacement != null) {\n        assertTrue(output.contains(replacement));\n      }\n    }\n    // Check html safe replacements\n    assertTrue(output.contains(\"\\\\u0026\")); // &\n    assertTrue(output.contains(\"\\\\u003c\")); // <\n    assertTrue(output.contains(\"\\\\u003e\")); // >\n    assertTrue(output.contains(\"\\\\u003d\")); // =\n    assertTrue(output.contains(\"\\\\u0027\")); // '\n  }\n\n  // Helper to invoke private string method and rethrow IOException as Throwable\n  private void invokeString(String value) throws Throwable {\n    try {\n      stringMethod.invoke(jsonWriter, value);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  // Helper to set private field via reflection\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      var field = JsonWriter.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get replacement char from REPLACEMENT_CHARS or HTML_SAFE_REPLACEMENT_CHARS array\n  private String getReplacementChar(char c, boolean htmlSafe) {\n    try {\n      var field = JsonWriter.class.getDeclaredField(htmlSafe ? \"HTML_SAFE_REPLACEMENT_CHARS\" : \"REPLACEMENT_CHARS\");\n      field.setAccessible(true);\n      String[] replacements = (String[]) field.get(null);\n      if (c < replacements.length) {\n        return replacements[c];\n      }\n      return null;\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889689,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1275,
+    "prompt_tokens": 929,
+    "total_tokens": 2204,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 37.89
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7xinjpqjFvDV8ZnkWxNgS58rZSg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Field;\n\nclass LexerIsEndOfFileTest {\n\n    // A minimal concrete subclass of Lexer to instantiate Lexer (since Lexer is abstract)\n    private static class LexerImpl extends Lexer {\n        LexerImpl(CSVFormat format, ExtendedBufferedReader in) {\n            super(format, in);\n        }\n\n        @Override\n        Token nextToken(Token reusableToken) {\n            return null;\n        }\n    }\n\n    @Test\n    void testIsEndOfFile_withEndOfStream() throws Exception {\n        CSVFormat format = Mockito.mock(CSVFormat.class);\n        ExtendedBufferedReader in = Mockito.mock(ExtendedBufferedReader.class);\n        Lexer lexer = new LexerImpl(format, in);\n\n        Class<?> constantsClass = Class.forName(\"org.apache.commons.csv.Constants\");\n        Field endOfStreamField = constantsClass.getDeclaredField(\"END_OF_STREAM\");\n        endOfStreamField.setAccessible(true);\n        int endOfStream = endOfStreamField.getInt(null);\n\n        boolean result = lexer.isEndOfFile(endOfStream);\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsEndOfFile_withNonEndOfStream() throws Exception {\n        CSVFormat format = Mockito.mock(CSVFormat.class);\n        ExtendedBufferedReader in = Mockito.mock(ExtendedBufferedReader.class);\n        Lexer lexer = new LexerImpl(format, in);\n\n        Class<?> constantsClass = Class.forName(\"org.apache.commons.csv.Constants\");\n        Field endOfStreamField = constantsClass.getDeclaredField(\"END_OF_STREAM\");\n        endOfStreamField.setAccessible(true);\n        int endOfStream = endOfStreamField.getInt(null);\n\n        int testChar = (endOfStream == 0) ? 1 : 0;\n\n        boolean result = lexer.isEndOfFile(testChar);\n        assertFalse(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969666,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 399,
+    "prompt_tokens": 887,
+    "total_tokens": 1286,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.43
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOLaMPWO0C568bdqxlVxSzNAOXa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderCommentsReturnsCloneOfArray() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set private field headerComments\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n\n        String[] comments = new String[] {\"comment1\", \"comment2\"};\n        headerCommentsField.set(csvFormat, comments);\n\n        String[] returnedComments = csvFormat.getHeaderComments();\n\n        // The returned array should be equal to the original but not the same instance\n        assertArrayEquals(comments, returnedComments);\n        assertNotSame(comments, returnedComments);\n\n        // Modify returned array should not affect original\n        returnedComments[0] = \"modified\";\n        String[] afterModification = (String[]) headerCommentsField.get(csvFormat);\n        assertEquals(\"comment1\", afterModification[0]);\n    }\n\n    @Test\n    void testGetHeaderCommentsReturnsNullWhenHeaderCommentsIsNull() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set private field headerComments to null\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        headerCommentsField.setAccessible(true);\n        headerCommentsField.set(csvFormat, null);\n\n        String[] returnedComments = csvFormat.getHeaderComments();\n\n        assertNull(returnedComments);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551761,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 329,
+    "prompt_tokens": 1142,
+    "total_tokens": 1471,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.44
+  }
+}

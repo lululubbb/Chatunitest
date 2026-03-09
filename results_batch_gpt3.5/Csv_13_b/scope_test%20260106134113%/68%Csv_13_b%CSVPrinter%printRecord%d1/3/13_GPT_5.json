@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuEoMNaxZ9RAUvQngqdmLDg8U5dv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setup() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues_callsPrintAndPrintln() throws IOException {\n        Object val1 = \"value1\";\n        Object val2 = 123;\n        Object val3 = null;\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord(val1, val2, val3);\n\n        verify(spyPrinter, times(1)).print(val1);\n        verify(spyPrinter, times(1)).print(val2);\n        verify(spyPrinter, times(1)).print(val3);\n        verify(spyPrinter, times(1)).println();\n    }\n\n    @Test\n    void testPrintRecord_withNoValues_onlyCallsPrintln() throws IOException {\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord();\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter, times(1)).println();\n    }\n\n    @Test\n    void testPrintRecord_privatePrintMethodInvocation() throws Exception {\n        Method printRecordMethod = CSVPrinter.class.getDeclaredMethod(\"printRecord\", Object[].class);\n        printRecordMethod.setAccessible(true);\n\n        Object[] params = new Object[] { \"a\", \"b\" };\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        // When invoking varargs method via reflection, wrap params in Object[] as single argument\n        printRecordMethod.invoke(spyPrinter, (Object) params);\n\n        verify(spyPrinter).print(\"a\");\n        verify(spyPrinter).print(\"b\");\n        verify(spyPrinter).println();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678582,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 437,
+    "prompt_tokens": 938,
+    "total_tokens": 1375,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.21
+  }
+}

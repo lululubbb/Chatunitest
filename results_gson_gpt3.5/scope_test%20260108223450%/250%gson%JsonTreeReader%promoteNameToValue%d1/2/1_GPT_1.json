@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmfiuDKGPbEifFRXW82KFHyZuGQT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a dummy JsonElement for constructor (using JsonNull)\n    reader = new JsonTreeReader(com.google.gson.JsonNull.INSTANCE);\n  }\n\n  @Test\n  public void testPromoteNameToValue_success() throws Exception {\n    // Arrange\n    // Mock an Iterator<Map.Entry<?, ?>> with one entry\n    @SuppressWarnings(\"unchecked\")\n    Iterator<Map.Entry<?, ?>> mockIterator = mock(Iterator.class);\n    @SuppressWarnings(\"unchecked\")\n    Map.Entry<String, String> mockEntry = mock(Map.Entry.class);\n\n    when(mockEntry.getKey()).thenReturn(\"mockKey\");\n    when(mockEntry.getValue()).thenReturn(new JsonPrimitive(\"mockValue\"));\n    when(mockIterator.next()).thenReturn(mockEntry);\n\n    // Use reflection to set the private stack field with the mockIterator at top\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(reader);\n    stack[0] = mockIterator;\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(reader, 1);\n\n    // Spy on reader to mock expect(JsonToken.NAME) so it does not throw\n    JsonTreeReader spyReader = spy(reader);\n    doNothing().when(spyReader).expect(JsonToken.NAME);\n\n    // Act\n    Method promoteNameToValue = JsonTreeReader.class.getDeclaredMethod(\"promoteNameToValue\");\n    promoteNameToValue.setAccessible(true);\n    promoteNameToValue.invoke(spyReader);\n\n    // Assert\n    // After promoteNameToValue, the stack size should be 3:\n    // original iterator at bottom, then pushed value, then pushed key as JsonPrimitive\n    int stackSizeAfter = stackSizeField.getInt(spyReader);\n    assertEquals(3, stackSizeAfter);\n\n    Object[] stackAfter = (Object[]) stackField.get(spyReader);\n\n    // Top of stack is JsonPrimitive with key string\n    Object top = stackAfter[stackSizeAfter - 1];\n    assertTrue(top instanceof JsonPrimitive);\n    assertEquals(\"mockKey\", ((JsonPrimitive) top).getAsString());\n\n    // Next element is the value from the entry\n    Object second = stackAfter[stackSizeAfter - 2];\n    assertTrue(second instanceof JsonPrimitive);\n    assertEquals(\"mockValue\", ((JsonPrimitive) second).getAsString());\n\n    // The iterator remains at bottom\n    assertSame(mockIterator, stackAfter[0]);\n\n    // Verify that next() was called on the iterator\n    verify(mockIterator).next();\n  }\n\n  @Test\n  public void testPromoteNameToValue_expectThrows() throws Exception {\n    JsonTreeReader spyReader = spy(reader);\n    doThrow(new IOException(\"Expected token not found\")).when(spyReader).expect(JsonToken.NAME);\n\n    Method promoteNameToValue = JsonTreeReader.class.getDeclaredMethod(\"promoteNameToValue\");\n    promoteNameToValue.setAccessible(true);\n\n    IOException thrown = assertThrows(IOException.class, () -> promoteNameToValue.invoke(spyReader));\n    assertTrue(thrown.getCause().getMessage().contains(\"Expected token not found\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887826,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 783,
+    "prompt_tokens": 601,
+    "total_tokens": 1384,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.76
+  }
+}

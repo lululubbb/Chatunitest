@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.TypeAdapterFactory;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class ObjectTypeAdapterTest {\n\n  @Test\n  public void getFactory_withDoubleStrategy_returnsDoubleFactory() {\n    TypeAdapterFactory factory = ObjectTypeAdapter.getFactory(ToNumberPolicy.DOUBLE);\n    assertNotNull(factory);\n    // The returned factory should be the same as DOUBLE_FACTORY field\n    TypeAdapterFactory doubleFactory = getDoubleFactoryField();\n    assertSame(doubleFactory, factory);\n  }\n\n  @Test\n  public void getFactory_withCustomStrategy_returnsNewFactory() {\n    ToNumberStrategy customStrategy = mock(ToNumberStrategy.class);\n    TypeAdapterFactory factory = ObjectTypeAdapter.getFactory(customStrategy);\n    assertNotNull(factory);\n    // It should not be the same instance as DOUBLE_FACTORY\n    TypeAdapterFactory doubleFactory = getDoubleFactoryField();\n    assertNotSame(doubleFactory, factory);\n  }\n\n  private TypeAdapterFactory getDoubleFactoryField() {\n    try {\n      java.lang.reflect.Field field = ObjectTypeAdapter.class.getDeclaredField(\"DOUBLE_FACTORY\");\n      field.setAccessible(true);\n      return (TypeAdapterFactory) field.get(null);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Failed to access DOUBLE_FACTORY field: \" + e.getMessage());\n      return null;\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 442,
+  "completion_tokens": 329,
+  "total_tokens": 771,
+  "llm_elapsed_time_seconds": 14.95
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlj9KglkN5upd2SNi3d8DqmYgFHC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValue_withNormalFloat_returnsThis() throws IOException {\n    JsonWriter result = writer.value(1.5f);\n    assertSame(writer, result);\n  }\n\n  @Test\n  public void testValue_withNaN_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.NaN);\n    });\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n\n  @Test\n  public void testValue_withPositiveInfinity_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.POSITIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_withNegativeInfinity_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.NEGATIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_callsPutWithJsonPrimitive() throws Exception {\n    // Use reflection to spy on private put method by subclassing and overriding put\n    class JsonTreeWriterSubclass extends JsonTreeWriter {\n      JsonElement receivedElement = null;\n\n      @Override\n      protected void put(com.google.gson.JsonElement value) {\n        receivedElement = value;\n      }\n    }\n\n    JsonTreeWriterSubclass spyWriter = spy(new JsonTreeWriterSubclass());\n\n    spyWriter.value(2.5f);\n\n    verify(spyWriter).put(argThat(element -> element instanceof JsonPrimitive && ((JsonPrimitive) element).getAsFloat() == 2.5f));\n    assertNotNull(spyWriter.receivedElement);\n    assertTrue(spyWriter.receivedElement instanceof JsonPrimitive);\n    assertEquals(2.5f, ((JsonPrimitive) spyWriter.receivedElement).getAsFloat());\n  }\n\n  @Test\n  public void testValue_lenientAllowsNaN() throws Exception {\n    // Use reflection to create a subclass that overrides isLenient() to true\n    JsonTreeWriter lenientWriter = new JsonTreeWriter() {\n      @Override\n      public boolean isLenient() {\n        return true;\n      }\n    };\n\n    JsonWriter result = lenientWriter.value(Float.NaN);\n    assertSame(lenientWriter, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884195,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 619,
+    "prompt_tokens": 1375,
+    "total_tokens": 1994,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.67
+  }
+}

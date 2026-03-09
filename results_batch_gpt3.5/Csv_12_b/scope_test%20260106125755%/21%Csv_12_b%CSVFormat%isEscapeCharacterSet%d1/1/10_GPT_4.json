@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutT7ltmFMBCAcqwMq6XjZs89QdT9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        // For primitive char field, handle unboxing if value is Character or null\n        if (field.getType() == char.class) {\n            if (value == null) {\n                // char primitive cannot be null, set to 0 char\n                field.setChar(target, (char) 0);\n            } else if (value instanceof Character) {\n                field.setChar(target, (Character) value);\n            } else {\n                throw new IllegalArgumentException(\"Invalid value for char field\");\n            }\n        } else {\n            field.set(target, value);\n        }\n    }\n\n    @Test\n    public void testIsEscapeCharacterSet_whenEscapeCharacterIsNull() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set escapeCharacter to null\n        setFinalField(csvFormat, \"escapeCharacter\", null);\n\n        assertFalse(csvFormat.isEscapeCharacterSet());\n    }\n\n    @Test\n    public void testIsEscapeCharacterSet_whenEscapeCharacterIsSet() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set escapeCharacter to a non-null Character\n        setFinalField(csvFormat, \"escapeCharacter\", Character.valueOf('\\\\'));\n\n        assertTrue(csvFormat.isEscapeCharacterSet());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675625,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 388,
+    "prompt_tokens": 1449,
+    "total_tokens": 1837,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.79
+  }
+}

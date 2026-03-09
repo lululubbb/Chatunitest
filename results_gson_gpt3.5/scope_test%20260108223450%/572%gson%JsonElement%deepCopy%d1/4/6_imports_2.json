@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n    // Since JsonElement is abstract, create a simple concrete subclass for testing\n    static class JsonElementImpl extends JsonElement {\n        private final JsonElement copy;\n\n        JsonElementImpl(JsonElement copy) {\n            this.copy = copy;\n        }\n\n        @Override\n        public JsonElement deepCopy() {\n            return this.copy != null ? this.copy : this;\n        }\n    }\n\n    @Test\n    void testDeepCopyReturnsCorrectInstance() {\n        JsonElement copy = new JsonElementImpl(null);\n        JsonElement original = new JsonElementImpl(copy);\n\n        // The deepCopy should return the copy instance passed in constructor\n        assertSame(copy, original.deepCopy());\n    }\n\n    @Test\n    void testDeepCopyNotNull() {\n        JsonElementImpl element = new JsonElementImpl(new JsonElementImpl(null));\n        JsonElement copy = element.deepCopy();\n        assertNotNull(copy);\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 934,
+  "completion_tokens": 216,
+  "total_tokens": 1150,
+  "llm_elapsed_time_seconds": 3.9,
+  "repair_elapsed_time_seconds": 19.76,
+  "round_total_time_seconds": 19.76
+}

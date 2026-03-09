@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw83qkYFSjEfR4ziFoko1KsufwPbP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.Lexer;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.ExtendedBufferedReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerIsWhitespaceTest {\n\n    private Lexer lexer;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n        ExtendedBufferedReader inMock = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass of abstract Lexer to instantiate it\n        lexer = new Lexer(formatMock, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsWhitespace_withDelimiterChar_returnsFalse() throws Exception {\n        // Arrange\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        // Use reflection to access isWhitespace method\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Act\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, delimiter);\n\n        // Assert\n        assertFalse(result, \"isWhitespace should return false when character equals delimiter\");\n    }\n\n    @Test\n    void testIsWhitespace_withWhitespaceCharNotDelimiter_returnsTrue() throws Exception {\n        // Arrange\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        char whitespaceChar = ' ';\n        assertNotEquals(delimiter, whitespaceChar);\n\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Act\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, whitespaceChar);\n\n        // Assert\n        assertTrue(result, \"isWhitespace should return true for whitespace chars not equal to delimiter\");\n    }\n\n    @Test\n    void testIsWhitespace_withNonWhitespaceNonDelimiterChar_returnsFalse() throws Exception {\n        // Arrange\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        char nonWhitespaceChar = 'A';\n        assertNotEquals(delimiter, nonWhitespaceChar);\n        assertFalse(Character.isWhitespace(nonWhitespaceChar));\n\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Act\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, nonWhitespaceChar);\n\n        // Assert\n        assertFalse(result, \"isWhitespace should return false for non-whitespace and non-delimiter chars\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970046,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 572,
+    "prompt_tokens": 1076,
+    "total_tokens": 1648,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.58
+  }
+}

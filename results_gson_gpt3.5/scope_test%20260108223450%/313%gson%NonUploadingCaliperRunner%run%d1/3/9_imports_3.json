@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.runner.CaliperMain;\n\nimport static org.mockito.ArgumentMatchers.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nimport java.util.Arrays;\n\nclass NonUploadingCaliperRunnerTest {\n\n  @Test\n  void run_invokesCaliperMainWithPrependedArg() {\n    Class<?> testClass = String.class;\n    String[] args = new String[] {\"arg1\", \"arg2\"};\n\n    try (MockedStatic<CaliperMain> caliperMainMock = mockStatic(CaliperMain.class)) {\n      NonUploadingCaliperRunner.run(testClass, args);\n\n      caliperMainMock.verify(() -> CaliperMain.main(eq(testClass), argThat(arg -> {\n        if (arg == null) return false;\n        if (arg.length != args.length + 1) return false;\n        if (!arg[0].equals(\"-Cresults.upload.options.url=\")) return false;\n        for (int i = 0; i < args.length; i++) {\n          if (!arg[i + 1].equals(args[i])) return false;\n        }\n        return true;\n      })));\n    }\n  }\n\n  @Test\n  void concat_returnsArrayWithFirstAndOthers() throws Exception {\n    var concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"firstArg\";\n    String[] others = new String[] {\"one\", \"two\"};\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    assert result.length == others.length + 1;\n    assert result[0].equals(first);\n    for (int i = 0; i < others.length; i++) {\n      assert result[i + 1].equals(others[i]);\n    }\n  }\n\n  @Test\n  void concat_returnsArrayWithOnlyFirstIfNoOthers() throws Exception {\n    var concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"onlyFirst\";\n    String[] others = new String[0];\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    assert result.length == 1;\n    assert result[0].equals(first);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 801,
+  "completion_tokens": 488,
+  "total_tokens": 1289,
+  "llm_elapsed_time_seconds": 6.07,
+  "repair_elapsed_time_seconds": 22.25,
+  "round_total_time_seconds": 22.25
+}

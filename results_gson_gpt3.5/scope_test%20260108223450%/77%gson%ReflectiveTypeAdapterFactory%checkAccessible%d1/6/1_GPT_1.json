@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn38M5jqxFS6OlzanyFidxSh7fVN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.ReflectionAccessFilterHelper;\nimport com.google.gson.internal.ReflectionHelper;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Member;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Proxy;\n\nclass ReflectiveTypeAdapterFactoryTest {\n\n  private Object instance;\n\n  @BeforeEach\n  void setUp() {\n    instance = new Object();\n  }\n\n  @Test\n  void checkAccessible_staticMember_accessAllowed() throws Exception {\n    // Arrange\n    Field staticField = SampleClass.class.getDeclaredField(\"STATIC_FIELD\");\n    // static field, so object param is null\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(true);\n\n      // Act & Assert no exception\n      ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n          .invoke(null, null, staticField);\n    }\n  }\n\n  @Test\n  void checkAccessible_instanceMember_accessAllowed() throws Exception {\n    // Arrange\n    Field instanceField = SampleClass.class.getDeclaredField(\"instanceField\");\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, instance)).thenReturn(true);\n\n      // Act & Assert no exception\n      ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n          .invoke(null, instance, instanceField);\n    }\n  }\n\n  @Test\n  void checkAccessible_staticMember_accessDenied_throws() throws Exception {\n    // Arrange\n    Field staticField = SampleClass.class.getDeclaredField(\"STATIC_FIELD\");\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(false);\n      mockedHelperDesc.when(() -> ReflectionHelper.getAccessibleObjectDescription(staticField, true))\n          .thenReturn(\"Static Field Description\");\n\n      // Act & Assert exception with expected message\n      Exception ex = assertThrows(JsonIOException.class, () -> {\n        ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n            .invoke(null, null, staticField);\n      });\n      // InvocationTargetException wraps the JsonIOException, unwrap it:\n      Throwable cause = ex.getCause();\n      assertTrue(cause instanceof JsonIOException);\n      String msg = cause.getMessage();\n      assertTrue(msg.contains(\"Static Field Description is not accessible\"));\n      assertTrue(msg.contains(\"ReflectionAccessFilter does not permit making it accessible\"));\n    }\n  }\n\n  @Test\n  void checkAccessible_instanceMember_accessDenied_throws() throws Exception {\n    // Arrange\n    Field instanceField = SampleClass.class.getDeclaredField(\"instanceField\");\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, instance)).thenReturn(false);\n      mockedHelperDesc.when(() -> ReflectionHelper.getAccessibleObjectDescription(instanceField, true))\n          .thenReturn(\"Instance Field Description\");\n\n      // Act & Assert exception with expected message\n      Exception ex = assertThrows(JsonIOException.class, () -> {\n        ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n            .invoke(null, instance, instanceField);\n      });\n      Throwable cause = ex.getCause();\n      assertTrue(cause instanceof JsonIOException);\n      String msg = cause.getMessage();\n      assertTrue(msg.contains(\"Instance Field Description is not accessible\"));\n      assertTrue(msg.contains(\"ReflectionAccessFilter does not permit making it accessible\"));\n    }\n  }\n\n  // Helper class for testing\n  static class SampleClass {\n    static int STATIC_FIELD;\n    int instanceField;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889278,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 995,
+    "prompt_tokens": 787,
+    "total_tokens": 1782,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.8
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlkvL1Vo06X2UtKToLmfwTMwADbV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.FieldNamingStrategy;\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.Excluder;\nimport com.google.gson.internal.ReflectiveTypeAdapterFactory;\nimport com.google.gson.internal.JsonAdapterAnnotationTypeAdapterFactory;\nimport com.google.gson.internal.reflect.ReflectionHelper;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\nimport com.google.gson.internal.FieldReflectionAdapter;\nimport com.google.gson.internal.RecordAdapter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.util.Collections;\nimport java.util.List;\n\npublic class ReflectiveTypeAdapterFactoryTest {\n\n  private ConstructorConstructor constructorConstructor;\n  private FieldNamingStrategy fieldNamingStrategy;\n  private Excluder excluder;\n  private JsonAdapterAnnotationTypeAdapterFactory jsonAdapterFactory;\n  private List<ReflectionAccessFilter> reflectionFilters;\n\n  private ReflectiveTypeAdapterFactory factory;\n\n  @BeforeEach\n  public void setUp() {\n    constructorConstructor = mock(ConstructorConstructor.class);\n    fieldNamingStrategy = mock(FieldNamingStrategy.class);\n    excluder = mock(Excluder.class);\n    jsonAdapterFactory = mock(JsonAdapterAnnotationTypeAdapterFactory.class);\n    reflectionFilters = Collections.emptyList();\n\n    factory = new ReflectiveTypeAdapterFactory(\n        constructorConstructor,\n        fieldNamingStrategy,\n        excluder,\n        jsonAdapterFactory,\n        reflectionFilters);\n  }\n\n  @Test\n  public void create_shouldReturnNullForPrimitiveType() {\n    Gson gson = mock(Gson.class);\n    TypeToken<Integer> typeToken = TypeToken.get(Integer.class);\n\n    TypeAdapter<Integer> adapter = factory.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_shouldThrowJsonIOExceptionWhenFilterBlocksAll() {\n    Gson gson = mock(Gson.class);\n    TypeToken<MyClass> typeToken = TypeToken.get(MyClass.class);\n\n    List<ReflectionAccessFilter> filters = Collections.singletonList(\n        (ReflectionAccessFilter) raw -> FilterResult.BLOCK_ALL);\n\n    factory = new ReflectiveTypeAdapterFactory(\n        constructorConstructor,\n        fieldNamingStrategy,\n        excluder,\n        jsonAdapterFactory,\n        filters);\n\n    JsonIOException exception = assertThrows(JsonIOException.class, () -> {\n      factory.create(gson, typeToken);\n    });\n    assertTrue(exception.getMessage().contains(\"ReflectionAccessFilter does not permit\"));\n  }\n\n  @Test\n  public void create_shouldReturnRecordAdapterWhenTypeIsRecord() {\n    Gson gson = mock(Gson.class);\n    TypeToken<MyRecord> typeToken = TypeToken.get(MyRecord.class);\n\n    List<ReflectionAccessFilter> filters = Collections.singletonList(\n        (ReflectionAccessFilter) raw -> FilterResult.ALLOW);\n\n    factory = new ReflectiveTypeAdapterFactory(\n        constructorConstructor,\n        fieldNamingStrategy,\n        excluder,\n        jsonAdapterFactory,\n        filters);\n\n    try (MockedStatic<ReflectionHelper> reflectionHelperMockedStatic = Mockito.mockStatic(ReflectionHelper.class);\n         MockedStatic<ReflectiveTypeAdapterFactory> reflectiveFactoryStatic = Mockito.mockStatic(ReflectiveTypeAdapterFactory.class)) {\n\n      reflectionHelperMockedStatic.when(() -> ReflectionHelper.isRecord(MyRecord.class)).thenReturn(true);\n\n      // Since getBoundFields is private, we mock it by spying the factory and stub getBoundFields\n      ReflectiveTypeAdapterFactory spyFactory = Mockito.spy(factory);\n      // We return an empty map for getBoundFields to proceed\n      reflectiveFactoryStatic.when(() -> spyFactory.getBoundFields(any(), any(), any(), anyBoolean(), anyBoolean()))\n          .thenReturn(Collections.emptyMap());\n\n      // For constructorConstructor.get(), return a mock ObjectConstructor\n      when(constructorConstructor.get(typeToken)).thenReturn(() -> new MyRecord(\"\"));\n\n      TypeAdapter<MyRecord> adapter = spyFactory.create(gson, typeToken);\n\n      assertNotNull(adapter);\n      assertEquals(RecordAdapter.class, adapter.getClass());\n    }\n  }\n\n  @Test\n  public void create_shouldReturnFieldReflectionAdapterForNormalClass() {\n    Gson gson = mock(Gson.class);\n    TypeToken<MyClass> typeToken = TypeToken.get(MyClass.class);\n\n    List<ReflectionAccessFilter> filters = Collections.singletonList(\n        (ReflectionAccessFilter) raw -> FilterResult.ALLOW);\n\n    factory = new ReflectiveTypeAdapterFactory(\n        constructorConstructor,\n        fieldNamingStrategy,\n        excluder,\n        jsonAdapterFactory,\n        filters);\n\n    // isRecord returns false\n    try (MockedStatic<ReflectionHelper> reflectionHelperMockedStatic = Mockito.mockStatic(ReflectionHelper.class)) {\n      reflectionHelperMockedStatic.when(() -> ReflectionHelper.isRecord(MyClass.class)).thenReturn(false);\n\n      // Mock constructorConstructor.get to return an ObjectConstructor\n      ObjectConstructor<MyClass> objectConstructor = () -> new MyClass();\n      when(constructorConstructor.get(typeToken)).thenReturn(objectConstructor);\n\n      // Spy factory to mock getBoundFields private method\n      ReflectiveTypeAdapterFactory spyFactory = Mockito.spy(factory);\n\n      // Use reflection to mock private getBoundFields method\n      // But since it's private, we invoke it normally by reflection and return a non-null map\n      // Or we can mock the method by using doReturn on spy\n      // We create a dummy map to return\n      doReturn(Collections.emptyMap()).when(spyFactory).getBoundFields(gson, typeToken, MyClass.class, false, false);\n\n      TypeAdapter<MyClass> adapter = spyFactory.create(gson, typeToken);\n\n      assertNotNull(adapter);\n      assertEquals(FieldReflectionAdapter.class, adapter.getClass());\n    }\n  }\n\n  // Dummy classes for testing\n  static class MyClass {\n    public int value;\n  }\n\n  // Java 16+ record for testing record path\n  record MyRecord(String name) {}\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884305,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1267,
+    "prompt_tokens": 990,
+    "total_tokens": 2257,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.24
+  }
+}

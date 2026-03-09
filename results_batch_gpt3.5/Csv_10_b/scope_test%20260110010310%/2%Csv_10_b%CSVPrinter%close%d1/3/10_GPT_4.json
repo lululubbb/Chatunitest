@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAHr2x4gsOoVvYfFkeiCJJCYiePP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    @Test\n    void close_whenOutIsCloseable_shouldCloseOut() throws IOException, ReflectiveOperationException {\n        Closeable closeableOut = mock(Closeable.class);\n        CSVFormat format = mock(CSVFormat.class);\n        // Use a dummy Appendable that implements Closeable by proxy\n        Appendable appendableOut = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) { return this; }\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) { return this; }\n            @Override\n            public Appendable append(char c) { return this; }\n        };\n        CSVPrinter printer = new CSVPrinter(appendableOut, format);\n\n        // Use reflection to set the private 'out' field to our Closeable mock\n        java.lang.reflect.Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, closeableOut);\n\n        printer.close();\n\n        verify(closeableOut, times(1)).close();\n    }\n\n    @Test\n    void close_whenOutIsNotCloseable_shouldNotThrow() throws IOException {\n        Appendable nonCloseableOut = mock(Appendable.class);\n        CSVFormat format = mock(CSVFormat.class);\n        CSVPrinter printer = new CSVPrinter(nonCloseableOut, format);\n\n        assertDoesNotThrow((Executable) printer::close);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978603,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 373,
+    "prompt_tokens": 873,
+    "total_tokens": 1246,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.09
+  }
+}

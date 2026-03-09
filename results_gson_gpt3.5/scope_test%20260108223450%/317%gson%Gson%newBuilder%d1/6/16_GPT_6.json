@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmTy6p5tiyNy9liWiFYjnNCznABz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonTest {\n\n  @Test\n  public void testNewBuilder() {\n    Gson gson = new Gson();\n    GsonBuilder builder = gson.newBuilder();\n    assertNotNull(builder);\n\n    try {\n      Field field = null;\n      Class<?> clazz = builder.getClass();\n\n      // Try to find a field of type Gson or a field that holds the Gson instance inside GsonBuilder\n      while (clazz != null) {\n        for (Field f : clazz.getDeclaredFields()) {\n          // The field may be named 'gson' or similar, but type may not be Gson directly.\n          // So also check if the field's value equals the gson instance.\n          f.setAccessible(true);\n          Object value = f.get(builder);\n          if (value == gson) {\n            field = f;\n            break;\n          }\n          if (f.getType() == Gson.class) {\n            field = f;\n            break;\n          }\n        }\n        if (field != null) break;\n        clazz = clazz.getSuperclass();\n      }\n\n      assertNotNull(field, \"Field holding Gson instance not found in GsonBuilder class hierarchy\");\n      field.setAccessible(true);\n      Object innerGson = field.get(builder);\n      assertSame(gson, innerGson);\n    } catch (IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887098,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 313,
+    "prompt_tokens": 2153,
+    "total_tokens": 2466,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.2
+  }
+}

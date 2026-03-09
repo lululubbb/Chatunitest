@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmjBIGq88N6yC3Z6Bv2bdkBitWZw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  public void setUp() {\n    // no-op, initialize in each test\n  }\n\n  @Test\n  public void testGetAsShort_whenValueIsNumber_shouldReturnShortValue() throws Exception {\n    // Create JsonPrimitive with a Number value\n    jsonPrimitive = new JsonPrimitive(12345);\n\n    short result = jsonPrimitive.getAsShort();\n\n    assertEquals((short) 12345, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenValueIsLazilyParsedNumber_shouldReturnShortValue() throws Exception {\n    // LazilyParsedNumber is internal, test with a String number\n    jsonPrimitive = new JsonPrimitive(\"12345\");\n\n    // Using reflection to set private field 'value' to LazilyParsedNumber\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(jsonPrimitive, new com.google.gson.internal.LazilyParsedNumber(\"12345\"));\n\n    short result = jsonPrimitive.getAsShort();\n\n    assertEquals((short) 12345, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenValueIsString_shouldParseShort() {\n    jsonPrimitive = new JsonPrimitive(\"32767\");\n\n    short result = jsonPrimitive.getAsShort();\n\n    assertEquals(Short.MAX_VALUE, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenValueIsStringNegative_shouldParseShort() {\n    jsonPrimitive = new JsonPrimitive(\"-32768\");\n\n    short result = jsonPrimitive.getAsShort();\n\n    assertEquals(Short.MIN_VALUE, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenValueIsNonNumberString_shouldThrowNumberFormatException() {\n    jsonPrimitive = new JsonPrimitive(\"notANumber\");\n\n    assertThrows(NumberFormatException.class, () -> {\n      jsonPrimitive.getAsShort();\n    });\n  }\n\n  @Test\n  public void testGetAsShort_coverageIsNumberFalseBranch() throws Exception {\n    // Spy on JsonPrimitive to mock isNumber() and getAsString()\n    JsonPrimitive spyPrimitive = spy(new JsonPrimitive(\"123\"));\n\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(\"123\").when(spyPrimitive).getAsString();\n\n    short result = spyPrimitive.getAsShort();\n\n    assertEquals((short) 123, result);\n  }\n\n  @Test\n  public void testGetAsShort_coverageIsNumberTrueBranch() throws Exception {\n    // Spy on JsonPrimitive to mock isNumber() and getAsNumber()\n    JsonPrimitive spyPrimitive = spy(new JsonPrimitive(456));\n\n    doReturn(true).when(spyPrimitive).isNumber();\n    doReturn((short) 456).when(spyPrimitive).getAsNumber();\n\n    short result = spyPrimitive.getAsShort();\n\n    assertEquals((short) 456, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888041,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 663,
+    "prompt_tokens": 426,
+    "total_tokens": 1089,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.71
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutjVXgtGreFQm8RhUhFYzQc39Tjh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.util.Arrays;\n\nclass CSVFormatToStringTest {\n\n    // Helper to create CSVFormat instance via reflection since constructor is private\n    private CSVFormat createCSVFormat(char delimiter,\n                                      Character quoteCharacter,\n                                      QuoteMode quoteMode,\n                                      Character commentMarker,\n                                      Character escapeCharacter,\n                                      boolean ignoreSurroundingSpaces,\n                                      boolean ignoreEmptyLines,\n                                      String recordSeparator,\n                                      String nullString,\n                                      String[] header,\n                                      boolean skipHeaderRecord,\n                                      boolean allowMissingColumnNames) throws Exception {\n        Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class, boolean.class,\n                String.class, String.class, String[].class, boolean.class, boolean.class);\n        ctor.setAccessible(true);\n        return ctor.newInstance(delimiter, quoteCharacter, quoteMode, commentMarker,\n                escapeCharacter, ignoreSurroundingSpaces, ignoreEmptyLines,\n                recordSeparator, nullString, header, skipHeaderRecord, allowMissingColumnNames);\n    }\n\n    @Test\n    void testToString_Minimal() throws Exception {\n        CSVFormat format = createCSVFormat(',', null, null, null,\n                null, false, false, null, null, null, false, false);\n        String s = format.toString();\n        assertTrue(s.contains(\"Delimiter=<,>\"));\n        assertFalse(s.contains(\"Escape=<\"));\n        assertFalse(s.contains(\"QuoteChar=<\"));\n        assertFalse(s.contains(\"CommentStart=<\"));\n        assertFalse(s.contains(\"NullString=<\"));\n        assertFalse(s.contains(\"RecordSeparator=<\"));\n        assertFalse(s.contains(\"EmptyLines:ignored\"));\n        assertFalse(s.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(s.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(s.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_AllFieldsSet() throws Exception {\n        String[] header = new String[]{\"h1\", \"h2\"};\n        CSVFormat format = createCSVFormat(';', '\"', QuoteMode.ALL, '#',\n                '\\\\', true, true, \"\\r\\n\", \"NULL\", header, true, true);\n        String s = format.toString();\n        assertTrue(s.contains(\"Delimiter=<;>\"));\n        assertTrue(s.contains(\"Escape=<\\\\>\"));\n        assertTrue(s.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(s.contains(\"CommentStart=<#>\"));\n        assertTrue(s.contains(\"NullString=<NULL>\"));\n        assertTrue(s.contains(\"RecordSeparator=<\\r\\n>\"));\n        assertTrue(s.contains(\"EmptyLines:ignored\"));\n        assertTrue(s.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(s.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(s.contains(\"Header:\" + Arrays.toString(header)));\n    }\n\n    @Test\n    void testToString_PartialFields() throws Exception {\n        String[] header = new String[]{\"header\"};\n        CSVFormat format = createCSVFormat('|', null, null, null,\n                'e', false, true, null, \"nullStr\", header, false, false);\n        String s = format.toString();\n        assertTrue(s.contains(\"Delimiter=<|>\"));\n        assertTrue(s.contains(\"Escape=<e>\"));\n        assertFalse(s.contains(\"QuoteChar=<\"));\n        assertFalse(s.contains(\"CommentStart=<\"));\n        assertTrue(s.contains(\"NullString=<nullStr>\"));\n        assertFalse(s.contains(\"RecordSeparator=<\"));\n        assertTrue(s.contains(\"EmptyLines:ignored\"));\n        assertFalse(s.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(s.contains(\"SkipHeaderRecord:false\"));\n        assertTrue(s.contains(\"Header:\" + Arrays.toString(header)));\n    }\n\n    @Test\n    void testToString_RecordSeparatorEmptyString() throws Exception {\n        CSVFormat format = createCSVFormat(',', null, null, null,\n                null, false, false, \"\", null, null, false, false);\n        String s = format.toString();\n        assertTrue(s.contains(\"RecordSeparator=<>\"));\n    }\n\n    @Test\n    void testToString_HeaderNull() throws Exception {\n        CSVFormat format = createCSVFormat(',', null, null, null,\n                null, false, false, null, null, null, false, false);\n        String s = format.toString();\n        assertFalse(s.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_HeaderEmptyArray() throws Exception {\n        CSVFormat format = createCSVFormat(',', null, null, null,\n                null, false, false, null, null, new String[0], false, false);\n        String s = format.toString();\n        assertTrue(s.contains(\"Header:[]\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676641,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1001,
+    "prompt_tokens": 2543,
+    "total_tokens": 3544,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.1
+  }
+}

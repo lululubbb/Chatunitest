@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmGphXpfH9hJvnMQTTMaFe3f3Jpx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nclass ObjectTypeAdapterTest {\n\n    private ObjectTypeAdapter objectTypeAdapter;\n    private JsonReader jsonReaderMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Use reflection to access private constructor\n        var constructor = ObjectTypeAdapter.class.getDeclaredConstructor(com.google.gson.Gson.class, com.google.gson.ToNumberStrategy.class);\n        constructor.setAccessible(true);\n        objectTypeAdapter = constructor.newInstance(null, null);\n\n        jsonReaderMock = mock(JsonReader.class);\n    }\n\n    @Test\n    void tryBeginNesting_withBeginArray_invokesBeginArrayAndReturnsArrayList() throws Throwable {\n        // Arrange\n        JsonToken peeked = JsonToken.BEGIN_ARRAY;\n\n        // Act\n        Object result = invokeTryBeginNesting(jsonReaderMock, peeked);\n\n        // Assert\n        verify(jsonReaderMock).beginArray();\n        assertNotNull(result);\n        assertTrue(result instanceof ArrayList);\n        assertTrue(((ArrayList<?>) result).isEmpty());\n    }\n\n    @Test\n    void tryBeginNesting_withBeginObject_invokesBeginObjectAndReturnsLinkedTreeMap() throws Throwable {\n        // Arrange\n        JsonToken peeked = JsonToken.BEGIN_OBJECT;\n\n        // Act\n        Object result = invokeTryBeginNesting(jsonReaderMock, peeked);\n\n        // Assert\n        verify(jsonReaderMock).beginObject();\n        assertNotNull(result);\n        assertTrue(result instanceof LinkedTreeMap);\n        assertTrue(((LinkedTreeMap<?, ?>) result).isEmpty());\n    }\n\n    @Test\n    void tryBeginNesting_withOtherToken_returnsNull() throws Throwable {\n        // Arrange\n        JsonToken peeked = JsonToken.STRING; // any token other than BEGIN_ARRAY or BEGIN_OBJECT\n\n        // Act\n        Object result = invokeTryBeginNesting(jsonReaderMock, peeked);\n\n        // Assert\n        verify(jsonReaderMock, never()).beginArray();\n        verify(jsonReaderMock, never()).beginObject();\n        assertNull(result);\n    }\n\n    private Object invokeTryBeginNesting(JsonReader in, JsonToken peeked) throws Throwable {\n        Method method = ObjectTypeAdapter.class.getDeclaredMethod(\"tryBeginNesting\", JsonReader.class, JsonToken.class);\n        method.setAccessible(true);\n        try {\n            return method.invoke(objectTypeAdapter, in, peeked);\n        } catch (InvocationTargetException e) {\n            // unwrap the real exception\n            throw e.getCause();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886283,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 592,
+    "prompt_tokens": 987,
+    "total_tokens": 1579,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.93
+  }
+}

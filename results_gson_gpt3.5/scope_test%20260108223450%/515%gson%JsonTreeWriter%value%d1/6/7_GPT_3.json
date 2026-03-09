@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlYIm4QvmfLB8yA2db6LgCMN8sCY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonWriter;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValueBooleanAddsJsonPrimitiveToStack() throws Exception {\n    // Put an empty JsonArray on stack to receive the value\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n    stack.clear();\n    stack.add(new JsonArray());\n\n    // Call value(true)\n    JsonWriter returned = jsonTreeWriter.value(true);\n    assertSame(jsonTreeWriter, returned);\n\n    // The array inside stack should contain one JsonPrimitive with value true\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top.isJsonArray());\n    JsonArray array = top.getAsJsonArray();\n    assertEquals(1, array.size());\n    JsonElement element = array.get(0);\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(true, ((JsonPrimitive) element).getAsBoolean());\n  }\n\n  @Test\n  public void testValueBooleanWithPendingNameAddsToObject() throws Exception {\n    // Set pendingName to simulate name-value pair insertion\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    pendingNameField.set(jsonTreeWriter, \"key\");\n\n    // Put an empty JsonObject on stack to receive the name-value pair\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n    stack.clear();\n    stack.add(new JsonObject());\n\n    // Call value(false)\n    JsonWriter returned = jsonTreeWriter.value(false);\n    assertSame(jsonTreeWriter, returned);\n\n    // The stack top should be JsonObject with the key \"key\" and value JsonPrimitive false\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top.isJsonObject());\n    JsonObject obj = top.getAsJsonObject();\n    assertTrue(obj.has(\"key\"));\n    assertEquals(false, obj.get(\"key\").getAsBoolean());\n\n    // pendingName should be reset to null\n    assertNull(pendingNameField.get(jsonTreeWriter));\n  }\n\n  @Test\n  public void testValueBooleanWhenStackEmptySetsProduct() throws Exception {\n    // Ensure stack is empty\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n    stack.clear();\n\n    // Call value(true)\n    jsonTreeWriter.value(true);\n\n    // product should now be JsonPrimitive true\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(jsonTreeWriter);\n    assertTrue(product instanceof JsonPrimitive);\n    assertEquals(true, ((JsonPrimitive) product).getAsBoolean());\n  }\n\n  @Test\n  public void testValueBooleanWithClosedSentinelThrows() throws Exception {\n    // Set product to SENTINEL_CLOSED to simulate closed writer\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n\n    Field sentinelClosedField = JsonTreeWriter.class.getDeclaredField(\"SENTINEL_CLOSED\");\n    sentinelClosedField.setAccessible(true);\n    JsonPrimitive sentinelClosed = (JsonPrimitive) sentinelClosedField.get(null);\n\n    productField.set(jsonTreeWriter, sentinelClosed);\n\n    // Calling value should throw IllegalStateException because put will throw\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n      jsonTreeWriter.value(true);\n    });\n  }\n\n  @Test\n  public void testPutMethodAddsCorrectly() throws Exception {\n    // Put an empty JsonArray on stack to receive the value\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n    stack.clear();\n    stack.add(new JsonArray());\n\n    // Access private method put(JsonElement)\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n    putMethod.setAccessible(true);\n\n    // Call put with JsonPrimitive true\n    putMethod.invoke(jsonTreeWriter, new JsonPrimitive(true));\n\n    // Check stack top is JsonArray and it has one element JsonPrimitive true\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top.isJsonArray());\n    JsonArray array = top.getAsJsonArray();\n    assertEquals(1, array.size());\n    assertTrue(array.get(0).isJsonPrimitive());\n    assertEquals(true, array.get(0).getAsBoolean());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883522,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1161,
+    "prompt_tokens": 2492,
+    "total_tokens": 3653,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.06
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmdgvuLsyOk1YkO2ofjbFXUJqVYh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\nimport java.text.DateFormat;\nimport java.text.ParsePosition;\nimport java.text.SimpleDateFormat;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class DefaultDateTypeAdapterTest {\n\n  private DefaultDateTypeAdapter<Date> adapter;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    adapter = createInstance();\n\n    Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n    dateFormatsField.setAccessible(true);\n    List<DateFormat> dateFormats = new ArrayList<>();\n    dateFormatsField.set(adapter, dateFormats);\n  }\n\n  @Test\n  public void toString_withSimpleDateFormat_returnsPattern() throws Exception {\n    List<DateFormat> dateFormats = getDateFormats(adapter);\n    SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\");\n    dateFormats.add(sdf);\n\n    String expected = \"DefaultDateTypeAdapter(\" + sdf.toPattern() + \")\";\n    assertEquals(expected, adapter.toString());\n  }\n\n  @Test\n  public void toString_withNonSimpleDateFormat_returnsClassName() throws Exception {\n    List<DateFormat> dateFormats = getDateFormats(adapter);\n    DateFormat anonymousFormat = new DateFormat() {\n      private static final long serialVersionUID = 1L;\n\n      @Override\n      public StringBuffer format(Date date, StringBuffer toAppendTo, java.text.FieldPosition fieldPosition) {\n        return null;\n      }\n\n      @Override\n      public Date parse(String source, ParsePosition pos) {\n        return null;\n      }\n    };\n    dateFormats.add(anonymousFormat);\n\n    String expected = \"DefaultDateTypeAdapter(\" + anonymousFormat.getClass().getSimpleName() + \")\";\n    assertEquals(expected, adapter.toString());\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private DefaultDateTypeAdapter<Date> createInstance() throws Exception {\n    Class<?> clazz = DefaultDateTypeAdapter.class;\n    // Instead of Proxy, instantiate with a real enum constant of DateType\n    Class<?> dateTypeClass = Class.forName(\"com.google.gson.internal.bind.DefaultDateTypeAdapter$DateType\");\n    Object[] enumConstants = dateTypeClass.getEnumConstants();\n    if (enumConstants == null || enumConstants.length == 0) {\n      throw new IllegalStateException(\"No enum constants found for DateType\");\n    }\n    Object dateType = enumConstants[0]; // use first enum constant\n\n    java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor(dateTypeClass, String.class);\n    constructor.setAccessible(true);\n    return (DefaultDateTypeAdapter<Date>) constructor.newInstance(dateType, \"yyyy-MM-dd\");\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private List<DateFormat> getDateFormats(DefaultDateTypeAdapter<Date> adapter) throws Exception {\n    Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n    dateFormatsField.setAccessible(true);\n    return (List<DateFormat>) dateFormatsField.get(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887700,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 654,
+    "prompt_tokens": 1803,
+    "total_tokens": 2457,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.58
+  }
+}

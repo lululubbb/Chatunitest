@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAD4MWBbp61H93STaRRPPBagN0vT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterPrintTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testPrint_newRecordTrue_quoting() throws Throwable {\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.isQuoting()).thenReturn(true);\n        when(format.isEscaping()).thenReturn(false);\n\n        printer = new CSVPrinter(out, format);\n        setField(printer, \"newRecord\", true);\n\n        String value = \"value\";\n        Object object = new Object();\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        printMethod.invoke(printer, object, value, 0, value.length());\n\n        // Because newRecord was true, no delimiter appended before\n        verify(out, never()).append(',');\n\n        // Quoting enabled, so printAndQuote should be called internally.\n        // We cannot directly verify private method call, but we can verify interactions with out.\n        // printAndQuote appends quotes and value, so verify out.append called at least once.\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n        assertFalse(getField(printer, \"newRecord\"));\n    }\n\n    @Test\n    void testPrint_newRecordFalse_quoting() throws Throwable {\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.isQuoting()).thenReturn(true);\n        when(format.isEscaping()).thenReturn(false);\n\n        printer = new CSVPrinter(out, format);\n        setField(printer, \"newRecord\", false);\n\n        String value = \"value\";\n        Object object = new Object();\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        printMethod.invoke(printer, object, value, 0, value.length());\n\n        // Because newRecord was false, delimiter appended before\n        verify(out).append(',');\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n        assertFalse(getField(printer, \"newRecord\"));\n    }\n\n    @Test\n    void testPrint_newRecordFalse_escaping() throws Throwable {\n        when(format.getDelimiter()).thenReturn(';');\n        when(format.isQuoting()).thenReturn(false);\n        when(format.isEscaping()).thenReturn(true);\n\n        printer = new CSVPrinter(out, format);\n        setField(printer, \"newRecord\", false);\n\n        String value = \"escapeTest\";\n        Object object = new Object();\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        printMethod.invoke(printer, object, value, 0, value.length());\n\n        verify(out).append(';');\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n        assertFalse(getField(printer, \"newRecord\"));\n    }\n\n    @Test\n    void testPrint_newRecordFalse_noQuotingNoEscaping() throws Throwable {\n        when(format.getDelimiter()).thenReturn('|');\n        when(format.isQuoting()).thenReturn(false);\n        when(format.isEscaping()).thenReturn(false);\n\n        printer = new CSVPrinter(out, format);\n        setField(printer, \"newRecord\", false);\n\n        String value = \"plainValue\";\n        Object object = new Object();\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        printMethod.invoke(printer, object, value, 0, value.length());\n\n        verify(out).append('|');\n        verify(out).append(value, 0, value.length());\n        assertFalse(getField(printer, \"newRecord\"));\n    }\n\n    // Utility to set private field\n    private void setField(Object target, String fieldName, Object value) {\n        try {\n            java.lang.reflect.Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            field.set(target, value);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Utility to get private boolean field\n    private boolean getField(CSVPrinter target, String fieldName) {\n        try {\n            java.lang.reflect.Field field = CSVPrinter.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getBoolean(target);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978306,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1026,
+    "prompt_tokens": 1600,
+    "total_tokens": 2626,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.8
+  }
+}

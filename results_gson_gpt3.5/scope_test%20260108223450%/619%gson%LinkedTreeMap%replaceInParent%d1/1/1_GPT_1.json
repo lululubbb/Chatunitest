@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnGTUD3sINjUycKz36KTJhhrNAqP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  private LinkedTreeMap<String, String> map;\n\n  private Class<?> nodeClass;\n  private Class<?> mapClass;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    map = new LinkedTreeMap<>();\n    mapClass = LinkedTreeMap.class;\n\n    // Node is a package-private static inner class, get it via reflection\n    for (Class<?> innerClass : mapClass.getDeclaredClasses()) {\n      if (\"Node\".equals(innerClass.getSimpleName())) {\n        nodeClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(nodeClass, \"Node class not found\");\n  }\n\n  private Object createNode(Object key, Object value) throws Exception {\n    // Node has constructor Node(K key, V value, Node<K,V> parent)\n    // We'll find a constructor with 3 params: key, value, parent\n    for (var constructor : nodeClass.getDeclaredConstructors()) {\n      if (constructor.getParameterCount() == 3) {\n        constructor.setAccessible(true);\n        return constructor.newInstance(key, value, null);\n      }\n    }\n    fail(\"Node constructor not found\");\n    return null;\n  }\n\n  private void setParent(Object node, Object parent) throws Exception {\n    Field parentField = nodeClass.getDeclaredField(\"parent\");\n    parentField.setAccessible(true);\n    parentField.set(node, parent);\n  }\n\n  private Object getParent(Object node) throws Exception {\n    Field parentField = nodeClass.getDeclaredField(\"parent\");\n    parentField.setAccessible(true);\n    return parentField.get(node);\n  }\n\n  private void setLeft(Object node, Object left) throws Exception {\n    Field leftField = nodeClass.getDeclaredField(\"left\");\n    leftField.setAccessible(true);\n    leftField.set(node, left);\n  }\n\n  private Object getLeft(Object node) throws Exception {\n    Field leftField = nodeClass.getDeclaredField(\"left\");\n    leftField.setAccessible(true);\n    return leftField.get(node);\n  }\n\n  private void setRight(Object node, Object right) throws Exception {\n    Field rightField = nodeClass.getDeclaredField(\"right\");\n    rightField.setAccessible(true);\n    rightField.set(node, right);\n  }\n\n  private Object getRight(Object node) throws Exception {\n    Field rightField = nodeClass.getDeclaredField(\"right\");\n    rightField.setAccessible(true);\n    return rightField.get(node);\n  }\n\n  private Object getRoot() throws Exception {\n    Field rootField = mapClass.getDeclaredField(\"root\");\n    rootField.setAccessible(true);\n    return rootField.get(map);\n  }\n\n  private void setRoot(Object root) throws Exception {\n    Field rootField = mapClass.getDeclaredField(\"root\");\n    rootField.setAccessible(true);\n    rootField.set(map, root);\n  }\n\n  private void invokeReplaceInParent(Object node, Object replacement) throws Exception {\n    Method method = mapClass.getDeclaredMethod(\"replaceInParent\", nodeClass, nodeClass);\n    method.setAccessible(true);\n    method.invoke(map, node, replacement);\n  }\n\n  @Test\n  public void testReplaceInParent_NodeHasParent_LeftChildReplaced() throws Exception {\n    // Setup parent node\n    Object parent = createNode(\"parentKey\", \"parentValue\");\n    // Setup node to replace\n    Object node = createNode(\"nodeKey\", \"nodeValue\");\n    // Setup replacement node\n    Object replacement = createNode(\"replacementKey\", \"replacementValue\");\n\n    // Setup tree links\n    setParent(node, parent);\n    setLeft(parent, node);\n    setRight(parent, null);\n\n    // replacement's parent should be set to parent after method call\n    setParent(replacement, null);\n\n    // root should remain unchanged\n    setRoot(parent);\n\n    // Call method\n    invokeReplaceInParent(node, replacement);\n\n    // Assertions\n    assertNull(getParent(node), \"Original node's parent should be null\");\n    assertSame(parent, getParent(replacement), \"Replacement's parent should be set to parent\");\n    assertSame(replacement, getLeft(parent), \"Parent's left child should be replacement\");\n    assertNull(getRight(parent), \"Parent's right child should remain null\");\n    assertSame(parent, getRoot(), \"Root should remain the same\");\n  }\n\n  @Test\n  public void testReplaceInParent_NodeHasParent_RightChildReplaced() throws Exception {\n    Object parent = createNode(\"parentKey\", \"parentValue\");\n    Object node = createNode(\"nodeKey\", \"nodeValue\");\n    Object replacement = createNode(\"replacementKey\", \"replacementValue\");\n\n    setParent(node, parent);\n    setRight(parent, node);\n    setLeft(parent, null);\n\n    setParent(replacement, null);\n    setRoot(parent);\n\n    invokeReplaceInParent(node, replacement);\n\n    assertNull(getParent(node), \"Original node's parent should be null\");\n    assertSame(parent, getParent(replacement), \"Replacement's parent should be set to parent\");\n    assertSame(replacement, getRight(parent), \"Parent's right child should be replacement\");\n    assertNull(getLeft(parent), \"Parent's left child should remain null\");\n    assertSame(parent, getRoot(), \"Root should remain the same\");\n  }\n\n  @Test\n  public void testReplaceInParent_NodeHasNoParent_RootReplaced() throws Exception {\n    Object node = createNode(\"nodeKey\", \"nodeValue\");\n    Object replacement = createNode(\"replacementKey\", \"replacementValue\");\n\n    setParent(node, null);\n    setParent(replacement, null);\n    setRoot(node);\n\n    invokeReplaceInParent(node, replacement);\n\n    assertNull(getParent(node), \"Original node's parent should be null\");\n    assertNull(getParent(replacement), \"Replacement's parent should be null since node's parent was null\");\n    assertSame(replacement, getRoot(), \"Root should be replaced by replacement\");\n  }\n\n  @Test\n  public void testReplaceInParent_ReplacementIsNull_NodeRemoved() throws Exception {\n    Object parent = createNode(\"parentKey\", \"parentValue\");\n    Object node = createNode(\"nodeKey\", \"nodeValue\");\n\n    setParent(node, parent);\n    setLeft(parent, node);\n    setRight(parent, null);\n    setRoot(parent);\n\n    invokeReplaceInParent(node, null);\n\n    assertNull(getParent(node), \"Original node's parent should be null\");\n    assertNull(getLeft(parent), \"Parent's left child should be null after removal\");\n    assertNull(getRight(parent), \"Parent's right child should remain null\");\n    assertSame(parent, getRoot(), \"Root should remain the same\");\n  }\n\n  @Test\n  public void testReplaceInParent_ReplacementIsNull_NodeIsRoot() throws Exception {\n    Object node = createNode(\"nodeKey\", \"nodeValue\");\n    setParent(node, null);\n    setRoot(node);\n\n    invokeReplaceInParent(node, null);\n\n    assertNull(getParent(node), \"Original node's parent should be null\");\n    assertNull(getRoot(), \"Root should be null after replacement with null\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890105,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1508,
+    "prompt_tokens": 781,
+    "total_tokens": 2289,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.46
+  }
+}

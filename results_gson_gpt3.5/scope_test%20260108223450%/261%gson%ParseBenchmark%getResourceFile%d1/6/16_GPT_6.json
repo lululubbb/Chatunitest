@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmQIO9US45iC9CpyA52ToIuQDApA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.File;\nimport java.lang.reflect.Method;\nimport java.net.URL;\nimport java.net.URISyntaxException;\n\npublic class ParseBenchmarkTest {\n\n  @Test\n  public void testGetResourceFile_validFile() throws Exception {\n    // Use reflection to invoke private method\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    // Use a resource that exists in the test resources folder and is guaranteed to be a file\n    // Use a resource file known to be accessible as a file in the file system, not inside a jar\n    String resourcePath = \"/com/google/gson/metrics/ParseBenchmarkTest.class\";\n\n    // Act\n    File resourceFile = (File) method.invoke(null, resourcePath);\n\n    // Assert\n    assertNotNull(resourceFile);\n    assertTrue(resourceFile.isFile());\n    assertTrue(resourceFile.getName().endsWith(\"ParseBenchmarkTest.class\"));\n  }\n\n  @Test\n  public void testGetResourceFile_resourceDoesNotExist() throws Exception {\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      try {\n        method.invoke(null, \"/nonexistent_resource.txt\");\n      } catch (java.lang.reflect.InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n    assertEquals(\"Resource /nonexistent_resource.txt does not exist\", thrown.getMessage());\n  }\n\n  @Test\n  public void testGetResourceFile_resourceIsNotFile() throws Exception {\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      try {\n        method.invoke(null, \"/com/google/gson/metrics\");\n      } catch (java.lang.reflect.InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n    assertEquals(\"Resource /com/google/gson/metrics is not a file\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886870,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 462,
+    "prompt_tokens": 1307,
+    "total_tokens": 1769,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.3
+  }
+}

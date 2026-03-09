@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpuOvhMrWasYB1lfdeZJQtkkz9B",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonToJsonTreeTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void testToJsonTree_withNullObject() {\n    JsonElement result = gson.toJsonTree(null, Object.class);\n    assertNotNull(result);\n    assertTrue(result.isJsonNull());\n  }\n\n  @Test\n  void testToJsonTree_withPrimitive() {\n    Integer src = 123;\n    JsonElement result = gson.toJsonTree(src, Integer.class);\n    assertNotNull(result);\n    assertTrue(result.isJsonPrimitive());\n    assertEquals(src.intValue(), result.getAsInt());\n  }\n\n  @Test\n  void testToJsonTree_withString() {\n    String src = \"test string\";\n    JsonElement result = gson.toJsonTree(src, String.class);\n    assertNotNull(result);\n    assertTrue(result.isJsonPrimitive());\n    assertEquals(src, result.getAsString());\n  }\n\n  @Test\n  void testToJsonTree_withObjectType() {\n    Object src = new TestObject(\"foo\", 42);\n    JsonElement result = gson.toJsonTree(src, TestObject.class);\n    assertNotNull(result);\n    assertTrue(result.isJsonObject());\n    assertEquals(\"foo\", result.getAsJsonObject().get(\"name\").getAsString());\n    assertEquals(42, result.getAsJsonObject().get(\"value\").getAsInt());\n  }\n\n  @Test\n  void testToJsonTree_invokesPrivateToJson() throws Exception {\n    // Spy on gson instance\n    Gson spyGson = spy(gson);\n    Object src = \"reflection test\";\n    Type type = String.class;\n\n    // Use reflection to get private method toJson\n    Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, Type.class, com.google.gson.stream.JsonWriter.class);\n    toJsonMethod.setAccessible(true);\n\n    // Create JsonTreeWriter to capture output\n    JsonTreeWriter writer = new JsonTreeWriter();\n\n    // Call toJson directly via reflection to verify it works\n    toJsonMethod.invoke(spyGson, src, type, writer);\n    JsonElement element = writer.get();\n    assertTrue(element.isJsonPrimitive());\n    assertEquals(src, element.getAsString());\n\n    // Stub toJsonTree to call real method\n    doCallRealMethod().when(spyGson).toJsonTree(any(), any());\n\n    // Spy on toJson method call by wrapping it with a doAnswer\n    // Because toJson is private, verify() won't work directly, so we track calls via spy and reflection\n    // We'll use an ArgumentCaptor to capture the JsonWriter argument\n\n    // Create a spy for JsonTreeWriter to verify it is passed to toJson\n    JsonTreeWriter spyWriter = spy(new JsonTreeWriter());\n\n    // Use reflection to invoke toJson with spyWriter and verify it is called\n    toJsonMethod.invoke(spyGson, src, type, spyWriter);\n\n    // Now call toJsonTree and verify it returns the same JsonElement as the direct toJson call\n    JsonElement result = spyGson.toJsonTree(src, type);\n    assertEquals(element, result);\n\n    // Verify toJson was called with expected arguments by spying on spyGson's toJson method indirectly\n    // Since toJson is private, use Mockito's verify with a custom Answer to track calls\n\n    // Instead, we verify that toJsonTree returns the correct result and the behavior is as expected.\n  }\n\n  private static class TestObject {\n    String name;\n    int value;\n\n    TestObject(String name, int value) {\n      this.name = name;\n      this.value = value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888458,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 841,
+    "prompt_tokens": 2802,
+    "total_tokens": 3643,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.32
+  }
+}

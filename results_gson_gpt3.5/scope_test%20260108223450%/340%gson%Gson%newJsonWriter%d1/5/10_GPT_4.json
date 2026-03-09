@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnUP1QWm528L4wnHjZBFa7wjfYnx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass Gson_newJsonWriter_Test {\n\n  private Gson gson;\n  private Writer writer;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Use default constructor to initialize gson\n    gson = new Gson();\n\n    writer = mock(Writer.class);\n  }\n\n  @Test\n  void newJsonWriter_generateNonExecutableJsonTrue_writesPrefixAndSetsProperties() throws IOException, NoSuchFieldException, IllegalAccessException {\n    // Use reflection to set private final field generateNonExecutableJson to true\n    setFinalField(gson, \"generateNonExecutableJson\", true);\n\n    // Set other fields for coverage\n    setFinalField(gson, \"prettyPrinting\", true);\n    setFinalField(gson, \"htmlSafe\", false);\n    setFinalField(gson, \"lenient\", true);\n    setFinalField(gson, \"serializeNulls\", true);\n\n    JsonWriter jsonWriter = gson.newJsonWriter(writer);\n\n    // Verify prefix written\n    verify(writer).write(\")]}'\\n\");\n\n    // Verify JsonWriter properties\n    assertEquals(\"  \", getJsonWriterIndent(jsonWriter));\n    assertFalse(getJsonWriterHtmlSafe(jsonWriter));\n    assertTrue(getJsonWriterLenient(jsonWriter));\n    assertTrue(getJsonWriterSerializeNulls(jsonWriter));\n  }\n\n  @Test\n  void newJsonWriter_generateNonExecutableJsonFalse_noPrefixWritten() throws IOException, NoSuchFieldException, IllegalAccessException {\n    setFinalField(gson, \"generateNonExecutableJson\", false);\n    setFinalField(gson, \"prettyPrinting\", false);\n    setFinalField(gson, \"htmlSafe\", true);\n    setFinalField(gson, \"lenient\", false);\n    setFinalField(gson, \"serializeNulls\", false);\n\n    JsonWriter jsonWriter = gson.newJsonWriter(writer);\n\n    verify(writer, never()).write(anyString());\n\n    assertEquals(\"\", getJsonWriterIndent(jsonWriter));\n    assertTrue(getJsonWriterHtmlSafe(jsonWriter));\n    assertFalse(getJsonWriterLenient(jsonWriter));\n    assertFalse(getJsonWriterSerializeNulls(jsonWriter));\n  }\n\n  private static void setFinalField(Object target, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {\n    Field field = Gson.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n\n    // Remove final modifier if present\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    field.set(target, value);\n  }\n\n  private static String getJsonWriterIndent(JsonWriter jsonWriter) throws NoSuchFieldException, IllegalAccessException {\n    Field indentField = JsonWriter.class.getDeclaredField(\"indent\");\n    indentField.setAccessible(true);\n    return (String) indentField.get(jsonWriter);\n  }\n\n  private static boolean getJsonWriterHtmlSafe(JsonWriter jsonWriter) throws NoSuchFieldException, IllegalAccessException {\n    Field htmlSafeField = JsonWriter.class.getDeclaredField(\"htmlSafe\");\n    htmlSafeField.setAccessible(true);\n    return (boolean) htmlSafeField.get(jsonWriter);\n  }\n\n  private static boolean getJsonWriterLenient(JsonWriter jsonWriter) throws NoSuchFieldException, IllegalAccessException {\n    Field lenientField = JsonWriter.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    return (boolean) lenientField.get(jsonWriter);\n  }\n\n  private static boolean getJsonWriterSerializeNulls(JsonWriter jsonWriter) throws NoSuchFieldException, IllegalAccessException {\n    Field serializeNullsField = JsonWriter.class.getDeclaredField(\"serializeNulls\");\n    serializeNullsField.setAccessible(true);\n    return (boolean) serializeNullsField.get(jsonWriter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890969,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 851,
+    "prompt_tokens": 2773,
+    "total_tokens": 3624,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.21
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAQpVggkjclY8AqqsiPsrH3drif5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.util.ArrayList;\nimport java.util.List;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.CSVRecord;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVFormat formatMock;\n    private Reader readerMock;\n    private CSVParser parserSpy;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        formatMock = mock(CSVFormat.class);\n        readerMock = mock(Reader.class);\n\n        // Use real constructor but spy on the instance to mock internals if needed\n        parserSpy = Mockito.spy(new CSVParser(readerMock, formatMock));\n    }\n\n    @Test\n    void testGetRecords_emptyList() throws IOException {\n        // We will invoke getRecords() which calls getRecords(new ArrayList<>())\n        // Mock getRecords(List) to call real method but control internals\n\n        // Spy getRecords(List) to call real method\n        doCallRealMethod().when(parserSpy).getRecords(any(List.class));\n\n        // Because internals depend on lexer and tokens, which are private and complex,\n        // we will mock getRecords(List) to return an empty list to simulate no records\n        // But since getRecords() calls getRecords(List), and getRecords(List) is final,\n        // we cannot mock it easily, so instead we call getRecords() directly.\n\n        // Because we cannot mock internals without full setup, just call getRecords()\n        // and expect empty list (since no input is provided).\n        List<CSVRecord> records = parserSpy.getRecords();\n\n        assertNotNull(records);\n        assertTrue(records.isEmpty());\n    }\n\n    @Test\n    void testGetRecords_withRecords() throws Exception {\n        // Prepare a list to pass to getRecords(List)\n        List<CSVRecord> recordsList = new ArrayList<>();\n\n        // Use reflection to invoke private getRecords(List) method which is generic\n        var method = CSVParser.class.getDeclaredMethod(\"getRecords\", List.class);\n        method.setAccessible(true);\n\n        // Since internals are complex, we simulate adding one CSVRecord by mocking nextRecord()\n        CSVRecord recordMock = mock(CSVRecord.class);\n        doReturn(recordMock).doThrow(new NoSuchElementException()).when(parserSpy).nextRecord();\n\n        // Invoke private getRecords(List) method\n        @SuppressWarnings(\"unchecked\")\n        List<CSVRecord> result = (List<CSVRecord>) method.invoke(parserSpy, recordsList);\n\n        assertNotNull(result);\n        assertEquals(1, result.size());\n        assertSame(recordMock, result.get(0));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979159,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 584,
+    "prompt_tokens": 490,
+    "total_tokens": 1074,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.74
+  }
+}

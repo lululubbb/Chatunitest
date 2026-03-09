@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnK7Qxrb74tdMHK3wIUg0OUMezRk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nclass Gson_floatAdapter_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void floatAdapter_returnsFloatTypeAdapter_whenSerializeSpecialFloatingPointValuesTrue() throws Exception {\n    Method floatAdapterMethod = Gson.class.getDeclaredMethod(\"floatAdapter\", boolean.class);\n    floatAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) floatAdapterMethod.invoke(gson, true);\n\n    assertSame(TypeAdapters.FLOAT, adapter);\n  }\n\n  @Test\n  void floatAdapter_returnsCustomTypeAdapter_whenSerializeSpecialFloatingPointValuesFalse() throws Exception {\n    Method floatAdapterMethod = Gson.class.getDeclaredMethod(\"floatAdapter\", boolean.class);\n    floatAdapterMethod.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) floatAdapterMethod.invoke(gson, false);\n\n    assertNotNull(adapter);\n\n    JsonReader readerMock = mock(JsonReader.class);\n    JsonWriter writerMock = mock(JsonWriter.class);\n\n    // Test read() when JsonToken.NULL\n    when(readerMock.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(readerMock).nextNull();\n\n    Float resultNull = (Float) adapter.read(readerMock);\n    assertNull(resultNull);\n    verify(readerMock).nextNull();\n\n    // Test read() when JsonToken is NUMBER (simulate nextDouble)\n    when(readerMock.peek()).thenReturn(JsonToken.NUMBER);\n    when(readerMock.nextDouble()).thenReturn(3.14d);\n\n    Float resultNumber = (Float) adapter.read(readerMock);\n    assertEquals(3.14f, resultNumber);\n\n    // Test write() when value is null\n    adapter.write(writerMock, null);\n    verify(writerMock).nullValue();\n\n    // Test write() when value is Float instance\n    Float floatValue = 1.23f;\n    adapter.write(writerMock, floatValue);\n    ArgumentCaptor<Number> captor = ArgumentCaptor.forClass(Number.class);\n    verify(writerMock, atLeastOnce()).value(captor.capture());\n    assertTrue(captor.getValue() instanceof Float);\n\n    // Test write() when value is other Number subclass (e.g. Double)\n    reset(writerMock);\n    Number doubleValue = Double.valueOf(2.34);\n    adapter.write(writerMock, doubleValue);\n    // The adapter converts the doubleValue to float before writing\n    verify(writerMock).value(2.34f);\n  }\n\n  @Test\n  void floatAdapter_write_throwsOnInvalidFloatingPoint() throws Throwable {\n    Method floatAdapterMethod = Gson.class.getDeclaredMethod(\"floatAdapter\", boolean.class);\n    floatAdapterMethod.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> adapter = (TypeAdapter<Number>) floatAdapterMethod.invoke(gson, false);\n\n    JsonWriter writerMock = mock(JsonWriter.class);\n\n    // Prepare a Number with NaN float value to cause checkValidFloatingPoint to throw\n    Number nanNumber = new Number() {\n      @Override\n      public int intValue() { return 0; }\n      @Override\n      public long longValue() { return 0L; }\n      @Override\n      public float floatValue() { return Float.NaN; }\n      @Override\n      public double doubleValue() { return Double.NaN; }\n    };\n\n    IOException thrown = assertThrows(IOException.class, () -> adapter.write(writerMock, nanNumber));\n    assertTrue(thrown.getCause() instanceof IllegalArgumentException);\n    assertTrue(thrown.getCause().getMessage().contains(\"NaN\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890331,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 838,
+    "prompt_tokens": 2764,
+    "total_tokens": 3602,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.55
+  }
+}

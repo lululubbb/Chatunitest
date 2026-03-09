@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn5cNtG7TU7OFvjpyp2jbxdJNP09",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n\n    @BeforeEach\n    public void setUp() {\n        jsonTreeWriter = new JsonTreeWriter();\n    }\n\n    @Test\n    public void testGet_WhenStackIsEmpty_ReturnsProduct() throws Exception {\n        // Arrange\n        // By default, product is JsonNull.INSTANCE and stack is empty\n\n        // Act\n        JsonElement result = jsonTreeWriter.get();\n\n        // Assert\n        assertNotNull(result);\n        assertEquals(JsonNull.INSTANCE, result);\n    }\n\n    @Test\n    public void testGet_WhenStackIsNotEmpty_ThrowsIllegalStateException() throws Exception {\n        // Arrange\n        // Use reflection to add a dummy element to the private stack field\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.add(new JsonArray());\n\n        // Act & Assert\n        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> jsonTreeWriter.get());\n        assertTrue(exception.getMessage().startsWith(\"Expected one JSON element but was\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889432,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 340,
+    "prompt_tokens": 531,
+    "total_tokens": 871,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.61
+  }
+}

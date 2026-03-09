@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnEmIMLPh8HcMms5q9qiH43wMchH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonReaderNextUnquotedValueTest {\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  private String invokeNextUnquotedValue() throws Exception {\n    Method method = JsonReader.class.getDeclaredMethod(\"nextUnquotedValue\");\n    method.setAccessible(true);\n    try {\n      return (String) method.invoke(jsonReader);\n    } catch (InvocationTargetException e) {\n      // Unwrap IOException thrown by nextUnquotedValue\n      if (e.getCause() instanceof IOException) {\n        throw (IOException) e.getCause();\n      }\n      throw e;\n    }\n  }\n\n  @Test\n  void nextUnquotedValue_simpleLiteral_noLenient() throws Exception {\n    // Setup buffer with unquoted value \"abc\"\n    setBuffer(\"abc \");\n    jsonReader.setLenient(false);\n\n    String result = invokeNextUnquotedValue();\n\n    assertEquals(\"abc\", result);\n    // pos should have advanced by 3\n    assertEquals(3, (int) getField(\"pos\"));\n  }\n\n  @Test\n  void nextUnquotedValue_literalStopsAtSpecialChar_lenient() throws Exception {\n    // Setup buffer with \"abc/def\"\n    setBuffer(\"abc/def\");\n    jsonReader.setLenient(true);\n\n    // We expect checkLenient() to be called when '/' is found.\n    // Because checkLenient() is private and no exception is thrown by default, no exception expected.\n\n    String result = invokeNextUnquotedValue();\n\n    assertEquals(\"abc\", result);\n    // pos should be at index after 'c' (pos + 3)\n    assertEquals(3, (int) getField(\"pos\"));\n  }\n\n  @Test\n  void nextUnquotedValue_longUnquotedValueWithBuilder() throws Exception {\n    // Create a long string larger than buffer length to force StringBuilder usage\n    int bufferLen = getBufferLength();\n    String longLiteral = \"a\".repeat(bufferLen + 10) + \" \";\n\n    setBuffer(longLiteral);\n\n    String result = invokeNextUnquotedValue();\n\n    assertTrue(result.startsWith(\"a\".repeat(bufferLen)));\n    assertTrue(result.length() > bufferLen);\n    // pos should be advanced by length of literal without trailing space\n    assertEquals(longLiteral.length() - 1, (int) getField(\"pos\"));\n  }\n\n  @Test\n  void nextUnquotedValue_bufferEndsWithoutFillBuffer() throws Exception {\n    // Setup buffer with literal at end of buffer, no fillBuffer possible\n    setBuffer(\"abc\");\n    // Set limit less than buffer length so fillBuffer returns false\n    setField(\"limit\", 3);\n    setField(\"pos\", 0);\n\n    String result = invokeNextUnquotedValue();\n\n    assertEquals(\"abc\", result);\n    assertEquals(3, (int) getField(\"pos\"));\n  }\n\n  @Test\n  void nextUnquotedValue_emptyBuffer_returnsEmptyString() throws Exception {\n    setField(\"limit\", 0);\n    setField(\"pos\", 0);\n\n    String result = invokeNextUnquotedValue();\n\n    assertEquals(\"\", result);\n    assertEquals(0, (int) getField(\"pos\"));\n  }\n\n  @Test\n  void nextUnquotedValue_checkLenientThrowsException() throws Exception {\n    // Setup buffer with '/' which triggers checkLenient()\n    // Override checkLenient() to throw IOException\n    JsonReader spyReader = Mockito.spy(jsonReader);\n    setField(spyReader, \"buffer\", \"a/b\".toCharArray());\n    setField(spyReader, \"limit\", 3);\n    setField(spyReader, \"pos\", 0);\n    spyReader.setLenient(false);\n\n    doThrow(new IOException(\"Lenient check failed\")).when(spyReader).checkLenient();\n\n    Method method = JsonReader.class.getDeclaredMethod(\"nextUnquotedValue\");\n    method.setAccessible(true);\n\n    IOException thrown = assertThrows(IOException.class, () -> {\n      try {\n        method.invoke(spyReader);\n      } catch (InvocationTargetException e) {\n        if (e.getCause() instanceof IOException) {\n          throw (IOException) e.getCause();\n        }\n        throw e;\n      }\n    });\n    assertEquals(\"Lenient check failed\", thrown.getMessage());\n  }\n\n  // Helper to set the buffer and initialize pos and limit accordingly\n  private void setBuffer(String content) throws Exception {\n    char[] buffer = content.toCharArray();\n    setField(\"buffer\", buffer);\n    setField(\"pos\", 0);\n    setField(\"limit\", buffer.length);\n  }\n\n  // Generic helper to set a private field on jsonReader instance\n  private void setField(String fieldName, Object value) throws Exception {\n    setField(jsonReader, fieldName, value);\n  }\n\n  private void setField(Object instance, String fieldName, Object value) throws Exception {\n    var field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n\n  // Generic helper to get a private field value from jsonReader instance\n  private <T> T getField(String fieldName) throws Exception {\n    var field = jsonReader.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(jsonReader);\n  }\n\n  // Get buffer length via reflection\n  private int getBufferLength() throws Exception {\n    char[] buffer = getField(\"buffer\");\n    return buffer.length;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890000,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1236,
+    "prompt_tokens": 2743,
+    "total_tokens": 3979,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.45
+  }
+}

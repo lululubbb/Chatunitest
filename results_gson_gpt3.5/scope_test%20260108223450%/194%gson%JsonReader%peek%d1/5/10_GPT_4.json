@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmF5S6jJm8bSplr69trm2FrrjWGR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderPeekTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Mock Reader (not used by peek directly)\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n\n    // Set lenient to true to avoid leniency issues if any\n    jsonReader.setLenient(true);\n  }\n\n  private void setPeeked(Object target, int value) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    peekedField.setInt(target, value);\n  }\n\n  private int getPeeked(Object target) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    return peekedField.getInt(target);\n  }\n\n  private int invokeDoPeek(Object target) throws Exception {\n    Method doPeekMethod = JsonReader.class.getDeclaredMethod(\"doPeek\");\n    doPeekMethod.setAccessible(true);\n    return (int) doPeekMethod.invoke(target);\n  }\n\n  @Test\n  void peek_returnsPeekedToken_whenPeekedIsNotNone() throws Exception {\n    // Set peeked to each known value except 0 (PEEKED_NONE) and test the returned JsonToken\n    // Mapping from peeked int to expected JsonToken\n    int[] peekedValues = {\n        1, 2, 3, 4, 12, 13, 14, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17\n    };\n    JsonToken[] expectedTokens = {\n        JsonToken.BEGIN_OBJECT,\n        JsonToken.END_OBJECT,\n        JsonToken.BEGIN_ARRAY,\n        JsonToken.END_ARRAY,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.BOOLEAN,\n        JsonToken.BOOLEAN,\n        JsonToken.NULL,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.NUMBER,\n        JsonToken.NUMBER,\n        JsonToken.END_DOCUMENT\n    };\n\n    for (int i = 0; i < peekedValues.length; i++) {\n      setPeeked(jsonReader, peekedValues[i]);\n      JsonToken token = jsonReader.peek();\n      assertEquals(expectedTokens[i], token,\n          \"peek() with peeked=\" + peekedValues[i] + \" should return \" + expectedTokens[i]);\n    }\n  }\n\n  @Test\n  void peek_callsDoPeek_whenPeekedIsNone() throws Exception {\n    setPeeked(jsonReader, 0); // PEEKED_NONE\n\n    // Spy on jsonReader to mock doPeek method\n    JsonReader spyReader = spy(jsonReader);\n\n    // Use reflection to set peeked field in spyReader to 0 as well\n    setPeeked(spyReader, 0);\n\n    // Mock doPeek to return PEEKED_BEGIN_OBJECT = 1\n    doReturn(1).when(spyReader).doPeek();\n\n    JsonToken token = spyReader.peek();\n    assertEquals(JsonToken.BEGIN_OBJECT, token);\n\n    // Verify doPeek was called once\n    verify(spyReader, times(1)).doPeek();\n\n    // After peek, peeked field should be updated to 1\n    int peekedValue = getPeeked(spyReader);\n    assertEquals(1, peekedValue);\n  }\n\n  @Test\n  void peek_throwsAssertionError_onInvalidPeekedValue() throws Exception {\n    // Use a subclass to override doPeek to avoid IOException on invalid peeked value\n    JsonReader invalidPeekReader = new JsonReader(mock(Reader.class)) {\n      @Override\n      int doPeek() {\n        return 999; // invalid value\n      }\n    };\n    invalidPeekReader.setLenient(true);\n\n    // Set peeked to invalid value to trigger default case in peek()\n    setPeeked(invalidPeekReader, 999);\n\n    AssertionError thrown = assertThrows(AssertionError.class, invalidPeekReader::peek);\n    assertNotNull(thrown);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886175,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 933,
+    "prompt_tokens": 2709,
+    "total_tokens": 3642,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.33
+  }
+}

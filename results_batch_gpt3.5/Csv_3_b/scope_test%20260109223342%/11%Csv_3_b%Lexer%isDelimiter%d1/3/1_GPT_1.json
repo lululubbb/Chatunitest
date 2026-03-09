@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7vnDnL5CYf6U5G34nQ5qCQNyFoW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private CSVFormat formatMock;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n        inMock = mock(ExtendedBufferedReader.class);\n        // Create an anonymous subclass to instantiate the abstract Lexer\n        lexer = new Lexer(formatMock, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null; // no-op for test\n            }\n        };\n    }\n\n    @Test\n    void testIsDelimiterTrue() throws Exception {\n        // Using reflection to set private final field 'delimiter'\n        setFinalCharField(lexer, \"delimiter\", 'a');\n\n        assertTrue(lexer.isDelimiter('a'));\n    }\n\n    @Test\n    void testIsDelimiterFalse() throws Exception {\n        setFinalCharField(lexer, \"delimiter\", 'a');\n\n        assertFalse(lexer.isDelimiter('b'));\n        assertFalse(lexer.isDelimiter(-1));\n        assertFalse(lexer.isDelimiter(0));\n    }\n\n    // Helper method to set private final char fields via reflection\n    private void setFinalCharField(Object target, String fieldName, char value) throws Exception {\n        java.lang.reflect.Field field = Lexer.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier via reflection on Field's modifiers\n        java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969547,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 396,
+    "prompt_tokens": 419,
+    "total_tokens": 815,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.29
+  }
+}

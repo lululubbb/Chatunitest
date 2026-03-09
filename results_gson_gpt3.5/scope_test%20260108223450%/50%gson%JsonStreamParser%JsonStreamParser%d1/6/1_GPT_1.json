@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmzdAwh9baHTysqihMr0fM2VzQ7P",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.NoSuchElementException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonStreamParserTest {\n\n  JsonStreamParser parser;\n\n  @BeforeEach\n  public void setUp() {\n    // no setup needed here\n  }\n\n  @Test\n  public void testConstructor_String_validJson() {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonStreamParser p = new JsonStreamParser(json);\n    assertNotNull(p);\n    assertTrue(p.hasNext());\n  }\n\n  @Test\n  public void testConstructor_Reader_validJson() {\n    Reader reader = new StringReader(\"[1,2,3]\");\n    JsonStreamParser p = new JsonStreamParser(reader);\n    assertNotNull(p);\n    assertTrue(p.hasNext());\n  }\n\n  @Test\n  public void testHasNext_trueAndFalse() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonStreamParser p = new JsonStreamParser(json);\n    assertTrue(p.hasNext());\n    p.next();\n    assertFalse(p.hasNext());\n  }\n\n  @Test\n  public void testNext_returnsJsonElement() {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonStreamParser p = new JsonStreamParser(json);\n    JsonElement element = p.next();\n    assertNotNull(element);\n    assertTrue(element.isJsonObject());\n  }\n\n  @Test\n  public void testNext_noSuchElementException() {\n    String json = \"{}\";\n    JsonStreamParser p = new JsonStreamParser(json);\n    p.next();\n    assertThrows(NoSuchElementException.class, p::next);\n  }\n\n  @Test\n  public void testRemove_throwsUnsupportedOperationException() {\n    String json = \"{}\";\n    JsonStreamParser p = new JsonStreamParser(json);\n    assertThrows(UnsupportedOperationException.class, p::remove);\n  }\n\n  @Test\n  public void testNext_malformedJsonException() throws Exception {\n    String malformedJson = \"{\";\n    JsonStreamParser p = new JsonStreamParser(malformedJson);\n    // Using reflection to get private field 'parser'\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader reader = (JsonReader) parserField.get(p);\n    // Move reader to simulate malformed JSON causing MalformedJsonException on peek\n    // But since the real JsonReader will throw MalformedJsonException on next(), we can test that\n    assertThrows(JsonParseException.class, p::next);\n  }\n\n  @Test\n  public void testHasNext_ioExceptionWrapped() throws Exception {\n    // Create a mock JsonReader that throws IOException on peek\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockReader.peek()).thenThrow(new IOException(\"IO error\"));\n\n    // Use reflection to create JsonStreamParser with mockReader\n    Constructor<JsonStreamParser> ctor = JsonStreamParser.class.getDeclaredConstructor(Reader.class);\n    ctor.setAccessible(true);\n    JsonStreamParser p = ctor.newInstance(new StringReader(\"{}\"));\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    parserField.set(p, mockReader);\n\n    // hasNext should wrap IOException in JsonParseException\n    assertThrows(JsonParseException.class, p::hasNext);\n  }\n\n  @Test\n  public void testNext_ioExceptionWrapped() throws Exception {\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    doThrow(new IOException(\"IO error\")).when(mockReader).beginObject();\n\n    Constructor<JsonStreamParser> ctor = JsonStreamParser.class.getDeclaredConstructor(Reader.class);\n    ctor.setAccessible(true);\n    JsonStreamParser p = ctor.newInstance(new StringReader(\"{}\"));\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    parserField.set(p, mockReader);\n\n    // next should wrap IOException in JsonParseException\n    assertThrows(JsonParseException.class, p::next);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889061,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 931,
+    "prompt_tokens": 287,
+    "total_tokens": 1218,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.28
+  }
+}

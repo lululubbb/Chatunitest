@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7zpXh3yZHP62tk0vZIoDjiwVtsO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private CSVFormat formatMock;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n        inMock = mock(ExtendedBufferedReader.class);\n\n        // Create an anonymous subclass of Lexer since Lexer is abstract\n        lexer = new Lexer(formatMock, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsEscape_withEscapeChar() throws Exception {\n        // Using reflection to access private final field 'escape'\n        var escapeField = Lexer.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n        escapeField.setChar(lexer, 'e');\n\n        // c == escape, should return true\n        assertTrue(lexer.isEscape('e'));\n    }\n\n    @Test\n    void testIsEscape_withDifferentChar() throws Exception {\n        var escapeField = Lexer.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n        escapeField.setChar(lexer, 'e');\n\n        // c != escape, should return false\n        assertFalse(lexer.isEscape('x'));\n        assertFalse(lexer.isEscape('\\0'));\n        assertFalse(lexer.isEscape('E'));\n    }\n\n    @Test\n    void testIsEscape_withDisabledEscapeChar() throws Exception {\n        var escapeField = Lexer.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n        escapeField.setChar(lexer, '\\ufffe'); // DISABLED char\n\n        // c == escape (DISABLED), should return true\n        assertTrue(lexer.isEscape('\\ufffe'));\n\n        // c != escape, should return false\n        assertFalse(lexer.isEscape('e'));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969797,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 431,
+    "prompt_tokens": 419,
+    "total_tokens": 850,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.95
+  }
+}

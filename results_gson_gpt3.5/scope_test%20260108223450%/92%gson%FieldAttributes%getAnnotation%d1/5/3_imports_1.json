@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.Objects;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.FieldAttributes;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\n\nclass FieldAttributesTest {\n\n  private FieldAttributes fieldAttributes;\n  private Field mockField;\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException {\n    mockField = mock(Field.class);\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void testGetAnnotation_returnsAnnotation() {\n    Deprecated deprecatedAnnotation = Deprecated.class.getAnnotation(Deprecated.class);\n    when(mockField.getAnnotation(Deprecated.class)).thenReturn(deprecatedAnnotation);\n\n    Deprecated result = fieldAttributes.getAnnotation(Deprecated.class);\n\n    assertEquals(deprecatedAnnotation, result);\n    verify(mockField).getAnnotation(Deprecated.class);\n  }\n\n  @Test\n  void testGetAnnotation_returnsNullWhenAnnotationNotPresent() {\n    when(mockField.getAnnotation(SuppressWarnings.class)).thenReturn(null);\n\n    SuppressWarnings result = fieldAttributes.getAnnotation(SuppressWarnings.class);\n\n    assertNull(result);\n    verify(mockField).getAnnotation(SuppressWarnings.class);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 280,
+  "completion_tokens": 255,
+  "total_tokens": 535,
+  "llm_elapsed_time_seconds": 38.08,
+  "repair_elapsed_time_seconds": 55.86,
+  "round_total_time_seconds": 55.86
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAC4n4DGeB61JumFKGCPqEDGGzr9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterFlushTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void flush_whenOutIsFlushable_shouldInvokeFlush() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Flushable mockFlushable = mock(Flushable.class);\n\n        // Create CSVPrinter with a dummy Appendable because constructor requires Appendable\n        CSVPrinter printer = new CSVPrinter(new StringBuilder(), mockFormat);\n\n        // Use reflection to set the private final 'out' field to our Flushable mock\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, mockFlushable);\n\n        printer.flush();\n\n        verify(mockFlushable, times(1)).flush();\n    }\n\n    @Test\n    void flush_whenOutIsNotFlushable_shouldNotThrow() throws IOException {\n        Appendable nonFlushable = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) { return this; }\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) { return this; }\n            @Override\n            public Appendable append(char c) { return this; }\n        };\n        CSVPrinter printer = new CSVPrinter(nonFlushable, mockFormat);\n\n        assertDoesNotThrow(() -> printer.flush());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978244,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 375,
+    "prompt_tokens": 875,
+    "total_tokens": 1250,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.55
+  }
+}

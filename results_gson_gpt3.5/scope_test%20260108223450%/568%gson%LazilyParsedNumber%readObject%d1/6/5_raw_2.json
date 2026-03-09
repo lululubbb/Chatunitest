@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  void readObject_throwsInvalidObjectException() throws Exception {\n    LazilyParsedNumber instance = new LazilyParsedNumber(\"123\");\n\n    ObjectInputStream mockInputStream = Mockito.mock(ObjectInputStream.class);\n\n    Method readObjectMethod = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObjectMethod.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      readObjectMethod.invoke(instance, mockInputStream);\n    });\n\n    // Verify that the cause of InvocationTargetException is InvalidObjectException\n    assertThrows(InvalidObjectException.class, () -> {\n      throw thrown.getCause();\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 922,
+  "completion_tokens": 215,
+  "total_tokens": 1137,
+  "llm_elapsed_time_seconds": 5.38
+}

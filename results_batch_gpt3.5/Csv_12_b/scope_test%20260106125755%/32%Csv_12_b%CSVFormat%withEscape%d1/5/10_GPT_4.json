@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutckMt9zKcr93Lj2aAgrYViWHdKK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithEscape_NullEscape() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withEscape((Character) null);\n        assertNotNull(result);\n        assertNull(result.getEscapeCharacter());\n        // Original unchanged\n        assertNull(format.getEscapeCharacter());\n    }\n\n    @Test\n    public void testWithEscape_ValidEscape() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        char escapeChar = '\\\\';\n        CSVFormat result = format.withEscape(escapeChar);\n        assertNotNull(result);\n        assertEquals(Character.valueOf(escapeChar), result.getEscapeCharacter());\n        // Original unchanged\n        assertNull(format.getEscapeCharacter());\n    }\n\n    @Test\n    public void testWithEscape_LineBreakEscapeCharThrows() {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        char[] lineBreaks = new char[] { '\\n', '\\r' };\n\n        for (char c : lineBreaks) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                format.withEscape(c);\n            });\n            assertEquals(\"The escape character cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    public void testIsLineBreak_PrivateStaticChar() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n\n        // Test line breaks\n        assertTrue((Boolean) method.invoke(null, '\\n'));\n        assertTrue((Boolean) method.invoke(null, '\\r'));\n\n        // Test non-line breaks\n        assertFalse((Boolean) method.invoke(null, 'a'));\n        assertFalse((Boolean) method.invoke(null, ','));\n        assertFalse((Boolean) method.invoke(null, '\\\\'));\n    }\n\n    @Test\n    public void testIsLineBreak_PrivateStaticCharacter() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        method.setAccessible(true);\n\n        // Test null returns false\n        assertFalse((Boolean) method.invoke(null, (Character) null));\n\n        // Test line breaks\n        assertTrue((Boolean) method.invoke(null, Character.valueOf('\\n')));\n        assertTrue((Boolean) method.invoke(null, Character.valueOf('\\r')));\n\n        // Test non-line breaks\n        assertFalse((Boolean) method.invoke(null, Character.valueOf('a')));\n        assertFalse((Boolean) method.invoke(null, Character.valueOf(',')));\n        assertFalse((Boolean) method.invoke(null, Character.valueOf('\\\\')));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676222,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 617,
+    "prompt_tokens": 1722,
+    "total_tokens": 2339,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.39
+  }
+}

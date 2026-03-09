@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmebbUQZLWGQIt2b2elzxq9FI5dQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class ParseBenchmarkTest {\n\n  private ParseBenchmark parseBenchmark;\n\n  @BeforeEach\n  void init() {\n    parseBenchmark = new ParseBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Use reflection to get the private Document class and create a mock\n    Class<?> documentClass = null;\n    for (Class<?> innerClass : ParseBenchmark.class.getDeclaredClasses()) {\n      if (\"Document\".equals(innerClass.getSimpleName())) {\n        documentClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(documentClass, \"Document class not found\");\n    Object mockDocument = mock(documentClass);\n    Method nameMethod = documentClass.getMethod(\"name\");\n    when(nameMethod.invoke(mockDocument)).thenReturn(\"testdoc\");\n    // Mockito cannot mock final methods via reflection invoke, so mock with Mockito normally:\n    mockDocument = mock(documentClass);\n    when(((Enum<?>) mockDocument).name()).thenReturn(\"testdoc\");\n\n    // Use reflection to get the private Api class and create a mock\n    Class<?> apiClass = null;\n    for (Class<?> innerClass : ParseBenchmark.class.getDeclaredClasses()) {\n      if (\"Api\".equals(innerClass.getSimpleName())) {\n        apiClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(apiClass, \"Api class not found\");\n    Object mockApi = mock(apiClass);\n\n    // Use reflection to get the private Parser class and create a mock\n    Class<?> parserClass = null;\n    for (Class<?> innerClass : ParseBenchmark.class.getDeclaredClasses()) {\n      if (\"Parser\".equals(innerClass.getSimpleName())) {\n        parserClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(parserClass, \"Parser class not found\");\n    Object mockParser = mock(parserClass);\n\n    // When api.newParser() called, return mockParser\n    Method newParserMethod = apiClass.getMethod(\"newParser\");\n    when(newParserMethod.invoke(mockApi)).thenReturn(mockParser);\n    // Because above invoke is direct reflection, Mockito won't intercept it.\n    // Instead, stub with Mockito:\n    when(((ParseBenchmark.Api) mockApi).newParser()).thenReturn((ParseBenchmark.Parser) mockParser);\n\n    // Set private fields document and api via reflection\n    Field documentField = ParseBenchmark.class.getDeclaredField(\"document\");\n    documentField.setAccessible(true);\n    documentField.set(parseBenchmark, mockDocument);\n\n    Field apiField = ParseBenchmark.class.getDeclaredField(\"api\");\n    apiField.setAccessible(true);\n    apiField.set(parseBenchmark, mockApi);\n\n    // Mock private static method resourceToString using reflection to make it accessible\n    Method resourceToStringMethod = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n    resourceToStringMethod.setAccessible(true);\n\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class)) {\n      mockedStatic.when(() -> {\n        try {\n          return resourceToStringMethod.invoke(null, \"testdoc.json\");\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      }).thenReturn(\"jsoncontent\");\n\n      // Invoke private setUp method\n      Method setUpMethod = ParseBenchmark.class.getDeclaredMethod(\"setUp\");\n      setUpMethod.setAccessible(true);\n      setUpMethod.invoke(parseBenchmark);\n\n      // Verify text field is set correctly as char array of \"jsoncontent\"\n      Field textField = ParseBenchmark.class.getDeclaredField(\"text\");\n      textField.setAccessible(true);\n      char[] textValue = (char[]) textField.get(parseBenchmark);\n      assertArrayEquals(\"jsoncontent\".toCharArray(), textValue);\n\n      // Verify parser field is set to mockParser\n      Field parserField = ParseBenchmark.class.getDeclaredField(\"parser\");\n      parserField.setAccessible(true);\n      Object parserValue = parserField.get(parseBenchmark);\n      assertSame(mockParser, parserValue);\n\n      // Verify resourceToString was called with correct argument\n      mockedStatic.verify(() -> {\n        try {\n          return resourceToStringMethod.invoke(null, \"testdoc.json\");\n        } catch (Exception e) {\n          throw new RuntimeException(e);\n        }\n      });\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887757,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 935,
+    "prompt_tokens": 1476,
+    "total_tokens": 2411,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.45
+  }
+}

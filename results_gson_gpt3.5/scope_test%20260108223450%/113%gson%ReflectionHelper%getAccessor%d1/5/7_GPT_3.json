@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmaKfRbVcgXyGgv8RrmJogOPcxAm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nimport static org.mockito.Mockito.*;\n\nclass ReflectionHelperTest {\n\n  private static Object dummyRecordHelper;\n  private static Method dummyMethod;\n  private static Field dummyField;\n  private static Field recordHelperField;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    dummyField = DummyClass.class.getDeclaredField(\"value\");\n    dummyMethod = DummyClass.class.getDeclaredMethod(\"getValue\");\n\n    recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Get the type of RECORD_HELPER field (RecordHelper)\n    Class<?> recordHelperClass = recordHelperField.getType();\n\n    // Create a Mockito mock instance of RecordHelper\n    dummyRecordHelper = mock(recordHelperClass);\n\n    // When getAccessor is called with any Class and Field, return dummyMethod\n    Method getAccessorMethod = recordHelperClass.getMethod(\"getAccessor\", Class.class, Field.class);\n    when(getAccessorMethod.invoke(dummyRecordHelper, DummyClass.class, dummyField)).thenReturn(dummyMethod);\n\n    // Mockito's when().thenReturn() does not work with reflection invoke directly,\n    // so use Mockito's stub for method call on mock:\n    // Instead, use Mockito's 'doAnswer' with invocation handler:\n    // But since we have no direct interface, use a dynamic proxy that delegates to Mockito.\n    // Alternatively, use a Mockito spy with Answer.\n\n    // Because the above does not work, instead create a dynamic proxy that intercepts getAccessor call:\n    dummyRecordHelper = java.lang.reflect.Proxy.newProxyInstance(\n        recordHelperClass.getClassLoader(),\n        new Class<?>[]{recordHelperClass},\n        (proxy, method, args) -> {\n          if (\"getAccessor\".equals(method.getName()) && args.length == 2) {\n            return dummyMethod;\n          }\n          if (method.getReturnType().isPrimitive()) {\n            if (method.getReturnType() == boolean.class) return false;\n            if (method.getReturnType() == void.class) return null;\n            return 0;\n          }\n          return null;\n        });\n  }\n\n  @Test\n  void getAccessor_returnsMethodFromRecordHelper() throws Exception {\n    Object originalRecordHelper = recordHelperField.get(null);\n    try {\n      recordHelperField.set(null, dummyRecordHelper);\n\n      Method result = ReflectionHelper.getAccessor(DummyClass.class, dummyField);\n      assertNotNull(result);\n      assertEquals(dummyMethod, result);\n    } finally {\n      recordHelperField.set(null, originalRecordHelper);\n    }\n  }\n\n  private static class DummyClass {\n    private int value;\n\n    public int getValue() {\n      return value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887492,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 600,
+    "prompt_tokens": 1200,
+    "total_tokens": 1800,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.95
+  }
+}

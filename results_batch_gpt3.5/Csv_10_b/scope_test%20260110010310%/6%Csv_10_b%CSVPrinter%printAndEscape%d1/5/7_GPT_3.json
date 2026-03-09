@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAEqW1MfzcRiH2YFDnhsnneWtouf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVPrinterPrintAndEscapeTest {\n\n    @Mock\n    private Appendable out;\n\n    @Mock\n    private CSVFormat format;\n\n    private CSVPrinter printer;\n\n    private Method printAndEscapeMethod;\n\n    private AutoCloseable mocks;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        mocks = MockitoAnnotations.initMocks(this);\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.getEscape()).thenReturn('\\\\');\n\n        printer = new CSVPrinter(out, format);\n\n        printAndEscapeMethod = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscapeMethod.setAccessible(true);\n    }\n\n    @AfterEach\n    void tearDown() throws Exception {\n        if (mocks != null) {\n            mocks.close();\n        }\n    }\n\n    @Test\n    void testPrintAndEscape_NoSpecialChars() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"simpletext\";\n        printAndEscapeMethod.invoke(printer, input, 0, input.length());\n\n        // Expect out.append(value, start, pos) once with whole string\n        verify(out, times(1)).append(input, 0, input.length());\n        verify(out, never()).append(anyChar());\n    }\n\n    @Test\n    void testPrintAndEscape_WithDelimiter() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"a,b\";\n        printAndEscapeMethod.invoke(printer, input, 0, input.length());\n\n        // Should append \"a\"\n        verify(out).append(input, 0, 1);\n        // Then append escape char\n        verify(out).append('\\\\');\n        // Then append delimiter ','\n        verify(out).append(',');\n        // Then append \"b\"\n        verify(out).append(input, 2, 3);\n    }\n\n    @Test\n    void testPrintAndEscape_WithEscapeChar() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"a\\\\b\";\n        printAndEscapeMethod.invoke(printer, input, 0, input.length());\n\n        // Should append \"a\"\n        verify(out).append(input, 0, 1);\n        // Then append escape char\n        verify(out).append('\\\\');\n        // Then append escape char again\n        verify(out).append('\\\\');\n        // Then append \"b\"\n        verify(out).append(input, 2, 3);\n    }\n\n    @Test\n    void testPrintAndEscape_WithLF() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"a\\nb\";\n        printAndEscapeMethod.invoke(printer, input, 0, input.length());\n\n        // Should append \"a\"\n        verify(out).append(input, 0, 1);\n        // Then append escape char\n        verify(out).append('\\\\');\n        // Then append 'n' for LF\n        verify(out).append('n');\n        // Then append \"b\"\n        verify(out).append(input, 2, 3);\n    }\n\n    @Test\n    void testPrintAndEscape_WithCR() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"a\\rb\";\n        printAndEscapeMethod.invoke(printer, input, 0, input.length());\n\n        // Should append \"a\"\n        verify(out).append(input, 0, 1);\n        // Then append escape char\n        verify(out).append('\\\\');\n        // Then append 'r' for CR\n        verify(out).append('r');\n        // Then append \"b\"\n        verify(out).append(input, 2, 3);\n    }\n\n    @Test\n    void testPrintAndEscape_EmptyInput() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"\";\n        printAndEscapeMethod.invoke(printer, input, 0, 0);\n\n        // No append calls expected\n        verify(out, never()).append(any(CharSequence.class), anyInt(), anyInt());\n        verify(out, never()).append(anyChar());\n    }\n\n    @Test\n    void testPrintAndEscape_OffsetAndLength() throws IOException, InvocationTargetException, IllegalAccessException {\n        String input = \"123,456\\n789\\\\0\";\n        // substring \"456\\n7\" starting at index 4 length 5\n        printAndEscapeMethod.invoke(printer, input, 4, 5);\n\n        // Check calls:\n        // substring is \"456\\n7\"\n        // chars: '4','5','6','\\n','7'\n        // special char at pos=7 (offset 4 + 3) is LF\n\n        // append \"456\"\n        verify(out).append(input, 4, 7);\n        // append escape char\n        verify(out).append('\\\\');\n        // append 'n'\n        verify(out).append('n');\n        // append \"7\"\n        verify(out).append(input, 8, 9);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978416,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1124,
+    "prompt_tokens": 1872,
+    "total_tokens": 2996,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.98
+  }
+}

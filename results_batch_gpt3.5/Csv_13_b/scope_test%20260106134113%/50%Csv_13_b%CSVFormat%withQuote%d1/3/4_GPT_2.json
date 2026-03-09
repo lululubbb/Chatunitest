@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuLwXvOVbxhjiZYQqkaf3L8Nwp6I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithQuote_char() {\n        // Use a sample quote char different from default\n        char quoteChar = '\\'';\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVFormat result = format.withQuote(quoteChar);\n\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        // Original format should remain unchanged (immutability)\n        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), format.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_char_nullQuote() {\n        // Test with quote char as double quote - should be set properly\n        char quoteChar = CSVFormat.DEFAULT.getQuoteCharacter();\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVFormat result = format.withQuote(quoteChar);\n\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuote_char_edgeCases() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to invoke private withQuote(Character) to test null argument\n        Method method = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        method.setAccessible(true);\n\n        // Passing null Character should return a CSVFormat with null quoteCharacter\n        CSVFormat resultNull = (CSVFormat) method.invoke(format, new Object[] { null });\n        assertNotNull(resultNull);\n        assertNull(resultNull.getQuoteCharacter());\n\n        // Passing a valid Character\n        Character quoteChar = Character.valueOf('\\\"');\n        CSVFormat resultChar = (CSVFormat) method.invoke(format, quoteChar);\n        assertNotNull(resultChar);\n        assertEquals(quoteChar, resultChar.getQuoteCharacter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679024,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 396,
+    "prompt_tokens": 1837,
+    "total_tokens": 2233,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.69
+  }
+}

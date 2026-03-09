@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JsonElementTest {\n\n  @Test\n  public void testGetAsJsonArray_whenIsJsonArrayTrue_returnsThisAsJsonArray() {\n    // Create a real JsonArray instance instead of mocking it\n    JsonArray jsonArray = new JsonArray();\n\n    // Spy on the real instance to override isJsonArray()\n    JsonArray spyJsonArray = spy(jsonArray);\n\n    when(spyJsonArray.isJsonArray()).thenReturn(true);\n\n    JsonArray result = spyJsonArray.getAsJsonArray();\n\n    assertSame(spyJsonArray, result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_whenIsJsonArrayFalse_throwsIllegalStateException() {\n    JsonElement element = new JsonElement() {\n      @Override\n      public boolean isJsonArray() {\n        return false;\n      }\n\n      @Override\n      public JsonElement deepCopy() {\n        return null;\n      }\n\n      @Override\n      public String toString() {\n        return \"notJsonArrayElement\";\n      }\n    };\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, element::getAsJsonArray);\n    assertEquals(\"Not a JSON Array: notJsonArrayElement\", thrown.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 931,
+  "completion_tokens": 282,
+  "total_tokens": 1213,
+  "llm_elapsed_time_seconds": 5.88
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmuGypTiso69vMOqVpJxH9KxgCco",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a JsonElement for constructor, using JsonNull as simple element\n        JsonElement element = JsonNull.INSTANCE;\n        jsonTreeReader = new JsonTreeReader(element);\n    }\n\n    @Test\n    public void testHasNext_withEndObject() throws Exception {\n        setStackWithToken(JsonToken.END_OBJECT);\n        assertFalse(jsonTreeReader.hasNext());\n    }\n\n    @Test\n    public void testHasNext_withEndArray() throws Exception {\n        setStackWithToken(JsonToken.END_ARRAY);\n        assertFalse(jsonTreeReader.hasNext());\n    }\n\n    @Test\n    public void testHasNext_withEndDocument() throws Exception {\n        setStackWithToken(JsonToken.END_DOCUMENT);\n        assertFalse(jsonTreeReader.hasNext());\n    }\n\n    @Test\n    public void testHasNext_withOtherTokens() throws Exception {\n        for (JsonToken token : JsonToken.values()) {\n            if (token != JsonToken.END_OBJECT && token != JsonToken.END_ARRAY && token != JsonToken.END_DOCUMENT) {\n                setStackWithToken(token);\n                assertTrue(jsonTreeReader.hasNext(), \"Failed for token: \" + token);\n            }\n        }\n    }\n\n    private void setStackWithToken(JsonToken token) throws Exception {\n        // Use reflection to set the stack so that peek() returns the given token\n        // peek() is public and uses peekStack() private method internally, so we mock peekStack() by setting stack[stackSize-1]\n\n        // Get stack field\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n\n        // Get stackSize field\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n\n        Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n        int stackSize = stackSizeField.getInt(jsonTreeReader);\n\n        // We will set stackSize to 1 and set stack[0] to an object that peek() will interpret as the token.\n        // Because peek() calls peekStack() which returns stack[stackSize-1], and then determines token based on that object.\n\n        // We need to create an object so that peek() returns the desired token.\n        // peek() is overridden in JsonTreeReader, so let's check the source code or behavior:\n        // peek() inspects the top of the stack (stack[stackSize-1]) and returns a JsonToken accordingly.\n\n        // We'll create minimal objects so that peek() returns the expected token:\n\n        Object topObject;\n        switch (token) {\n            case BEGIN_ARRAY:\n                topObject = new JsonArray();\n                break;\n            case END_ARRAY:\n                // To get END_ARRAY, peek() expects topObject to be an Iterator whose hasNext() is false\n                topObject = new Iterator<Object>() {\n                    @Override\n                    public boolean hasNext() { return false; }\n                    @Override\n                    public Object next() { return null; }\n                };\n                break;\n            case BEGIN_OBJECT:\n                topObject = new JsonObject();\n                break;\n            case END_OBJECT:\n                // To get END_OBJECT, peek() expects topObject to be an Iterator whose hasNext() is false\n                topObject = new Iterator<Object>() {\n                    @Override\n                    public boolean hasNext() { return false; }\n                    @Override\n                    public Object next() { return null; }\n                };\n                break;\n            case NAME:\n                // peek() returns NAME if topObject is an Iterator with hasNext() true and next() returns Map.Entry\n                topObject = new Iterator<Map.Entry<String, JsonElement>>() {\n                    boolean returned = false;\n                    @Override\n                    public boolean hasNext() { return !returned; }\n                    @Override\n                    public Map.Entry<String, JsonElement> next() {\n                        returned = true;\n                        return Map.entry(\"key\", JsonNull.INSTANCE);\n                    }\n                };\n                break;\n            case STRING:\n                topObject = new JsonPrimitive(\"string\");\n                break;\n            case NUMBER:\n                topObject = new JsonPrimitive(1);\n                break;\n            case BOOLEAN:\n                topObject = new JsonPrimitive(true);\n                break;\n            case NULL:\n                topObject = JsonNull.INSTANCE;\n                break;\n            case END_DOCUMENT:\n                // stackSize == 0 means end document\n                stackSizeField.setInt(jsonTreeReader, 0);\n                return;\n            case DOCUMENT_START:\n                // No such token in JsonToken enum, skip\n            default:\n                // fallback to JsonNull\n                topObject = JsonNull.INSTANCE;\n                break;\n        }\n\n        stack[0] = topObject;\n        stackSizeField.setInt(jsonTreeReader, 1);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888728,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1094,
+    "prompt_tokens": 577,
+    "total_tokens": 1671,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.96
+  }
+}

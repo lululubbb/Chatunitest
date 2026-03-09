@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlSb6yjssAJe5BTP1WFfnk5poTb9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.isNull;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.internal.bind.NumberTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n  private ToNumberStrategy toNumberStrategy;\n  private NumberTypeAdapter adapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    toNumberStrategy = mock(ToNumberStrategy.class);\n    // Use reflection to access private constructor\n    Constructor<NumberTypeAdapter> constructor = NumberTypeAdapter.class.getDeclaredConstructor(ToNumberStrategy.class);\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance(toNumberStrategy);\n  }\n\n  @Test\n  void testRead_null() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(in).nextNull();\n\n    Number result = adapter.read(in);\n\n    verify(in).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  void testRead_nonNull_success() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NUMBER);\n    Number expectedNumber = 123;\n    when(toNumberStrategy.readNumber(in)).thenReturn(expectedNumber);\n\n    Number result = adapter.read(in);\n\n    assertEquals(expectedNumber, result);\n  }\n\n  @Test\n  void testRead_nonNull_throwsJsonSyntaxException() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NUMBER);\n    when(toNumberStrategy.readNumber(in)).thenThrow(new JsonSyntaxException(\"error\"));\n\n    assertThrows(JsonSyntaxException.class, () -> adapter.read(in));\n  }\n\n  @Test\n  void testWrite_null() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n\n    adapter.write(out, null);\n\n    verify(out).nullValue();\n  }\n\n  @Test\n  void testWrite_nonNull() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n    Number value = 42;\n\n    adapter.write(out, value);\n\n    verify(out).value(value);\n  }\n\n  @Test\n  void testNewFactory_andGetFactory() throws Exception {\n    // Use reflection to invoke private static newFactory method\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n    Object factoryFromNewFactory = newFactoryMethod.invoke(null, ToNumberPolicy.LAZILY_PARSED_NUMBER);\n\n    assertNotNull(factoryFromNewFactory);\n\n    // Call public static getFactory method\n    var factoryFromGetFactory = NumberTypeAdapter.getFactory(ToNumberPolicy.LAZILY_PARSED_NUMBER);\n    assertNotNull(factoryFromGetFactory);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883169,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 657,
+    "prompt_tokens": 1385,
+    "total_tokens": 2042,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.71
+  }
+}

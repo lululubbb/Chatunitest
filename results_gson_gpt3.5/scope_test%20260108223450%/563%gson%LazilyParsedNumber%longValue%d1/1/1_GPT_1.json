@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmDytW92YdWDBg9xcpddllvDQsxB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LazilyParsedNumberTest {\n\n  private LazilyParsedNumber longNumber;\n  private LazilyParsedNumber bigDecimalNumber;\n\n  @BeforeEach\n  public void setUp() {\n    longNumber = new LazilyParsedNumber(\"123456789\");\n    bigDecimalNumber = new LazilyParsedNumber(\"123456789123456789123456789\");\n  }\n\n  @Test\n  public void testLongValue_parsesLongSuccessfully() {\n    long expected = 123456789L;\n    assertEquals(expected, longNumber.longValue());\n  }\n\n  @Test\n  public void testLongValue_parsesBigDecimalFallback() {\n    BigDecimal bigDecimal = new BigDecimal(\"123456789123456789123456789\");\n    assertEquals(bigDecimal.longValue(), bigDecimalNumber.longValue());\n  }\n\n  @Test\n  public void testLongValue_invalidNumberFormat() {\n    LazilyParsedNumber invalidNumber = new LazilyParsedNumber(\"notANumber\");\n    // The BigDecimal constructor throws NumberFormatException on invalid string,\n    // so longValue() will throw NumberFormatException as well.\n    assertThrows(NumberFormatException.class, invalidNumber::longValue);\n  }\n\n  @Test\n  public void testWriteReplace_invocation() throws Exception {\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(longNumber);\n    // The method is private and returns Object, typically for serialization proxy,\n    // no exception means success; result should not be null\n    assertEquals(result != null, true);\n  }\n\n  @Test\n  public void testReadObject_invocation() throws Exception {\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", java.io.ObjectInputStream.class);\n    readObject.setAccessible(true);\n    // We just test that it throws InvalidObjectException as per source code expectations\n    assertThrows(java.io.InvalidObjectException.class, () -> readObject.invoke(longNumber, (Object) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886106,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 481,
+    "prompt_tokens": 326,
+    "total_tokens": 807,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.89
+  }
+}

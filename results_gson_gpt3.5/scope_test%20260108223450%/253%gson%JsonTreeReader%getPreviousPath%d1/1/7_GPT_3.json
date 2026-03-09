@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn1Da5SL9BGS7dzDhnZCdR4wdcaA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeReader = new JsonTreeReader(JsonNull.INSTANCE);\n  }\n\n  @Test\n  public void testGetPreviousPath_emptyStack() throws Exception {\n    // stackSize = 0, should return \"$\"\n    setField(jsonTreeReader, \"stackSize\", 0);\n    String path = jsonTreeReader.getPreviousPath();\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPreviousPath_withObjectAndName() throws Exception {\n    // Setup stack with an object and a name at the top\n    setField(jsonTreeReader, \"stackSize\", 2);\n\n    Object[] stack = new Object[32];\n    stack[0] = new JsonObject();\n    stack[1] = new JsonPrimitive(\"value\");\n    setField(jsonTreeReader, \"stack\", stack);\n\n    String[] pathNames = new String[32];\n    pathNames[0] = null;\n    pathNames[1] = \"keyName\";\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 0;\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    String path = jsonTreeReader.getPreviousPath();\n    assertEquals(\"$.keyName\", path);\n  }\n\n  @Test\n  public void testGetPreviousPath_withArrayAndIndex() throws Exception {\n    // Setup stack with an array and index at the top\n    setField(jsonTreeReader, \"stackSize\", 2);\n\n    Object[] stack = new Object[32];\n    stack[0] = new JsonArray();\n    stack[1] = new JsonPrimitive(\"value\");\n    setField(jsonTreeReader, \"stack\", stack);\n\n    String[] pathNames = new String[32];\n    pathNames[0] = null;\n    pathNames[1] = null;\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 2;\n    pathIndices[1] = 5;\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    String path = jsonTreeReader.getPreviousPath();\n    assertEquals(\"$[2][5]\", path);\n  }\n\n  @Test\n  public void testGetPreviousPath_mixedObjectArray() throws Exception {\n    // Setup stack with mixed JsonObject and JsonArray with names and indices\n    setField(jsonTreeReader, \"stackSize\", 4);\n\n    Object[] stack = new Object[32];\n    stack[0] = new JsonObject();\n    stack[1] = new JsonArray();\n    stack[2] = new JsonObject();\n    stack[3] = new JsonPrimitive(\"value\");\n    setField(jsonTreeReader, \"stack\", stack);\n\n    String[] pathNames = new String[32];\n    pathNames[0] = \"root\";\n    pathNames[1] = null;\n    pathNames[2] = \"child\";\n    pathNames[3] = null;\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    pathIndices[1] = 3;\n    pathIndices[2] = 0;\n    pathIndices[3] = 0;\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    String path = jsonTreeReader.getPreviousPath();\n    assertEquals(\"$.root[3].child\", path);\n  }\n\n  // Helper method to set private fields via reflection\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889159,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 930,
+    "prompt_tokens": 2404,
+    "total_tokens": 3334,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.43
+  }
+}

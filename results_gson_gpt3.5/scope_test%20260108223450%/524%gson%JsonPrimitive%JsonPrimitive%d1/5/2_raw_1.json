@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.JsonPrimitive;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testConstructorWithNumber_nonNull() throws Exception {\n    Number number = 123;\n    JsonPrimitive jp = new JsonPrimitive(number);\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Object value = valueField.get(jp);\n    assertSame(number, value);\n  }\n\n  @Test\n  public void testConstructorWithNumber_null_throwsNPE() {\n    assertThrows(NullPointerException.class, () -> new JsonPrimitive((Number) null));\n  }\n\n  @Test\n  public void testIsIntegral_trueAndFalse() throws Exception {\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getDeclaredConstructor(Number.class);\n    constructor.setAccessible(true);\n    JsonPrimitive integralPrimitive = constructor.newInstance(123);\n    JsonPrimitive nonIntegralPrimitive = constructor.newInstance(123.456);\n\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    boolean integralResult = (boolean) isIntegralMethod.invoke(null, integralPrimitive);\n    boolean nonIntegralResult = (boolean) isIntegralMethod.invoke(null, nonIntegralPrimitive);\n\n    assertTrue(integralResult);\n    assertFalse(nonIntegralResult);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 412,
+  "completion_tokens": 325,
+  "total_tokens": 737,
+  "llm_elapsed_time_seconds": 6.19
+}

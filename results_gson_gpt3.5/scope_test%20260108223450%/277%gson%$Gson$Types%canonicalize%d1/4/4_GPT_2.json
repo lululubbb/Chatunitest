@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmeYjf5hTyORoH7wa3PdUflIndLZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport org.junit.jupiter.api.Test;\n\npublic class $Gson$TypesTest {\n\n  private static Class<?> getPrivateInnerClass(String simpleName) throws ClassNotFoundException {\n    for (Class<?> inner : $Gson$Types.class.getDeclaredClasses()) {\n      if (inner.getSimpleName().equals(simpleName)) {\n        return inner;\n      }\n    }\n    throw new ClassNotFoundException(\"Inner class \" + simpleName + \" not found\");\n  }\n\n  @Test\n  public void canonicalize_withClassArray_returnsGenericArrayTypeImpl() throws Exception {\n    Class<?> arrayClass = String[].class;\n    Type result = $Gson$Types.canonicalize(arrayClass);\n    assertNotNull(result);\n\n    Class<?> genericArrayTypeImplClass = getPrivateInnerClass(\"GenericArrayTypeImpl\");\n    assertTrue(genericArrayTypeImplClass.isInstance(result));\n\n    // Check that component type is canonicalized String.class\n    Type componentType = ((GenericArrayType) result).getGenericComponentType();\n    assertEquals(String.class, componentType);\n  }\n\n  @Test\n  public void canonicalize_withClassNonArray_returnsSameClass() {\n    Class<?> clazz = Integer.class;\n    Type result = $Gson$Types.canonicalize(clazz);\n    assertSame(clazz, result);\n  }\n\n  @Test\n  public void canonicalize_withParameterizedType_returnsParameterizedTypeImpl() throws Exception {\n    ParameterizedType mockParamType = mock(ParameterizedType.class);\n    Type ownerType = String.class;\n    Type rawType = java.util.Map.class;\n    Type[] typeArgs = new Type[] { String.class, Integer.class };\n    when(mockParamType.getOwnerType()).thenReturn(ownerType);\n    when(mockParamType.getRawType()).thenReturn(rawType);\n    when(mockParamType.getActualTypeArguments()).thenReturn(typeArgs);\n\n    Type result = $Gson$Types.canonicalize(mockParamType);\n    assertNotNull(result);\n\n    Class<?> parameterizedTypeImplClass = getPrivateInnerClass(\"ParameterizedTypeImpl\");\n    assertTrue(parameterizedTypeImplClass.isInstance(result));\n\n    // Use reflection to access methods\n    Object pti = result;\n    Method getOwnerType = parameterizedTypeImplClass.getMethod(\"getOwnerType\");\n    Method getRawType = parameterizedTypeImplClass.getMethod(\"getRawType\");\n    Method getActualTypeArguments = parameterizedTypeImplClass.getMethod(\"getActualTypeArguments\");\n\n    assertEquals(ownerType, getOwnerType.invoke(pti));\n    assertEquals(rawType, getRawType.invoke(pti));\n    assertArrayEquals(typeArgs, (Object[]) getActualTypeArguments.invoke(pti));\n  }\n\n  @Test\n  public void canonicalize_withGenericArrayType_returnsGenericArrayTypeImpl() throws Exception {\n    GenericArrayType mockGenericArrayType = mock(GenericArrayType.class);\n    Type componentType = String.class;\n    when(mockGenericArrayType.getGenericComponentType()).thenReturn(componentType);\n\n    Type result = $Gson$Types.canonicalize(mockGenericArrayType);\n    assertNotNull(result);\n\n    Class<?> genericArrayTypeImplClass = getPrivateInnerClass(\"GenericArrayTypeImpl\");\n    assertTrue(genericArrayTypeImplClass.isInstance(result));\n\n    Type comp = ((GenericArrayType) result).getGenericComponentType();\n    assertEquals(componentType, comp);\n  }\n\n  @Test\n  public void canonicalize_withWildcardType_returnsWildcardTypeImpl() throws Exception {\n    WildcardType mockWildcardType = mock(WildcardType.class);\n    Type[] upperBounds = new Type[] { Number.class };\n    Type[] lowerBounds = new Type[] { Integer.class };\n    when(mockWildcardType.getUpperBounds()).thenReturn(upperBounds);\n    when(mockWildcardType.getLowerBounds()).thenReturn(lowerBounds);\n\n    Type result = $Gson$Types.canonicalize(mockWildcardType);\n    assertNotNull(result);\n\n    Class<?> wildcardTypeImplClass = getPrivateInnerClass(\"WildcardTypeImpl\");\n    assertTrue(wildcardTypeImplClass.isInstance(result));\n\n    Object wti = result;\n    Method getUpperBounds = wildcardTypeImplClass.getMethod(\"getUpperBounds\");\n    Method getLowerBounds = wildcardTypeImplClass.getMethod(\"getLowerBounds\");\n\n    assertArrayEquals(upperBounds, (Object[]) getUpperBounds.invoke(wti));\n    assertArrayEquals(lowerBounds, (Object[]) getLowerBounds.invoke(wti));\n  }\n\n  @Test\n  public void canonicalize_withOtherType_returnsSameType() {\n    Type customType = new Type() {};\n    Type result = $Gson$Types.canonicalize(customType);\n    assertSame(customType, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887754,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 991,
+    "prompt_tokens": 2351,
+    "total_tokens": 3342,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.59
+  }
+}

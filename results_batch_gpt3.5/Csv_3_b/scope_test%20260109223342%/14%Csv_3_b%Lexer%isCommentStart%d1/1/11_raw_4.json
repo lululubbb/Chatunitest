@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Field;\n\nclass LexerTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create anonymous subclass of abstract Lexer to instantiate\n        lexer = new Lexer(Mockito.mock(CSVFormat.class), Mockito.mock(ExtendedBufferedReader.class)) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n        // Use reflection to set the private final field 'commmentStart'\n        Field commentStartField = Lexer.class.getDeclaredField(\"commmentStart\");\n        commentStartField.setAccessible(true);\n        // Set commmentStart to '#'\n        commentStartField.set(lexer, '#');\n    }\n\n    @Test\n    void testIsCommentStart_MatchingChar() {\n        assertTrue(lexer.isCommentStart('#'));\n    }\n\n    @Test\n    void testIsCommentStart_NonMatchingChar() {\n        assertFalse(lexer.isCommentStart('a'));\n        assertFalse(lexer.isCommentStart('\\0'));\n        assertFalse(lexer.isCommentStart(' '));\n        assertFalse(lexer.isCommentStart('\\n'));\n        assertFalse(lexer.isCommentStart(-1));\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_3_b/scope_test%20260109223342%/14%Csv_3_b%Lexer%isCommentStart%d1/1/runtemp/Csv_3_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 769,
+  "completion_tokens": 281,
+  "total_tokens": 1050,
+  "llm_elapsed_time_seconds": 5.74
+}

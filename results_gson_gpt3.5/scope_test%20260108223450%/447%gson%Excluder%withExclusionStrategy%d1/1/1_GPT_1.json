@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvms5MnttuZiAwqfxMmJASgPGUaC1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.List;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n  private ExclusionStrategy mockStrategy;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n    mockStrategy = mock(ExclusionStrategy.class);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationFalse_addsToSerializationStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, true, false);\n\n    assertNotSame(excluder, result);\n    List<ExclusionStrategy> serializationStrategies = getPrivateList(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getPrivateList(result, \"deserializationStrategies\");\n\n    assertTrue(serializationStrategies.contains(mockStrategy));\n    assertEquals(1, serializationStrategies.size());\n    assertTrue(deserializationStrategies.isEmpty());\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationTrue_addsToDeserializationStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, false, true);\n\n    assertNotSame(excluder, result);\n    List<ExclusionStrategy> serializationStrategies = getPrivateList(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getPrivateList(result, \"deserializationStrategies\");\n\n    assertTrue(deserializationStrategies.contains(mockStrategy));\n    assertEquals(1, deserializationStrategies.size());\n    assertTrue(serializationStrategies.isEmpty());\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationTrue_addsToBothStrategies() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, true, true);\n\n    assertNotSame(excluder, result);\n    List<ExclusionStrategy> serializationStrategies = getPrivateList(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getPrivateList(result, \"deserializationStrategies\");\n\n    assertTrue(serializationStrategies.contains(mockStrategy));\n    assertTrue(deserializationStrategies.contains(mockStrategy));\n    assertEquals(1, serializationStrategies.size());\n    assertEquals(1, deserializationStrategies.size());\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationFalse_noStrategiesAdded() {\n    Excluder result = excluder.withExclusionStrategy(mockStrategy, false, false);\n\n    assertNotSame(excluder, result);\n    List<ExclusionStrategy> serializationStrategies = getPrivateList(result, \"serializationStrategies\");\n    List<ExclusionStrategy> deserializationStrategies = getPrivateList(result, \"deserializationStrategies\");\n\n    assertTrue(serializationStrategies.isEmpty());\n    assertTrue(deserializationStrategies.isEmpty());\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private List<ExclusionStrategy> getPrivateList(Excluder excluder, String fieldName) {\n    try {\n      Field field = Excluder.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return (List<ExclusionStrategy>) field.get(excluder);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888593,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 716,
+    "prompt_tokens": 655,
+    "total_tokens": 1371,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.43
+  }
+}

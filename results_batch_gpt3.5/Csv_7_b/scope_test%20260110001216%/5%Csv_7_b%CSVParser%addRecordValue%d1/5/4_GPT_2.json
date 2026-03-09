@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9OZGtTCSKf0u79nI9nsiDuf3XLw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Mock CSVFormat\n        mockFormat = mock(CSVFormat.class);\n\n        // Create CSVParser instance using constructor with Reader and CSVFormat\n        parser = new CSVParser(new java.io.StringReader(\"\"), mockFormat);\n\n        // Use reflection to set reusableToken field with a Token instance\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Token token = new Token();\n        reusableTokenField.set(parser, token);\n    }\n\n    @Test\n    void testAddRecordValue_nullStringIsNull_addsInput() throws Exception {\n        // Setup reusableToken.content to \"testValue\"\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Token token = (Token) reusableTokenField.get(parser);\n\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"testValue\");\n        contentField.set(token, content);\n\n        // Setup format.getNullString() to return null\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        // Clear record list before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> recordList = (List<String>) recordField.get(parser);\n        recordList.clear();\n\n        // Invoke private addRecordValue method\n        Method addRecordValueMethod = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValueMethod.setAccessible(true);\n        addRecordValueMethod.invoke(parser);\n\n        // Assert record contains the input string\n        assertEquals(1, recordList.size());\n        assertEquals(\"testValue\", recordList.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringMatchesInput_addsNull() throws Exception {\n        // Setup reusableToken.content to \"NULL\"\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Token token = (Token) reusableTokenField.get(parser);\n\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"NULL\");\n        contentField.set(token, content);\n\n        // Setup format.getNullString() to return \"null\" (case insensitive match)\n        when(mockFormat.getNullString()).thenReturn(\"null\");\n\n        // Clear record list before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> recordList = (List<String>) recordField.get(parser);\n        recordList.clear();\n\n        // Invoke private addRecordValue method\n        Method addRecordValueMethod = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValueMethod.setAccessible(true);\n        addRecordValueMethod.invoke(parser);\n\n        // Assert record contains null\n        assertEquals(1, recordList.size());\n        assertNull(recordList.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringNotMatchesInput_addsInput() throws Exception {\n        // Setup reusableToken.content to \"value\"\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Token token = (Token) reusableTokenField.get(parser);\n\n        Field contentField = Token.class.getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        StringBuilder content = new StringBuilder(\"value\");\n        contentField.set(token, content);\n\n        // Setup format.getNullString() to return \"null\" (does not match input)\n        when(mockFormat.getNullString()).thenReturn(\"null\");\n\n        // Clear record list before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> recordList = (List<String>) recordField.get(parser);\n        recordList.clear();\n\n        // Invoke private addRecordValue method\n        Method addRecordValueMethod = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValueMethod.setAccessible(true);\n        addRecordValueMethod.invoke(parser);\n\n        // Assert record contains the input string\n        assertEquals(1, recordList.size());\n        assertEquals(\"value\", recordList.get(0));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975175,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 983,
+    "prompt_tokens": 1686,
+    "total_tokens": 2669,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.25
+  }
+}

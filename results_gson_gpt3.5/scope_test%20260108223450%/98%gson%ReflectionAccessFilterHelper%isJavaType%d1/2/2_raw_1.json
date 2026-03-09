@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsJavaType_javaPrefix() throws Exception {\n    // Access private static method isJavaType(String)\n    Method isJavaTypeMethod = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    isJavaTypeMethod.setAccessible(true);\n\n    // Test with className starting with \"java.\"\n    boolean resultJava = (boolean) isJavaTypeMethod.invoke(null, \"java.lang.String\");\n    assertTrue(resultJava);\n\n    // Test with className starting with \"javax.\"\n    boolean resultJavax = (boolean) isJavaTypeMethod.invoke(null, \"javax.servlet.Servlet\");\n    assertTrue(resultJavax);\n\n    // Test with className not starting with \"java.\" or \"javax.\"\n    boolean resultOther = (boolean) isJavaTypeMethod.invoke(null, \"com.google.gson.Gson\");\n    assertFalse(resultOther);\n\n    // Test with empty string\n    boolean resultEmpty = (boolean) isJavaTypeMethod.invoke(null, \"\");\n    assertFalse(resultEmpty);\n\n    // Test with null - should throw NullPointerException\n    assertThrows(InvocationTargetException.class, () -> isJavaTypeMethod.invoke(null, (Object) null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 318,
+  "completion_tokens": 298,
+  "total_tokens": 616,
+  "llm_elapsed_time_seconds": 6.32
+}

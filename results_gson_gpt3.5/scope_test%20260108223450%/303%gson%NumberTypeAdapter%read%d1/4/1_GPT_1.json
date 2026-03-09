@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlP3iPXNhCDSjm6cAVnZlEuTaEqv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.internal.bind.NumberTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass NumberTypeAdapterTest {\n\n  private ToNumberStrategy toNumberStrategyMock;\n  private NumberTypeAdapter numberTypeAdapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    toNumberStrategyMock = mock(ToNumberStrategy.class);\n    // Use reflection to invoke private constructor\n    var constructor = NumberTypeAdapter.class.getDeclaredConstructor(ToNumberStrategy.class);\n    constructor.setAccessible(true);\n    numberTypeAdapter = (NumberTypeAdapter) constructor.newInstance(toNumberStrategyMock);\n  }\n\n  @Test\n  void read_nullToken_returnsNull() throws IOException {\n    JsonReader jsonReaderMock = mock(JsonReader.class);\n    when(jsonReaderMock.peek()).thenReturn(JsonToken.NULL);\n\n    // nextNull() should be called once\n    doNothing().when(jsonReaderMock).nextNull();\n\n    Number result = numberTypeAdapter.read(jsonReaderMock);\n\n    assertNull(result);\n    InOrder inOrder = inOrder(jsonReaderMock);\n    inOrder.verify(jsonReaderMock).peek();\n    inOrder.verify(jsonReaderMock).nextNull();\n    verifyNoMoreInteractions(jsonReaderMock);\n    verifyNoInteractions(toNumberStrategyMock);\n  }\n\n  @Test\n  void read_numberToken_delegatesToToNumberStrategy() throws IOException {\n    JsonReader jsonReaderMock = mock(JsonReader.class);\n    when(jsonReaderMock.peek()).thenReturn(JsonToken.NUMBER);\n\n    Number expectedNumber = 123.45;\n    when(toNumberStrategyMock.readNumber(jsonReaderMock)).thenReturn(expectedNumber);\n\n    Number result = numberTypeAdapter.read(jsonReaderMock);\n\n    assertSame(expectedNumber, result);\n    verify(jsonReaderMock).peek();\n    verify(toNumberStrategyMock).readNumber(jsonReaderMock);\n    verifyNoMoreInteractions(jsonReaderMock, toNumberStrategyMock);\n  }\n\n  @Test\n  void read_stringToken_delegatesToToNumberStrategy() throws IOException {\n    JsonReader jsonReaderMock = mock(JsonReader.class);\n    when(jsonReaderMock.peek()).thenReturn(JsonToken.STRING);\n\n    Number expectedNumber = 678.9;\n    when(toNumberStrategyMock.readNumber(jsonReaderMock)).thenReturn(expectedNumber);\n\n    Number result = numberTypeAdapter.read(jsonReaderMock);\n\n    assertSame(expectedNumber, result);\n    verify(jsonReaderMock).peek();\n    verify(toNumberStrategyMock).readNumber(jsonReaderMock);\n    verifyNoMoreInteractions(jsonReaderMock, toNumberStrategyMock);\n  }\n\n  @Test\n  void read_otherToken_throwsJsonSyntaxException() throws IOException {\n    JsonReader jsonReaderMock = mock(JsonReader.class);\n    when(jsonReaderMock.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    when(jsonReaderMock.getPath()).thenReturn(\"$.some.path\");\n\n    JsonSyntaxException exception = assertThrows(JsonSyntaxException.class, () -> {\n      numberTypeAdapter.read(jsonReaderMock);\n    });\n\n    assertEquals(\"Expecting number, got: BEGIN_OBJECT; at path $.some.path\", exception.getMessage());\n    verify(jsonReaderMock).peek();\n    verify(jsonReaderMock).getPath();\n    verifyNoMoreInteractions(jsonReaderMock);\n    verifyNoInteractions(toNumberStrategyMock);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882949,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 726,
+    "prompt_tokens": 1025,
+    "total_tokens": 1751,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.03
+  }
+}

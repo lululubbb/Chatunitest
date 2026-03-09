@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm0fH2rapaB0govmHavwzBAfMNmQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ArrayTypeAdapter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Array;\n\npublic class ArrayTypeAdapterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n    private TypeAdapter<Object> componentTypeAdapter;\n    private ArrayTypeAdapter<Object> arrayTypeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = spy(new JsonWriter(stringWriter));\n        componentTypeAdapter = mock(TypeAdapter.class);\n        arrayTypeAdapter = new ArrayTypeAdapter<>(new Gson(), componentTypeAdapter, Object.class);\n    }\n\n    @Test\n    public void write_NullArray_WritesNullValue() throws IOException {\n        arrayTypeAdapter.write(jsonWriter, null);\n        verify(jsonWriter).nullValue();\n        verifyNoMoreInteractions(jsonWriter);\n        verifyNoInteractions(componentTypeAdapter);\n    }\n\n    @Test\n    public void write_EmptyArray_WritesBeginAndEndArrayOnly() throws IOException {\n        Object emptyArray = Array.newInstance(Object.class, 0);\n        arrayTypeAdapter.write(jsonWriter, emptyArray);\n        InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n        inOrder.verify(jsonWriter).beginArray();\n        inOrder.verify(jsonWriter).endArray();\n        verifyNoMoreInteractions(jsonWriter, componentTypeAdapter);\n    }\n\n    @Test\n    public void write_ArrayWithElements_WritesAllElements() throws IOException {\n        Object[] array = (Object[]) Array.newInstance(Object.class, 3);\n        array[0] = \"one\";\n        array[1] = \"two\";\n        array[2] = \"three\";\n\n        doAnswer(invocation -> {\n            // simulate writing string value, do nothing\n            return null;\n        }).when(componentTypeAdapter).write(any(JsonWriter.class), any());\n\n        arrayTypeAdapter.write(jsonWriter, array);\n\n        InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n        inOrder.verify(jsonWriter).beginArray();\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), eq(\"one\"));\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), eq(\"two\"));\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), eq(\"three\"));\n        inOrder.verify(jsonWriter).endArray();\n\n        verifyNoMoreInteractions(jsonWriter, componentTypeAdapter);\n    }\n\n    @Test\n    public void write_ArrayWithNullElements_WritesNullElements() throws IOException {\n        Object[] array = (Object[]) Array.newInstance(Object.class, 3);\n        array[0] = \"one\";\n        array[1] = null;\n        array[2] = \"three\";\n\n        doAnswer(invocation -> {\n            JsonWriter writer = invocation.getArgument(0);\n            Object value = invocation.getArgument(1);\n            if(value == null) {\n                writer.nullValue();\n            } else {\n                // simulate writing string value, do nothing\n            }\n            return null;\n        }).when(componentTypeAdapter).write(any(JsonWriter.class), any());\n\n        arrayTypeAdapter.write(jsonWriter, array);\n\n        InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n        inOrder.verify(jsonWriter).beginArray();\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), eq(\"one\"));\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), isNull());\n        inOrder.verify(componentTypeAdapter).write(eq(jsonWriter), eq(\"three\"));\n        inOrder.verify(jsonWriter).endArray();\n\n        verifyNoMoreInteractions(jsonWriter, componentTypeAdapter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885281,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 808,
+    "prompt_tokens": 2192,
+    "total_tokens": 3000,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.58
+  }
+}

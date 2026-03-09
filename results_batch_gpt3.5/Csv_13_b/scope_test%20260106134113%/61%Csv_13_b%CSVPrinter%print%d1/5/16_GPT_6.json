@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuSvTKVPktvaP8Xgmy4FpvU1sw7D",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    public void testPrint_withNullValue_andNullStringNull() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(null);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        verifyPrivateMethodCalled(spyPrinter, printMethod, null, \"\", 0, 0);\n    }\n\n    @Test\n    public void testPrint_withNullValue_andNullStringNonNull() throws Exception {\n        String nullStr = \"NULL\";\n        when(format.getNullString()).thenReturn(nullStr);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(null);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        verifyPrivateMethodCalled(spyPrinter, printMethod, null, nullStr, 0, nullStr.length());\n    }\n\n    @Test\n    public void testPrint_withNonNullValue() throws Exception {\n        String val = \"value\";\n        when(format.getNullString()).thenReturn(null); // irrelevant here\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print(val);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        verifyPrivateMethodCalled(spyPrinter, printMethod, val, val, 0, val.length());\n    }\n\n    @Test\n    public void testPrint_propagatesIOException() throws Exception {\n        String val = \"value\";\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        // Using doThrow on public print(Object) method since private method cannot be stubbed directly\n        doThrow(new IOException(\"forced\")).when(spyPrinter).print(val);\n\n        IOException thrown = assertThrows(IOException.class, () -> spyPrinter.print(val));\n        assertEquals(\"forced\", thrown.getMessage());\n    }\n\n    private void verifyPrivateMethodCalled(CSVPrinter spy, Method method, Object obj, CharSequence seq, int offset, int len) throws Exception {\n        // Instead of clearInvocations(spy.getOut()), use Mockito.clearInvocations correctly\n        clearInvocations(spy.getOut());\n\n        method.setAccessible(true);\n        method.invoke(spy, obj, seq, offset, len);\n\n        if (len > 0) {\n            verify(spy.getOut()).append(seq, offset, offset + len);\n        } else {\n            verify(spy.getOut(), never()).append(any(CharSequence.class), anyInt(), anyInt());\n        }\n    }\n\n    // Add static import for clearInvocations\n    private static void clearInvocations(Object... mocks) {\n        org.mockito.Mockito.clearInvocations(mocks);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679457,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 728,
+    "prompt_tokens": 1555,
+    "total_tokens": 2283,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.29
+  }
+}

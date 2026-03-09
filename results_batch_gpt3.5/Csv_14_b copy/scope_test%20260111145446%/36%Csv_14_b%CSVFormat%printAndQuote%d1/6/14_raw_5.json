@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.spy;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testPrintAndQuote() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVFormat spyFormat = spy(csvFormat);\n        Object object = \"test\";\n        CharSequence value = \"value\";\n        int offset = 0;\n        int len = value.length();\n        StringWriter out = new StringWriter();\n        boolean newRecord = true;\n\n        // When\n        try {\n            Method method = CSVFormat.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n            method.setAccessible(true);\n            method.invoke(spyFormat, object, value, offset, len, out, newRecord);\n        } catch (Exception e) {\n            throw new IOException(\"Error invoking private method\", e);\n        }\n\n        // Then\n        assertEquals(\"\\\"value\\\"\", out.toString());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_14_b/scope_test%20260111145446%/36%Csv_14_b%CSVFormat%printAndQuote%d1/6/runtemp/Csv_14_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2067,
+  "completion_tokens": 257,
+  "total_tokens": 2324,
+  "llm_elapsed_time_seconds": 3.21
+}

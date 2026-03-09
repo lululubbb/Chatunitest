@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n    private JsonObject jsonObject;\n\n    @BeforeEach\n    public void setUp() {\n        jsonObject = spy(new JsonObject());\n    }\n\n    @Test\n    public void testAddPropertyWithNonNullValue() {\n        String property = \"key\";\n        String value = \"value\";\n\n        doNothing().when(jsonObject).add(eq(property), any(JsonElement.class));\n\n        jsonObject.addProperty(property, value);\n\n        verify(jsonObject, times(1)).add(eq(property), argThat(jsonElement ->\n                jsonElement instanceof JsonPrimitive &&\n                value.equals(((JsonPrimitive) jsonElement).getAsString())\n        ));\n    }\n\n    @Test\n    public void testAddPropertyWithNullValue() {\n        String property = \"key\";\n        String value = null;\n\n        doNothing().when(jsonObject).add(eq(property), any(JsonElement.class));\n\n        jsonObject.addProperty(property, value);\n\n        verify(jsonObject, times(1)).add(eq(property), eq(JsonNull.INSTANCE));\n    }\n\n    @Test\n    public void testAddPropertyInvokesPrivateAdd() throws Exception {\n        String property = \"testProperty\";\n        String value = \"testValue\";\n\n        JsonObject obj = new JsonObject();\n\n        Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n        addMethod.setAccessible(true);\n\n        // Spy on obj to verify add() call\n        JsonObject spyObj = spy(obj);\n\n        spyObj.addProperty(property, value);\n\n        verify(spyObj, times(1)).add(eq(property), argThat(jsonElement ->\n                jsonElement instanceof JsonPrimitive &&\n                value.equals(((JsonPrimitive) jsonElement).getAsString())\n        ));\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 402,
+  "completion_tokens": 418,
+  "total_tokens": 820,
+  "llm_elapsed_time_seconds": 8.38,
+  "repair_elapsed_time_seconds": 20.41,
+  "round_total_time_seconds": 20.41
+}

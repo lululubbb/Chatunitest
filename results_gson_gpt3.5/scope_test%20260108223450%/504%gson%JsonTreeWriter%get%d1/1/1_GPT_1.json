@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn5aUsX9kY4JdDJyhmPd8MUApFF6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter writer;\n\n    @BeforeEach\n    public void setUp() {\n        writer = new JsonTreeWriter();\n    }\n\n    @Test\n    public void get_whenStackIsEmpty_returnsProduct() throws Exception {\n        // Arrange\n        // By default, product is JsonNull.INSTANCE and stack is empty.\n        JsonElement product = getField(writer, \"product\");\n        List<?> stack = getField(writer, \"stack\");\n\n        assertTrue(stack.isEmpty());\n        assertEquals(JsonNull.INSTANCE, product);\n\n        // Act\n        JsonElement result = writer.get();\n\n        // Assert\n        assertSame(product, result);\n    }\n\n    @Test\n    public void get_whenStackIsNotEmpty_throwsIllegalStateException() throws Exception {\n        // Arrange\n        List<JsonElement> stack = getField(writer, \"stack\");\n        stack.add(new JsonArray()); // add element to stack to simulate not empty\n\n        // Act & Assert\n        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> writer.get());\n        assertTrue(exception.getMessage().startsWith(\"Expected one JSON element but was\"));\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getField(Object instance, String fieldName) throws Exception {\n        Field field = instance.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return (T) field.get(instance);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889430,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 378,
+    "prompt_tokens": 531,
+    "total_tokens": 909,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.33
+  }
+}

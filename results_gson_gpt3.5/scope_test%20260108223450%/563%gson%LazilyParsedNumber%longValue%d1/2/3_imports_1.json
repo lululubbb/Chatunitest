@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.io.IOException;\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectStreamException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\npublic class LazilyParsedNumberTest {\n\n  @Test\n  public void testLongValue_parsableLong() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123456789\");\n    long result = number.longValue();\n    assertEquals(123456789L, result);\n  }\n\n  @Test\n  public void testLongValue_notParsableLong_usesBigDecimal() {\n    // Number larger than Long.MAX_VALUE to force NumberFormatException in parseLong\n    String bigNumberStr = \"9223372036854775808\"; // Long.MAX_VALUE + 1\n    LazilyParsedNumber number = new LazilyParsedNumber(bigNumberStr);\n    long result = number.longValue();\n    // BigDecimal.longValue() truncates to Long.MAX_VALUE for values > Long.MAX_VALUE\n    assertEquals(new BigDecimal(bigNumberStr).longValue(), result);\n  }\n\n  @Test\n  public void testLongValue_negativeNumber() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"-9876543210\");\n    long result = number.longValue();\n    assertEquals(-9876543210L, result);\n  }\n\n  @Test\n  public void testLongValue_zero() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"0\");\n    long result = number.longValue();\n    assertEquals(0L, result);\n  }\n\n  @Test\n  public void testLongValue_invalidNumberFormat_throwsNumberFormatExceptionFromBigDecimal() {\n    // LazilyParsedNumber.longValue() catches NumberFormatException from parseLong,\n    // but if BigDecimal constructor throws NumberFormatException, it propagates.\n    LazilyParsedNumber number = new LazilyParsedNumber(\"notANumber\");\n    assertThrows(NumberFormatException.class, number::longValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 326,
+  "completion_tokens": 411,
+  "total_tokens": 737,
+  "llm_elapsed_time_seconds": 8.99,
+  "repair_elapsed_time_seconds": 17.15,
+  "round_total_time_seconds": 17.15
+}

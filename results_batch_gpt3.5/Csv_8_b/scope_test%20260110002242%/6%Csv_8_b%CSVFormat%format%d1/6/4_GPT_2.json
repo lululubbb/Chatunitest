@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9sA0wIQDUWxaXpp0ojDNSpYv4Gn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormat_withValidValues_shouldReturnFormattedString() throws Exception {\n        String[] values = new String[] {\"a\", \"b\", \"c\"};\n\n        String result = csvFormat.format((Object[]) values);\n\n        // The default delimiter is comma, default quote char is '\"', record separator is CRLF\n        assertEquals(\"\\\"a\\\",\\\"b\\\",\\\"c\\\"\", result);\n    }\n\n    @Test\n    public void testFormat_withNullValues_shouldReturnFormattedStringWithNulls() {\n        Object[] values = new Object[] {null, \"value\", null};\n\n        CSVFormat formatWithNullString = csvFormat.withNullString(\"NULL\");\n\n        String result = formatWithNullString.format(values);\n\n        assertEquals(\"NULL,\\\"value\\\",NULL\", result);\n    }\n\n    @Test\n    public void testFormat_withEmptyValues_shouldReturnEmptyString() {\n        Object[] values = new Object[] {};\n\n        String result = csvFormat.format(values);\n\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormat_whenIOExceptionThrown_shouldThrowIllegalStateException() throws Exception {\n        // Use reflection to inject a mocked CSVPrinter that throws IOException on printRecord\n\n        // Create a mock CSVPrinter\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"IO error\")).when(mockPrinter).printRecord(any());\n\n        // Use reflection to replace the constructor call inside CSVFormat.format method\n        // Since it's impossible to mock constructor call directly without Mockito 4+,\n        // we create a subclass to override the behavior for test purpose.\n\n        CSVFormat testFormat = new CSVFormat(csvFormat.getDelimiter(),\n                csvFormat.getQuoteChar(),\n                csvFormat.getQuotePolicy(),\n                csvFormat.getCommentStart(),\n                csvFormat.getEscape(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                csvFormat.getHeader(),\n                csvFormat.getSkipHeaderRecord()) {\n            @Override\n            public String format(final Object... values) {\n                final StringWriter out = new StringWriter();\n                try {\n                    // Instead of new CSVPrinter, use the mocked one\n                    mockPrinter.printRecord(values);\n                    return out.toString().trim();\n                } catch (final IOException e) {\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            testFormat.format(\"a\");\n        });\n\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n\n    @Test\n    public void testFormat_withDifferentObjectTypes() {\n        Object[] values = new Object[] {123, 45.67, true, 'x'};\n\n        String result = csvFormat.format(values);\n\n        assertEquals(\"\\\"123\\\",\\\"45.67\\\",\\\"true\\\",\\\"x\\\"\", result);\n    }\n\n    @Test\n    public void testFormat_withSingleValue() {\n        Object[] values = new Object[] {\"single\"};\n\n        String result = csvFormat.format(values);\n\n        assertEquals(\"\\\"single\\\"\", result);\n    }\n\n    @Test\n    public void testFormat_withSpecialCharacters() {\n        Object[] values = new Object[] {\"a,b\", \"c\\\"d\", \"e\\nf\"};\n\n        String result = csvFormat.format(values);\n\n        // Values with comma, quote, and newline should be quoted and escaped accordingly\n        assertEquals(\"\\\"a,b\\\",\\\"c\\\"\\\"d\\\",\\\"e\\nf\\\"\", result);\n    }\n\n    @Test\n    public void testFormat_withTrimmedOutput() {\n        // The format method trims the output string\n        Object[] values = new Object[] {\" a \", \" b \"};\n\n        String result = csvFormat.format(values);\n\n        // The values are quoted but spaces inside quotes remain\n        assertEquals(\"\\\" a \\\",\\\" b \\\"\", result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977010,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 927,
+    "prompt_tokens": 1886,
+    "total_tokens": 2813,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.15
+  }
+}

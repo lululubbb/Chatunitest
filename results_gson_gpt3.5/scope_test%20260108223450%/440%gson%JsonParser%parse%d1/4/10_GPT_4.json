@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmYCe1nJTKwv2IytrLgVQXxQvjTu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.internal.Streams;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class JsonParserTest {\n\n  private JsonParser jsonParser;\n\n  @BeforeEach\n  public void setUp() {\n    jsonParser = new JsonParser();\n  }\n\n  @Test\n  public void testParse_withValidReader_returnsJsonElement() throws IOException {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n\n    JsonElement result = jsonParser.parse(reader);\n\n    assertNotNull(result);\n    // Since parseReader delegates to parseReader(Reader) static method, \n    // and that returns a JsonElement representing the JSON, \n    // we can verify it is a JsonObject with the expected member.\n    assertTrue(result.isJsonObject());\n    assertEquals(\"value\", result.getAsJsonObject().get(\"key\").getAsString());\n  }\n\n  @Test\n  public void testParse_withEmptyJson_throwsJsonSyntaxException() {\n    String json = \"\";\n    Reader reader = new StringReader(json);\n\n    assertThrows(JsonSyntaxException.class, () -> {\n      jsonParser.parse(reader);\n    });\n  }\n\n  @Test\n  public void testParse_withMalformedJson_throwsJsonSyntaxException() {\n    String json = \"{key:value\"; // malformed json\n    Reader reader = new StringReader(json);\n\n    assertThrows(JsonSyntaxException.class, () -> jsonParser.parse(reader));\n  }\n\n  @Test\n  public void testParse_withNullReader_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> jsonParser.parse((Reader) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887360,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 408,
+    "prompt_tokens": 1055,
+    "total_tokens": 1463,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.48
+  }
+}

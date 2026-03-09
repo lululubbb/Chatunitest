@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuws5HYXJr4M0ptEhbAJvYKe8YRHC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        // Set the field value\n        field.set(target, value);\n    }\n\n    @Test\n    void testGetHeaderReturnsCloneWhenHeaderIsSet() throws Exception {\n        // Create a new CSVFormat instance with header set, instead of modifying DEFAULT\n        String[] header = new String[]{\"col1\", \"col2\"};\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(header);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(header, returnedHeader, \"Returned header should match the set header\");\n        assertNotSame(header, returnedHeader, \"Returned header should be a clone, not the same instance\");\n    }\n\n    @Test\n    void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        // Create a new CSVFormat instance without header, instead of modifying DEFAULT\n        CSVFormat format = CSVFormat.DEFAULT.withHeader((String[]) null);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNull(returnedHeader, \"Returned header should be null when header field is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688705,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 359,
+    "prompt_tokens": 2228,
+    "total_tokens": 2587,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.52
+  }
+}

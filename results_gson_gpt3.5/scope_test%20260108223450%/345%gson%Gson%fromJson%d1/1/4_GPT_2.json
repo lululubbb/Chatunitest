@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn8q4MFEzp9k5Y0P9vpWjqAoCr0t",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.JsonSyntaxException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_nullJson_returnsNull() throws Exception {\n    // Act\n    String json = null;\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    // Using reflection to invoke fromJson(String, TypeToken<T>)\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", String.class, TypeToken.class);\n    fromJsonMethod.setAccessible(true);\n    Object result = fromJsonMethod.invoke(gson, json, typeToken);\n\n    // Assert\n    assertNull(result);\n  }\n\n  @Test\n  public void fromJson_validJson_returnsObject() {\n    String json = \"\\\"hello\\\"\";\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    String result = gson.fromJson(json, typeToken);\n\n    assertEquals(\"hello\", result);\n  }\n\n  @Test\n  public void fromJson_emptyJson_throwsJsonSyntaxException() {\n    String json = \"\";\n\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    assertThrows(JsonSyntaxException.class, () -> {\n      gson.fromJson(json, typeToken);\n    });\n  }\n\n  @Test\n  public void fromJson_invalidJson_throwsJsonSyntaxException() {\n    String json = \"{ invalid json }\";\n\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    assertThrows(JsonSyntaxException.class, () -> {\n      gson.fromJson(json, typeToken);\n    });\n  }\n\n  @Test\n  public void fromJson_jsonArray_returnsList() {\n    String json = \"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\";\n\n    TypeToken<java.util.List<String>> typeToken = new TypeToken<java.util.List<String>>() {};\n\n    java.util.List<String> result = gson.fromJson(json, typeToken);\n\n    assertNotNull(result);\n    assertEquals(3, result.size());\n    assertEquals(\"a\", result.get(0));\n    assertEquals(\"b\", result.get(1));\n    assertEquals(\"c\", result.get(2));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889632,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 505,
+    "prompt_tokens": 2171,
+    "total_tokens": 2676,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.69
+  }
+}

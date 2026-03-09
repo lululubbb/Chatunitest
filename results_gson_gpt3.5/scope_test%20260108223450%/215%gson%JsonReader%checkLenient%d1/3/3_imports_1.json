@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\nimport com.google.gson.internal.JsonReaderInternalAccess;\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport java.io.Closeable;\nimport java.io.EOFException;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method checkLenientMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    Reader dummyReader = new Reader() {\n      @Override\n      public int read(char[] cbuf, int off, int len) {\n        return -1; // EOF\n      }\n      @Override\n      public void close() {\n      }\n    };\n    jsonReader = new JsonReader(dummyReader);\n    checkLenientMethod = JsonReader.class.getDeclaredMethod(\"checkLenient\");\n    checkLenientMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testCheckLenient_whenLenientTrue_doesNotThrow() throws Throwable {\n    jsonReader.setLenient(true);\n    // Should not throw IOException\n    assertDoesNotThrow(() -> {\n      try {\n        checkLenientMethod.invoke(jsonReader);\n      } catch (InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n  }\n\n  @Test\n  public void testCheckLenient_whenLenientFalse_throwsIOException() {\n    jsonReader.setLenient(false);\n    IOException thrown = assertThrows(IOException.class, () -> {\n      try {\n        checkLenientMethod.invoke(jsonReader);\n      } catch (InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n    // Optional: verify exception message\n    assert(thrown.getMessage().contains(\"Use JsonReader.setLenient(true) to accept malformed JSON\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1021,
+  "completion_tokens": 386,
+  "total_tokens": 1407,
+  "llm_elapsed_time_seconds": 8.69,
+  "repair_elapsed_time_seconds": 14.78,
+  "round_total_time_seconds": 14.78
+}

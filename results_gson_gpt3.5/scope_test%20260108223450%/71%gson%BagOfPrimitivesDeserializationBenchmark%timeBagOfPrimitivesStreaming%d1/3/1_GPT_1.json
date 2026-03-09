@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmS6CnkKQrkLABdg7ma4kHpj4bc6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport com.google.gson.stream.JsonReader;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n    // Use reflection to set private field 'json'\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    // Set valid JSON string with all expected fields\n    jsonField.set(benchmark, \"{\\\"longValue\\\":1234567890123,\\\"intValue\\\":42,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"test\\\"}\");\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesStreaming_validJson_multipleReps() throws IOException {\n    // Test with 3 repetitions\n    benchmark.timeBagOfPrimitivesStreaming(3);\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesStreaming_zeroReps() throws IOException {\n    // Test with 0 repetitions, should do nothing and not throw\n    benchmark.timeBagOfPrimitivesStreaming(0);\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesStreaming_unexpectedName_throwsIOException() throws Exception {\n    // Set json with unexpected field name to trigger IOException\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"unexpectedField\\\":1}\");\n\n    IOException thrown = assertThrows(IOException.class, () -> {\n      benchmark.timeBagOfPrimitivesStreaming(1);\n    });\n    // Optionally assert message contains \"Unexpected name\"\n    assert(thrown.getMessage().contains(\"Unexpected name\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886982,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 425,
+    "prompt_tokens": 489,
+    "total_tokens": 914,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.62
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnCrPkbIkKKOdrN7n3OJp0lDmtFz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  @Test\n  void disableInnerClassSerialization_shouldReturnNewExcluderWithSerializeInnerClassesFalse() throws Exception {\n    Excluder original = new Excluder();\n\n    // Use reflection to get the original value of serializeInnerClasses\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    boolean originalValue = serializeInnerClassesField.getBoolean(original);\n    assertTrue(originalValue, \"Original serializeInnerClasses should be true\");\n\n    // Call the focal method\n    Excluder result = original.disableInnerClassSerialization();\n\n    // The result should not be the same instance as original\n    assertNotSame(original, result);\n\n    // The result's serializeInnerClasses field should be false\n    boolean resultValue = serializeInnerClassesField.getBoolean(result);\n    assertFalse(resultValue, \"serializeInnerClasses should be false after disableInnerClassSerialization\");\n\n    // The original's serializeInnerClasses field should remain true\n    boolean originalValueAfter = serializeInnerClassesField.getBoolean(original);\n    assertTrue(originalValueAfter, \"Original serializeInnerClasses should remain true\");\n\n    // Other fields should be equal (version, modifiers, requireExpose, strategies)\n    Field versionField = Excluder.class.getDeclaredField(\"version\");\n    versionField.setAccessible(true);\n    assertEquals(versionField.getDouble(original), versionField.getDouble(result));\n\n    Field modifiersField = Excluder.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    assertEquals(modifiersField.getInt(original), modifiersField.getInt(result));\n\n    Field requireExposeField = Excluder.class.getDeclaredField(\"requireExpose\");\n    requireExposeField.setAccessible(true);\n    assertEquals(requireExposeField.getBoolean(original), requireExposeField.getBoolean(result));\n\n    Field serializationStrategiesField = Excluder.class.getDeclaredField(\"serializationStrategies\");\n    serializationStrategiesField.setAccessible(true);\n    assertEquals(serializationStrategiesField.get(original), serializationStrategiesField.get(result));\n\n    Field deserializationStrategiesField = Excluder.class.getDeclaredField(\"deserializationStrategies\");\n    deserializationStrategiesField.setAccessible(true);\n    assertEquals(deserializationStrategiesField.get(original), deserializationStrategiesField.get(result));\n  }\n\n  @Test\n  void disableInnerClassSerialization_cloneThrowsRuntimeException_shouldPropagate() throws Exception {\n    // Create a spy of Excluder to mock clone method throwing exception\n    Excluder excluderSpy = spy(new Excluder());\n\n    doThrow(new RuntimeException(\"clone failure\")).when(excluderSpy).clone();\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      excluderSpy.disableInnerClassSerialization();\n    });\n    assertEquals(\"clone failure\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889881,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 618,
+    "prompt_tokens": 601,
+    "total_tokens": 1219,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.43
+  }
+}

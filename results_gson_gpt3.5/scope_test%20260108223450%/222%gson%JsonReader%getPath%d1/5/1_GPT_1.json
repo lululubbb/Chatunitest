@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmTTfep3yuZwx6NNGmMhAwqQJi9Z",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  public void testGetPath_default() throws Exception {\n    // getPath() calls getPath(false)\n    String path = jsonReader.getPath();\n    assertNotNull(path);\n    // Since stackSize is 0 by default, path should be \"$\"\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_usePreviousPath_false_stackSize0() throws Exception {\n    String path = invokeGetPath(false);\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_usePreviousPath_true_stackSize0() throws Exception {\n    String path = invokeGetPath(true);\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_stackSize1_array() throws Exception {\n    setStackSize(1);\n    setStackAt(0, JsonReader.PEEKED_BEGIN_ARRAY);\n    setPathIndicesAt(0, 5);\n    setPathNamesAt(0, null);\n\n    String path = invokeGetPath(false);\n    assertEquals(\"$[5]\", path);\n  }\n\n  @Test\n  public void testGetPath_stackSize1_object_withName() throws Exception {\n    setStackSize(1);\n    setStackAt(0, JsonReader.PEEKED_BEGIN_OBJECT);\n    setPathIndicesAt(0, 0);\n    setPathNamesAt(0, \"foo\");\n\n    String path = invokeGetPath(false);\n    assertEquals(\"$.foo\", path);\n  }\n\n  @Test\n  public void testGetPath_stackSize2_mixed() throws Exception {\n    setStackSize(2);\n    // First element is array\n    setStackAt(0, JsonReader.PEEKED_BEGIN_ARRAY);\n    setPathIndicesAt(0, 3);\n    setPathNamesAt(0, null);\n    // Second element is object\n    setStackAt(1, JsonReader.PEEKED_BEGIN_OBJECT);\n    setPathIndicesAt(1, 0);\n    setPathNamesAt(1, \"bar\");\n\n    String path = invokeGetPath(false);\n    // Should be $[3].bar\n    assertEquals(\"$[3].bar\", path);\n  }\n\n  @Test\n  public void testGetPath_withUsePreviousPath_true() throws Exception {\n    setStackSize(2);\n    setStackAt(0, JsonReader.PEEKED_BEGIN_ARRAY);\n    setPathIndicesAt(0, 1);\n    setPathNamesAt(0, null);\n    setStackAt(1, JsonReader.PEEKED_BEGIN_OBJECT);\n    setPathIndicesAt(1, 2);\n    setPathNamesAt(1, \"baz\");\n\n    String path = invokeGetPath(true);\n    // usePreviousPath true, so index is decremented by 1 for arrays\n    // For stack[0] index 1 -> 0\n    // For stack[1] index 2 -> 1\n    assertEquals(\"$[0].baz\", path);\n  }\n\n  @Test\n  public void testGetPath_withUsePreviousPath_true_andIndexZero() throws Exception {\n    setStackSize(1);\n    setStackAt(0, JsonReader.PEEKED_BEGIN_ARRAY);\n    setPathIndicesAt(0, 0);\n    setPathNamesAt(0, null);\n\n    String path = invokeGetPath(true);\n    // index 0 decremented by 1 -> -1, so path should be $[-1]\n    assertEquals(\"$[-1]\", path);\n  }\n\n  // Helpers to access private fields and methods\n\n  private String invokeGetPath(boolean usePreviousPath) throws Exception {\n    Method method = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    method.setAccessible(true);\n    return (String) method.invoke(jsonReader, usePreviousPath);\n  }\n\n  private void setStackSize(int size) throws Exception {\n    java.lang.reflect.Field stackSizeField = JsonReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonReader, size);\n  }\n\n  private void setStackAt(int index, int value) throws Exception {\n    java.lang.reflect.Field stackField = JsonReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(jsonReader);\n    stack[index] = value;\n  }\n\n  private void setPathIndicesAt(int index, int value) throws Exception {\n    java.lang.reflect.Field pathIndicesField = JsonReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonReader);\n    pathIndices[index] = value;\n  }\n\n  private void setPathNamesAt(int index, String value) throws Exception {\n    java.lang.reflect.Field pathNamesField = JsonReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonReader);\n    pathNames[index] = value;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887067,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1148,
+    "prompt_tokens": 997,
+    "total_tokens": 2145,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.01
+  }
+}

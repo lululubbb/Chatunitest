@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlkt9LynyoWeoZasK6ANd43PhHua",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.*;\nimport com.google.gson.internal.Excluder;\nimport com.google.gson.internal.bind.JsonAdapterAnnotationTypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\n\npublic class GsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testDefaultConstructorCreatesNonNullGson() {\n    assertNotNull(gson);\n    // Check default values via reflection\n    try {\n      Field excluderField = Gson.class.getDeclaredField(\"excluder\");\n      excluderField.setAccessible(true);\n      Excluder excluder = (Excluder) excluderField.get(gson);\n      assertNotNull(excluder);\n\n      Field serializeNullsField = Gson.class.getDeclaredField(\"serializeNulls\");\n      serializeNullsField.setAccessible(true);\n      boolean serializeNulls = serializeNullsField.getBoolean(gson);\n      assertFalse(serializeNulls);\n\n      Field htmlSafeField = Gson.class.getDeclaredField(\"htmlSafe\");\n      htmlSafeField.setAccessible(true);\n      boolean htmlSafe = htmlSafeField.getBoolean(gson);\n      assertTrue(htmlSafe);\n\n      Field prettyPrintingField = Gson.class.getDeclaredField(\"prettyPrinting\");\n      prettyPrintingField.setAccessible(true);\n      boolean prettyPrinting = prettyPrintingField.getBoolean(gson);\n      assertFalse(prettyPrinting);\n\n      Field lenientField = Gson.class.getDeclaredField(\"lenient\");\n      lenientField.setAccessible(true);\n      boolean lenient = lenientField.getBoolean(gson);\n      assertFalse(lenient);\n\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failure: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  public void testGsonConstructorWithAllParameters() throws Exception {\n    Excluder excluder = Excluder.DEFAULT;\n    FieldNamingStrategy fieldNamingStrategy = FieldNamingPolicy.IDENTITY;\n    var instanceCreators = Collections.<Type, InstanceCreator<?>>emptyMap();\n    boolean serializeNulls = true;\n    boolean complexMapKeySerialization = true;\n    boolean generateNonExecutableGson = true;\n    boolean htmlSafe = false;\n    boolean prettyPrinting = true;\n    boolean lenient = true;\n    boolean serializeSpecialFloatingPointValues = true;\n    boolean useJdkUnsafe = false;\n    LongSerializationPolicy longSerializationPolicy = LongSerializationPolicy.DEFAULT;\n    String datePattern = \"yyyy-MM-dd\";\n    int dateStyle = DateFormat.SHORT;\n    int timeStyle = DateFormat.LONG;\n    var builderFactories = Collections.<TypeAdapterFactory>emptyList();\n    var builderHierarchyFactories = Collections.<TypeAdapterFactory>emptyList();\n    var factoriesToBeAdded = Collections.<TypeAdapterFactory>emptyList();\n    ToNumberStrategy objectToNumberStrategy = ToNumberPolicy.DOUBLE;\n    ToNumberStrategy numberToNumberStrategy = ToNumberPolicy.LONG_OR_DOUBLE;\n    var reflectionFilters = Collections.<ReflectionAccessFilter>emptyList();\n\n    Constructor<Gson> constructor = Gson.class.getDeclaredConstructor(\n        Excluder.class,\n        FieldNamingStrategy.class,\n        Map.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        LongSerializationPolicy.class,\n        String.class,\n        int.class,\n        int.class,\n        List.class,\n        List.class,\n        List.class,\n        ToNumberStrategy.class,\n        ToNumberStrategy.class,\n        List.class\n    );\n    constructor.setAccessible(true);\n    Gson customGson = constructor.newInstance(\n        excluder,\n        fieldNamingStrategy,\n        instanceCreators,\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableGson,\n        htmlSafe,\n        prettyPrinting,\n        lenient,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        builderFactories,\n        builderHierarchyFactories,\n        factoriesToBeAdded,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        reflectionFilters\n    );\n\n    assertNotNull(customGson);\n\n    // Validate some fields via reflection\n    Field serializeNullsField = Gson.class.getDeclaredField(\"serializeNulls\");\n    serializeNullsField.setAccessible(true);\n    assertTrue(serializeNullsField.getBoolean(customGson));\n\n    Field htmlSafeField = Gson.class.getDeclaredField(\"htmlSafe\");\n    htmlSafeField.setAccessible(true);\n    assertFalse(htmlSafeField.getBoolean(customGson));\n\n    Field prettyPrintingField = Gson.class.getDeclaredField(\"prettyPrinting\");\n    prettyPrintingField.setAccessible(true);\n    assertTrue(prettyPrintingField.getBoolean(customGson));\n\n    Field lenientField = Gson.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    assertTrue(lenientField.getBoolean(customGson));\n\n    Field datePatternField = Gson.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n    assertEquals(datePattern, datePatternField.get(customGson));\n  }\n\n  @Test\n  public void testToStringContainsClassName() {\n    String str = gson.toString();\n    assertNotNull(str);\n    assertTrue(str.contains(\"Gson\"));\n  }\n\n  @Test\n  public void testGetAdapterReturnsTypeAdapter() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    TypeAdapter<String> adapter = gson.getAdapter(stringTypeToken);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  public void testGetAdapterWithClassReturnsTypeAdapter() {\n    TypeAdapter<String> adapter = gson.getAdapter(String.class);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  public void testGetDelegateAdapterReturnsTypeAdapter() {\n    TypeAdapterFactory mockFactory = mock(TypeAdapterFactory.class);\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    TypeAdapter<String> adapter = gson.getDelegateAdapter(mockFactory, stringTypeToken);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  public void testNewBuilderReturnsGsonBuilder() {\n    GsonBuilder builder = gson.newBuilder();\n    assertNotNull(builder);\n  }\n\n  @Test\n  public void testExcluderAndFieldNamingStrategyAccess() {\n    Excluder excluder = gson.excluder();\n    assertNotNull(excluder);\n    FieldNamingStrategy strategy = gson.fieldNamingStrategy();\n    assertNotNull(strategy);\n  }\n\n  @Test\n  public void testSerializeNullsAndHtmlSafe() {\n    assertFalse(gson.serializeNulls());\n    assertTrue(gson.htmlSafe());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884303,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1440,
+    "prompt_tokens": 1725,
+    "total_tokens": 3165,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.69
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class GsonBuilderTest {\n\n  @Test\n  public void testDisableHtmlEscaping() throws Exception {\n    GsonBuilder builder = new GsonBuilder();\n\n    // Initially escapeHtmlChars should be true (DEFAULT_ESCAPE_HTML)\n    Field escapeHtmlCharsField = GsonBuilder.class.getDeclaredField(\"escapeHtmlChars\");\n    escapeHtmlCharsField.setAccessible(true);\n    boolean initialValue = (boolean) escapeHtmlCharsField.get(builder);\n    assertTrue(initialValue, \"escapeHtmlChars should be true by default\");\n\n    // Call disableHtmlEscaping and check returned instance is same\n    GsonBuilder returned = builder.disableHtmlEscaping();\n    assertSame(builder, returned, \"disableHtmlEscaping should return this\");\n\n    // Check escapeHtmlChars is now false\n    boolean afterValue = (boolean) escapeHtmlCharsField.get(builder);\n    assertFalse(afterValue, \"escapeHtmlChars should be false after disableHtmlEscaping\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1066,
+  "completion_tokens": 222,
+  "total_tokens": 1288,
+  "llm_elapsed_time_seconds": 3.74
+}

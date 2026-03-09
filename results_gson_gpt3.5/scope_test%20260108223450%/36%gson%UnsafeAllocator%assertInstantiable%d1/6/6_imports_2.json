@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectStreamClass;\nimport java.lang.reflect.Field;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.fail;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void testAssertInstantiable_withInstantiableClass() throws Exception {\n    Method method = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    method.setAccessible(true);\n\n    // Using a known instantiable class (e.g., String)\n    try {\n      method.invoke(null, String.class);\n    } catch (InvocationTargetException e) {\n      // If the method throws, unwrap and fail\n      fail(\"assertInstantiable threw an exception for instantiable class: \" + e.getCause());\n    }\n  }\n\n  @Test\n  void testAssertInstantiable_withNonInstantiableClass() throws Exception {\n    Method method = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    method.setAccessible(true);\n\n    // Use an interface, which is non-instantiable and should cause checkInstantiable() to return a message.\n    Class<?> nonInstantiable = Runnable.class;\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class,\n        () -> method.invoke(null, nonInstantiable),\n        \"Expected assertInstantiable to throw InvocationTargetException wrapping AssertionError for non-instantiable class\");\n\n    Throwable cause = thrown.getCause();\n    if (!(cause instanceof AssertionError)) {\n      fail(\"Expected AssertionError but got \" + cause);\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1296,
+  "completion_tokens": 338,
+  "total_tokens": 1634,
+  "llm_elapsed_time_seconds": 8.05,
+  "repair_elapsed_time_seconds": 12.75,
+  "round_total_time_seconds": 12.75
+}

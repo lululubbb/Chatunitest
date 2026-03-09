@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn8d8mhUkpGDzz6kJMKeEhKb0JBa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\nclass GsonGetDelegateAdapterTest {\n\n  private Gson gson;\n  private TypeAdapterFactory skipPastFactory;\n  private TypeAdapterFactory otherFactory1;\n  private TypeAdapterFactory otherFactory2;\n  private TypeToken<String> typeToken;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    gson = new Gson();\n\n    // Prepare mocks\n    skipPastFactory = mock(TypeAdapterFactory.class);\n    otherFactory1 = mock(TypeAdapterFactory.class);\n    otherFactory2 = mock(TypeAdapterFactory.class);\n\n    typeToken = TypeToken.get(String.class);\n\n    // Use reflection to set the private final field 'factories'\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n\n    // Create a list of factories including skipPastFactory and others\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(otherFactory1);\n    factories.add(skipPastFactory);\n    factories.add(otherFactory2);\n\n    factoriesField.set(gson, factories);\n\n    // Also set jsonAdapterFactory to a mock for the test where skipPast not contained\n    Field jsonAdapterFactoryField = Gson.class.getDeclaredField(\"jsonAdapterFactory\");\n    jsonAdapterFactoryField.setAccessible(true);\n    TypeAdapterFactory jsonAdapterFactory = mock(TypeAdapterFactory.class);\n    jsonAdapterFactoryField.set(gson, jsonAdapterFactory);\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastNotInFactories_usesJsonAdapterFactory() throws Exception {\n    // Arrange\n    TypeAdapterFactory notInFactories = mock(TypeAdapterFactory.class);\n    TypeAdapter<String> expectedAdapter = mock(TypeAdapter.class);\n\n    // jsonAdapterFactory is mock set in setUp\n    Field jsonAdapterFactoryField = Gson.class.getDeclaredField(\"jsonAdapterFactory\");\n    jsonAdapterFactoryField.setAccessible(true);\n    TypeAdapterFactory jsonAdapterFactory = (TypeAdapterFactory) jsonAdapterFactoryField.get(gson);\n    when(jsonAdapterFactory.create(eq(gson), eq(typeToken))).thenReturn(expectedAdapter);\n\n    // Act\n    TypeAdapter<String> adapter = gson.getDelegateAdapter(notInFactories, typeToken);\n\n    // Assert\n    assertSame(expectedAdapter, adapter);\n\n    // Verify that create was called on jsonAdapterFactory and not on others after skipPast\n    verify(jsonAdapterFactory).create(eq(gson), eq(typeToken));\n    verifyNoMoreInteractions(otherFactory1, skipPastFactory, otherFactory2);\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastInFactories_returnsFirstNonNullAdapterAfterSkipPast() {\n    // Arrange\n    TypeAdapter<String> nullAdapter = null;\n    TypeAdapter<String> expectedAdapter = mock(TypeAdapter.class);\n\n    // Configure factories:\n    // otherFactory1.create returns null\n    when(otherFactory1.create(eq(gson), eq(typeToken))).thenReturn(nullAdapter);\n    // skipPastFactory.create returns null (should not be called)\n    // otherFactory2.create returns expectedAdapter\n    when(otherFactory2.create(eq(gson), eq(typeToken))).thenReturn(expectedAdapter);\n\n    // Act\n    TypeAdapter<String> adapter = gson.getDelegateAdapter(skipPastFactory, typeToken);\n\n    // Assert\n    assertSame(expectedAdapter, adapter);\n\n    // Verify call order and calls\n    verify(otherFactory1).create(eq(gson), eq(typeToken));\n    verify(otherFactory2).create(eq(gson), eq(typeToken));\n    verify(skipPastFactory, never()).create(any(), any());\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastInFactories_noNonNullAdapter_throws() {\n    // Arrange\n    // All factories after skipPast return null\n    when(otherFactory2.create(eq(gson), eq(typeToken))).thenReturn(null);\n    when(otherFactory1.create(eq(gson), eq(typeToken))).thenReturn(null);\n\n    // Act & Assert\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {\n      gson.getDelegateAdapter(skipPastFactory, typeToken);\n    });\n    assertTrue(ex.getMessage().contains(\"GSON cannot serialize\"));\n    assertTrue(ex.getMessage().contains(typeToken.toString()));\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastIsLastFactory_throws() {\n    // Arrange\n    // Set factories list so skipPast is last element\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(otherFactory1);\n    factories.add(otherFactory2);\n    factories.add(skipPastFactory);\n    try {\n      Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n      factoriesField.setAccessible(true);\n      factoriesField.set(gson, factories);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    // Act & Assert\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {\n      gson.getDelegateAdapter(skipPastFactory, typeToken);\n    });\n    assertTrue(ex.getMessage().contains(\"GSON cannot serialize\"));\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastFactoryNullInList_ignoresNullsAndContinues() {\n    // Arrange\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(otherFactory1);\n    factories.add(null); // null factory\n    factories.add(skipPastFactory);\n    factories.add(otherFactory2);\n\n    try {\n      Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n      factoriesField.setAccessible(true);\n      factoriesField.set(gson, factories);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    TypeAdapter<String> expectedAdapter = mock(TypeAdapter.class);\n    when(otherFactory2.create(eq(gson), eq(typeToken))).thenReturn(expectedAdapter);\n    when(otherFactory1.create(eq(gson), eq(typeToken))).thenReturn(null);\n\n    // Act\n    TypeAdapter<String> adapter = gson.getDelegateAdapter(skipPastFactory, typeToken);\n\n    // Assert\n    assertSame(expectedAdapter, adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889619,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1303,
+    "prompt_tokens": 2790,
+    "total_tokens": 4093,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.62
+  }
+}

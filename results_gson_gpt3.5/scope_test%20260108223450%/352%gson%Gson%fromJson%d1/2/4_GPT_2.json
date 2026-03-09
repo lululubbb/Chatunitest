@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm3ouMgc1NBaVEU2mtytfWw0X0rI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testFromJson_withJsonElementAndClass_returnsCorrectInstance() {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<String> classOfT = String.class;\n\n    // Mock static methods of TypeToken and Primitives\n    try (MockedStatic<TypeToken> typeTokenStatic = Mockito.mockStatic(TypeToken.class);\n         MockedStatic<Primitives> primitivesStatic = Mockito.mockStatic(Primitives.class)) {\n\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n      typeTokenStatic.when(() -> TypeToken.get(classOfT)).thenReturn(typeToken);\n\n      String expectedObject = \"testString\";\n\n      // Spy on gson to mock fromJson(JsonElement, TypeToken<T>)\n      Gson spyGson = Mockito.spy(gson);\n      doReturn(expectedObject).when(spyGson).fromJson(jsonElement, typeToken);\n\n      primitivesStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(classOfT);\n\n      // Act\n      String result = spyGson.fromJson(jsonElement, classOfT);\n\n      // Assert\n      assertEquals(expectedObject, result);\n      verify(spyGson).fromJson(jsonElement, typeToken);\n      primitivesStatic.verify(() -> Primitives.wrap(classOfT));\n    }\n  }\n\n  @Test\n  public void testFromJson_withNullJsonElement_returnsNull() {\n    // Arrange\n    JsonElement jsonElement = null;\n    Class<String> classOfT = String.class;\n\n    try (MockedStatic<TypeToken> typeTokenStatic = Mockito.mockStatic(TypeToken.class);\n         MockedStatic<Primitives> primitivesStatic = Mockito.mockStatic(Primitives.class)) {\n\n      TypeToken<String> typeToken = TypeToken.get(classOfT);\n      typeTokenStatic.when(() -> TypeToken.get(classOfT)).thenReturn(typeToken);\n\n      Gson spyGson = Mockito.spy(gson);\n      doReturn(null).when(spyGson).fromJson(jsonElement, typeToken);\n\n      primitivesStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(classOfT);\n\n      // Act\n      String result = spyGson.fromJson(jsonElement, classOfT);\n\n      // Assert\n      assertNull(result);\n      verify(spyGson).fromJson(jsonElement, typeToken);\n      primitivesStatic.verify(() -> Primitives.wrap(classOfT));\n    }\n  }\n\n  @Test\n  public void testFromJson_withPrimitiveClass_returnsCorrectInstance() {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Class<Integer> classOfT = int.class;\n\n    try (MockedStatic<TypeToken> typeTokenStatic = Mockito.mockStatic(TypeToken.class);\n         MockedStatic<Primitives> primitivesStatic = Mockito.mockStatic(Primitives.class)) {\n\n      TypeToken<Integer> typeToken = TypeToken.get(classOfT);\n      typeTokenStatic.when(() -> TypeToken.get(classOfT)).thenReturn(typeToken);\n\n      Integer expectedObject = 123;\n\n      Gson spyGson = Mockito.spy(gson);\n      doReturn(expectedObject).when(spyGson).fromJson(jsonElement, typeToken);\n\n      // Primitives.wrap should return Integer.class for int.class\n      primitivesStatic.when(() -> Primitives.wrap(classOfT)).thenReturn(Integer.class);\n\n      // Act\n      Integer result = spyGson.fromJson(jsonElement, classOfT);\n\n      // Assert\n      assertEquals(expectedObject, result);\n      verify(spyGson).fromJson(jsonElement, typeToken);\n      primitivesStatic.verify(() -> Primitives.wrap(classOfT));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885476,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 840,
+    "prompt_tokens": 2132,
+    "total_tokens": 2972,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.91
+  }
+}

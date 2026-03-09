@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmv6sXYZIvjHX3Tnj4cvfAbCumlo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n\n    @BeforeEach\n    public void setUp() {\n        jsonTreeWriter = new JsonTreeWriter();\n    }\n\n    @Test\n    public void close_whenStackIsEmpty_addsSentinelClosed() throws Exception {\n        // Initially stack is empty, call close should add SENTINEL_CLOSED\n\n        jsonTreeWriter.close();\n\n        // Access private field stack via reflection\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<?> stack = (List<?>) stackField.get(jsonTreeWriter);\n\n        // Access SENTINEL_CLOSED static field via reflection\n        Field sentinelField = JsonTreeWriter.class.getDeclaredField(\"SENTINEL_CLOSED\");\n        sentinelField.setAccessible(true);\n        JsonPrimitive sentinelClosed = (JsonPrimitive) sentinelField.get(null);\n\n        assertEquals(1, stack.size());\n        assertSame(sentinelClosed, stack.get(0));\n    }\n\n    @Test\n    public void close_whenStackIsNotEmpty_throwsIOException() throws Exception {\n        // Access private field stack and add an element\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<Object> stack = (List<Object>) stackField.get(jsonTreeWriter);\n        stack.add(new JsonPrimitive(\"not empty\"));\n\n        IOException thrown = assertThrows(IOException.class, () -> jsonTreeWriter.close());\n        assertEquals(\"Incomplete document\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888780,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 399,
+    "prompt_tokens": 530,
+    "total_tokens": 929,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.41
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxasD6NZNujevjC2jF3dxyEmYHGF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileInputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private File file;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        file = mock(File.class);\n        charset = Charset.defaultCharset();\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParse_file_success() throws Exception {\n        // Since Mockito 3 does not support mockConstruction, avoid mocking FileInputStream/InputStreamReader construction.\n        // Instead, spy or mock the CSVParser constructor or use a real file with a temporary file if needed.\n        // Here we just test parse with a mocked file and format, assuming no real IO.\n\n        // We create a stub CSVParser to return when constructor is called via spy or partial mock\n        // But since CSVParser.parse(File, Charset, CSVFormat) is static and creates new CSVParser internally,\n        // we cannot mock constructor easily with Mockito 3.\n        // So test just the method call with a real file (mock returns a path to an existing file)\n        // Instead, create a temporary file with minimal content:\n\n        java.nio.file.Path tempFile = java.nio.file.Files.createTempFile(\"test\", \".csv\");\n        java.nio.file.Files.write(tempFile, \"header1,header2\\nvalue1,value2\\n\".getBytes(charset));\n\n        File realFile = tempFile.toFile();\n\n        CSVFormat realFormat = CSVFormat.DEFAULT.withHeader();\n\n        CSVParser parser = CSVParser.parse(realFile, charset, realFormat);\n        assertNotNull(parser);\n        // headerMap depends on format initialization\n        assertNotNull(parser.getHeaderMap());\n\n        parser.close();\n\n        java.nio.file.Files.deleteIfExists(tempFile);\n    }\n\n    @Test\n    void testParse_file_nullFile() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse((File)null, charset, format));\n        assertEquals(\"file\", ex.getMessage());\n    }\n\n    @Test\n    void testParse_file_nullFormat() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(file, charset, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testParse_file_nullCharset() {\n        // Charset can be null? The method does not check null for charset explicitly, so it may NPE internally\n        assertThrows(NullPointerException.class, () -> CSVParser.parse(file, null, format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691482,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 584,
+    "prompt_tokens": 1548,
+    "total_tokens": 2132,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.37
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8NtDNpflkaGFDSAU943nEHs0kDH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private URL mockUrl;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockUrl = mock(URL.class);\n        // Removed mockInputStream since not used directly here\n        when(mockUrl.openStream()).thenReturn(null);\n    }\n\n    @Test\n    void testParse_NullUrl() {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVFormat format = mock(CSVFormat.class);\n\n        NullPointerException npe = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(null, charset, format);\n        });\n        assertEquals(\"url\", npe.getMessage());\n    }\n\n    @Test\n    void testParse_NullCharset() throws IOException {\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Instead of mocking Assertions.notNull, just call parse with null charset and expect NPE\n        NullPointerException npe = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, null, format);\n        });\n        assertEquals(\"charset\", npe.getMessage());\n    }\n\n    @Test\n    void testParse_NullFormat() {\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        NullPointerException npe = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, null);\n        });\n        assertEquals(\"format\", npe.getMessage());\n    }\n\n    @Test\n    void testParse_ValidInputs() throws IOException {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVFormat format = mock(CSVFormat.class);\n\n        // We must mock openStream to return a non-null InputStream to avoid NPE in CSVParser constructor\n        when(mockUrl.openStream()).thenReturn(this.getClass().getResourceAsStream(\"/test.csv\"));\n        // If /test.csv does not exist, fallback to ByteArrayInputStream\n        if (mockUrl.openStream() == null) {\n            when(mockUrl.openStream()).thenReturn(new java.io.ByteArrayInputStream(\"a,b\\n1,2\".getBytes(charset)));\n        }\n\n        CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n\n        assertNotNull(parser);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767971289,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 512,
+    "prompt_tokens": 1115,
+    "total_tokens": 1627,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.43
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlq6glMzHjE5pNxHTA5nIPkA2Acz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsAndroidType_withAndroidClassName() throws Exception {\n    // Use reflection to invoke private static boolean isAndroidType(String className)\n    Method isAndroidTypeStringMethod = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    isAndroidTypeStringMethod.setAccessible(true);\n\n    // Android class name example: \"android.app.Activity\"\n    boolean result = (boolean) isAndroidTypeStringMethod.invoke(null, \"android.app.Activity\");\n    assertTrue(result);\n\n    // Android class name with prefix \"android.\" should return true\n    assertTrue((boolean) isAndroidTypeStringMethod.invoke(null, \"android.something.ClassName\"));\n\n    // Non-Android class names should return false\n    assertFalse((boolean) isAndroidTypeStringMethod.invoke(null, \"java.lang.String\"));\n    assertFalse((boolean) isAndroidTypeStringMethod.invoke(null, \"javax.swing.JButton\"));\n    assertFalse((boolean) isAndroidTypeStringMethod.invoke(null, \"com.google.gson.internal.ReflectionAccessFilterHelper\"));\n    assertFalse((boolean) isAndroidTypeStringMethod.invoke(null, \"\"));\n    assertFalse((boolean) isAndroidTypeStringMethod.invoke(null, \"androidx.appcompat.widget.AppCompatButton\")); // androidx is not android prefix\n  }\n\n  @Test\n  void testIsAndroidType_withClass() {\n    // Public API method: isAndroidType(Class<?> c)\n    // Class with android prefix in name\n    Class<?> androidClass = android.app.Activity.class;\n    assertTrue(ReflectionAccessFilterHelper.isAndroidType(androidClass));\n\n    // Class without android prefix in name\n    assertFalse(ReflectionAccessFilterHelper.isAndroidType(String.class));\n\n    // Anonymous class with android prefix in name\n    Class<?> anonAndroidClass = new Object() {\n      public String getName() {\n        return \"android.fake.Class\";\n      }\n    }.getClass();\n    // But getName() returns the real class name, so this won't be android prefix\n    // So test with a custom class with android prefix in name\n    class android_fake_Class {}\n    // This class's name will not start with \"android.\" but with package name or default package\n    // So just test normal cases\n\n    // null class - should throw NullPointerException\n    assertThrows(NullPointerException.class, () -> ReflectionAccessFilterHelper.isAndroidType(null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884626,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 548,
+    "prompt_tokens": 310,
+    "total_tokens": 858,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.77
+  }
+}

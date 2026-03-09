@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOZEAucA4p10bwSlXf8815kzuyQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testGetHeaderWhenHeaderIsNull() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to set private header field to null\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(csvFormat, null);\n\n        String[] header = csvFormat.getHeader();\n        assertNull(header, \"Header should be null when header field is null\");\n    }\n\n    @Test\n    public void testGetHeaderWhenHeaderIsNonNull() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n\n        String[] originalHeader = new String[] {\"col1\", \"col2\", \"col3\"};\n\n        // Use reflection to set private header field to originalHeader\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(csvFormat, originalHeader);\n\n        String[] returnedHeader = csvFormat.getHeader();\n\n        // Returned header should be a clone, not the same reference\n        assertNotNull(returnedHeader, \"Header should not be null when header field is set\");\n        assertArrayEquals(originalHeader, returnedHeader, \"Returned header should equal original header\");\n        assertNotSame(originalHeader, returnedHeader, \"Returned header should be a clone, not the same reference\");\n\n        // Modify returnedHeader and verify originalHeader is unchanged\n        returnedHeader[0] = \"modified\";\n        assertNotEquals(originalHeader[0], returnedHeader[0], \"Original header should not be affected by changes to returned header\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551775,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 371,
+    "prompt_tokens": 1139,
+    "total_tokens": 1510,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.92
+  }
+}

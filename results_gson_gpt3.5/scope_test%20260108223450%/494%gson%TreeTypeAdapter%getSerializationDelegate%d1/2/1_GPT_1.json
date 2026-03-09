@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmuX5VuRPyatW28udvBXLHB4xg9T",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSerializer;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class TreeTypeAdapterTest {\n\n  private TreeTypeAdapter<String> treeTypeAdapterWithSerializer;\n  private TreeTypeAdapter<String> treeTypeAdapterWithoutSerializer;\n  private JsonSerializer<String> serializerMock;\n  private Gson gsonMock;\n  private TypeToken<String> typeToken;\n  private TypeAdapterFactory skipPastMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    serializerMock = mock(JsonSerializer.class);\n    gsonMock = mock(Gson.class);\n    typeToken = TypeToken.get(String.class);\n    skipPastMock = mock(TypeAdapterFactory.class);\n\n    // Instance with non-null serializer\n    treeTypeAdapterWithSerializer = new TreeTypeAdapter<>(serializerMock, null, gsonMock, typeToken, skipPastMock, true);\n\n    // Instance with null serializer, so getSerializationDelegate calls delegate()\n    treeTypeAdapterWithoutSerializer = new TreeTypeAdapter<>(null, null, gsonMock, typeToken, skipPastMock, true);\n\n    // For treeTypeAdapterWithoutSerializer, we need to set delegate field to a mock TypeAdapter to avoid null pointer\n    TypeAdapter<String> delegateMock = mock(TypeAdapter.class);\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(treeTypeAdapterWithoutSerializer, delegateMock);\n  }\n\n  @Test\n  public void testGetSerializationDelegate_withSerializer_returnsThis() throws Exception {\n    Method method = TreeTypeAdapter.class.getDeclaredMethod(\"getSerializationDelegate\");\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> result = (TypeAdapter<String>) method.invoke(treeTypeAdapterWithSerializer);\n    assertSame(treeTypeAdapterWithSerializer, result);\n  }\n\n  @Test\n  public void testGetSerializationDelegate_withoutSerializer_returnsDelegate() throws Exception {\n    Method method = TreeTypeAdapter.class.getDeclaredMethod(\"getSerializationDelegate\");\n    method.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> result = (TypeAdapter<String>) method.invoke(treeTypeAdapterWithoutSerializer);\n\n    Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> delegateValue = (TypeAdapter<String>) delegateField.get(treeTypeAdapterWithoutSerializer);\n\n    assertSame(delegateValue, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888745,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 571,
+    "prompt_tokens": 547,
+    "total_tokens": 1118,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.23
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZEaLBTPtctGLwrSPr1nV3I3sRxT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private Method toStringArrayMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        csvFormat = CSVFormat.DEFAULT;\n        toStringArrayMethod = CSVFormat.class.getDeclaredMethod(\"toStringArray\", Object[].class);\n        toStringArrayMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testToStringArray_NullInput() throws IllegalAccessException, InvocationTargetException {\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { null });\n        assertNull(result);\n    }\n\n    @Test\n    public void testToStringArray_EmptyArray() throws IllegalAccessException, InvocationTargetException {\n        Object[] input = new Object[0];\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertNotNull(result);\n        assertEquals(0, result.length);\n    }\n\n    @Test\n    public void testToStringArray_AllNonNullObjects() throws IllegalAccessException, InvocationTargetException {\n        Object[] input = new Object[] { \"abc\", 123, 45.6, true };\n        String[] expected = new String[] { \"abc\", \"123\", \"45.6\", \"true\" };\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertArrayEquals(expected, result);\n    }\n\n    @Test\n    public void testToStringArray_NullElements() throws IllegalAccessException, InvocationTargetException {\n        Object[] input = new Object[] { null, \"text\", null, 5 };\n        String[] expected = new String[] { null, \"text\", null, \"5\" };\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertArrayEquals(expected, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551156,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 460,
+    "prompt_tokens": 1743,
+    "total_tokens": 2203,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.95
+  }
+}

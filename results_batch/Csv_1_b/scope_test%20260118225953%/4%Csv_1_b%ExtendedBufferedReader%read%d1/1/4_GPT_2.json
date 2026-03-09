@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOYYVCKTwvtKNco3LrJ04auDQi09",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader extendedBufferedReader;\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadLengthZeroReturnsZero() throws IOException {\n        char[] buf = new char[10];\n        int result = extendedBufferedReader.read(buf, 0, 0);\n        assertEquals(0, result);\n    }\n\n    @Test\n    void testReadReturnsMinusOneSetsLastCharToEndOfStream() throws Exception {\n        char[] buf = new char[10];\n\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        // Mock the super.read call by mocking the internal 'read' method of the BufferedReader\n        // Since we cannot mock super.read directly, we mock the underlying Reader's read method instead.\n        // Prepare a spy on the underlying Reader\n        Reader underlyingReader = getPrivateField(spyReader, \"in\");\n        Reader spyUnderlyingReader = Mockito.spy(underlyingReader);\n        setPrivateField(spyReader, \"in\", spyUnderlyingReader);\n\n        // When spyUnderlyingReader.read(char[], int, int) called, return -1 to simulate EOF\n        doReturn(-1).when(spyUnderlyingReader).read(buf, 0, 10);\n\n        int result = spyReader.read(buf, 0, 10);\n        assertEquals(-1, result);\n\n        int lastChar = (int) getPrivateField(spyReader, \"lastChar\");\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n    }\n\n    @Test\n    void testReadProcessesBufferWithNewlinesAndCarriageReturns() throws Exception {\n        char[] buf = new char[] {'a', '\\n', 'b', '\\r', 'c', '\\n', '\\r', 'd'};\n        int offset = 0;\n        int length = buf.length;\n\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        Reader underlyingReader = getPrivateField(spyReader, \"in\");\n        Reader spyUnderlyingReader = Mockito.spy(underlyingReader);\n        setPrivateField(spyReader, \"in\", spyUnderlyingReader);\n\n        // When spyUnderlyingReader.read(char[], int, int) called, copy buf content into argument and return length\n        doAnswer(invocation -> {\n            char[] targetBuf = invocation.getArgument(0);\n            int off = invocation.getArgument(1);\n            int len = invocation.getArgument(2);\n            System.arraycopy(buf, 0, targetBuf, off, length);\n            return length;\n        }).when(spyUnderlyingReader).read(any(char[].class), anyInt(), anyInt());\n\n        setPrivateField(spyReader, \"lastChar\", ExtendedBufferedReader.UNDEFINED);\n        setPrivateField(spyReader, \"lineCounter\", 0);\n\n        int result = spyReader.read(new char[length], offset, length);\n\n        // We call read with a new buffer, so to test properly, we need to pass buf directly to read\n        // So change to:\n        result = spyReader.read(buf, offset, length);\n\n        assertEquals(length, result);\n\n        int lineCounter = (int) getPrivateField(spyReader, \"lineCounter\");\n        assertEquals(4, lineCounter);\n\n        int lastChar = (int) getPrivateField(spyReader, \"lastChar\");\n        assertEquals('d', lastChar);\n    }\n\n    @Test\n    void testReadProcessesNewlineAfterCarriageReturnDoesNotIncrementLineCounter() throws Exception {\n        char[] buf = new char[] {'\\r', '\\n'};\n        int offset = 0;\n        int length = buf.length;\n\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        Reader underlyingReader = getPrivateField(spyReader, \"in\");\n        Reader spyUnderlyingReader = Mockito.spy(underlyingReader);\n        setPrivateField(spyReader, \"in\", spyUnderlyingReader);\n\n        doAnswer(invocation -> {\n            char[] targetBuf = invocation.getArgument(0);\n            int off = invocation.getArgument(1);\n            int len = invocation.getArgument(2);\n            System.arraycopy(buf, 0, targetBuf, off, length);\n            return length;\n        }).when(spyUnderlyingReader).read(any(char[].class), anyInt(), anyInt());\n\n        setPrivateField(spyReader, \"lastChar\", ExtendedBufferedReader.UNDEFINED);\n        setPrivateField(spyReader, \"lineCounter\", 0);\n\n        int result = spyReader.read(buf, offset, length);\n        assertEquals(length, result);\n\n        int lineCounter = (int) getPrivateField(spyReader, \"lineCounter\");\n        assertEquals(1, lineCounter);\n\n        int lastChar = (int) getPrivateField(spyReader, \"lastChar\");\n        assertEquals('\\n', lastChar);\n    }\n\n    /*\n     * Helper methods to access private fields\n     */\n\n    private <T> T getPrivateField(Object instance, String fieldName) throws Exception {\n        java.lang.reflect.Field field = null;\n        Class<?> clazz = instance.getClass();\n        while (clazz != null) {\n            try {\n                field = clazz.getDeclaredField(fieldName);\n                break;\n            } catch (NoSuchFieldException e) {\n                clazz = clazz.getSuperclass();\n            }\n        }\n        if (field == null) {\n            throw new NoSuchFieldException(fieldName);\n        }\n        field.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        T value = (T) field.get(instance);\n        return value;\n    }\n\n    private void setPrivateField(Object instance, String fieldName, Object value) throws Exception {\n        java.lang.reflect.Field field = null;\n        Class<?> clazz = instance.getClass();\n        while (clazz != null) {\n            try {\n                field = clazz.getDeclaredField(fieldName);\n                break;\n            } catch (NoSuchFieldException e) {\n                clazz = clazz.getSuperclass();\n            }\n        }\n        if (field == null) {\n            throw new NoSuchFieldException(fieldName);\n        }\n        field.setAccessible(true);\n        field.set(instance, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748438,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1347,
+    "prompt_tokens": 1660,
+    "total_tokens": 3007,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.11
+  }
+}

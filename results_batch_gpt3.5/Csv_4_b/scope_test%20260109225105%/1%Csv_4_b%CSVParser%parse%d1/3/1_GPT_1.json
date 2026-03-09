@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw87PIbcrYUn4BFSRBJGDh0ZarZ8Q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.IOException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\npublic class CSVParserTest {\n\n    private CSVFormat format;\n\n    @BeforeEach\n    public void setUp() {\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    public void testParse_withValidFile_returnsCSVParser() throws Exception {\n        File mockFile = mock(File.class);\n        // Mock FileReader construction to avoid actual file IO\n        try (MockedConstruction<FileReader> mocked = Mockito.mockConstruction(FileReader.class)) {\n            CSVParser parser = CSVParser.parse(mockFile, format);\n            assertNotNull(parser);\n            // Check that parser has expected format\n            assertSame(format, getField(parser, \"format\"));\n        }\n    }\n\n    @Test\n    public void testParse_nullFile_throwsNullPointerException() {\n        File file = null;\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(file, format);\n        });\n        assertEquals(\"file\", ex.getMessage());\n    }\n\n    @Test\n    public void testParse_nullFormat_throwsNullPointerException() {\n        File file = mock(File.class);\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(file, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    // Helper method to access private fields via reflection\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getField(Object obj, String fieldName) throws Exception {\n        java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return (T) field.get(obj);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970267,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 417,
+    "prompt_tokens": 477,
+    "total_tokens": 894,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.05
+  }
+}

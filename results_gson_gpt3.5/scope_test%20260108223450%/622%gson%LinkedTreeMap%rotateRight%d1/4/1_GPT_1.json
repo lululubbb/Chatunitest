@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmYhwgwNClbreI1BOHLlE2uJhTi3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMap_rotateRight_Test {\n\n  private LinkedTreeMap<String, String> map;\n\n  // Helper method to create Node instances via reflection\n  private LinkedTreeMap.Node<String, String> createNode(String key, String value, int height) throws Exception {\n    Class<?> nodeClass = Class.forName(\"com.google.gson.internal.LinkedTreeMap$Node\");\n    // Node constructor: Node(LinkedTreeMap, K, V, Node<K,V>)\n    // We pass null for parent in constructor, will set manually later\n    var ctor = nodeClass.getDeclaredConstructor(LinkedTreeMap.class, Object.class, Object.class, nodeClass);\n    ctor.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap.Node<String, String> node = (LinkedTreeMap.Node<String, String>) ctor.newInstance(map, key, value, null);\n    // set height field\n    Field heightField = nodeClass.getDeclaredField(\"height\");\n    heightField.setAccessible(true);\n    heightField.setInt(node, height);\n    return node;\n  }\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void rotateRight_balancedTree_correctRotationAndHeight() throws Exception {\n    // Setup nodes to simulate a tree:\n    //       root\n    //      /    \\\n    //   pivot   right\n    //   /   \\\n    // pl    pr\n    // Create root node\n    var root = createNode(\"root\", \"r\", 3);\n    var pivot = createNode(\"pivot\", \"p\", 2);\n    var right = createNode(\"right\", \"ri\", 1);\n    var pivotLeft = createNode(\"pl\", \"plv\", 1);\n    var pivotRight = createNode(\"pr\", \"prv\", 1);\n\n    // Setup relationships\n    setField(root, \"left\", pivot);\n    setField(root, \"right\", right);\n    setField(pivot, \"left\", pivotLeft);\n    setField(pivot, \"right\", pivotRight);\n\n    setField(pivot, \"parent\", root);\n    setField(right, \"parent\", root);\n    setField(pivotLeft, \"parent\", pivot);\n    setField(pivotRight, \"parent\", pivot);\n\n    // set map root to root node\n    setField(map, \"root\", root);\n\n    // Spy map to verify replaceInParent call\n    LinkedTreeMap<String, String> spyMap = spy(map);\n\n    // Use reflection to invoke private rotateRight\n    Method rotateRight = LinkedTreeMap.class.getDeclaredMethod(\"rotateRight\", Class.forName(\"com.google.gson.internal.LinkedTreeMap$Node\"));\n    rotateRight.setAccessible(true);\n\n    rotateRight.invoke(spyMap, root);\n\n    // After rotation, pivot should be root of subtree, root becomes right child of pivot\n    // Check parent relationship\n    assertSame(pivot, getField(root, \"parent\"));\n    assertSame(root, getField(pivot, \"right\"));\n\n    // Check that root's left is pivotRight (pr)\n    assertSame(pivotRight, getField(root, \"left\"));\n    // pivotRight's parent is root\n    assertSame(root, getField(pivotRight, \"parent\"));\n\n    // Check heights updated correctly\n    int rootHeight = (int) getField(root, \"height\");\n    int pivotHeight = (int) getField(pivot, \"height\");\n\n    int expectedRootHeight = Math.max(\n        getHeight(right),\n        getHeight(pivotRight)\n    ) + 1;\n    int expectedPivotHeight = Math.max(\n        expectedRootHeight,\n        getHeight(pivotLeft)\n    ) + 1;\n\n    assertEquals(expectedRootHeight, rootHeight);\n    assertEquals(expectedPivotHeight, pivotHeight);\n\n    // Verify replaceInParent was called with root and pivot\n    verify(spyMap).replaceInParent(root, pivot);\n  }\n\n  @Test\n  void rotateRight_nullPivotRight_noParentSet() throws Exception {\n    // Setup nodes:\n    //     root\n    //    /\n    //  pivot\n    //  /    \n    // pl\n    var root = createNode(\"root\", \"r\", 2);\n    var pivot = createNode(\"pivot\", \"p\", 2);\n    var pivotLeft = createNode(\"pl\", \"plv\", 1);\n\n    setField(root, \"left\", pivot);\n    setField(root, \"right\", null);\n    setField(pivot, \"left\", pivotLeft);\n    setField(pivot, \"right\", null);\n\n    setField(pivot, \"parent\", root);\n    setField(pivotLeft, \"parent\", pivot);\n\n    setField(map, \"root\", root);\n\n    LinkedTreeMap<String, String> spyMap = spy(map);\n\n    Method rotateRight = LinkedTreeMap.class.getDeclaredMethod(\"rotateRight\", Class.forName(\"com.google.gson.internal.LinkedTreeMap$Node\"));\n    rotateRight.setAccessible(true);\n\n    rotateRight.invoke(spyMap, root);\n\n    // root.left should be pivot.right which is null\n    assertNull(getField(root, \"left\"));\n\n    // No NullPointerException, pivotRight parent not set\n    // pivot.right = root\n    assertSame(root, getField(pivot, \"right\"));\n    assertSame(pivot, getField(root, \"parent\"));\n\n    // Heights updated correctly\n    int rootHeight = (int) getField(root, \"height\");\n    int pivotHeight = (int) getField(pivot, \"height\");\n\n    int expectedRootHeight = Math.max(\n        0, // root.right is null\n        0  // pivotRight is null\n    ) + 1;\n    int expectedPivotHeight = Math.max(\n        expectedRootHeight,\n        getHeight(pivotLeft)\n    ) + 1;\n\n    assertEquals(expectedRootHeight, rootHeight);\n    assertEquals(expectedPivotHeight, pivotHeight);\n\n    verify(spyMap).replaceInParent(root, pivot);\n  }\n\n  // Helper to get private field value\n  private Object getField(Object obj, String fieldName) throws Exception {\n    Field f = obj.getClass().getDeclaredField(fieldName);\n    f.setAccessible(true);\n    return f.get(obj);\n  }\n\n  // Helper to set private field value\n  private void setField(Object obj, String fieldName, Object value) throws Exception {\n    Field f = obj.getClass().getDeclaredField(fieldName);\n    f.setAccessible(true);\n    f.set(obj, value);\n  }\n\n  // Helper to get height field from Node or 0 if null\n  private int getHeight(Object node) throws Exception {\n    if (node == null) return 0;\n    Field heightField = node.getClass().getDeclaredField(\"height\");\n    heightField.setAccessible(true);\n    return heightField.getInt(node);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887391,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1479,
+    "prompt_tokens": 874,
+    "total_tokens": 2353,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.18
+  }
+}

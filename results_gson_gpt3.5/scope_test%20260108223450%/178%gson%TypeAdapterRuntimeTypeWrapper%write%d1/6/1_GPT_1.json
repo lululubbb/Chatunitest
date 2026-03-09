@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlgVbZBd85G92pande4fP47W7mSk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter;\nimport com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper;\nimport com.google.gson.stream.JsonWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.io.IOException;\nimport java.lang.reflect.Type;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  @Mock Gson mockGson;\n  @Mock TypeAdapter<Object> mockDelegateAdapter;\n  @Mock TypeAdapter<Object> mockRuntimeTypeAdapter;\n  @Mock JsonWriter mockJsonWriter;\n\n  TypeAdapterRuntimeTypeWrapper<Object> wrapper;\n  Type declaredType = Object.class;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegateAdapter, declaredType);\n  }\n\n  @Test\n  void write_runtimeTypeSameAsDeclaredType_usesDelegateWrite() throws IOException {\n    Object value = new Object();\n\n    // Spy the static method getRuntimeTypeIfMoreSpecific to return the same declared type\n    // Since getRuntimeTypeIfMoreSpecific is private static, use reflection to override it\n    // But easier is to pass value whose runtime type is declaredType to produce same result\n\n    // Setup Gson.getAdapter to not be called (since runtimeType == declaredType)\n    // So no interaction needed with mockGson.getAdapter\n\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegateAdapter).write(mockJsonWriter, value);\n    verifyNoMoreInteractions(mockGson);\n  }\n\n  @Test\n  void write_runtimeTypeDifferentAndRuntimeAdapterNotReflective_usesRuntimeAdapter() throws IOException {\n    Object value = \"string\"; // runtimeType = String.class, declaredType = Object.class\n\n    Type runtimeType = String.class;\n\n    // Setup mockGson.getAdapter to return a runtimeTypeAdapter which is NOT instance of ReflectiveTypeAdapterFactory.Adapter\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(mockRuntimeTypeAdapter);\n    // Make runtimeTypeAdapter NOT instance of Adapter\n    // mockRuntimeTypeAdapter is a mock, so by default false for instanceof Adapter\n\n    // Use a wrapper with declaredType Object.class\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, mockDelegateAdapter, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    // Should use runtimeTypeAdapter.write\n    verify(mockRuntimeTypeAdapter).write(mockJsonWriter, value);\n    verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    verifyNoMoreInteractions(mockDelegateAdapter);\n  }\n\n  @Test\n  void write_runtimeTypeDifferentRuntimeAdapterReflectiveDelegateNotReflective_usesDelegate() throws IOException {\n    Object value = \"string\"; // runtimeType = String.class, declaredType = Object.class\n    Type runtimeType = String.class;\n\n    // Prepare a runtimeTypeAdapter which is instance of Adapter (ReflectiveTypeAdapterFactory.Adapter)\n    TypeAdapter<Object> reflectiveRuntimeAdapter = mock(Adapter.class);\n\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(reflectiveRuntimeAdapter);\n\n    // Prepare delegate which is NOT instance of Adapter\n    TypeAdapter<Object> nonReflectiveDelegate = mock(TypeAdapter.class);\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, nonReflectiveDelegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    // Should use delegate.write\n    verify(nonReflectiveDelegate).write(mockJsonWriter, value);\n    verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    verifyNoMoreInteractions(reflectiveRuntimeAdapter);\n  }\n\n  @Test\n  void write_runtimeTypeDifferentRuntimeAdapterReflectiveDelegateReflective_usesRuntimeAdapter() throws IOException {\n    Object value = \"string\"; // runtimeType = String.class, declaredType = Object.class\n    Type runtimeType = String.class;\n\n    // Prepare a runtimeTypeAdapter which is instance of Adapter (ReflectiveTypeAdapterFactory.Adapter)\n    TypeAdapter<Object> reflectiveRuntimeAdapter = mock(Adapter.class);\n\n    when(mockGson.getAdapter(TypeToken.get(runtimeType))).thenReturn(reflectiveRuntimeAdapter);\n\n    // Prepare delegate which IS instance of Adapter\n    TypeAdapter<Object> reflectiveDelegate = mock(Adapter.class);\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(mockGson, reflectiveDelegate, declaredType);\n\n    wrapper.write(mockJsonWriter, value);\n\n    // Should use runtimeTypeAdapter.write\n    verify(reflectiveRuntimeAdapter).write(mockJsonWriter, value);\n    verify(mockGson).getAdapter(TypeToken.get(runtimeType));\n    verifyNoMoreInteractions(reflectiveDelegate);\n  }\n\n  @Test\n  void write_nullValue_usesDelegateWrite() throws IOException {\n    Object value = null;\n\n    // null value means runtimeType == declaredType (null check in getRuntimeTypeIfMoreSpecific)\n    wrapper.write(mockJsonWriter, value);\n\n    verify(mockDelegateAdapter).write(mockJsonWriter, null);\n    verifyNoMoreInteractions(mockGson);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884031,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1087,
+    "prompt_tokens": 1247,
+    "total_tokens": 2334,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1152
+    },
+    "llm_elapsed_time_seconds": 21.55
+  }
+}

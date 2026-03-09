@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LazilyParsedNumber;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testGetAsNumber_withNumberValue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(42);\n\n    Number number = primitive.getAsNumber();\n\n    assertNotNull(number);\n    assertEquals(42, number.intValue());\n  }\n\n  @Test\n  public void testGetAsNumber_withStringValue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"123.456\");\n\n    Number number = primitive.getAsNumber();\n\n    assertNotNull(number);\n    assertTrue(number instanceof LazilyParsedNumber);\n    assertEquals(\"123.456\", number.toString());\n  }\n\n  @Test\n  public void testGetAsNumber_withUnsupportedValue_throws() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"dummy\");\n    // Use reflection to set private final field 'value' to an unsupported type (e.g. Boolean)\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(primitive, new Object());\n\n    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, primitive::getAsNumber);\n    assertEquals(\"Primitive is neither a number nor a string\", exception.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 460,
+  "completion_tokens": 322,
+  "total_tokens": 782,
+  "llm_elapsed_time_seconds": 5.49
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmxb8i5uHXvSUiZ8CTAmY8cmXRQe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ParseBenchmarkTest {\n\n  private ParseBenchmark parseBenchmark;\n\n  private Object parserMock;\n\n  private Object documentMock;\n\n  private Method parseMethod;\n\n  // Added to keep parserClass and documentClass accessible in all methods\n  private Class<?> parserClass;\n  private Class<?> documentClass;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    MockitoAnnotations.openMocks(this);\n    parseBenchmark = new ParseBenchmark();\n\n    // Use reflection to get the Parser class type and create a mock\n    Field parserField = ParseBenchmark.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    parserClass = parserField.getType();\n    parserMock = mock(parserClass);\n    parserField.set(parseBenchmark, parserMock);\n\n    // Use reflection to get the Document class type and create a mock\n    Field documentField = ParseBenchmark.class.getDeclaredField(\"document\");\n    documentField.setAccessible(true);\n    documentClass = documentField.getType();\n    documentMock = mock(documentClass);\n    documentField.set(parseBenchmark, documentMock);\n\n    // Set text field\n    Field textField = ParseBenchmark.class.getDeclaredField(\"text\");\n    textField.setAccessible(true);\n    textField.set(parseBenchmark, \"test text\".toCharArray());\n\n    // Set api field to null (or mock if needed)\n    Field apiField = ParseBenchmark.class.getDeclaredField(\"api\");\n    apiField.setAccessible(true);\n    apiField.set(parseBenchmark, null);\n\n    // Get the parse method from parserClass\n    parseMethod = parserClass.getMethod(\"parse\", char[].class, documentClass);\n  }\n\n  // Create a helper interface to avoid compile errors when verifying parse calls\n  interface ParserInterface {\n    void parse(char[] text, Object document) throws Exception;\n  }\n\n  @Test\n  void timeParse_repsZero_noParseCall() throws Exception {\n    parseBenchmark.timeParse(0);\n\n    // Cast parserMock to ParserInterface to verify parse calls\n    ParserInterface typedParserMock = (ParserInterface) parserMock;\n\n    // Verify parse method was never called on parserMock\n    verify(typedParserMock, never()).parse(any(char[].class), any());\n  }\n\n  @Test\n  void timeParse_repsPositive_parseCalledCorrectTimes() throws Exception {\n    int reps = 3;\n    parseBenchmark.timeParse(reps);\n\n    // Cast parserMock to ParserInterface to verify parse calls\n    ParserInterface typedParserMock = (ParserInterface) parserMock;\n\n    // Verify parse method was called correct number of times\n    verify(typedParserMock, times(reps)).parse(any(char[].class), any());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888935,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 592,
+    "prompt_tokens": 1558,
+    "total_tokens": 2150,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.5
+  }
+}

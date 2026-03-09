@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlXlwyVKujDyZLuzAU15DrhIstcR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValueBooleanTrue() throws Exception {\n    JsonWriter returned = jsonTreeWriter.value(true);\n    assertSame(jsonTreeWriter, returned);\n\n    // Use reflection to get 'stack' field and verify it contains JsonPrimitive(true)\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertFalse(stack.isEmpty());\n    JsonElement element = stack.get(stack.size() - 1);\n    assertTrue(element.isJsonPrimitive());\n    JsonPrimitive primitive = element.getAsJsonPrimitive();\n    assertTrue(primitive.isBoolean());\n    assertTrue(primitive.getAsBoolean());\n  }\n\n  @Test\n  public void testValueBooleanFalse() throws Exception {\n    JsonWriter returned = jsonTreeWriter.value(false);\n    assertSame(jsonTreeWriter, returned);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertFalse(stack.isEmpty());\n    JsonElement element = stack.get(stack.size() - 1);\n    assertTrue(element.isJsonPrimitive());\n    JsonPrimitive primitive = element.getAsJsonPrimitive();\n    assertTrue(primitive.isBoolean());\n    assertFalse(primitive.getAsBoolean());\n  }\n\n  @Test\n  public void testPutMethodAddsElementToStack() throws Exception {\n    // Access private method put(JsonElement)\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n    putMethod.setAccessible(true);\n\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    putMethod.invoke(jsonTreeWriter, primitive);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertFalse(stack.isEmpty());\n    assertEquals(primitive, stack.get(stack.size() - 1));\n  }\n\n  @Test\n  public void testValueBooleanThrowsIOException() {\n    // The method signature declares IOException but the method does not throw it in normal use.\n    // So no test needed for exception throwing here.\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883489,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 627,
+    "prompt_tokens": 2025,
+    "total_tokens": 2652,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.57
+  }
+}

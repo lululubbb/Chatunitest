@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn48FwBZSsoY1AcRXBxCPipnOlGx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\n\npublic class GsonProguardExampleActivityTest {\n\n  @Test\n  void testBuildCart() throws Exception {\n    // Use reflection to load the Activity class to avoid Android dependencies at compile time\n    Class<?> activityClass = Class.forName(\"com.google.gson.examples.android.GsonProguardExampleActivity\");\n    Object activity = activityClass.getDeclaredConstructor().newInstance();\n\n    Method buildCartMethod = activityClass.getDeclaredMethod(\"buildCart\");\n    buildCartMethod.setAccessible(true);\n\n    Object result = buildCartMethod.invoke(activity);\n    assertNotNull(result);\n\n    // Use reflection to verify the returned object's properties without importing Cart and LineItem\n    Class<?> cartClass = result.getClass();\n\n    Method getBuyerNameMethod = cartClass.getMethod(\"getBuyerName\");\n    String buyerName = (String) getBuyerNameMethod.invoke(result);\n    assertEquals(\"Happy Buyer\", buyerName);\n\n    Method getCardNumberMethod = cartClass.getMethod(\"getCardNumber\");\n    String cardNumber = (String) getCardNumberMethod.invoke(result);\n    assertEquals(\"4111-1111-1111-1111\", cardNumber);\n\n    Method getLineItemsMethod = cartClass.getMethod(\"getLineItems\");\n    Object lineItemsObj = getLineItemsMethod.invoke(result);\n    assertNotNull(lineItemsObj);\n\n    // lineItemsObj is a List<LineItem>\n    // Use reflection to check list size and properties\n    Class<?> listClass = lineItemsObj.getClass();\n    Method sizeMethod = listClass.getMethod(\"size\");\n    int size = (int) sizeMethod.invoke(lineItemsObj);\n    assertEquals(1, size);\n\n    Method getMethod = listClass.getMethod(\"get\", int.class);\n    Object lineItem = getMethod.invoke(lineItemsObj, 0);\n    assertNotNull(lineItem);\n\n    Class<?> lineItemClass = lineItem.getClass();\n\n    Method getNameMethod = lineItemClass.getMethod(\"getName\");\n    String name = (String) getNameMethod.invoke(lineItem);\n    assertEquals(\"hammer\", name);\n\n    Method getQuantityMethod = lineItemClass.getMethod(\"getQuantity\");\n    int quantity = (int) getQuantityMethod.invoke(lineItem);\n    assertEquals(1, quantity);\n\n    Method getPriceMethod = lineItemClass.getMethod(\"getPrice\");\n    int price = (int) getPriceMethod.invoke(lineItem);\n    assertEquals(12000000, price);\n\n    Method getCurrencyCodeMethod = lineItemClass.getMethod(\"getCurrencyCode\");\n    String currencyCode = (String) getCurrencyCodeMethod.invoke(lineItem);\n    assertEquals(\"USD\", currencyCode);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889340,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 584,
+    "prompt_tokens": 1525,
+    "total_tokens": 2109,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.33
+  }
+}

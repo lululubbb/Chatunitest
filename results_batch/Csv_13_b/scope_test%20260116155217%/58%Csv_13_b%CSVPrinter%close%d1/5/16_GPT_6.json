@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZN0s1vfZSt925BRc9IHwmU2HL64",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterCloseTest {\n\n    private Appendable appendableMock;\n    private CSVFormat csvFormatMock;\n    private CSVPrinter csvPrinter;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        appendableMock = mock(Appendable.class);\n        csvFormatMock = mock(CSVFormat.class);\n        csvPrinter = new CSVPrinter(appendableMock, csvFormatMock);\n    }\n\n    @Test\n    void close_whenOutIsCloseable_shouldCallClose() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Closeable closeableMock = mock(Closeable.class);\n        CSVPrinter printer = new CSVPrinter(mock(Appendable.class), csvFormatMock);\n\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n\n        // Remove final modifier using reflection on the \"modifiers\" field of Field class\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(outField, outField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        outField.set(printer, closeableMock);\n\n        printer.close();\n\n        verify(closeableMock, times(1)).close();\n    }\n\n    @Test\n    void close_whenOutIsNotCloseable_shouldNotThrow() {\n        assertDoesNotThrow(() -> csvPrinter.close());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551678,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 360,
+    "prompt_tokens": 847,
+    "total_tokens": 1207,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.72
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvljdnwvUQqQYeO4evpfq3g9PICKe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValue_withValidFloat_returnsThisAndAddsJsonPrimitive() throws Exception {\n    float input = 1.23f;\n\n    JsonWriter returned = writer.value(input);\n\n    assertSame(writer, returned);\n\n    // Use reflection to access private field 'stack' to verify the JsonPrimitive was added\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n\n    assertFalse(stack.isEmpty());\n\n    JsonElement lastElement = stack.get(stack.size() - 1);\n    assertTrue(lastElement instanceof JsonPrimitive);\n    assertEquals(input, ((JsonPrimitive) lastElement).getAsFloat());\n  }\n\n  @Test\n  public void testValue_withNaN_throwsIllegalArgumentException() {\n    float input = Float.NaN;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> writer.value(input));\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n\n  @Test\n  public void testValue_withPositiveInfinity_throwsIllegalArgumentException() {\n    float input = Float.POSITIVE_INFINITY;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> writer.value(input));\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_withNegativeInfinity_throwsIllegalArgumentException() {\n    float input = Float.NEGATIVE_INFINITY;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> writer.value(input));\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_allowsNaNAndInfinityWhenLenient() throws Exception {\n    // Spy on writer to override isLenient() to return true\n    JsonTreeWriter spyWriter = spy(writer);\n    doReturn(true).when(spyWriter).isLenient();\n\n    float nan = Float.NaN;\n    float posInf = Float.POSITIVE_INFINITY;\n    float negInf = Float.NEGATIVE_INFINITY;\n\n    // Should not throw for NaN\n    JsonWriter retNaN = spyWriter.value(nan);\n    assertSame(spyWriter, retNaN);\n\n    // Should not throw for positive infinity\n    JsonWriter retPosInf = spyWriter.value(posInf);\n    assertSame(spyWriter, retPosInf);\n\n    // Should not throw for negative infinity\n    JsonWriter retNegInf = spyWriter.value(negInf);\n    assertSame(spyWriter, retNegInf);\n\n    // Verify the JsonPrimitive values were added to the stack\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(spyWriter);\n\n    // Last three elements should be NaN, POSITIVE_INFINITY, NEGATIVE_INFINITY\n    int size = stack.size();\n    assertTrue(size >= 3);\n\n    JsonPrimitive np = (JsonPrimitive) stack.get(size - 3);\n    assertTrue(np.isNumber());\n    assertTrue(Float.isNaN(np.getAsFloat()));\n\n    JsonPrimitive pp = (JsonPrimitive) stack.get(size - 2);\n    assertTrue(pp.isNumber());\n    assertEquals(Float.POSITIVE_INFINITY, pp.getAsFloat());\n\n    JsonPrimitive np2 = (JsonPrimitive) stack.get(size - 1);\n    assertTrue(np2.isNumber());\n    assertEquals(Float.NEGATIVE_INFINITY, np2.getAsFloat());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884225,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 862,
+    "prompt_tokens": 2079,
+    "total_tokens": 2941,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.11
+  }
+}

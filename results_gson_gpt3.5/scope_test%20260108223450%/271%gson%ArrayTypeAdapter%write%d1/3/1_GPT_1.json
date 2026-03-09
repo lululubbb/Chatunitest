@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlyDf9DTFKDnUc3nBSUZ00MOanPd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.ArrayTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Array;\n\npublic class ArrayTypeAdapterTest {\n\n    private JsonWriter jsonWriterMock;\n    private TypeAdapter<Object> componentTypeAdapterMock;\n    private ArrayTypeAdapter<Object> arrayTypeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        jsonWriterMock = mock(JsonWriter.class);\n        componentTypeAdapterMock = mock(TypeAdapter.class);\n        arrayTypeAdapter = new ArrayTypeAdapter<>(null, componentTypeAdapterMock, Object.class);\n    }\n\n    @Test\n    public void testWrite_NullArray() throws IOException {\n        arrayTypeAdapter.write(jsonWriterMock, null);\n\n        verify(jsonWriterMock).nullValue();\n        verifyNoMoreInteractions(jsonWriterMock);\n        verifyNoInteractions(componentTypeAdapterMock);\n    }\n\n    @Test\n    public void testWrite_EmptyArray() throws IOException {\n        Object[] emptyArray = new Object[0];\n\n        arrayTypeAdapter.write(jsonWriterMock, emptyArray);\n\n        InOrder inOrder = inOrder(jsonWriterMock, componentTypeAdapterMock);\n        inOrder.verify(jsonWriterMock).beginArray();\n        inOrder.verify(jsonWriterMock).endArray();\n        verifyNoMoreInteractions(jsonWriterMock);\n        verifyNoInteractions(componentTypeAdapterMock);\n    }\n\n    @Test\n    public void testWrite_ArrayWithElements() throws IOException {\n        Object[] array = new Object[]{\"one\", \"two\", null};\n\n        arrayTypeAdapter.write(jsonWriterMock, array);\n\n        InOrder inOrder = inOrder(jsonWriterMock, componentTypeAdapterMock);\n        inOrder.verify(jsonWriterMock).beginArray();\n        inOrder.verify(componentTypeAdapterMock).write(jsonWriterMock, \"one\");\n        inOrder.verify(componentTypeAdapterMock).write(jsonWriterMock, \"two\");\n        inOrder.verify(componentTypeAdapterMock).write(jsonWriterMock, null);\n        inOrder.verify(jsonWriterMock).endArray();\n        verifyNoMoreInteractions(jsonWriterMock);\n    }\n\n    @Test\n    public void testWrite_PrimitiveArray() throws IOException {\n        int[] intArray = new int[]{1, 2, 3};\n\n        // Use a TypeAdapter<Integer> mock for primitive wrapper type\n        TypeAdapter<Integer> intAdapterMock = mock(TypeAdapter.class);\n        ArrayTypeAdapter<Integer> intArrayTypeAdapter = new ArrayTypeAdapter<>(null, intAdapterMock, Integer.class);\n\n        intArrayTypeAdapter.write(jsonWriterMock, intArray);\n\n        InOrder inOrder = inOrder(jsonWriterMock, intAdapterMock);\n        inOrder.verify(jsonWriterMock).beginArray();\n        inOrder.verify(intAdapterMock).write(jsonWriterMock, 1);\n        inOrder.verify(intAdapterMock).write(jsonWriterMock, 2);\n        inOrder.verify(intAdapterMock).write(jsonWriterMock, 3);\n        inOrder.verify(jsonWriterMock).endArray();\n        verifyNoMoreInteractions(jsonWriterMock);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885129,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 659,
+    "prompt_tokens": 860,
+    "total_tokens": 1519,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.47
+  }
+}

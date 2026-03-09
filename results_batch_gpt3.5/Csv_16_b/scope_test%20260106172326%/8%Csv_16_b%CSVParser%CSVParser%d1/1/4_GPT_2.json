@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxkvLnCv6gN7veXvEEh4QrdQytbx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVFormat formatMock;\n    private Reader reader;\n    private CSVParser parser;\n\n    @BeforeEach\n    public void setup() {\n        formatMock = mock(CSVFormat.class);\n        reader = new StringReader(\"header1,header2\\nvalue1,value2\");\n    }\n\n    @Test\n    public void testConstructor_withValidReaderAndFormat() throws Exception {\n        // Use the public constructor CSVParser(Reader, CSVFormat)\n        parser = new CSVParser(reader, formatMock);\n\n        assertNotNull(parser);\n\n        // Validate fields using reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(formatMock, formatField.get(parser));\n\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        assertNotNull(lexerField.get(parser));\n\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        Object headerMap = headerMapField.get(parser);\n        assertNotNull(headerMap);\n        assertTrue(headerMap instanceof Map);\n\n        Field characterOffsetField = CSVParser.class.getDeclaredField(\"characterOffset\");\n        characterOffsetField.setAccessible(true);\n        assertEquals(0L, characterOffsetField.getLong(parser));\n\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        // The public constructor CSVParser(Reader, CSVFormat) calls the main constructor with recordNumber=1,\n        // so recordNumber field is initialized as recordNumber - 1 = 0\n        assertEquals(0L, recordNumberField.getLong(parser));\n    }\n\n    @Test\n    public void testConstructor_withValidReaderFormatOffsetRecordNumber() throws Exception {\n        Reader reader2 = new StringReader(\"header1,header2\\nvalue1,value2\");\n\n        Constructor<CSVParser> ctor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n        ctor.setAccessible(true);\n        CSVParser parser2 = ctor.newInstance(reader2, formatMock, 10L, 5L);\n\n        assertNotNull(parser2);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(formatMock, formatField.get(parser2));\n\n        Field characterOffsetField = CSVParser.class.getDeclaredField(\"characterOffset\");\n        characterOffsetField.setAccessible(true);\n        assertEquals(10L, characterOffsetField.getLong(parser2));\n\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        // recordNumber initialized to recordNumber - 1\n        assertEquals(4L, recordNumberField.getLong(parser2));\n    }\n\n    @Test\n    public void testConstructor_nullReader_throwsException() {\n        Exception ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, formatMock);\n        });\n        assertTrue(ex.getMessage().contains(\"reader\"));\n    }\n\n    @Test\n    public void testConstructor_nullFormat_throwsException() {\n        Exception ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(reader, null);\n        });\n        assertTrue(ex.getMessage().contains(\"format\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692105,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 784,
+    "prompt_tokens": 1556,
+    "total_tokens": 2340,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.35
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmtViSOb2Dw15ML8aqXambNixh1D",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Type;\nimport java.util.HashMap;\nimport java.util.Map;\n\nclass MapTypeAdapterFactoryTest {\n\n  private ConstructorConstructor constructorConstructor;\n  private Gson gson;\n  private MapTypeAdapterFactory factory;\n\n  @BeforeEach\n  void setUp() {\n    constructorConstructor = mock(ConstructorConstructor.class);\n    gson = mock(Gson.class);\n  }\n\n  @Test\n  void create_WithMapType_ShouldReturnTypeAdapter() {\n    factory = new MapTypeAdapterFactory(constructorConstructor, true);\n\n    TypeToken<Map<String, String>> mapTypeToken = new TypeToken<Map<String, String>>() {};\n    Type mapType = mapTypeToken.getType();\n\n    // Mock Gson behavior for key and value TypeAdapters\n    TypeToken<String> keyTypeToken = TypeToken.get(String.class);\n    TypeToken<String> valueTypeToken = TypeToken.get(String.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> keyAdapter = mock(TypeAdapter.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> valueAdapter = mock(TypeAdapter.class);\n\n    when(gson.getAdapter(TypeToken.get(String.class))).thenReturn(keyAdapter);\n    when(gson.getAdapter(TypeToken.get(String.class))).thenReturn(valueAdapter);\n\n    // Spy on factory to call real getKeyAdapter (private method)\n    MapTypeAdapterFactory spyFactory = Mockito.spy(factory);\n\n    // Use reflection to invoke private getKeyAdapter method\n    Type keyType = $Gson$Types.getMapKeyType(mapType, Map.class);\n    try {\n      var method = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, Type.class);\n      method.setAccessible(true);\n      TypeAdapter<?> returnedKeyAdapter = (TypeAdapter<?>) method.invoke(spyFactory, gson, keyType);\n      assertNotNull(returnedKeyAdapter);\n    } catch (Exception e) {\n      fail(\"Reflection invocation of getKeyAdapter failed: \" + e.getMessage());\n    }\n\n    TypeAdapter<?> adapter = factory.create(gson, mapTypeToken);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  void create_WithNonMapType_ShouldReturnNull() {\n    factory = new MapTypeAdapterFactory(constructorConstructor, false);\n\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<?> adapter = factory.create(gson, stringTypeToken);\n    assertNull(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888681,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 567,
+    "prompt_tokens": 412,
+    "total_tokens": 979,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.34
+  }
+}

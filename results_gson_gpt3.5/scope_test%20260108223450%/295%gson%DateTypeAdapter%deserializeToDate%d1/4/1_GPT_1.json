@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnFzvd3gZaOzxXbFmrvTc2DFCRHf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.internal.bind.util.ISO8601Utils;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.ParseException;\nimport java.text.ParsePosition;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n    private Method deserializeToDateMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        dateTypeAdapter = new DateTypeAdapter();\n        deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testDeserializeToDate_withValidDateFormat() throws Exception {\n        // Arrange\n        JsonReader jsonReader = mock(JsonReader.class);\n        String testDateString = \"2023-06-01\";\n        when(jsonReader.nextString()).thenReturn(testDateString);\n\n        // Add a DateFormat that can parse the testDateString\n        DateFormat mockDateFormat = mock(DateFormat.class);\n        Date expectedDate = new Date();\n        when(mockDateFormat.parse(testDateString)).thenReturn(expectedDate);\n\n        // Inject mockDateFormat into the dateFormats list using reflection\n        List<DateFormat> dateFormats = getDateFormatsList();\n        dateFormats.clear();\n        dateFormats.add(mockDateFormat);\n\n        // Act\n        Date result = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n\n        // Assert\n        assertEquals(expectedDate, result);\n        verify(jsonReader).nextString();\n        verify(mockDateFormat).parse(testDateString);\n    }\n\n    @Test\n    public void testDeserializeToDate_withDateFormatThrowsParseException_andIso8601Parses() throws Exception {\n        // Arrange\n        JsonReader jsonReader = mock(JsonReader.class);\n        String testDateString = \"2023-06-01T12:34:56Z\";\n        when(jsonReader.nextString()).thenReturn(testDateString);\n\n        // Add a DateFormat that throws ParseException\n        DateFormat mockDateFormat = mock(DateFormat.class);\n        when(mockDateFormat.parse(testDateString)).thenThrow(ParseException.class);\n\n        List<DateFormat> dateFormats = getDateFormatsList();\n        dateFormats.clear();\n        dateFormats.add(mockDateFormat);\n\n        // Spy on ISO8601Utils to verify parse is called\n        Date expectedDate = new Date();\n        // Since ISO8601Utils.parse is static final, we cannot mock it easily.\n        // Instead, we rely on actual parsing, so testDateString must be a valid ISO8601 date.\n        // The string \"2023-06-01T12:34:56Z\" is valid ISO8601.\n\n        // Act\n        Date result = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n\n        // Assert\n        assertNotNull(result);\n        assertEquals(expectedDate.getClass(), result.getClass());\n        verify(jsonReader).nextString();\n        verify(mockDateFormat).parse(testDateString);\n    }\n\n    @Test\n    public void testDeserializeToDate_withAllParseFailures_throwsJsonSyntaxException() throws Exception {\n        // Arrange\n        JsonReader jsonReader = mock(JsonReader.class);\n        String testDateString = \"invalid-date\";\n        when(jsonReader.nextString()).thenReturn(testDateString);\n        when(jsonReader.getPreviousPath()).thenReturn(\"$.date\");\n\n        // Add a DateFormat that throws ParseException\n        DateFormat mockDateFormat = mock(DateFormat.class);\n        when(mockDateFormat.parse(testDateString)).thenThrow(ParseException.class);\n\n        List<DateFormat> dateFormats = getDateFormatsList();\n        dateFormats.clear();\n        dateFormats.add(mockDateFormat);\n\n        // Act & Assert\n        InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n            deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n        });\n        Throwable cause = thrown.getCause();\n        assertTrue(cause instanceof JsonSyntaxException);\n        assertTrue(cause.getMessage().contains(\"Failed parsing 'invalid-date' as Date; at path $.date\"));\n        verify(jsonReader).nextString();\n        verify(mockDateFormat).parse(testDateString);\n        verify(jsonReader).getPreviousPath();\n    }\n\n    private List<DateFormat> getDateFormatsList() throws Exception {\n        // Use reflection to access the private final List<DateFormat> dateFormats field\n        java.lang.reflect.Field dateFormatsField = DateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        //noinspection unchecked\n        return (List<DateFormat>) dateFormatsField.get(dateTypeAdapter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890075,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1043,
+    "prompt_tokens": 1154,
+    "total_tokens": 2197,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 39.65
+  }
+}

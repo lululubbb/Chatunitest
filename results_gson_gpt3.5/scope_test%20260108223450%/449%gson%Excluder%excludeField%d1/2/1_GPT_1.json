@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpSbJIPZr2tYQqbqaGe2CptOSpL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport com.google.gson.ExclusionStrategy;\nimport com.google.gson.FieldAttributes;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n  }\n\n  static class DummyClass {\n    public int normalField;\n    public transient int transientField;\n    public static int staticField;\n    @Expose(serialize = true, deserialize = true)\n    public int exposedField;\n    @Since(1.0)\n    public int sinceField;\n    @Until(2.0)\n    public int untilField;\n    int syntheticField;\n  }\n\n  @Test\n  void excludeField_modifiersMatch_returnsTrue() throws Exception {\n    Field field = DummyClass.class.getField(\"transientField\");\n    // transient modifier is in default excluder.modifiers (TRANSIENT | STATIC)\n    assertTrue(excluder.excludeField(field, true));\n  }\n\n  @Test\n  void excludeField_versionNotValid_returnsTrue() throws Exception {\n    excluder = excluder.withVersion(1.5);\n    Field sinceField = DummyClass.class.getField(\"sinceField\");\n    // Since=1.0 < 1.5 is valid, so excludeField should return false for sinceField\n    assertFalse(excluder.excludeField(sinceField, true));\n\n    Field untilField = DummyClass.class.getField(\"untilField\");\n    // Until=2.0 > 1.5 so valid, excludeField should return false\n    assertFalse(excluder.excludeField(untilField, true));\n\n    // Now test with a version that excludes sinceField\n    excluder = excluder.withVersion(0.5);\n    assertTrue(excluder.excludeField(sinceField, true));\n  }\n\n  @Test\n  void excludeField_syntheticField_returnsTrue() throws Exception {\n    Field syntheticField = DummyClass.class.getDeclaredField(\"syntheticField\");\n    // We simulate synthetic field by mocking isSynthetic() to true\n    Field spyField = spy(syntheticField);\n    doReturn(true).when(spyField).isSynthetic();\n\n    assertTrue(excluder.excludeField(spyField, true));\n  }\n\n  @Test\n  void excludeField_requireExposeAndNoAnnotation_returnsTrue() throws Exception {\n    excluder = excluder.excludeFieldsWithoutExposeAnnotation();\n    Field field = DummyClass.class.getField(\"normalField\");\n    assertTrue(excluder.excludeField(field, true));\n  }\n\n  @Test\n  void excludeField_requireExposeAndAnnotationSerializeFalse_returnsTrue() throws Exception {\n    excluder = excluder.excludeFieldsWithoutExposeAnnotation();\n    // Create a field with @Expose(serialize=false)\n    class ExposeFalse {\n      @Expose(serialize = false, deserialize = true)\n      int field;\n    }\n    Field field = ExposeFalse.class.getDeclaredField(\"field\");\n    assertTrue(excluder.excludeField(field, true));\n  }\n\n  @Test\n  void excludeField_requireExposeAndAnnotationDeserializeFalse_returnsTrue() throws Exception {\n    excluder = excluder.excludeFieldsWithoutExposeAnnotation();\n    class ExposeFalse {\n      @Expose(serialize = true, deserialize = false)\n      int field;\n    }\n    Field field = ExposeFalse.class.getDeclaredField(\"field\");\n    assertTrue(excluder.excludeField(field, false));\n  }\n\n  @Test\n  void excludeField_serializeInnerClassesFalseAndInnerClass_returnsTrue() throws Exception {\n    excluder = excluder.disableInnerClassSerialization();\n    class Inner {}\n    Field field = Inner.class.getDeclaredFields().length > 0 ?\n      Inner.class.getDeclaredFields()[0] :\n      Inner.class.getDeclaredField(\"class\"); // fallback, won't matter\n\n    // Use a field of type Inner class\n    Field dummyField = DummyClass.class.getDeclaredField(\"normalField\");\n    Field spyField = spy(dummyField);\n    doReturn(Inner.class).when(spyField).getType();\n\n    assertTrue(excluder.excludeField(spyField, true));\n  }\n\n  @Test\n  void excludeField_anonymousOrNonStaticLocalClass_returnsTrue() throws Exception {\n    // Create anonymous class\n    Object anonymous = new Object() {};\n    Class<?> anonClass = anonymous.getClass();\n\n    Field dummyField = DummyClass.class.getDeclaredField(\"normalField\");\n    Field spyField = spy(dummyField);\n    doReturn(anonClass).when(spyField).getType();\n\n    assertTrue(excluder.excludeField(spyField, true));\n  }\n\n  @Test\n  void excludeField_serializationStrategySkipsField_returnsTrue() throws Exception {\n    ExclusionStrategy strategy = mock(ExclusionStrategy.class);\n    when(strategy.shouldSkipField(any(FieldAttributes.class))).thenReturn(true);\n    excluder = excluder.withExclusionStrategy(strategy, true, false);\n\n    Field field = DummyClass.class.getDeclaredField(\"normalField\");\n    assertTrue(excluder.excludeField(field, true));\n  }\n\n  @Test\n  void excludeField_deserializationStrategySkipsField_returnsTrue() throws Exception {\n    ExclusionStrategy strategy = mock(ExclusionStrategy.class);\n    when(strategy.shouldSkipField(any(FieldAttributes.class))).thenReturn(true);\n    excluder = excluder.withExclusionStrategy(strategy, false, true);\n\n    Field field = DummyClass.class.getDeclaredField(\"normalField\");\n    assertTrue(excluder.excludeField(field, false));\n  }\n\n  @Test\n  void excludeField_noConditionsMet_returnsFalse() throws Exception {\n    // Use default excluder with no version set, no requireExpose, no strategies\n    Field field = DummyClass.class.getDeclaredField(\"normalField\");\n    assertFalse(excluder.excludeField(field, true));\n    assertFalse(excluder.excludeField(field, false));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888430,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1291,
+    "prompt_tokens": 819,
+    "total_tokens": 2110,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.36
+  }
+}

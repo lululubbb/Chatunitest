@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwoEcSoiYEgaXW33XSnXDBNCk022",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetIgnoreHeaderCase_DefaultInstance() {\n        // DEFAULT has ignoreHeaderCase = false\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertFalse(format.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testGetIgnoreHeaderCase_WithIgnoreHeaderCaseTrue() {\n        // Use withIgnoreHeaderCase(true) to get a CSVFormat with ignoreHeaderCase = true\n        CSVFormat format = CSVFormat.DEFAULT.withIgnoreHeaderCase(true);\n        assertTrue(format.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testGetIgnoreHeaderCase_WithIgnoreHeaderCaseFalse() {\n        // Use withIgnoreHeaderCase(false) explicitly\n        CSVFormat format = CSVFormat.DEFAULT.withIgnoreHeaderCase(false);\n        assertFalse(format.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testGetIgnoreHeaderCase_ExcelConstant() throws Exception {\n        // EXCEL constant sets ignoreHeaderCase = false in actual Apache Commons CSV 1.9.0\n        // Use reflection to create a new CSVFormat instance with ignoreHeaderCase = true\n\n        CSVFormat format = CSVFormat.EXCEL;\n\n        // Use reflection to access the private constructor and create a new instance with ignoreHeaderCase = true\n        Field ignoreHeaderCaseField = CSVFormat.class.getDeclaredField(\"ignoreHeaderCase\");\n        ignoreHeaderCaseField.setAccessible(true);\n\n        // Create a new instance copying all fields from EXCEL but setting ignoreHeaderCase = true\n        Field[] fields = CSVFormat.class.getDeclaredFields();\n        Object[] constructorArgs = new Object[17];\n\n        // The constructor parameters order:\n        // (char delimiter, Character quoteChar, QuoteMode quoteMode,\n        //  Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        //  boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        //  Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        //  boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n        //  boolean trailingDelimiter, boolean autoFlush)\n\n        // We will get the values from the existing EXCEL instance via reflection\n\n        // Helper function to get field value by name and type\n        Object getFieldValue(String name) throws Exception {\n            Field f = CSVFormat.class.getDeclaredField(name);\n            f.setAccessible(true);\n            return f.get(format);\n        }\n\n        constructorArgs[0] = getFieldValue(\"delimiter\");\n        constructorArgs[1] = getFieldValue(\"quoteCharacter\");\n        constructorArgs[2] = getFieldValue(\"quoteMode\");\n        constructorArgs[3] = getFieldValue(\"commentMarker\");\n        constructorArgs[4] = getFieldValue(\"escapeCharacter\");\n        constructorArgs[5] = getFieldValue(\"ignoreSurroundingSpaces\");\n        constructorArgs[6] = getFieldValue(\"ignoreEmptyLines\");\n        constructorArgs[7] = getFieldValue(\"recordSeparator\");\n        constructorArgs[8] = getFieldValue(\"nullString\");\n        constructorArgs[9] = getFieldValue(\"headerComments\");\n        constructorArgs[10] = getFieldValue(\"header\");\n        constructorArgs[11] = getFieldValue(\"skipHeaderRecord\");\n        constructorArgs[12] = getFieldValue(\"allowMissingColumnNames\");\n        constructorArgs[13] = true; // ignoreHeaderCase = true\n        constructorArgs[14] = getFieldValue(\"trim\");\n        constructorArgs[15] = getFieldValue(\"trailingDelimiter\");\n        constructorArgs[16] = getFieldValue(\"autoFlush\");\n\n        var constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class,\n                boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class,\n                boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n\n        constructor.setAccessible(true);\n\n        CSVFormat modifiedFormat = (CSVFormat) constructor.newInstance(constructorArgs);\n\n        assertTrue(modifiedFormat.getIgnoreHeaderCase());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688466,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 888,
+    "prompt_tokens": 2186,
+    "total_tokens": 3074,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.98
+  }
+}

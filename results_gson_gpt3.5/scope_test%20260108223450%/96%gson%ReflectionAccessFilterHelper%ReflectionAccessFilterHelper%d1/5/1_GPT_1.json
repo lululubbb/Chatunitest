@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBtC4D8jqBfezHFKaV1A9ktZTns",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\n\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method as ReflectMethod;\n\nclass ReflectionAccessFilterHelperTest {\n\n  private AccessibleObject accessibleObject;\n  private Object targetObject;\n\n  @BeforeEach\n  void setup() {\n    accessibleObject = mock(AccessibleObject.class);\n    targetObject = new Object();\n  }\n\n  @Test\n  void testIsJavaType_class() throws Exception {\n    // Using reflection to invoke private static boolean isJavaType(String)\n    ReflectMethod method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    method.setAccessible(true);\n\n    // Known java type\n    boolean result = (boolean) method.invoke(null, \"java.lang.String\");\n    assertTrue(result);\n\n    // Non-java type\n    result = (boolean) method.invoke(null, \"com.example.MyClass\");\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsJavaType_class_public() {\n    assertTrue(ReflectionAccessFilterHelper.isJavaType(String.class));\n    assertFalse(ReflectionAccessFilterHelper.isJavaType(Object.class.getClassLoader() != null ? Object.class : com.google.gson.internal.ReflectionAccessFilterHelper.class)); // just to test false path\n  }\n\n  @Test\n  void testIsAndroidType_class() throws Exception {\n    ReflectMethod method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n    method.setAccessible(true);\n\n    // Android type example\n    boolean result = (boolean) method.invoke(null, \"android.app.Activity\");\n    assertTrue(result);\n\n    // Non-android type\n    result = (boolean) method.invoke(null, \"java.lang.String\");\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsAndroidType_class_public() {\n    assertTrue(ReflectionAccessFilterHelper.isAndroidType(android.app.Activity.class));\n    assertFalse(ReflectionAccessFilterHelper.isAndroidType(String.class));\n  }\n\n  @Test\n  void testIsAnyPlatformType() {\n    assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(String.class));\n    assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(android.app.Activity.class));\n    assertFalse(ReflectionAccessFilterHelper.isAnyPlatformType(com.google.gson.internal.ReflectionAccessFilterHelper.class));\n  }\n\n  @Test\n  void testGetFilterResult_noFilters() {\n    List<ReflectionAccessFilter> filters = Collections.emptyList();\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n    assertEquals(FilterResult.UNDECIDED, result);\n  }\n\n  @Test\n  void testGetFilterResult_filters() {\n    ReflectionAccessFilter filter1 = mock(ReflectionAccessFilter.class);\n    ReflectionAccessFilter filter2 = mock(ReflectionAccessFilter.class);\n\n    when(filter1.apply(String.class)).thenReturn(FilterResult.UNDECIDED);\n    when(filter2.apply(String.class)).thenReturn(FilterResult.ALLOW);\n\n    List<ReflectionAccessFilter> filters = Arrays.asList(filter1, filter2);\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n    assertEquals(FilterResult.ALLOW, result);\n\n    verify(filter1).apply(String.class);\n    verify(filter2).apply(String.class);\n  }\n\n  @Test\n  void testGetFilterResult_filters_denied() {\n    ReflectionAccessFilter filter1 = mock(ReflectionAccessFilter.class);\n    ReflectionAccessFilter filter2 = mock(ReflectionAccessFilter.class);\n\n    when(filter1.apply(String.class)).thenReturn(FilterResult.DENY);\n    when(filter2.apply(String.class)).thenReturn(FilterResult.ALLOW);\n\n    List<ReflectionAccessFilter> filters = Arrays.asList(filter1, filter2);\n    FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n    assertEquals(FilterResult.DENY, result);\n\n    verify(filter1).apply(String.class);\n    verifyNoMoreInteractions(filter2);\n  }\n\n  @Test\n  void testCanAccess_accessibleObjectIsNull() {\n    assertFalse(ReflectionAccessFilterHelper.canAccess(null, targetObject));\n  }\n\n  @Test\n  void testCanAccess_accessibleObjectSetAccessibleTrue() throws Exception {\n    when(accessibleObject.isAccessible()).thenReturn(true);\n    assertTrue(ReflectionAccessFilterHelper.canAccess(accessibleObject, targetObject));\n  }\n\n  @Test\n  void testCanAccess_accessibleObjectSetAccessibleFalse() throws Exception {\n    when(accessibleObject.isAccessible()).thenReturn(false);\n    doNothing().when(accessibleObject).setAccessible(true);\n    assertTrue(ReflectionAccessFilterHelper.canAccess(accessibleObject, targetObject));\n    verify(accessibleObject).setAccessible(true);\n  }\n\n  @Test\n  void testCanAccess_setAccessibleThrows() throws Exception {\n    when(accessibleObject.isAccessible()).thenReturn(false);\n    doThrow(new SecurityException()).when(accessibleObject).setAccessible(true);\n    assertFalse(ReflectionAccessFilterHelper.canAccess(accessibleObject, targetObject));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889821,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1115,
+    "prompt_tokens": 300,
+    "total_tokens": 1415,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.51
+  }
+}

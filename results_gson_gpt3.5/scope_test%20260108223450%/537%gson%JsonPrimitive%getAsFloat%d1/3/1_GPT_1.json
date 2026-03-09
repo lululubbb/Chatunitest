@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmVWlAHWOUp0fKiptaIyhNKPfTEb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  void testGetAsFloat_whenIsNumberTrue_returnsNumberFloatValue() throws Exception {\n    JsonPrimitive jsonPrimitive = Mockito.spy(new JsonPrimitive(\"123.45\"));\n\n    // Mock isNumber() to return true\n    doReturn(true).when(jsonPrimitive).isNumber();\n\n    // Create a Number instance to be returned by getAsNumber()\n    Number number = 99.99f;\n\n    // Mock getAsNumber() to return the above number\n    doReturn(number).when(jsonPrimitive).getAsNumber();\n\n    float result = jsonPrimitive.getAsFloat();\n\n    assertEquals(number.floatValue(), result);\n  }\n\n  @Test\n  void testGetAsFloat_whenIsNumberFalse_returnsParsedFloatFromString() throws Exception {\n    JsonPrimitive jsonPrimitive = Mockito.spy(new JsonPrimitive(\"456.78\"));\n\n    // Mock isNumber() to return false\n    doReturn(false).when(jsonPrimitive).isNumber();\n\n    // Mock getAsString() to return a valid float string\n    doReturn(\"456.78\").when(jsonPrimitive).getAsString();\n\n    float result = jsonPrimitive.getAsFloat();\n\n    assertEquals(Float.parseFloat(\"456.78\"), result);\n  }\n\n  @Test\n  void testGetAsFloat_whenIsNumberFalse_invalidFloatString_throwsNumberFormatException() throws Exception {\n    JsonPrimitive jsonPrimitive = Mockito.spy(new JsonPrimitive(\"not_a_float\"));\n\n    doReturn(false).when(jsonPrimitive).isNumber();\n    doReturn(\"not_a_float\").when(jsonPrimitive).getAsString();\n\n    assertThrows(NumberFormatException.class, jsonPrimitive::getAsFloat);\n  }\n\n  @Test\n  void testGetAsFloat_withPrivateValueFieldNumber() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"0\"); // dummy init\n\n    // Use reflection to set private final field 'value' to a Number\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(jsonPrimitive, 123.456f);\n\n    // Use reflection to invoke private method isNumber()\n    Method isNumberMethod = JsonPrimitive.class.getDeclaredMethod(\"isNumber\");\n    isNumberMethod.setAccessible(true);\n    boolean isNumber = (boolean) isNumberMethod.invoke(jsonPrimitive);\n\n    // Use reflection to invoke getAsNumber()\n    Method getAsNumberMethod = JsonPrimitive.class.getDeclaredMethod(\"getAsNumber\");\n    getAsNumberMethod.setAccessible(true);\n    Number number = (Number) getAsNumberMethod.invoke(jsonPrimitive);\n\n    // Now call getAsFloat normally\n    float result = jsonPrimitive.getAsFloat();\n\n    if (isNumber) {\n      assertEquals(number.floatValue(), result);\n    } else {\n      String str = jsonPrimitive.getAsString();\n      assertEquals(Float.parseFloat(str), result);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887194,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 639,
+    "prompt_tokens": 426,
+    "total_tokens": 1065,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.6
+  }
+}

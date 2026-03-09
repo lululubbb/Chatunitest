@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvlpcVnP7a1IE6gBYJslEsZAQe8s",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.io.OutputStreamWriter;\nimport java.nio.charset.Charset;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\npublic class CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private File mockFile;\n    private Charset charset;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n        mockFile = mock(File.class);\n        charset = Charset.forName(\"UTF-8\");\n    }\n\n    @Test\n    public void testPrintCreatesCSVPrinter() throws IOException {\n        try (MockedConstruction<OutputStreamWriter> mockedOutputStreamWriter = mockConstruction(OutputStreamWriter.class);\n             MockedConstruction<CSVPrinter> mockedCSVPrinter = mockConstruction(CSVPrinter.class,\n                     (mock, context) -> {\n                         // no-op\n                     })) {\n\n            CSVPrinter printer = csvFormat.print(mockFile, charset);\n\n            assertNotNull(printer);\n            // Verify that OutputStreamWriter was constructed with FileOutputStream and charset\n            assertEquals(1, mockedOutputStreamWriter.constructed().size());\n            assertEquals(1, mockedCSVPrinter.constructed().size());\n        }\n    }\n\n    @Test\n    public void testPrintThrowsIOException() {\n        // To simulate IOException, we mock OutputStreamWriter constructor to throw\n        try (MockedConstruction<OutputStreamWriter> mockedOutputStreamWriter = mockConstruction(OutputStreamWriter.class,\n                (mock, context) -> {\n                    throw new IOException(\"Simulated IOException\");\n                })) {\n\n            IOException thrown = assertThrows(IOException.class, () -> {\n                csvFormat.print(mockFile, charset);\n            });\n            assertEquals(\"Simulated IOException\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684473,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 403,
+    "prompt_tokens": 1557,
+    "total_tokens": 1960,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.42
+  }
+}

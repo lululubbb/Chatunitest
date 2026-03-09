@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlsr0x62WVAdIK9EcjvF7a2ka2L8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Type;\n\nclass GsonFromJsonStringTypeTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_validJson_returnsExpectedObject() {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Type type = new TypeToken<TestClass>() {}.getType();\n\n    TestClass result = gson.fromJson(json, type);\n\n    assertNotNull(result);\n    assertEquals(\"test\", result.name);\n  }\n\n  @Test\n  public void fromJson_nullJson_returnsNull() {\n    String json = null;\n    Type type = new TypeToken<TestClass>() {}.getType();\n\n    TestClass result = gson.fromJson(json, type);\n\n    assertNull(result);\n  }\n\n  @Test\n  public void fromJson_emptyJson_throwsJsonSyntaxException() {\n    String json = \"\";\n    Type type = new TypeToken<TestClass>() {}.getType();\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(json, type));\n  }\n\n  @Test\n  public void fromJson_invalidJson_throwsJsonSyntaxException() {\n    String json = \"{invalid json}\";\n    Type type = new TypeToken<TestClass>() {}.getType();\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(json, type));\n  }\n\n  @Test\n  public void fromJson_callsFromJsonWithTypeToken() throws Exception {\n    String json = \"{\\\"name\\\":\\\"test\\\"}\";\n    Type type = new TypeToken<TestClass>() {}.getType();\n\n    // Spy on gson to verify delegation to fromJson(String, TypeToken)\n    Gson spyGson = Mockito.spy(gson);\n\n    // Create a real TypeToken instance for the given type\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<TestClass> typeToken = (TypeToken<TestClass>) TypeToken.get(type);\n\n    // Mock fromJson(String, TypeToken) to return a dummy object\n    TestClass expected = new TestClass();\n    doReturn(expected).when(spyGson).fromJson(json, typeToken);\n\n    TestClass actual = spyGson.fromJson(json, type);\n\n    assertSame(expected, actual);\n    verify(spyGson).fromJson(json, typeToken);\n  }\n\n  // Helper class for testing\n  static class TestClass {\n    String name;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884797,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 558,
+    "prompt_tokens": 2768,
+    "total_tokens": 3326,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.53
+  }
+}

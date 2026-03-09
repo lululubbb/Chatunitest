@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn3oSIntdR4DxZYoo9pJmxbK9X47",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.mockStatic;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.ReflectionAccessFilterHelper;\nimport com.google.gson.internal.reflect.ReflectionHelper;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nclass ReflectiveTypeAdapterFactoryTest {\n\n  // We cannot instantiate Field directly, so we use a real field for testing\n  static class DummyClass {\n    public static int staticField;\n    public int instanceField;\n  }\n\n  private static Method checkAccessibleMethod;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    checkAccessibleMethod = ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class);\n    checkAccessibleMethod.setAccessible(true);\n  }\n\n  @Test\n  void checkAccessible_permitsAccessibleMember() throws Exception {\n    Field instanceField = DummyClass.class.getDeclaredField(\"instanceField\");\n    Object object = new DummyClass();\n\n    try (MockedStatic<ReflectionAccessFilterHelper> filterHelperMock = mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> helperMock = mockStatic(ReflectionHelper.class)) {\n      filterHelperMock.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, object)).thenReturn(true);\n\n      checkAccessibleMethod.invoke(null, object, instanceField);\n    }\n  }\n\n  @Test\n  void checkAccessible_permitsAccessibleStaticMember() throws Exception {\n    Field staticField = DummyClass.class.getDeclaredField(\"staticField\");\n\n    try (MockedStatic<ReflectionAccessFilterHelper> filterHelperMock = mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> helperMock = mockStatic(ReflectionHelper.class)) {\n      filterHelperMock.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(true);\n\n      checkAccessibleMethod.invoke(null, null, staticField);\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenAccessDenied() throws Exception {\n    Field instanceField = DummyClass.class.getDeclaredField(\"instanceField\");\n    Object object = new DummyClass();\n\n    try (MockedStatic<ReflectionAccessFilterHelper> filterHelperMock = mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> helperMock = mockStatic(ReflectionHelper.class)) {\n      filterHelperMock.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, object)).thenReturn(false);\n      helperMock.when(() -> ReflectionHelper.getAccessibleObjectDescription(instanceField, true))\n          .thenReturn(\"field com.google.gson.internal.bind.ReflectiveTypeAdapterFactoryTest$DummyClass.instanceField\");\n\n      Exception exception = assertThrows(JsonIOException.class, () -> {\n        try {\n          checkAccessibleMethod.invoke(null, object, instanceField);\n        } catch (Exception e) {\n          // unwrap InvocationTargetException\n          Throwable cause = e.getCause();\n          if (cause instanceof JsonIOException) {\n            throw (JsonIOException) cause;\n          }\n          throw e;\n        }\n      });\n      String message = exception.getMessage();\n      assert message.contains(\"field com.google.gson.internal.bind.ReflectiveTypeAdapterFactoryTest$DummyClass.instanceField\");\n      assert message.contains(\"is not accessible\");\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenAccessDenied_staticField() throws Exception {\n    Field staticField = DummyClass.class.getDeclaredField(\"staticField\");\n\n    try (MockedStatic<ReflectionAccessFilterHelper> filterHelperMock = mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> helperMock = mockStatic(ReflectionHelper.class)) {\n      filterHelperMock.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(false);\n      helperMock.when(() -> ReflectionHelper.getAccessibleObjectDescription(staticField, true))\n          .thenReturn(\"field com.google.gson.internal.bind.ReflectiveTypeAdapterFactoryTest$DummyClass.staticField\");\n\n      Exception exception = assertThrows(JsonIOException.class, () -> {\n        try {\n          checkAccessibleMethod.invoke(null, null, staticField);\n        } catch (Exception e) {\n          // unwrap InvocationTargetException\n          Throwable cause = e.getCause();\n          if (cause instanceof JsonIOException) {\n            throw (JsonIOException) cause;\n          }\n          throw e;\n        }\n      });\n      String message = exception.getMessage();\n      assert message.contains(\"field com.google.gson.internal.bind.ReflectiveTypeAdapterFactoryTest$DummyClass.staticField\");\n      assert message.contains(\"is not accessible\");\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889320,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 974,
+    "prompt_tokens": 2761,
+    "total_tokens": 3735,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.65
+  }
+}

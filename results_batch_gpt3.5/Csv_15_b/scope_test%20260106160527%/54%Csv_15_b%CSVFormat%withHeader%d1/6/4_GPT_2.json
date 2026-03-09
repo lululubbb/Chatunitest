@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuwpw05PkCLA103AKkrUb7B4ejHoo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithHeader_withNullResultSet_returnsWithHeaderNull() throws SQLException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((ResultSet) null);\n        CSVFormat expected = format.withHeader((ResultSetMetaData) null);\n        assertEquals(expected, result);\n    }\n\n    @Test\n    void testWithHeader_withResultSet_callsGetMetaDataAndReturnsWithHeader() throws SQLException {\n        ResultSet resultSet = mock(ResultSet.class);\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(resultSet.getMetaData()).thenReturn(metaData);\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(resultSet);\n        CSVFormat expected = format.withHeader(metaData);\n\n        verify(resultSet, times(1)).getMetaData();\n        assertEquals(expected, result);\n    }\n\n    @Test\n    void testWithHeader_withResultSet_throwsSQLException() throws SQLException {\n        ResultSet resultSet = mock(ResultSet.class);\n        when(resultSet.getMetaData()).thenThrow(new SQLException(\"MetaData exception\"));\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        SQLException thrown = assertThrows(SQLException.class, () -> format.withHeader(resultSet));\n        assertEquals(\"MetaData exception\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688572,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 329,
+    "prompt_tokens": 2204,
+    "total_tokens": 2533,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.95
+  }
+}

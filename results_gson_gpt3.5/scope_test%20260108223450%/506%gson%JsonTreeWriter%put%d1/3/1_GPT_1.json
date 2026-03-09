@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm20LOE7yLqEMWi7y4apvQLzW1DC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n    private Method putMethod;\n    private Field pendingNameField;\n    private Field stackField;\n    private Field productField;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException, NoSuchFieldException {\n        jsonTreeWriter = new JsonTreeWriter();\n        putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethod.setAccessible(true);\n\n        pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameField.setAccessible(true);\n\n        stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n\n        productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n        productField.setAccessible(true);\n    }\n\n    private void invokePut(JsonElement value) throws InvocationTargetException, IllegalAccessException {\n        putMethod.invoke(jsonTreeWriter, value);\n    }\n\n    @Test\n    public void testPut_withPendingNameNotNull_valueNotJsonNull_addsToJsonObject() throws Exception {\n        // Arrange\n        String name = \"key\";\n        pendingNameField.set(jsonTreeWriter, name);\n\n        JsonElement value = mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(false);\n\n        JsonObject jsonObject = spy(new JsonObject());\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(jsonObject);\n\n        // Act\n        invokePut(value);\n\n        // Assert\n        verify(jsonObject).add(name, value);\n        assertNull(pendingNameField.get(jsonTreeWriter));\n    }\n\n    @Test\n    public void testPut_withPendingNameNotNull_valueIsJsonNull_serializeNullsTrue_addsToJsonObject() throws Exception {\n        // Arrange\n        String name = \"key\";\n        pendingNameField.set(jsonTreeWriter, name);\n\n        JsonElement value = mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(true);\n\n        JsonObject jsonObject = spy(new JsonObject());\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(jsonObject);\n\n        // set serializeNulls to true\n        Method getSerializeNullsMethod = JsonTreeWriter.class.getSuperclass().getDeclaredMethod(\"getSerializeNulls\");\n        getSerializeNullsMethod.setAccessible(true);\n        // Cannot mock superclass method easily, so create subclass to override getSerializeNulls\n        JsonTreeWriter writerOverride = new JsonTreeWriter() {\n            @Override\n            public boolean getSerializeNulls() {\n                return true;\n            }\n        };\n        Field stackFieldOverride = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackFieldOverride.setAccessible(true);\n        stackFieldOverride.set(writerOverride, stack);\n        Field pendingNameFieldOverride = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameFieldOverride.setAccessible(true);\n        pendingNameFieldOverride.set(writerOverride, name);\n\n        Method putMethodOverride = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethodOverride.setAccessible(true);\n\n        // Act\n        putMethodOverride.invoke(writerOverride, value);\n\n        // Assert\n        verify(jsonObject).add(name, value);\n        assertNull(pendingNameFieldOverride.get(writerOverride));\n    }\n\n    @Test\n    public void testPut_withPendingNameNotNull_valueIsJsonNull_serializeNullsFalse_doesNotAdd() throws Exception {\n        // Arrange\n        String name = \"key\";\n        pendingNameField.set(jsonTreeWriter, name);\n\n        JsonElement value = mock(JsonElement.class);\n        when(value.isJsonNull()).thenReturn(true);\n\n        JsonObject jsonObject = spy(new JsonObject());\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(jsonObject);\n\n        // By default getSerializeNulls() returns false, so no need to override\n\n        // Act\n        invokePut(value);\n\n        // Assert\n        verify(jsonObject, never()).add(anyString(), any());\n        assertNull(pendingNameField.get(jsonTreeWriter));\n    }\n\n    @Test\n    public void testPut_withEmptyStack_setsProduct() throws Exception {\n        // Arrange\n        pendingNameField.set(jsonTreeWriter, null);\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n\n        JsonElement value = mock(JsonElement.class);\n\n        // Act\n        invokePut(value);\n\n        // Assert\n        assertSame(value, productField.get(jsonTreeWriter));\n    }\n\n    @Test\n    public void testPut_withStackContainingJsonArray_addsValueToArray() throws Exception {\n        // Arrange\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonArray jsonArray = spy(new JsonArray());\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(jsonArray);\n\n        JsonElement value = mock(JsonElement.class);\n\n        // Act\n        invokePut(value);\n\n        // Assert\n        verify(jsonArray).add(value);\n    }\n\n    @Test\n    public void testPut_withStackContainingNonArrayNonPendingName_throwsIllegalStateException() throws Exception {\n        // Arrange\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonElement jsonElement = mock(JsonElement.class);\n        // Make sure jsonElement is not instance of JsonArray\n        // We cannot mock instanceof easily so use JsonObject\n        JsonObject jsonObject = new JsonObject();\n\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(jsonObject);\n\n        JsonElement value = mock(JsonElement.class);\n\n        // Act & Assert\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> invokePut(value));\n        assertNotNull(thrown);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885364,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1337,
+    "prompt_tokens": 577,
+    "total_tokens": 1914,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.54
+  }
+}

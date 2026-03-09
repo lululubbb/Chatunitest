@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmK9VckELPMFTAOrYINLOBMFXFI2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.Collections;\nimport java.util.List;\n\nclass ConstructorConstructorTest {\n\n  private ConstructorConstructor constructorConstructorWithUnsafe;\n  private ConstructorConstructor constructorConstructorWithoutUnsafe;\n\n  @BeforeEach\n  void setUp() {\n    constructorConstructorWithUnsafe = new ConstructorConstructor(\n        Collections.emptyMap(), true, Collections.emptyList());\n    constructorConstructorWithoutUnsafe = new ConstructorConstructor(\n        Collections.emptyMap(), false, Collections.emptyList());\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_constructReturnsInstance() throws Exception {\n    // Arrange\n    Class<TestClass> clazz = TestClass.class;\n\n    // Act\n    Object constructor = invokeNewUnsafeAllocator(constructorConstructorWithUnsafe, clazz);\n    TestClass instance = (TestClass) invokeConstruct(constructor);\n\n    // Assert\n    assertNotNull(instance);\n    assertEquals(0, instance.value);\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_constructThrowsRuntimeException_whenUnsafeFails() throws Exception {\n    // Arrange\n    try (MockedStatic<UnsafeAllocator> unsafeAllocatorMock = Mockito.mockStatic(UnsafeAllocator.class)) {\n      unsafeAllocatorMock.when(() -> UnsafeAllocator.INSTANCE.newInstance(any())).thenThrow(new UnsupportedOperationException(\"fail\"));\n\n      Class<TestClass> clazz = TestClass.class;\n      Object constructor = invokeNewUnsafeAllocator(constructorConstructorWithUnsafe, clazz);\n\n      // Act & Assert\n      RuntimeException ex = assertThrows(RuntimeException.class, () -> invokeConstruct(constructor));\n      assertTrue(ex.getMessage().contains(\"Unable to create instance of\"));\n      assertTrue(ex.getCause() instanceof UnsupportedOperationException);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeFalse_constructThrowsJsonIOException() throws Exception {\n    // Arrange\n    Class<TestClass> clazz = TestClass.class;\n    Object constructor = invokeNewUnsafeAllocator(constructorConstructorWithoutUnsafe, clazz);\n\n    // Act & Assert\n    JsonIOException exception = assertThrows(JsonIOException.class, () -> invokeConstruct(constructor));\n    String message = exception.getMessage();\n    assertTrue(message.contains(\"Unable to create instance of \" + clazz));\n    assertTrue(message.contains(\"usage of JDK Unsafe is disabled\"));\n  }\n\n  private Object invokeNewUnsafeAllocator(ConstructorConstructor cc, Class<?> rawType) throws Exception {\n    Method method = ConstructorConstructor.class.getDeclaredMethod(\"newUnsafeAllocator\", Class.class);\n    method.setAccessible(true);\n    return method.invoke(cc, rawType);\n  }\n\n  private Object invokeConstruct(Object objectConstructor) throws Exception {\n    Method constructMethod = objectConstructor.getClass().getMethod(\"construct\");\n    return constructMethod.invoke(objectConstructor);\n  }\n\n  // Simple class without no-arg constructor to test UnsafeAllocator usage\n  private static class TestClass {\n    final int value;\n\n    TestClass(int value) {\n      this.value = value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886489,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 659,
+    "prompt_tokens": 1931,
+    "total_tokens": 2590,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.44
+  }
+}

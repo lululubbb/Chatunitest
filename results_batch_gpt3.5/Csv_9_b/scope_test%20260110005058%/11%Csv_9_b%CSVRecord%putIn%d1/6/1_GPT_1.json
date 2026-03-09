@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9zQx7P7EkU3efvCj5BrTA9uuH2E",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        values = new String[]{\"val0\", \"val1\", \"val2\"};\n    }\n\n    @Test\n    void testPutIn_withEmptyMapAndValidMapping() {\n        mapping.put(\"key0\", 0);\n        mapping.put(\"key1\", 1);\n        mapping.put(\"key2\", 2);\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n\n        Map<String, String> map = new HashMap<>();\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertEquals(\"val0\", map.get(\"key0\"));\n        assertEquals(\"val1\", map.get(\"key1\"));\n        assertEquals(\"val2\", map.get(\"key2\"));\n        assertEquals(3, map.size());\n    }\n\n    @Test\n    void testPutIn_withMappingIndexOutOfBounds() {\n        mapping.put(\"key0\", 0);\n        mapping.put(\"key1\", 3); // out of bounds index\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n\n        Map<String, String> map = new HashMap<>();\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertEquals(\"val0\", map.get(\"key0\"));\n        assertFalse(map.containsKey(\"key1\"));\n        assertEquals(1, map.size());\n    }\n\n    @Test\n    void testPutIn_withEmptyMapping() {\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n\n        Map<String, String> map = new HashMap<>();\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertTrue(map.isEmpty());\n    }\n\n    @Test\n    void testPutIn_withNullValuesArray() throws Exception {\n        // Use reflection to create CSVRecord with null values array to test null handling\n        Class<CSVRecord> clazz = CSVRecord.class;\n        var constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        csvRecord = constructor.newInstance(null, mapping, null, 1L);\n\n        Map<String, String> map = new HashMap<>();\n        // The method putIn should handle null values gracefully (no NPE)\n        Map<String, String> result = csvRecord.putIn(map);\n\n        assertSame(map, result);\n        assertTrue(map.isEmpty());\n    }\n\n    @Test\n    void testPutIn_withPrivateMethodInvocationUsingReflection() throws Exception {\n        mapping.put(\"key0\", 0);\n        csvRecord = new CSVRecord(values, mapping, null, 1L);\n\n        Method putInMethod = CSVRecord.class.getDeclaredMethod(\"putIn\", Map.class);\n        putInMethod.setAccessible(true);\n\n        Map<String, String> map = new HashMap<>();\n        @SuppressWarnings(\"unchecked\")\n        Map<String, String> result = (Map<String, String>) putInMethod.invoke(csvRecord, map);\n\n        assertSame(map, result);\n        assertEquals(\"val0\", map.get(\"key0\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977460,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 754,
+    "prompt_tokens": 448,
+    "total_tokens": 1202,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.11
+  }
+}

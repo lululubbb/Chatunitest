@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwgOSGSn3K5uh7rP2h9qG7QWI1SE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrintReturnsCSVPrinter() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Appendable appendable = mock(Appendable.class);\n        CSVPrinter printer = csvFormat.print(appendable);\n        assertNotNull(printer);\n\n        // Use reflection to access the private 'out' field of CSVPrinter\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        Object internalOut = outField.get(printer);\n\n        // Unwrap BufferedWriter if present (BufferedWriter is in java.io package)\n        Class<?> bufferedWriterClass = null;\n        try {\n            bufferedWriterClass = Class.forName(\"java.io.BufferedWriter\");\n        } catch (ClassNotFoundException e) {\n            // Ignore if not found\n        }\n        if (bufferedWriterClass != null && bufferedWriterClass.isInstance(internalOut)) {\n            Field outFieldInBufferedWriter = bufferedWriterClass.getDeclaredField(\"out\");\n            outFieldInBufferedWriter.setAccessible(true);\n            internalOut = outFieldInBufferedWriter.get(internalOut);\n        }\n\n        // Unwrap FilterWriter if present (BufferedWriter extends FilterWriter)\n        Class<?> filterWriterClass = null;\n        try {\n            filterWriterClass = Class.forName(\"java.io.FilterWriter\");\n        } catch (ClassNotFoundException e) {\n            // Ignore if not found\n        }\n        if (filterWriterClass != null && filterWriterClass.isInstance(internalOut)) {\n            Field outFieldInFilterWriter = filterWriterClass.getDeclaredField(\"out\");\n            outFieldInFilterWriter.setAccessible(true);\n            internalOut = outFieldInFilterWriter.get(internalOut);\n        }\n\n        // Adjusted assertion: the internal 'out' field of CSVPrinter wraps the original Appendable,\n        // but the wrapped object may not be the same instance due to internal wrapping.\n        // Instead, we check that the internalOut is the same as the original appendable mock.\n        assertSame(appendable, internalOut);\n    }\n\n    @Test\n    void testPrintWithNullAppendableThrowsException() {\n        assertThrows(NullPointerException.class, () -> csvFormat.print(null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687980,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 559,
+    "prompt_tokens": 2351,
+    "total_tokens": 2910,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.4
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVFormatTest {\n\n    private enum TestEnum {\n        ONE, TWO, THREE\n    }\n\n    @Test\n    void testWithHeaderWithNull() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((Class<? extends Enum<?>>) null);\n        assertNotNull(result);\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    void testWithHeaderWithEnum() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(TestEnum.class);\n        assertNotNull(result);\n        String[] expected = {\"ONE\", \"TWO\", \"THREE\"};\n        assertArrayEquals(expected, result.getHeader());\n    }\n\n    @Test\n    void testWithHeaderInvokesPublicWithHeaderArray() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String[] headerArray = new String[]{\"A\", \"B\"};\n\n        // Use reflection to get public withHeader(String... header) method\n        Method withHeaderArrayMethod = CSVFormat.class.getMethod(\"withHeader\", String[].class);\n\n        // Invoke method directly and verify new CSVFormat has correct header\n        CSVFormat newFormat = (CSVFormat) withHeaderArrayMethod.invoke(format, (Object) headerArray);\n        assertNotNull(newFormat);\n        assertArrayEquals(headerArray, newFormat.getHeader());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260106160527%/53%Csv_15_b%CSVFormat%withHeader%d1/5/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2230,
+  "completion_tokens": 310,
+  "total_tokens": 2540,
+  "llm_elapsed_time_seconds": 5.05
+}

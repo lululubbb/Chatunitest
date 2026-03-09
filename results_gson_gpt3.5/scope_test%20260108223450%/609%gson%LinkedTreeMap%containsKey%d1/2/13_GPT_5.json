@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmtguu8HEI3CWbHNNVtAN6jJRrJj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMap_ContainsKeyTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void containsKey_withNullKey_notFound() {\n    assertFalse(map.containsKey(null));\n  }\n\n  @Test\n  void containsKey_withAbsentKey() {\n    map.put(\"key1\", \"value1\");\n    assertFalse(map.containsKey(\"key2\"));\n  }\n\n  @Test\n  void containsKey_withPresentKey() {\n    map.put(\"key1\", \"value1\");\n    assertTrue(map.containsKey(\"key1\"));\n  }\n\n  @Test\n  void containsKey_withDifferentObjectSameKey() {\n    map.put(\"key1\", \"value1\");\n    // new String with same content\n    String key = new String(\"key1\");\n    assertTrue(map.containsKey(key));\n  }\n\n  @Test\n  void containsKey_reflective_findByObjectReturnsNull() throws Exception {\n    // Create spy to mock findByObject returning null\n    LinkedTreeMap<String, String> spyMap = spy(new LinkedTreeMap<>());\n    doReturn(null).when(spyMap).findByObject(\"missingKey\");\n    assertFalse(spyMap.containsKey(\"missingKey\"));\n  }\n\n  @Test\n  void containsKey_reflective_findByObjectReturnsNode() throws Exception {\n    // Use reflection to create a Node and mock findByObject to return it\n    LinkedTreeMap<String, String> spyMap = spy(new LinkedTreeMap<>());\n\n    Class<?> nodeClass = Class.forName(\"com.google.gson.internal.LinkedTreeMap$Node\");\n    // Node constructor is package-private: Node(K key, V value, Node<K,V> parent, Node<K,V> left, Node<K,V> right, int height, Node<K,V> prev, Node<K,V> next)\n    // We will construct a node with minimal parameters (nulls and 1 height)\n    Object node = nodeClass.getDeclaredConstructor(\n        Object.class, Object.class, nodeClass, nodeClass, nodeClass, int.class, nodeClass, nodeClass)\n        .newInstance(\"key\", \"value\", null, null, null, 1, null, null);\n\n    doReturn(node).when(spyMap).findByObject(\"key\");\n    assertTrue(spyMap.containsKey(\"key\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888692,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 541,
+    "prompt_tokens": 1299,
+    "total_tokens": 1840,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.54
+  }
+}

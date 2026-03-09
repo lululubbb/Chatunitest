@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdaptersTest {\n\n  @Test\n  void newFactory_returnsFactoryWithCorrectBehavior() {\n    // Arrange\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> stringAdapter = mock(TypeAdapter.class);\n\n    TypeAdapterFactory factory = TypeAdapters.newFactory(stringTypeToken, stringAdapter);\n\n    Gson gson = mock(Gson.class);\n    TypeToken<String> matchingTypeToken = TypeToken.get(String.class);\n    TypeToken<Integer> nonMatchingTypeToken = TypeToken.get(Integer.class);\n\n    // Act & Assert\n    // When typeToken equals the registered type, create returns the adapter\n    TypeAdapter<?> adapter1 = factory.create(gson, matchingTypeToken);\n    assertSame(stringAdapter, adapter1);\n\n    // When typeToken does not equal the registered type, create returns null\n    TypeAdapter<?> adapter2 = factory.create(gson, nonMatchingTypeToken);\n    assertNull(adapter2);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 568,
+  "completion_tokens": 259,
+  "total_tokens": 827,
+  "llm_elapsed_time_seconds": 6.43
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmieszfaDoZQVsm6KkuzJxOwJGmI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testConstructorWithBoolean_nullThrowsNPE() {\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getConstructor(Boolean.class);\n      constructor.newInstance((Boolean) null);\n    });\n    assertNotNull(exception);\n  }\n\n  @Test\n  public void testConstructorWithBoolean_valueSet() throws Exception {\n    Boolean bool = Boolean.TRUE;\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getConstructor(Boolean.class);\n    JsonPrimitive jsonPrimitive = constructor.newInstance(bool);\n\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Object value = valueField.get(jsonPrimitive);\n\n    assertSame(bool, value);\n  }\n\n  @Test\n  public void testIsIntegral_privateMethod() throws Exception {\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getConstructor(Boolean.class);\n    JsonPrimitive instance = constructor.newInstance(Boolean.TRUE);\n\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    // Create a JsonPrimitive with integral Number\n    Constructor<JsonPrimitive> numberConstructor = JsonPrimitive.class.getConstructor(Number.class);\n    JsonPrimitive integralPrimitive = numberConstructor.newInstance(42);\n\n    Boolean resultIntegral = (Boolean) isIntegralMethod.invoke(null, integralPrimitive);\n    assertTrue(resultIntegral);\n\n    // Create a JsonPrimitive with non-integral Number\n    JsonPrimitive nonIntegralPrimitive = numberConstructor.newInstance(3.14);\n\n    Boolean resultNonIntegral = (Boolean) isIntegralMethod.invoke(null, nonIntegralPrimitive);\n    assertFalse(resultNonIntegral);\n\n    // Create a JsonPrimitive with Boolean (not a Number)\n    Boolean resultBoolean = (Boolean) isIntegralMethod.invoke(null, instance);\n    assertFalse(resultBoolean);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888008,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 440,
+    "prompt_tokens": 412,
+    "total_tokens": 852,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.34
+  }
+}

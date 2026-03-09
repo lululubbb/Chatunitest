@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.math.BigInteger;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testGetAsBigInteger_withBigIntegerValue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"0\"); // dummy init\n    // Use reflection to set private final field 'value' to a BigInteger\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    BigInteger expected = new BigInteger(\"12345678901234567890\");\n    valueField.set(primitive, expected);\n\n    BigInteger actual = primitive.getAsBigInteger();\n    assertSame(expected, actual);\n  }\n\n  @Test\n  public void testGetAsBigInteger_withStringValue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"0\"); // dummy init\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    String strValue = \"98765432109876543210\";\n    valueField.set(primitive, strValue);\n\n    BigInteger actual = primitive.getAsBigInteger();\n    BigInteger expected = new BigInteger(strValue);\n    assertEquals(expected, actual);\n  }\n\n  @Test\n  public void testGetAsBigInteger_withLazilyParsedNumberValue() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"0\"); // dummy init\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    LazilyParsedNumber lpn = new LazilyParsedNumber(\"11223344556677889900\");\n    valueField.set(primitive, lpn);\n\n    BigInteger actual = primitive.getAsBigInteger();\n    BigInteger expected = new BigInteger(lpn.toString());\n    assertEquals(expected, actual);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 427,
+  "completion_tokens": 397,
+  "total_tokens": 824,
+  "llm_elapsed_time_seconds": 7.37,
+  "repair_elapsed_time_seconds": 15.43,
+  "round_total_time_seconds": 15.43
+}

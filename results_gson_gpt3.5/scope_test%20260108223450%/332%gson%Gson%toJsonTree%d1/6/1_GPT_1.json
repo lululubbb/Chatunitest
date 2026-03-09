@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmoYliwxiH0TgDSqM9j41ho1TUVv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class GsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJsonTree_withObjectAndType() {\n    String src = \"testString\";\n    Type typeOfSrc = String.class;\n\n    JsonElement jsonElement = gson.toJsonTree(src, typeOfSrc);\n\n    assertNotNull(jsonElement);\n    assertTrue(jsonElement.isJsonPrimitive());\n    assertEquals(src, jsonElement.getAsString());\n  }\n\n  @Test\n  public void testToJsonTree_withNullObject() {\n    Object src = null;\n    Type typeOfSrc = Object.class;\n\n    JsonElement jsonElement = gson.toJsonTree(src, typeOfSrc);\n\n    assertNotNull(jsonElement);\n    assertTrue(jsonElement.isJsonNull());\n  }\n\n  @Test\n  public void testToJsonTree_invokesToJsonWithWriter() throws Exception {\n    // Use reflection to test toJson method invocation inside toJsonTree\n    Gson spyGson = Mockito.spy(new Gson());\n    String src = \"reflectionTest\";\n    Type typeOfSrc = String.class;\n\n    // Call toJsonTree normally\n    JsonElement result = spyGson.toJsonTree(src, typeOfSrc);\n\n    // Verify toJson(Object, Type, JsonWriter) is called exactly once\n    verify(spyGson, times(1)).toJson(eq(src), eq(typeOfSrc), any(JsonWriter.class));\n\n    assertNotNull(result);\n  }\n\n  @Test\n  public void testToJsonTree_privateMethodViaReflection() throws Exception {\n    Method toJsonTreeMethod = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class, Type.class);\n    toJsonTreeMethod.setAccessible(true);\n\n    String src = \"reflectionAccess\";\n    Type typeOfSrc = String.class;\n\n    Object result = toJsonTreeMethod.invoke(gson, src, typeOfSrc);\n\n    assertNotNull(result);\n    assertTrue(result instanceof JsonElement);\n    assertEquals(src, ((JsonElement) result).getAsString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888374,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 506,
+    "prompt_tokens": 1605,
+    "total_tokens": 2111,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.48
+  }
+}

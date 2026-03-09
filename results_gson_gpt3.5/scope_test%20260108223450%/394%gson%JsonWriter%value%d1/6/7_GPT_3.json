@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvloTVX3AdEwVeknw3FQ01jukuuE4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\nclass JsonWriter_value_Test {\n\n  private Writer mockWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  void value_writesLongValue_and_returnsThis() throws IOException {\n    // Arrange\n    setPrivateField(jsonWriter, \"deferredName\", null);\n    pushStackState(jsonWriter, 6); // NONEMPTY_DOCUMENT = 6\n\n    // Act\n    JsonWriter returned = jsonWriter.value(123456789L);\n\n    // Assert\n    assertSame(jsonWriter, returned);\n    verify(mockWriter).write(\"123456789\");\n  }\n\n  @Test\n  void value_withDeferredName_writesNameAndValue() throws Exception {\n    // Arrange\n    setPrivateField(jsonWriter, \"deferredName\", \"keyName\");\n    pushStackState(jsonWriter, 6); // NONEMPTY_DOCUMENT = 6\n\n    // Act\n    JsonWriter returned = jsonWriter.value(42L);\n\n    // Assert\n    assertSame(jsonWriter, returned);\n    assertNull(getPrivateField(jsonWriter, \"deferredName\"));\n    verify(mockWriter).write(\":\\\"keyName\\\"\");\n    verify(mockWriter).write(\"42\");\n  }\n\n  @Test\n  void value_throwsIOException_whenWriterThrows() throws IOException {\n    // Arrange\n    setPrivateField(jsonWriter, \"deferredName\", null);\n    pushStackState(jsonWriter, 6);\n    doThrow(new IOException(\"write error\")).when(mockWriter).write(anyString());\n\n    // Act & Assert\n    IOException thrown = assertThrows(IOException.class, () -> jsonWriter.value(1L));\n    assertEquals(\"write error\", thrown.getMessage());\n  }\n\n  // Helper to set private field via reflection\n  private static void setPrivateField(Object target, String fieldName, Object value) {\n    try {\n      Field field = getField(target.getClass(), fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get private field via reflection\n  private static Object getPrivateField(Object target, String fieldName) {\n    try {\n      Field field = getField(target.getClass(), fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to push a valid state onto the stack array and increment stackSize\n  private static void pushStackState(JsonWriter writer, int state) {\n    try {\n      Field stackField = getField(writer.getClass(), \"stack\");\n      stackField.setAccessible(true);\n      int[] stack = (int[]) stackField.get(writer);\n      Field stackSizeField = getField(writer.getClass(), \"stackSize\");\n      stackSizeField.setAccessible(true);\n      int stackSize = (int) stackSizeField.get(writer);\n      stack[stackSize] = state;\n      stackSizeField.set(writer, stackSize + 1);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  // Helper to get Field, including from superclasses\n  private static Field getField(Class<?> clazz, String name) throws NoSuchFieldException {\n    Class<?> current = clazz;\n    while (current != null) {\n      try {\n        return current.getDeclaredField(name);\n      } catch (NoSuchFieldException e) {\n        current = current.getSuperclass();\n      }\n    }\n    throw new NoSuchFieldException(name);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884525,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 819,
+    "prompt_tokens": 2729,
+    "total_tokens": 3548,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.8
+  }
+}

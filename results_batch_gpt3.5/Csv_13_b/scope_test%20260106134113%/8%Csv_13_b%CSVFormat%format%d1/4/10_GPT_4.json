@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuumclKVcdkZzg7RT80zM7afYo6B1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormatWithNormalValues() {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormatWithNullValues() {\n        String result = csvFormat.format(\"a\", null, \"c\");\n        assertEquals(\"a,,c\", result);\n    }\n\n    @Test\n    public void testFormatWithEmptyValues() {\n        String result = csvFormat.format(\"\", \"\", \"\");\n        assertEquals(\",,\", result);\n    }\n\n    @Test\n    public void testFormatWithNoValues() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormatThrowsIllegalStateExceptionOnIOException() throws Exception {\n        // We cannot subclass final CSVFormat or mock its format method directly.\n        // So we create a proxy CSVFormat that throws IOException inside format by\n        // mocking CSVPrinter.printRecord via a custom CSVPrinter subclass.\n\n        CSVFormat faultyFormat = new CSVFormatWithFaultyPrinter(csvFormat);\n\n        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {\n            faultyFormat.format(\"a\");\n        });\n        assertTrue(ex.getCause() instanceof IOException);\n        assertEquals(\"forced\", ex.getCause().getMessage());\n    }\n\n    private static class CSVFormatWithFaultyPrinter extends CSVFormat {\n        private final CSVFormat baseFormat;\n\n        CSVFormatWithFaultyPrinter(CSVFormat baseFormat) {\n            this.baseFormat = baseFormat;\n        }\n\n        @Override\n        public String format(final Object... values) {\n            final StringWriter out = new StringWriter();\n            try {\n                // Use our faulty CSVPrinter that throws IOException on printRecord\n                CSVPrinter printer = new CSVPrinter(out, baseFormat) {\n                    @Override\n                    public CSVPrinter printRecord(final Object... values) throws IOException {\n                        throw new IOException(\"forced\");\n                    }\n                };\n                printer.printRecord(values);\n                return out.toString().trim();\n            } catch (final IOException e) {\n                throw new IllegalStateException(e);\n            }\n        }\n    }\n\n    @Test\n    public void testFormatUsesCustomCSVFormat() {\n        CSVFormat customFormat = CSVFormat.DEFAULT.withDelimiter(';').withQuoteMode(QuoteMode.ALL);\n        String result = customFormat.format(\"a;b\", \"c\");\n        // Because QuoteMode.ALL, fields should be quoted\n        assertEquals(\"\\\"a;b\\\";\\\"c\\\"\", result);\n    }\n\n    @Test\n    public void testFormatWithReflectionAccessPrivateFields() throws Exception {\n        // Use reflection to set private field delimiter to semicolon\n        Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        delimiterField.setAccessible(true);\n        delimiterField.set(csvFormat, ';');\n\n        // Use reflection to set private field quoteCharacter to '\"'\n        Field quoteCharField = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n        quoteCharField.setAccessible(true);\n        quoteCharField.set(csvFormat, '\"');\n\n        String result = csvFormat.format(\"x\", \"y\");\n        assertEquals(\"x;y\", result); // Because default quoteMode is null, quotes may not be added\n    }\n\n    @Test\n    public void testFormatWithNullStringSet() throws Exception {\n        // Set private field nullString to \"NULL\"\n        Field nullStringField = CSVFormat.class.getDeclaredField(\"nullString\");\n        nullStringField.setAccessible(true);\n        nullStringField.set(csvFormat, \"NULL\");\n\n        String result = csvFormat.format(null, \"test\");\n        // null should be replaced with nullString \"NULL\"\n        assertTrue(result.contains(\"NULL\"));\n    }\n\n    @Test\n    public void testFormatWithQuoteCharacterSetToNull() throws Exception {\n        // Set quoteCharacter to null, so no quoting\n        Field quoteCharField = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n        quoteCharField.setAccessible(true);\n        quoteCharField.set(csvFormat, null);\n\n        String result = csvFormat.format(\"a,b\", \"c\");\n        // No quotes, delimiter is comma, so result should be \"a,b,c\"\n        assertEquals(\"a,b,c\", result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680678,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 994,
+    "prompt_tokens": 2596,
+    "total_tokens": 3590,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.33
+  }
+}

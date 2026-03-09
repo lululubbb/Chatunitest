@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmL96F4g0pPJEFBJwr5tYpfpoqdW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.sql.SqlDateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.sql.Date;\nimport java.text.SimpleDateFormat;\n\nclass SqlDateTypeAdapterTest {\n\n    private SqlDateTypeAdapter adapter;\n    private JsonReader jsonReader;\n\n    @BeforeEach\n    void setUp() {\n        adapter = new SqlDateTypeAdapter();\n        jsonReader = mock(JsonReader.class);\n    }\n\n    @Test\n    void read_nullToken_returnsNull() throws IOException {\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        Date result = adapter.read(jsonReader);\n\n        verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_validDateString_returnsSqlDate() throws IOException {\n        String dateString = \"Jan 1, 2020\";\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n        when(jsonReader.nextString()).thenReturn(dateString);\n\n        Date result = adapter.read(jsonReader);\n\n        assertNotNull(result);\n        // Check the date value corresponds to the parsed string\n        SimpleDateFormat sdf = new SimpleDateFormat(\"MMM d, yyyy\");\n        long expectedTime = sdf.parse(dateString).getTime();\n        assertEquals(expectedTime, result.getTime());\n    }\n\n    @Test\n    void read_invalidDateString_throwsJsonSyntaxException() throws IOException {\n        String invalidDate = \"invalid-date\";\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n        when(jsonReader.nextString()).thenReturn(invalidDate);\n        when(jsonReader.getPreviousPath()).thenReturn(\"$.date\");\n\n        JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> adapter.read(jsonReader));\n        assertTrue(thrown.getMessage().contains(\"Failed parsing\"));\n        assertTrue(thrown.getMessage().contains(invalidDate));\n        assertTrue(thrown.getMessage().contains(\"$.date\"));\n        assertNotNull(thrown.getCause());\n        assertTrue(thrown.getCause() instanceof java.text.ParseException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886551,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 475,
+    "prompt_tokens": 1131,
+    "total_tokens": 1606,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.12
+  }
+}

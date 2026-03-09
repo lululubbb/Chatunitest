@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnC9zIWc3lA6DKlF1hBtrVHMK7HQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Date;\n\nclass DefaultDateTypeAdapterTest {\n\n    private DefaultDateTypeAdapter<Date> adapter;\n    private DefaultDateTypeAdapter.DateType<Date> dateType;\n\n    @BeforeEach\n    void setUp() {\n        dateType = mock(DefaultDateTypeAdapter.DateType.class);\n        adapter = new DefaultDateTypeAdapter<>(dateType, \"yyyy-MM-dd\");\n    }\n\n    @Test\n    void read_shouldReturnNull_whenJsonTokenIsNull() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.NULL);\n\n        Date result = adapter.read(in);\n\n        verify(in).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_shouldReturnDeserializedDate() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.STRING);\n        Date expectedDate = new Date();\n        @SuppressWarnings(\"unchecked\")\n        DefaultDateTypeAdapter<Date> spyAdapter = Mockito.spy(adapter);\n\n        // Use reflection to invoke private deserializeToDate to mock its behavior\n        Method deserializeToDateMethod = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n        doReturn(expectedDate).when(spyAdapter).deserializeToDate(in);\n\n        when(dateType.deserialize(expectedDate)).thenReturn(expectedDate);\n\n        Date actual = spyAdapter.read(in);\n\n        verify(spyAdapter).deserializeToDate(in);\n        verify(dateType).deserialize(expectedDate);\n        assertEquals(expectedDate, actual);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889837,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 410,
+    "prompt_tokens": 1079,
+    "total_tokens": 1489,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.36
+  }
+}

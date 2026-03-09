@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  private ArrayList<String> delegate;\n  private NonNullElementWrapperList<String> list;\n\n  @BeforeEach\n  void setUp() {\n    delegate = Mockito.spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void removeAll_whenCollectionIsEmpty_shouldReturnFalseAndNotModifyList() {\n    delegate.addAll(Arrays.asList(\"a\", \"b\", \"c\"));\n    Collection<String> toRemove = Arrays.asList();\n\n    boolean result = list.removeAll(toRemove);\n\n    assertFalse(result);\n    assertEquals(3, list.size());\n    verify(delegate).removeAll(toRemove);\n  }\n\n  @Test\n  void removeAll_whenCollectionContainsElements_shouldRemoveAndReturnTrue() {\n    delegate.addAll(Arrays.asList(\"a\", \"b\", \"c\", \"d\"));\n    Collection<String> toRemove = Arrays.asList(\"b\", \"d\");\n\n    boolean result = list.removeAll(toRemove);\n\n    assertTrue(result);\n    assertEquals(2, list.size());\n    assertFalse(list.contains(\"b\"));\n    assertFalse(list.contains(\"d\"));\n    verify(delegate).removeAll(toRemove);\n  }\n\n  @Test\n  void removeAll_whenCollectionContainsNonExistingElements_shouldReturnFalse() {\n    delegate.addAll(Arrays.asList(\"a\", \"b\", \"c\"));\n    Collection<String> toRemove = Arrays.asList(\"x\", \"y\");\n\n    boolean result = list.removeAll(toRemove);\n\n    assertFalse(result);\n    assertEquals(3, list.size());\n    verify(delegate).removeAll(toRemove);\n  }\n\n  @Test\n  void removeAll_withNullCollection_shouldThrowNullPointerException() {\n    assertThrows(NullPointerException.class, () -> list.removeAll(null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 374,
+  "completion_tokens": 433,
+  "total_tokens": 807,
+  "llm_elapsed_time_seconds": 10.71,
+  "repair_elapsed_time_seconds": 19.95,
+  "round_total_time_seconds": 19.95
+}

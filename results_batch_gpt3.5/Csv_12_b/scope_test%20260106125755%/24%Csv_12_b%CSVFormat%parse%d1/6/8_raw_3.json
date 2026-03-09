@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n    }\n\n    @Test\n    void testParseReturnsCSVParserInstance() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVParser parser = format.parse(mockReader);\n        assertNotNull(parser);\n        assertEquals(format, getCSVFormatFromParser(parser));\n    }\n\n    @Test\n    void testParseWithNullReaderThrowsException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertThrows(NullPointerException.class, () -> format.parse(null));\n    }\n\n    // Helper method to use reflection to get the private 'format' field from CSVParser\n    private CSVFormat getCSVFormatFromParser(CSVParser parser) {\n        try {\n            java.lang.reflect.Field formatField = parser.getClass().getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            return (CSVFormat) formatField.get(parser);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Reflection failed: \" + e.getMessage());\n            return null;\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_12_b/scope_test%20260106125755%/24%Csv_12_b%CSVFormat%parse%d1/6/runtemp/Csv_12_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1325,
+  "completion_tokens": 288,
+  "total_tokens": 1613,
+  "llm_elapsed_time_seconds": 3.78
+}

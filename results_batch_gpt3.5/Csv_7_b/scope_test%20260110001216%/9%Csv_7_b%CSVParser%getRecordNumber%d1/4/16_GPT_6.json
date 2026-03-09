@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9VJxIIve0VAbcQ7lIKS13M0yf9x",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertNull;\n\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        String csvData = \"header1,header2\\nvalue1,value2\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"header1\", \"header2\").withSkipHeaderRecord(true);\n        parser = new CSVParser(new StringReader(csvData), format);\n    }\n\n    @Test\n    void testGetRecordNumber_initialValue() throws Exception {\n        // Initially, recordNumber should be 0 before any records are read\n        assertEquals(0L, parser.getRecordNumber());\n    }\n\n    @Test\n    void testGetRecordNumber_afterNextRecord() throws Exception {\n        // Use nextRecord() to advance parser and increment recordNumber\n        CSVRecord record = parser.nextRecord();\n        assertEquals(1L, parser.getRecordNumber());\n\n        // nextRecord() returns null if no more records\n        assertNull(parser.nextRecord());\n        assertEquals(1L, parser.getRecordNumber());\n    }\n\n    @Test\n    void testSetRecordNumberUsingReflection() throws Exception {\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        recordNumberField.setLong(parser, 42L);\n        assertEquals(42L, parser.getRecordNumber());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975593,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 338,
+    "prompt_tokens": 913,
+    "total_tokens": 1251,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.33
+  }
+}

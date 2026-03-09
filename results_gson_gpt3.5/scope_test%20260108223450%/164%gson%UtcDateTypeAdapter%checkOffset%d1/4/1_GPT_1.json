@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmRmedPJdlJGNOmqnCgcXsmuez9A",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static Method checkOffsetMethod;\n\n  @BeforeAll\n  public static void setUp() throws NoSuchMethodException {\n    checkOffsetMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"checkOffset\", String.class, int.class, char.class);\n    checkOffsetMethod.setAccessible(true);\n  }\n\n  private boolean invokeCheckOffset(String value, int offset, char expected) throws InvocationTargetException, IllegalAccessException {\n    return (boolean) checkOffsetMethod.invoke(null, value, offset, expected);\n  }\n\n  @Test\n  public void testCheckOffset_OffsetLessThanLengthAndCharMatches() throws Exception {\n    assertTrue(invokeCheckOffset(\"abc\", 1, 'b'));\n  }\n\n  @Test\n  public void testCheckOffset_OffsetLessThanLengthAndCharDoesNotMatch() throws Exception {\n    assertFalse(invokeCheckOffset(\"abc\", 1, 'a'));\n  }\n\n  @Test\n  public void testCheckOffset_OffsetEqualsLength() throws Exception {\n    assertFalse(invokeCheckOffset(\"abc\", 3, 'c'));\n  }\n\n  @Test\n  public void testCheckOffset_OffsetGreaterThanLength() throws Exception {\n    assertFalse(invokeCheckOffset(\"abc\", 4, 'c'));\n  }\n\n  @Test\n  public void testCheckOffset_EmptyString() throws Exception {\n    assertFalse(invokeCheckOffset(\"\", 0, 'a'));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886962,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 354,
+    "prompt_tokens": 397,
+    "total_tokens": 751,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.55
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwjDAb4JH7njHoPtr3GyiDjDnBwV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithHeaderTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithHeader_NullMetaData() throws Exception {\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", ResultSetMetaData.class);\n        withHeaderMethod.setAccessible(true);\n\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(csvFormat, new Object[] { null });\n        assertNotNull(result);\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    void testWithHeader_EmptyMetaData() throws Exception {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(0);\n\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", ResultSetMetaData.class);\n        withHeaderMethod.setAccessible(true);\n\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(csvFormat, metaData);\n        assertNotNull(result);\n        assertArrayEquals(new String[0], result.getHeader());\n\n        verify(metaData).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    void testWithHeader_MultipleColumns() throws Exception {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(3);\n        when(metaData.getColumnLabel(1)).thenReturn(\"col1\");\n        when(metaData.getColumnLabel(2)).thenReturn(\"col2\");\n        when(metaData.getColumnLabel(3)).thenReturn(\"col3\");\n\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", ResultSetMetaData.class);\n        withHeaderMethod.setAccessible(true);\n\n        CSVFormat result = (CSVFormat) withHeaderMethod.invoke(csvFormat, metaData);\n        assertNotNull(result);\n        assertArrayEquals(new String[] { \"col1\", \"col2\", \"col3\" }, result.getHeader());\n\n        verify(metaData).getColumnCount();\n        verify(metaData).getColumnLabel(1);\n        verify(metaData).getColumnLabel(2);\n        verify(metaData).getColumnLabel(3);\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    void testWithHeader_MetaDataThrowsSQLException() throws Exception {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenThrow(new SQLException(\"Test exception\"));\n\n        Method withHeaderMethod = CSVFormat.class.getDeclaredMethod(\"withHeader\", ResultSetMetaData.class);\n        withHeaderMethod.setAccessible(true);\n\n        SQLException thrown = assertThrows(SQLException.class, () -> {\n            try {\n                withHeaderMethod.invoke(csvFormat, metaData);\n            } catch (Exception e) {\n                Throwable cause = e.getCause();\n                if (cause instanceof SQLException) {\n                    throw (SQLException) cause;\n                }\n                throw e;\n            }\n        });\n        assertEquals(\"Test exception\", thrown.getMessage());\n\n        verify(metaData).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688155,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 710,
+    "prompt_tokens": 1375,
+    "total_tokens": 2085,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.17
+  }
+}

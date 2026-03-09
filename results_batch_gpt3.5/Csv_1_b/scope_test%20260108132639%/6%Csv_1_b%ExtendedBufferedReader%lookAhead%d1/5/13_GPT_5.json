@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvctD79hMOVPl122lcyIAR44wNX0K",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testLookAheadReturnsChar() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        // Use reflection to set lastChar to UNDEFINED to avoid interference\n        setLastChar(spyReader, ExtendedBufferedReader.UNDEFINED);\n\n        // mock read() call to return 'A' (65)\n        doReturn(65).when(spyReader).read();\n\n        // Since mark and reset are final in BufferedReader, do not stub them, let real methods run\n\n        int result = spyReader.lookAhead();\n\n        verify(spyReader).read();\n\n        assertEquals(65, result);\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        setLastChar(spyReader, ExtendedBufferedReader.UNDEFINED);\n\n        doReturn(ExtendedBufferedReader.END_OF_STREAM).when(spyReader).read();\n\n        int result = spyReader.lookAhead();\n\n        verify(spyReader).read();\n\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n\n    @Test\n    void testLookAheadThrowsIOException() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        // Use doThrow to throw IOException when mark is called\n        doThrow(new IOException(\"mark exception\")).when(spyReader).mark(anyInt());\n\n        IOException thrown = assertThrows(IOException.class, () -> spyReader.lookAhead());\n        assertEquals(\"mark exception\", thrown.getMessage());\n    }\n\n    private void setLastChar(ExtendedBufferedReader reader, int value) {\n        try {\n            Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n            lastCharField.setAccessible(true);\n            lastCharField.setInt(reader, value);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850223,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 506,
+    "prompt_tokens": 863,
+    "total_tokens": 1369,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.22
+  }
+}

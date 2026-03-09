@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaLvlRvW1jyYrRxlxDeVVGMcW4Wf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withNormalValues() throws IOException {\n        String result = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        // Default delimiter is comma, default quote char is \"\n        assertEquals(\"\\\"value1\\\",\\\"value2\\\",\\\"value3\\\"\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format(\"\", null, \" \");\n        // null is printed as empty string by default\n        assertEquals(\"\\\"\\\",\\\"\\\",\\\" \\\"\", result);\n    }\n\n    @Test\n    void testFormat_withNoValues() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Create a proxy for CSVPrinter that throws IOException on printRecord\n        CSVPrinter proxyPrinter = (CSVPrinter) Proxy.newProxyInstance(\n                CSVPrinter.class.getClassLoader(),\n                new Class<?>[]{CSVPrinter.class, AutoCloseable.class},\n                new InvocationHandler() {\n                    private boolean closed = false;\n\n                    @Override\n                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n                        String methodName = method.getName();\n                        if (\"printRecord\".equals(methodName)) {\n                            throw new IOException(\"io error\");\n                        } else if (\"close\".equals(methodName)) {\n                            closed = true;\n                            return null;\n                        } else if (\"toString\".equals(methodName)) {\n                            return \"\";\n                        }\n                        return null;\n                    }\n                });\n\n        // Use reflection to create a CSVFormat instance by copying DEFAULT's fields\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat defaultFormat = CSVFormat.DEFAULT;\n\n        CSVFormat csvFormatSpy = constructor.newInstance(\n                defaultFormat.getDelimiter(),\n                defaultFormat.getQuoteCharacter(),\n                defaultFormat.getQuoteMode(),\n                defaultFormat.getCommentMarker(),\n                defaultFormat.getEscapeCharacter(),\n                defaultFormat.getIgnoreSurroundingSpaces(),\n                defaultFormat.getIgnoreEmptyLines(),\n                defaultFormat.getRecordSeparator(),\n                null,\n                defaultFormat.getHeader(),\n                defaultFormat.getSkipHeaderRecord(),\n                defaultFormat.getAllowMissingColumnNames(),\n                defaultFormat.getIgnoreHeaderCase(),\n                defaultFormat.getTrim(),\n                defaultFormat.getTrailingDelimiter(),\n                defaultFormat.getAutoFlush()\n        ) {\n            @Override\n            public String format(final Object... values) {\n                final StringWriter out = new StringWriter();\n                try (final CSVPrinter csvPrinter = proxyPrinter) {\n                    csvPrinter.printRecord(values);\n                    return out.toString().trim();\n                } catch (final IOException e) {\n                    // should not happen because a StringWriter does not do IO.\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatSpy.format(\"a\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"io error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555455,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 806,
+    "prompt_tokens": 2565,
+    "total_tokens": 3371,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.93
+  }
+}

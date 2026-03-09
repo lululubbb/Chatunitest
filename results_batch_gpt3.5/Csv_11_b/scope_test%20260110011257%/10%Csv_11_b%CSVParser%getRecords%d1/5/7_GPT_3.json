@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwARxxivBMzr73VmxlvDbeLf78jUk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        parser = new CSVParser(new java.io.StringReader(\"header1,header2\\nvalue1,value2\"), CSVFormat.DEFAULT.withHeader());\n    }\n\n    @Test\n    void testGetRecords_returnsList() throws IOException {\n        List<CSVRecord> records = parser.getRecords();\n        assertNotNull(records);\n        assertFalse(records.isEmpty());\n        CSVRecord firstRecord = records.get(0);\n        assertEquals(\"value1\", firstRecord.get(0));\n        assertEquals(\"value2\", firstRecord.get(1));\n    }\n\n    @Test\n    void testGetRecords_withEmptyRecordsList() throws Exception {\n        List<CSVRecord> inputRecords = new ArrayList<>();\n\n        // Use reflection to invoke private getRecords(List)\n        Method getRecordsMethod = CSVParser.class.getDeclaredMethod(\"getRecords\", List.class);\n        getRecordsMethod.setAccessible(true);\n\n        @SuppressWarnings(\"unchecked\")\n        List<CSVRecord> result = (List<CSVRecord>) getRecordsMethod.invoke(parser, inputRecords);\n\n        assertSame(inputRecords, result);\n        assertTrue(result.isEmpty());\n    }\n\n    @Test\n    void testGetRecords_invokesPrivateGetRecords() throws Exception {\n        Method getRecordsMethod = CSVParser.class.getDeclaredMethod(\"getRecords\", List.class);\n        getRecordsMethod.setAccessible(true);\n\n        List<CSVRecord> input = new ArrayList<>();\n        @SuppressWarnings(\"unchecked\")\n        List<CSVRecord> result = (List<CSVRecord>) getRecordsMethod.invoke(parser, input);\n\n        assertSame(input, result);\n        assertTrue(result.isEmpty());\n    }\n\n    @Test\n    void testGetRecords_handlesIOException() throws Exception {\n        CSVParser spyParser = spy(parser);\n\n        doThrow(new IOException(\"Simulated IO error\")).when(spyParser).nextRecord();\n\n        IOException thrown = assertThrows(IOException.class, spyParser::getRecords);\n        assertEquals(\"Simulated IO error\", thrown.getMessage());\n    }\n\n    @Test\n    void testGetRecords_iteratesAllRecords() throws IOException {\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(1, records.size());\n        CSVRecord record = records.get(0);\n        assertEquals(\"value1\", record.get(\"header1\"));\n        assertEquals(\"value2\", record.get(\"header2\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979229,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 562,
+    "prompt_tokens": 1118,
+    "total_tokens": 1680,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.73
+  }
+}

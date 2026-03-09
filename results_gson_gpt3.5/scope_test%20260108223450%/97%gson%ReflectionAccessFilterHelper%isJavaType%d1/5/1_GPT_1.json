@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm8Lsn2M1BW2l57gbov7XyRHDuvN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.AccessibleObject;\n\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\npublic class ReflectionAccessFilterHelperTest {\n\n  @Test\n  public void testIsJavaType_withJavaLangString() {\n    // java.lang.String is a Java type, should return true\n    assertTrue(ReflectionAccessFilterHelper.isJavaType(String.class));\n  }\n\n  @Test\n  public void testIsJavaType_withCustomClass() {\n    // A custom class should return false\n    class CustomClass {}\n    assertFalse(ReflectionAccessFilterHelper.isJavaType(CustomClass.class));\n  }\n\n  @Test\n  public void testIsJavaType_privateStringMethodInvocation() throws Exception {\n    // Use reflection to invoke private isJavaType(String className) method\n    Method isJavaTypeStringMethod = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    isJavaTypeStringMethod.setAccessible(true);\n\n    // java.lang.String should return true\n    boolean resultString = (boolean) isJavaTypeStringMethod.invoke(null, \"java.lang.String\");\n    assertTrue(resultString);\n\n    // some random class name should return false\n    boolean resultRandom = (boolean) isJavaTypeStringMethod.invoke(null, \"com.example.NonExistent\");\n    assertFalse(resultRandom);\n  }\n\n  @Test\n  public void testPrivateConstructor() throws Exception {\n    // Use reflection to invoke private constructor to achieve 100% coverage\n    Constructor<ReflectionAccessFilterHelper> constructor = ReflectionAccessFilterHelper.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    ReflectionAccessFilterHelper instance = constructor.newInstance();\n    assertNotNull(instance);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885757,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 397,
+    "prompt_tokens": 310,
+    "total_tokens": 707,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.02
+  }
+}

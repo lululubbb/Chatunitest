@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = Mockito.spy(new ArrayList<>());\n    delegate.add(\"one\");\n    delegate.add(\"two\");\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void toArray_givenArray_returnsDelegateToArray() {\n    String[] arr = new String[2];\n    String[] result = list.toArray(arr);\n    assertSame(delegate.toArray(arr), result);\n  }\n\n  @Test\n  void toArray_withSmallerArray_expandsArray() {\n    String[] arr = new String[1];\n    String[] result = list.toArray(arr);\n    assertEquals(2, result.length);\n    assertArrayEquals(new String[]{\"one\", \"two\"}, result);\n  }\n\n  @Test\n  void toArray_withLargerArray_returnsArrayWithNullPadding() {\n    String[] arr = new String[5];\n    String[] result = list.toArray(arr);\n    assertSame(arr, result);\n    assertEquals(\"one\", result[0]);\n    assertEquals(\"two\", result[1]);\n    for (int i = 2; i < result.length; i++) {\n      assertNull(result[i]);\n    }\n  }\n\n  @Test\n  void toArray_invokesDelegateToArray_withReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\", Object[].class);\n    toArrayMethod.setAccessible(true);\n    String[] arr = new String[2];\n    @SuppressWarnings(\"unchecked\")\n    String[] result = (String[]) toArrayMethod.invoke(list, (Object) arr);\n    assertSame(delegate.toArray(arr), result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 377,
+  "completion_tokens": 449,
+  "total_tokens": 826,
+  "llm_elapsed_time_seconds": 20.74,
+  "repair_elapsed_time_seconds": 37.58,
+  "round_total_time_seconds": 37.58
+}

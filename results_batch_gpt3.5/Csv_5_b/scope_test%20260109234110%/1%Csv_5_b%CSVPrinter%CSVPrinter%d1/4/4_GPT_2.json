@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8yUoWYn42ibUY1jPax3TR3zv5Zj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_validParameters_shouldInitializeFields() {\n        doNothing().when(format).validate();\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        assertNotNull(printer);\n        assertSame(out, printer.getOut());\n    }\n\n    @Test\n    void testConstructor_nullOut_shouldThrowNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, format));\n        assertEquals(\"out\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_nullFormat_shouldThrowNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(out, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_formatValidateThrows_shouldPropagateException() {\n        doThrow(new IllegalArgumentException(\"invalid\")).when(format).validate();\n\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new CSVPrinter(out, format));\n        assertEquals(\"invalid\", ex.getMessage());\n    }\n\n    @Test\n    void testPrintPrivateMethods_viaReflection() throws Exception {\n        // Mock Appendable.append(CharSequence) to return the Appendable itself\n        when(out.append(any(CharSequence.class))).thenReturn(out);\n        // Also mock Appendable.append(CharSequence, int, int) to return Appendable itself for any substring append\n        when(out.append(any(CharSequence.class), anyInt(), anyInt())).thenReturn(out);\n        // Mock Appendable.append(char) to return Appendable itself\n        when(out.append(anyChar())).thenReturn(out);\n\n        doNothing().when(format).validate();\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        Method printAndEscapeMethod = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscapeMethod.setAccessible(true);\n\n        Method printAndQuoteMethod = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        printAndQuoteMethod.setAccessible(true);\n\n        // Call print(Object, CharSequence, int, int) with normal string\n        printMethod.invoke(printer, \"obj\", \"value\", 0, 5);\n\n        // Call printAndEscape with value\n        printAndEscapeMethod.invoke(printer, \"escapeValue\", 0, 11);\n\n        // Call printAndQuote with value\n        printAndQuoteMethod.invoke(printer, \"obj\", \"quoteValue\", 0, 10);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973558,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 668,
+    "prompt_tokens": 1115,
+    "total_tokens": 1783,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.72
+  }
+}

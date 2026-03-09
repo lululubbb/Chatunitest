@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuuuwg5VcQRXcXlUQWmAUFNMfFjjy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testPrivateConstructorAndValidate() throws Exception {\n        // Access the private constructor\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Create instance with various parameters\n        CSVFormat format = constructor.newInstance(\n                ';', '\"', QuoteMode.ALL, '#', '\\\\', true, false,\n                \"\\n\", \"NULL\", null, new String[]{\"h1\", \"h2\"},\n                true, true, true);\n\n        assertNotNull(format);\n\n        // Use reflection to invoke private validate method\n        Method validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n        validateMethod.invoke(format);\n\n        // Assert fields via getters to confirm constructor set them correctly\n        assertEquals(';', format.getDelimiter());\n        assertEquals(Character.valueOf('\"'), format.getQuoteCharacter());\n        assertEquals(QuoteMode.ALL, format.getQuoteMode());\n        assertEquals(Character.valueOf('#'), format.getCommentMarker());\n        assertEquals(Character.valueOf('\\\\'), format.getEscapeCharacter());\n        assertTrue(format.getIgnoreSurroundingSpaces());\n        assertFalse(format.getIgnoreEmptyLines());\n        assertEquals(\"\\n\", format.getRecordSeparator());\n        assertEquals(\"NULL\", format.getNullString());\n        assertArrayEquals(new String[]{\"h1\", \"h2\"}, format.getHeader());\n        assertArrayEquals(null, format.getHeaderComments());\n        assertTrue(format.getSkipHeaderRecord());\n        assertTrue(format.getAllowMissingColumnNames());\n        assertTrue(format.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testPrivateConstructorWithNullHeader() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat format = constructor.newInstance(\n                ',', null, null, null, null, false, true,\n                \"\\r\\n\", null, null, null,\n                false, false, false);\n\n        assertNotNull(format);\n        assertNull(format.getHeader());\n    }\n\n    @Test\n    void testStaticConstants() {\n        assertNotNull(CSVFormat.DEFAULT);\n        assertNotNull(CSVFormat.RFC4180);\n        assertNotNull(CSVFormat.EXCEL);\n        assertNotNull(CSVFormat.TDF);\n        assertNotNull(CSVFormat.MYSQL);\n\n        // Check some expected properties of constants\n        assertEquals(',', CSVFormat.DEFAULT.getDelimiter());\n        assertEquals('\\t', CSVFormat.TDF.getDelimiter());\n        assertTrue(CSVFormat.EXCEL.getAllowMissingColumnNames());\n        assertFalse(CSVFormat.DEFAULT.getIgnoreEmptyLines());\n        assertFalse(CSVFormat.MYSQL.isQuoteCharacterSet());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767681194,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 710,
+    "prompt_tokens": 2039,
+    "total_tokens": 2749,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.93
+  }
+}

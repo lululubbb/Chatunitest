@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAQThYIOImoGuKlnyduiPHrz1FEC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.Lexer;\nimport org.apache.commons.csv.Assertions;\nimport org.apache.commons.csv.ExtendedBufferedReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private Reader mockReader;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_NullReader_ThrowsException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, mockFormat);\n        });\n        assertEquals(\"reader\", thrown.getMessage());\n    }\n\n    @Test\n    void testConstructor_NullFormat_ThrowsException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(mockReader, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n\n    @Test\n    void testConstructor_ValidArguments_InitializesFields() throws Exception {\n        // Since Mockito.mockStatic is not available, mock Assertions.notNull and ExtendedBufferedReader constructor differently.\n\n        // Mock Assertions.notNull to do nothing using spy on Assertions class (static methods cannot be spied easily without mockStatic)\n        // So we skip mocking Assertions.notNull, assuming it will not throw if arguments are not null.\n\n        // Mock ExtendedBufferedReader constructor by using a spy subclass or by reflection to inject mocked BufferedReader into Lexer\n\n        // Instead, create a subclass of ExtendedBufferedReader that we can mock\n        ExtendedBufferedReader mockedBufferedReader = mock(ExtendedBufferedReader.class);\n\n        // Mock the constructor of ExtendedBufferedReader by using a spy on CSVParser and override its lexer initialization via reflection\n\n        // Create a spy CSVParser with mocks to bypass constructor calls that create ExtendedBufferedReader\n        CSVParser parser = new CSVParser(mockReader, mockFormat);\n\n        // Replace lexer field with a mocked Lexer created with mockedBufferedReader and mockFormat\n        Lexer mockedLexer = mock(Lexer.class);\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(parser, mockedLexer);\n\n        // Verify format field is set\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        CSVFormat formatValue = (CSVFormat) formatField.get(parser);\n        assertSame(mockFormat, formatValue);\n\n        // Verify headerMap is initialized (not null)\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        Map<String, Integer> headerMap = (Map<String, Integer>) headerMapField.get(parser);\n        assertNotNull(headerMap);\n\n        // Verify lexer field is set to mockedLexer\n        Lexer lexer = (Lexer) lexerField.get(parser);\n        assertSame(mockedLexer, lexer);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979137,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 680,
+    "prompt_tokens": 1594,
+    "total_tokens": 2274,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.38
+  }
+}

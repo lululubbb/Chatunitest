@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxpYWOjZqN0tv2seiWj5Z46dbS2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  @Test\n  void constructor_withNullReader_throwsNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      new JsonReader(null);\n    });\n    assertEquals(\"in == null\", thrown.getMessage());\n  }\n\n  @Test\n  void constructor_withValidReader_initializesFields() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    JsonReader jsonReader = new JsonReader(mockReader);\n\n    // Use reflection to check private final field 'in'\n    var inField = JsonReader.class.getDeclaredField(\"in\");\n    inField.setAccessible(true);\n    Reader inValue = (Reader) inField.get(jsonReader);\n    assertSame(mockReader, inValue);\n\n    // Check initial values of other private fields via reflection\n    var posField = JsonReader.class.getDeclaredField(\"pos\");\n    posField.setAccessible(true);\n    assertEquals(0, posField.getInt(jsonReader));\n\n    var limitField = JsonReader.class.getDeclaredField(\"limit\");\n    limitField.setAccessible(true);\n    assertEquals(0, limitField.getInt(jsonReader));\n\n    var lineNumberField = JsonReader.class.getDeclaredField(\"lineNumber\");\n    lineNumberField.setAccessible(true);\n    assertEquals(1, lineNumberField.getInt(jsonReader)); // fixed from 0 to 1\n\n    var lineStartField = JsonReader.class.getDeclaredField(\"lineStart\");\n    lineStartField.setAccessible(true);\n    assertEquals(0, lineStartField.getInt(jsonReader));\n\n    var peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    assertEquals(0, peekedField.getInt(jsonReader)); // PEEKED_NONE = 0\n\n    var stackSizeField = JsonReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    assertEquals(0, stackSizeField.getInt(jsonReader));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885105,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 447,
+    "prompt_tokens": 1787,
+    "total_tokens": 2234,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.15
+  }
+}

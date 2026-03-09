@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlwfu3MI44fpubFQEfIinBQweDJm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nclass StreamsTest {\n\n  @Test\n  void write_callsTypeAdaptersJsonElementWrite() throws Exception {\n    JsonElement element = mock(JsonElement.class);\n    JsonWriter writer = mock(JsonWriter.class);\n\n    // Spy on TypeAdapters.JSON_ELEMENT to verify write invocation\n    Object jsonElementAdapter = getStaticField(TypeAdapters.class, \"JSON_ELEMENT\");\n    Object spyAdapter = spy(jsonElementAdapter);\n    setStaticField(TypeAdapters.class, \"JSON_ELEMENT\", spyAdapter);\n\n    // Call the focal method\n    Streams.write(element, writer);\n\n    // Verify that write(writer, element) was called on JSON_ELEMENT\n    Method writeMethod = spyAdapter.getClass().getMethod(\"write\", JsonWriter.class, Object.class);\n    verify(spyAdapter).write(writer, element);\n\n    // Restore original JSON_ELEMENT field value\n    setStaticField(TypeAdapters.class, \"JSON_ELEMENT\", jsonElementAdapter);\n  }\n\n  @Test\n  void privateConstructor_coverage() throws Exception {\n    var constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    constructor.newInstance();\n  }\n\n  private static Object getStaticField(Class<?> clazz, String fieldName) throws Exception {\n    var field = clazz.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(null);\n  }\n\n  private static void setStaticField(Class<?> clazz, String fieldName, Object value) throws Exception {\n    var field = clazz.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(null, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885033,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 381,
+    "prompt_tokens": 308,
+    "total_tokens": 689,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 111.85
+  }
+}

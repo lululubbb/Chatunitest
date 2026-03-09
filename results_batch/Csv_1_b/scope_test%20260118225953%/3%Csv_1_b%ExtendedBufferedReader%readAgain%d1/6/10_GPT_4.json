@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOZPPjJ5icU2lV51sGCrwg7sVz59",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        Reader reader = new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) throws IOException {\n                return -1;\n            }\n            @Override\n            public void close() throws IOException {}\n        };\n        extendedBufferedReader = new ExtendedBufferedReader(reader);\n    }\n\n    @Test\n    void testReadAgain_initialUndefined() throws Exception {\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        int result = (int) readAgainMethod.invoke(extendedBufferedReader);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, result);\n    }\n\n    @Test\n    void testReadAgain_afterSettingLastChar() throws Exception {\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        lastCharField.setInt(extendedBufferedReader, 10);\n\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        int result = (int) readAgainMethod.invoke(extendedBufferedReader);\n        assertEquals(10, result);\n    }\n\n    @Test\n    void testReadAgain_afterSettingLastCharToEndOfStream() throws Exception {\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        lastCharField.setInt(extendedBufferedReader, ExtendedBufferedReader.END_OF_STREAM);\n\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        int result = (int) readAgainMethod.invoke(extendedBufferedReader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748491,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 445,
+    "prompt_tokens": 785,
+    "total_tokens": 1230,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.55
+  }
+}

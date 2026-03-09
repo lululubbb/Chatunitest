@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmKlRdog4KF2YALOCSyYsuGBEmrM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.util.Collections;\n\nclass ConstructorConstructorTest {\n\n  private ConstructorConstructor constructorConstructor;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Prepare instanceCreators map and reflectionFilters list as empty for simplicity\n    constructorConstructor = new ConstructorConstructor(Collections.emptyMap(), true, Collections.emptyList());\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_createsInstanceSuccessfully() throws Exception {\n    // Arrange\n    Class<DummyClass> clazz = DummyClass.class;\n\n    Class<?> unsafeAllocatorClass = Class.forName(\"com.google.gson.internal.reflect.UnsafeAllocator\");\n    Field instanceField = unsafeAllocatorClass.getDeclaredField(\"INSTANCE\");\n    instanceField.setAccessible(true);\n\n    Object realInstance = instanceField.get(null);\n\n    try (MockedStatic<?> mockedUnsafeAllocator = Mockito.mockStatic(unsafeAllocatorClass)) {\n      mockedUnsafeAllocator.when(() -> instanceField.get(null)).thenReturn(realInstance);\n\n      Object mockAllocator = mock(unsafeAllocatorClass);\n      mockedUnsafeAllocator.when(() -> instanceField.get(null)).thenReturn(mockAllocator);\n\n      // Stub the newInstance method on mockAllocator via reflection proxy\n      // Since UnsafeAllocator class is not imported, use reflection to stub\n      java.lang.reflect.Method newInstanceMethod = unsafeAllocatorClass.getMethod(\"newInstance\", Class.class);\n      when(newInstanceMethod.invoke(mockAllocator, clazz)).thenReturn(new DummyClass());\n\n      // Because Mockito cannot stub invoke() directly, use doAnswer to intercept the method call\n      doAnswer(invocation -> {\n        Class<?> arg = invocation.getArgument(0);\n        if (arg == clazz) {\n          return new DummyClass();\n        }\n        return invocation.callRealMethod();\n      }).when(mockAllocator).getClass()\n          .getMethod(\"newInstance\", Class.class)\n          .invoke(mockAllocator, clazz);\n\n      // Instead, simpler approach: use a spy with real method and override newInstance via proxy\n      // But since this is complicated, we will create a proxy UnsafeAllocator that overrides newInstance\n\n      // Create proxy UnsafeAllocator with newInstance method stubbed\n      ObjectConstructor<DummyClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, clazz);\n\n      // Act\n      DummyClass instance = objectConstructor.construct();\n\n      // Assert\n      assertNotNull(instance);\n      assertTrue(instance instanceof DummyClass);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_throwsRuntimeExceptionOnFailure() throws Exception {\n    // Arrange\n    Class<DummyClass> clazz = DummyClass.class;\n\n    Class<?> unsafeAllocatorClass = Class.forName(\"com.google.gson.internal.reflect.UnsafeAllocator\");\n    Field instanceField = unsafeAllocatorClass.getDeclaredField(\"INSTANCE\");\n    instanceField.setAccessible(true);\n\n    Object realInstance = instanceField.get(null);\n\n    try (MockedStatic<?> mockedUnsafeAllocator = Mockito.mockStatic(unsafeAllocatorClass)) {\n      mockedUnsafeAllocator.when(() -> instanceField.get(null)).thenReturn(realInstance);\n\n      Object mockAllocator = mock(unsafeAllocatorClass);\n      mockedUnsafeAllocator.when(() -> instanceField.get(null)).thenReturn(mockAllocator);\n\n      java.lang.reflect.Method newInstanceMethod = unsafeAllocatorClass.getMethod(\"newInstance\", Class.class);\n      when(newInstanceMethod.invoke(mockAllocator, clazz)).thenThrow(new InstantiationException(\"fail\"));\n\n      ObjectConstructor<DummyClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, clazz);\n\n      // Act & Assert\n      RuntimeException thrown = assertThrows(RuntimeException.class, objectConstructor::construct);\n      assertTrue(thrown.getMessage().contains(\"Unable to create instance of\"));\n      assertTrue(thrown.getCause() instanceof InstantiationException);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeFalse_throwsJsonIOException() throws Exception {\n    // Arrange\n    // Create instance with useJdkUnsafe = false via constructor\n    constructorConstructor = new ConstructorConstructor(Collections.emptyMap(), false, Collections.emptyList());\n    Class<DummyClass> clazz = DummyClass.class;\n\n    // Use reflection to access private method newUnsafeAllocator\n    ObjectConstructor<DummyClass> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, clazz);\n\n    // Act & Assert\n    JsonIOException thrown = assertThrows(JsonIOException.class, objectConstructor::construct);\n    assertTrue(thrown.getMessage().contains(\"Unable to create instance of \" + clazz));\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> ObjectConstructor<T> invokeNewUnsafeAllocator(ConstructorConstructor cc, Class<? super T> rawType) throws Exception {\n    java.lang.reflect.Method method = ConstructorConstructor.class.getDeclaredMethod(\"newUnsafeAllocator\", Class.class);\n    method.setAccessible(true);\n    return (ObjectConstructor<T>) method.invoke(cc, rawType);\n  }\n\n  private static class DummyClass {\n    // Empty class for testing\n  }\n}\n```\n",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886527,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1058,
+    "prompt_tokens": 2478,
+    "total_tokens": 3536,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.32
+  }
+}

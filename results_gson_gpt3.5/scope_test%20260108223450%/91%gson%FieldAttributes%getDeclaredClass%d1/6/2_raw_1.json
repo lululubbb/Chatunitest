@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass FieldAttributesTest {\n\n  private Field mockField;\n  private FieldAttributes fieldAttributes;\n\n  static class DummyClass {\n    public int publicField;\n    private String privateField;\n  }\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException {\n    mockField = DummyClass.class.getField(\"publicField\");\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void testGetDeclaredClass_returnsFieldType() {\n    Class<?> declaredClass = fieldAttributes.getDeclaredClass();\n    assertEquals(int.class, declaredClass);\n  }\n\n  @Test\n  void testGetDeclaredClass_privateField() throws NoSuchFieldException {\n    Field privateField = DummyClass.class.getDeclaredField(\"privateField\");\n    FieldAttributes fa = new FieldAttributes(privateField);\n    assertEquals(String.class, fa.getDeclaredClass());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 275,
+  "completion_tokens": 246,
+  "total_tokens": 521,
+  "llm_elapsed_time_seconds": 9.16
+}

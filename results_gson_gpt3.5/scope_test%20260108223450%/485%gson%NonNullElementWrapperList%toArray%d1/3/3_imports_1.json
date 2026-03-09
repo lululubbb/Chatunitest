@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  private ArrayList<String> mockDelegate;\n  private NonNullElementWrapperList<String> list;\n\n  @BeforeEach\n  void setUp() {\n    mockDelegate = Mockito.mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(mockDelegate);\n  }\n\n  @Test\n  void toArray_delegatesToDelegate() {\n    Object[] expected = new Object[] {\"a\", \"b\"};\n    when(mockDelegate.toArray()).thenReturn(expected);\n\n    Object[] result = list.toArray();\n\n    assertSame(expected, result);\n    verify(mockDelegate).toArray();\n  }\n\n  @Test\n  void toArray_reflectionInvoke_privateToArray() throws Exception {\n    // Use reflection to invoke the public toArray method (which is not private, but per request)\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\");\n    toArrayMethod.setAccessible(true);\n\n    Object[] expected = new Object[] {\"x\", \"y\"};\n    when(mockDelegate.toArray()).thenReturn(expected);\n\n    Object[] result = (Object[]) toArrayMethod.invoke(list);\n\n    assertSame(expected, result);\n    verify(mockDelegate).toArray();\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 373,
+  "completion_tokens": 310,
+  "total_tokens": 683,
+  "llm_elapsed_time_seconds": 14.53,
+  "repair_elapsed_time_seconds": 40.08,
+  "round_total_time_seconds": 40.08
+}

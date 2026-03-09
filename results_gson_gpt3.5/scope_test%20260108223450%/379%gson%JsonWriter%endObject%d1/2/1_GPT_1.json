@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvllU5OIsApw5yT7LmAFoMa1DUz96",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.JsonScope;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n    private StringWriter stringWriter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testEndObject_whenEmptyObject() throws IOException {\n        jsonWriter.beginObject();\n        JsonWriter returned = jsonWriter.endObject();\n        assertSame(jsonWriter, returned);\n        // The output should be \"{}\"\n        assertEquals(\"{}\", stringWriter.toString());\n    }\n\n    @Test\n    public void testEndObject_whenNonEmptyObject() throws IOException {\n        jsonWriter.beginObject();\n        jsonWriter.name(\"key\").value(\"value\");\n        JsonWriter returned = jsonWriter.endObject();\n        assertSame(jsonWriter, returned);\n        // The output should be {\"key\":\"value\"}\n        assertEquals(\"{\\\"key\\\":\\\"value\\\"}\", stringWriter.toString());\n    }\n\n    @Test\n    public void testEndObject_illegalState_shouldThrow() throws IOException {\n        // Calling endObject without beginObject should throw IllegalStateException\n        Exception exception = assertThrows(IllegalStateException.class, () -> {\n            jsonWriter.endObject();\n        });\n        String msg = exception.getMessage();\n        assertNotNull(msg);\n    }\n\n    @Test\n    public void testCloseMethodDirectlyUsingReflection() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // We test private close(int empty, int nonempty, char closeBracket) method via reflection\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Setup: push EMPTY_OBJECT to stack so close can work\n        Method pushMethod = JsonWriter.class.getDeclaredMethod(\"push\", int.class);\n        pushMethod.setAccessible(true);\n        // Push EMPTY_OBJECT to stack to simulate beginObject\n        pushMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT);\n\n        Object returned = closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n        assertSame(jsonWriter, returned);\n    }\n\n    @Test\n    public void testEndObject_withIndentAndLenient() throws IOException {\n        jsonWriter.setIndent(\"  \");\n        jsonWriter.setLenient(true);\n        jsonWriter.beginObject();\n        jsonWriter.name(\"a\").value(\"b\");\n        JsonWriter returned = jsonWriter.endObject();\n        assertSame(jsonWriter, returned);\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"a\"));\n        assertTrue(output.contains(\"b\"));\n        assertTrue(output.contains(\"}\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884340,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 629,
+    "prompt_tokens": 729,
+    "total_tokens": 1358,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.73
+  }
+}

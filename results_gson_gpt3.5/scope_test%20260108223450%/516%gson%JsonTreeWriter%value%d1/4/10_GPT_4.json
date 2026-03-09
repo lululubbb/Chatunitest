@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn9cIi91DGWJs5ywZgiTuOBYMQNv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonTreeWriterTest {\n\n  JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n    // Initialize the writer state by beginning an array to allow putting values\n    try {\n      jsonTreeWriter.beginArray();\n    } catch (IOException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  @Test\n  void value_withNull_callsNullValueAndReturnsSame() throws IOException {\n    JsonWriter returned = jsonTreeWriter.value((Boolean) null);\n    assertSame(jsonTreeWriter, returned);\n  }\n\n  @Test\n  void value_withTrue_putCalledWithJsonPrimitiveTrue() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    JsonWriter returned = jsonTreeWriter.value(Boolean.TRUE);\n    assertSame(jsonTreeWriter, returned);\n\n    // Use reflection to access private peek method to verify the JsonPrimitive value was added\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    JsonElement top = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n\n    // The top element is a JsonArray, get its last element\n    assertTrue(top instanceof JsonArray);\n    JsonArray array = (JsonArray) top;\n    JsonElement lastElement = array.get(array.size() - 1);\n\n    assertTrue(lastElement instanceof JsonPrimitive);\n    assertEquals(Boolean.TRUE, ((JsonPrimitive) lastElement).getAsBoolean());\n  }\n\n  @Test\n  void value_withFalse_putCalledWithJsonPrimitiveFalse() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    JsonWriter returned = jsonTreeWriter.value(Boolean.FALSE);\n    assertSame(jsonTreeWriter, returned);\n\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    JsonElement top = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n\n    // The top element is a JsonArray, get its last element\n    assertTrue(top instanceof JsonArray);\n    JsonArray array = (JsonArray) top;\n    JsonElement lastElement = array.get(array.size() - 1);\n\n    assertTrue(lastElement instanceof JsonPrimitive);\n    assertEquals(Boolean.FALSE, ((JsonPrimitive) lastElement).getAsBoolean());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889680,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 561,
+    "prompt_tokens": 1613,
+    "total_tokens": 2174,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.36
+  }
+}

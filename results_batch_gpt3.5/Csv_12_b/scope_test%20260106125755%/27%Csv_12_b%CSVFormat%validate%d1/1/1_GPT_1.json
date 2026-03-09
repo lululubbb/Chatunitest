@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutQkatAgCpCDNk4L47g2IEhtRyPX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatValidateTest {\n\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Throwable {\n        try {\n            validateMethod.invoke(format);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsDelimiter_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                ',',\n                QuoteMode.MINIMAL,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains quoteChar and delimiter same\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsDelimiter_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                null,\n                ',',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains escape character and delimiter same\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsDelimiter_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                ',',\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains comment start character and delimiter same\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsQuoteChar_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                '\"',\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains comment start character and quoteChar same\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsEscapeChar_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                '#',\n                '#',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains comment start and escape character same\n    }\n\n    @Test\n    public void testValidate_escapeCharNullAndQuoteModeNone_throws() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                null,\n                QuoteMode.NONE,\n                null,\n                null,\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        // message contains no quotes mode set but no escape character set\n    }\n\n    @Test\n    public void testValidate_validConfig_noException() {\n        CSVFormat format = new CSVFormat(\n                ',',\n                '\"',\n                QuoteMode.MINIMAL,\n                '#',\n                '\\\\',\n                false,\n                false,\n                \"\\n\",\n                null,\n                null,\n                false,\n                false);\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675478,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 846,
+    "prompt_tokens": 1230,
+    "total_tokens": 2076,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.87
+  }
+}

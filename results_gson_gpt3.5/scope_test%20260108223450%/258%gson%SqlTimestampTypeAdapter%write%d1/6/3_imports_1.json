@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.sql;\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport java.io.IOException;\nimport java.sql.Timestamp;\nimport java.util.Date;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nclass SqlTimestampTypeAdapterTest {\n\n  private TypeAdapter<Date> mockDateTypeAdapter;\n  private SqlTimestampTypeAdapter sqlTimestampTypeAdapter;\n  private JsonWriter mockJsonWriter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    mockDateTypeAdapter = mock(TypeAdapter.class);\n    mockJsonWriter = mock(JsonWriter.class);\n\n    Constructor<SqlTimestampTypeAdapter> constructor = SqlTimestampTypeAdapter.class.getDeclaredConstructor(TypeAdapter.class);\n    constructor.setAccessible(true);\n    sqlTimestampTypeAdapter = constructor.newInstance(mockDateTypeAdapter);\n  }\n\n  @Test\n  void write_callsDateTypeAdapterWrite_withTimestampValue() throws IOException {\n    Timestamp timestamp = new Timestamp(System.currentTimeMillis());\n\n    sqlTimestampTypeAdapter.write(mockJsonWriter, timestamp);\n\n    verify(mockDateTypeAdapter).write(mockJsonWriter, timestamp);\n  }\n\n  @Test\n  void write_callsDateTypeAdapterWrite_withNullValue() throws IOException {\n    sqlTimestampTypeAdapter.write(mockJsonWriter, null);\n\n    verify(mockDateTypeAdapter).write(mockJsonWriter, null);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 411,
+  "completion_tokens": 297,
+  "total_tokens": 708,
+  "llm_elapsed_time_seconds": 5.97,
+  "repair_elapsed_time_seconds": 33.07,
+  "round_total_time_seconds": 33.07
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8tsrEq9Mbi3AfsloRNm6qJbZR0T",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.Quote;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    private Method printAndQuoteMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n\n        // Default mocks for format\n        when(format.getDelimiter()).thenReturn(',');\n        when(format.getQuoteChar()).thenReturn('\\\"');\n        when(format.getQuotePolicy()).thenReturn(null);\n\n        printer = new CSVPrinter(out, format);\n\n        printAndQuoteMethod = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        printAndQuoteMethod.setAccessible(true);\n    }\n\n    private void invokePrintAndQuote(Object object, CharSequence value, int offset, int len) throws IOException, InvocationTargetException, IllegalAccessException {\n        printAndQuoteMethod.invoke(printer, object, value, offset, len);\n    }\n\n    @Test\n    void testPrintAndQuote_allQuotePolicy_quotesAll() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.ALL);\n\n        invokePrintAndQuote(\"test\", \"test\", 0, 4);\n        assertEquals(\"\\\"test\\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_nonNumericQuotePolicy_withNumber_noQuotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NON_NUMERIC);\n\n        invokePrintAndQuote(123, \"123\", 0, 3);\n        assertEquals(\"123\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_nonNumericQuotePolicy_withNonNumber_quotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NON_NUMERIC);\n\n        invokePrintAndQuote(\"abc\", \"abc\", 0, 3);\n        assertEquals(\"\\\"abc\\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_noneQuotePolicy_callsPrintAndEscape() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.NONE);\n\n        // Spy on printer to verify printAndEscape call\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        Method printAndEscapeMethod = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscapeMethod.setAccessible(true);\n\n        // We replace printer with spyPrinter for this test\n        printAndQuoteMethod.invoke(spyPrinter, \"abc\", \"abc\", 0, 3);\n\n        verify(spyPrinter, times(1)).printAndEscape(\"abc\", 0, 3);\n        // Since printAndEscape is mocked, out should be empty (StringBuilder)\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_emptyTokenNewRecord_quotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        // Set newRecord to true via reflection\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, true);\n\n        invokePrintAndQuote(null, \"\", 0, 0);\n        assertEquals(\"\\\"\\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_newRecordFirstCharSpecialChar_quotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, true);\n\n        // First char is comment char (# = 35), COMMENT constant assumed 35 or less\n        String value = \"#abc\";\n        invokePrintAndQuote(\"abc\", value, 0, value.length());\n        assertEquals(\"\\\"#abc\\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_containsSpecialChar_quotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        String value = \"ab,c\";\n        invokePrintAndQuote(\"abc\", value, 0, value.length());\n        assertEquals(\"\\\"ab,c\\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_endsWithSpace_quotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        String value = \"abc \";\n        invokePrintAndQuote(\"abc\", value, 0, value.length());\n        assertEquals(\"\\\"abc \\\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_noQuotes() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        String value = \"abc\";\n        invokePrintAndQuote(\"abc\", value, 0, value.length());\n        assertEquals(\"abc\", out.toString());\n    }\n\n    @Test\n    void testPrintAndQuote_minimalQuotePolicy_quotesWithEmbeddedQuoteChars() throws Throwable {\n        when(format.getQuotePolicy()).thenReturn(Quote.MINIMAL);\n\n        var newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        String value = \"ab\\\"c\\\"d\";\n        invokePrintAndQuote(\"abc\", value, 0, value.length());\n        // Quotes should be doubled inside quoted string\n        assertEquals(\"\\\"ab\\\"\\\"c\\\"\\\"d\\\"\", out.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973272,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1336,
+    "prompt_tokens": 1199,
+    "total_tokens": 2535,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.46
+  }
+}

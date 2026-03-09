@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmudTpMHmlSqMHCc2gQR86xaBSHG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReader_locationString_Test {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    jsonReader = new JsonReader(new StringReader(\"{}\"));\n  }\n\n  @Test\n  void locationString_returnsCorrectFormat() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n    // Use reflection to access the package-private locationString method\n    Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n\n    // Set lineNumber, pos, lineStart fields via reflection\n    setField(jsonReader, \"lineNumber\", 4); // lineNumber = 4 means line = 5 (4 + 1)\n    setField(jsonReader, \"pos\", 15);\n    setField(jsonReader, \"lineStart\", 10); // column = pos - lineStart + 1 = 15 - 10 + 1 = 6\n\n    // Set stackSize, pathNames and pathIndices to simulate a path, via reflection\n    setField(jsonReader, \"stackSize\", 2);\n\n    // pathNames and pathIndices are arrays of size 32, so we must get existing arrays and modify them\n    Field pathNamesField = JsonReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonReader);\n    pathNames[0] = null;\n    pathNames[1] = \"key\";\n\n    Field pathIndicesField = JsonReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonReader);\n    pathIndices[0] = 0;\n    pathIndices[1] = 3;\n\n    // Invoke locationString\n    String result = (String) locationStringMethod.invoke(jsonReader);\n\n    // Expected path is [\"[0]\", \"key[3]\"] but getPath() returns a string like \"$[0].key[3]\"\n    // So we need to verify the exact path string returned by getPath()\n    String expectedPath = jsonReader.getPath();\n\n    String expected = \" at line 5 column 6 path \" + expectedPath;\n    assertEquals(expected, result);\n  }\n\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888751,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 612,
+    "prompt_tokens": 2744,
+    "total_tokens": 3356,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.9
+  }
+}

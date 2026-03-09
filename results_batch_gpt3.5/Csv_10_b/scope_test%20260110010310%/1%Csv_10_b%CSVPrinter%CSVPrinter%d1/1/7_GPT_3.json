@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwACAlgEoF1TR3Rx5Tcw3sY8lkZog",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_nullOut_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVPrinter(null, format);\n        });\n        assertEquals(\"out\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_nullFormat_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVPrinter(out, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_callsFormatValidate() throws IOException {\n        doNothing().when(format).validate();\n        CSVPrinter printer = new CSVPrinter(out, format);\n        verify(format, times(1)).validate();\n        assertNotNull(printer);\n    }\n\n    @Test\n    void testPrintAndEscape_invokesAppend() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method m = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        m.setAccessible(true);\n\n        CharSequence value = \"escapeTest\";\n\n        when(out.append(any(CharSequence.class))).thenReturn(out);\n\n        m.invoke(printer, value, 0, value.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintAndQuote_invokesAppend() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method m = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        m.setAccessible(true);\n\n        CharSequence value = \"quoteTest\";\n\n        when(out.append(any(CharSequence.class))).thenReturn(out);\n\n        m.invoke(printer, \"obj\", value, 0, value.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_privatePrintMethod() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method m = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        m.setAccessible(true);\n\n        CharSequence value = \"printTest\";\n\n        when(out.append(any(CharSequence.class))).thenReturn(out);\n\n        m.invoke(printer, \"obj\", value, 0, value.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_publicPrintMethod_callsPrivatePrint() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        when(out.append(any(CharSequence.class))).thenReturn(out);\n\n        printer.print(\"value\");\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testGetOut_returnsAppendable() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        assertSame(out, printer.getOut());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978250,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 719,
+    "prompt_tokens": 1240,
+    "total_tokens": 1959,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.85
+  }
+}

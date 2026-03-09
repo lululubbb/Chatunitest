@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxhXE5v4tMr8kwFcywNRdI2uNBOl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a dummy CSVFormat mock or real instance as needed\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Create a CSVParser instance with a Reader and format (using the public constructor)\n        parser = new CSVParser(new java.io.StringReader(\"\"), format);\n\n        // Use reflection to set the private final headerMap field to null for one test\n        setFinalField(parser, \"headerMap\", null);\n    }\n\n    @Test\n    void testGetHeaderMapReturnsNullWhenHeaderMapIsNull() throws Exception {\n        // headerMap is already set to null in setUp\n        Map<String, Integer> result = parser.getHeaderMap();\n        assertNull(result, \"Expected getHeaderMap to return null when headerMap is null\");\n    }\n\n    @Test\n    void testGetHeaderMapReturnsCopyOfHeaderMap() throws Exception {\n        // Prepare a LinkedHashMap to set as headerMap\n        LinkedHashMap<String, Integer> originalHeaderMap = new LinkedHashMap<>();\n        originalHeaderMap.put(\"Name\", 0);\n        originalHeaderMap.put(\"Age\", 1);\n\n        // Set the private final headerMap field via reflection\n        setFinalField(parser, \"headerMap\", originalHeaderMap);\n\n        Map<String, Integer> result = parser.getHeaderMap();\n\n        assertNotNull(result, \"Expected getHeaderMap to not return null when headerMap is set\");\n        assertEquals(originalHeaderMap, result, \"Expected getHeaderMap to return a map equal to headerMap\");\n        assertNotSame(originalHeaderMap, result, \"Expected getHeaderMap to return a new LinkedHashMap instance\");\n\n        // Modify result and verify originalHeaderMap is not affected (defensive copy)\n        result.put(\"NewColumn\", 2);\n        assertFalse(originalHeaderMap.containsKey(\"NewColumn\"), \"Original headerMap should not be modified\");\n    }\n\n    private static void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVParser.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691895,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 570,
+    "prompt_tokens": 1301,
+    "total_tokens": 1871,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.33
+  }
+}

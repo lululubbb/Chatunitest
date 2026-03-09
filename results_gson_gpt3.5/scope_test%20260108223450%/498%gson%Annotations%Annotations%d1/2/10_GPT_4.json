@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnAoNdlqbQRqTSv796dK9mWPkYNk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf.generated;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.Descriptors;\nimport com.google.protobuf.ExtensionRegistry;\nimport com.google.protobuf.ExtensionRegistryLite;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass AnnotationsTest {\n\n  private ExtensionRegistryLite mockRegistryLite;\n  private ExtensionRegistry mockRegistry;\n  private Class<?> annotationsClass;\n\n  @BeforeEach\n  void setUp() {\n    mockRegistryLite = mock(ExtensionRegistryLite.class);\n    mockRegistry = mock(ExtensionRegistry.class);\n    annotationsClass = Annotations.class;\n  }\n\n  @Test\n  void testRegisterAllExtensions_WithExtensionRegistryLite() {\n    // Call the static method via reflection\n    try {\n      Method method = annotationsClass.getMethod(\"registerAllExtensions\", ExtensionRegistryLite.class);\n      method.invoke(null, mockRegistryLite);\n    } catch (Exception e) {\n      fail(\"Invocation of registerAllExtensions(ExtensionRegistryLite) failed: \" + e);\n    }\n\n    // No exceptions and no interactions expected with mockRegistryLite (method is likely empty)\n    verifyNoInteractions(mockRegistryLite);\n  }\n\n  @Test\n  void testRegisterAllExtensions_WithExtensionRegistry() {\n    // Call the static method via reflection\n    try {\n      Method method = annotationsClass.getMethod(\"registerAllExtensions\", ExtensionRegistry.class);\n      method.invoke(null, mockRegistry);\n    } catch (Exception e) {\n      fail(\"Invocation of registerAllExtensions(ExtensionRegistry) failed: \" + e);\n    }\n\n    // No exceptions and no interactions expected with mockRegistry (method is likely empty)\n    verifyNoInteractions(mockRegistry);\n  }\n\n  @Test\n  void testGetDescriptor_NotNull() {\n    try {\n      Method getDescriptorMethod = annotationsClass.getMethod(\"getDescriptor\");\n      Object descriptor = getDescriptorMethod.invoke(null);\n      assertNotNull(descriptor);\n      assertTrue(descriptor instanceof Descriptors.FileDescriptor);\n    } catch (Exception e) {\n      fail(\"Invocation of getDescriptor() failed: \" + e);\n    }\n  }\n\n  @Test\n  void testSerializedNameAndSerializedValueFields() {\n    try {\n      Field serializedNameField = annotationsClass.getField(\"serializedName\");\n      Object serializedName = serializedNameField.get(null);\n      assertNotNull(serializedName);\n      Method getExtensionTypeMethod = serializedName.getClass().getMethod(\"getExtensionType\");\n      Object extensionType = getExtensionTypeMethod.invoke(serializedName);\n      assertEquals(String.class, extensionType);\n\n      Field serializedValueField = annotationsClass.getField(\"serializedValue\");\n      Object serializedValue = serializedValueField.get(null);\n      assertNotNull(serializedValue);\n      Object extensionType2 = getExtensionTypeMethod.invoke(serializedValue);\n      assertEquals(String.class, extensionType2);\n\n      Field serializedNameFieldNumberField = annotationsClass.getField(\"SERIALIZED_NAME_FIELD_NUMBER\");\n      int serializedNameFieldNumber = serializedNameFieldNumberField.getInt(null);\n      assertEquals(92066888, serializedNameFieldNumber);\n\n      Field serializedValueFieldNumberField = annotationsClass.getField(\"SERIALIZED_VALUE_FIELD_NUMBER\");\n      int serializedValueFieldNumber = serializedValueFieldNumberField.getInt(null);\n      assertEquals(92066888, serializedValueFieldNumber);\n\n    } catch (Exception e) {\n      fail(\"Reflection failed for serializedName/serializedValue fields: \" + e);\n    }\n  }\n\n  @Test\n  void testPrivateConstructor() {\n    try {\n      Constructor<?> constructor = annotationsClass.getDeclaredConstructor();\n      constructor.setAccessible(true);\n      Object instance = constructor.newInstance();\n      assertNotNull(instance);\n      assertEquals(annotationsClass, instance.getClass());\n    } catch (Exception e) {\n      fail(\"Instantiation of private constructor failed: \" + e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889754,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 815,
+    "prompt_tokens": 2560,
+    "total_tokens": 3375,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.58
+  }
+}

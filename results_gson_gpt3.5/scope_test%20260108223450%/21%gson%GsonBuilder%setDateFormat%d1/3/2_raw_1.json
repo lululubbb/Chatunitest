@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void testSetDateFormat_ReturnsThisAndSetsDatePattern() throws Exception {\n    String pattern = \"yyyy-MM-dd\";\n\n    GsonBuilder returned = gsonBuilder.setDateFormat(pattern);\n\n    assertSame(gsonBuilder, returned, \"setDateFormat should return this\");\n    // Use reflection to verify private field datePattern is set\n    Field datePatternField = GsonBuilder.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n    String actualPattern = (String) datePatternField.get(gsonBuilder);\n    assertEquals(pattern, actualPattern, \"datePattern field should be set to the given pattern\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1083,
+  "completion_tokens": 213,
+  "total_tokens": 1296,
+  "llm_elapsed_time_seconds": 5.59
+}

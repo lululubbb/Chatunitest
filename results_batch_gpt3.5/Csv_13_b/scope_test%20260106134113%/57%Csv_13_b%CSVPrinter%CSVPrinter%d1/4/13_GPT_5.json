@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuACfRrPjwktchnopcVyxIUQ8fBr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_withHeaderCommentsAndHeader() throws Exception {\n        String[] headerComments = new String[] {\"comment1\", null, \"comment2\"};\n        when(format.getHeaderComments()).thenReturn(headerComments);\n        when(format.getHeader()).thenReturn(new String[] {\"col1\", \"col2\"});\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String output = out.toString();\n        assertTrue(output.contains(\"comment1\"));\n        assertTrue(output.contains(\"comment2\"));\n        assertTrue(output.contains(\"col1\"));\n        assertTrue(output.contains(\"col2\"));\n    }\n\n    @Test\n    void testConstructor_withNoHeaderCommentsAndSkipHeader() throws Exception {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(new String[] {\"col1\"});\n        when(format.getSkipHeaderRecord()).thenReturn(true);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String output = out.toString();\n        assertFalse(output.contains(\"col1\"));\n    }\n\n    @Test\n    void testConstructor_withNullHeaderAndNullHeaderComments() throws Exception {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(null);\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String output = out.toString();\n        assertEquals(\"\", output);\n    }\n\n    @Test\n    void testConstructor_nullOut_throwsException() {\n        Exception ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, format));\n        assertEquals(\"out\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_nullFormat_throwsException() {\n        Exception ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(out, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testInvokePrivatePrintComment() throws Exception {\n        String[] headerComments = new String[] {\"comment\"};\n        when(format.getHeaderComments()).thenReturn(headerComments);\n        when(format.getHeader()).thenReturn(null);\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method printComment = CSVPrinter.class.getDeclaredMethod(\"printComment\", String.class);\n        printComment.setAccessible(true);\n        printComment.invoke(printer, \"myComment\");\n\n        assertTrue(out.toString().contains(\"myComment\"));\n    }\n\n    @Test\n    void testInvokePrivatePrint() throws Exception {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(null);\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n        printMethod.invoke(printer, \"obj\", \"value\", 0, 5);\n\n        String output = out.toString();\n        assertTrue(output.length() > 0);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678296,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 754,
+    "prompt_tokens": 1385,
+    "total_tokens": 2139,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.0
+  }
+}

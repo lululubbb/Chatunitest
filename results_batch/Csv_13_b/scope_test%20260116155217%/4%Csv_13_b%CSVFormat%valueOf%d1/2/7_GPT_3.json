@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZYHSU4qY8w3zQmNbSz0Ky8heCy1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVFormat.Predefined;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testValueOf_withValidPredefinedFormat() throws Exception {\n        // Arrange\n        String formatName = \"DEFAULT\";\n        CSVFormat expectedFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to replace the enum constant with a mock\n        Class<?> predefinedClass = Predefined.class;\n\n        // Get the enum constant field\n        Field enumField = predefinedClass.getDeclaredField(formatName);\n        enumField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(enumField, enumField.getModifiers() & ~Modifier.FINAL);\n\n        // Create mock Predefined\n        Predefined predefinedMock = Mockito.mock(Predefined.class);\n        Mockito.when(predefinedMock.getFormat()).thenReturn(expectedFormat);\n\n        // Replace enum constant with mock\n        enumField.set(null, predefinedMock);\n\n        // Act\n        CSVFormat actualFormat = CSVFormat.valueOf(formatName);\n\n        // Assert\n        assertSame(expectedFormat, actualFormat);\n        Mockito.verify(predefinedMock).getFormat();\n    }\n\n    @Test\n    void testValueOf_withInvalidFormat_throwsIllegalArgumentException() {\n        String invalidFormatName = \"NON_EXISTENT_FORMAT\";\n\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(invalidFormatName));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552377,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 356,
+    "prompt_tokens": 1562,
+    "total_tokens": 1918,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.58
+  }
+}

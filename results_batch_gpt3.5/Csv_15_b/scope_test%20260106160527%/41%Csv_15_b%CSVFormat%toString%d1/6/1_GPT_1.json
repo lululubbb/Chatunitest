@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwPO4snnhNSAeLWUnUC4DuJUDpq7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testToString_Default() {\n        String str = csvFormat.toString();\n        assertTrue(str.contains(\"Delimiter=<,>\"));\n        assertTrue(str.contains(\"QuoteChar=<\\\"\"));\n        assertTrue(str.contains(\"SkipHeaderRecord:false\"));\n        assertTrue(str.contains(\"EmptyLines:ignored\"));\n        assertTrue(str.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(str.contains(\"IgnoreHeaderCase:ignored\"));\n    }\n\n    @Test\n    void testToString_WithEscapeCharacter() throws Exception {\n        CSVFormat format = createCSVFormatWithField(\"escapeCharacter\", '\\\\');\n        String str = format.toString();\n        assertTrue(str.contains(\"Escape=<\\\\>\"));\n    }\n\n    @Test\n    void testToString_WithCommentMarker() throws Exception {\n        CSVFormat format = createCSVFormatWithField(\"commentMarker\", '#');\n        String str = format.toString();\n        assertTrue(str.contains(\"CommentStart=<#>\"));\n    }\n\n    @Test\n    void testToString_WithNullString() throws Exception {\n        CSVFormat format = createCSVFormatWithField(\"nullString\", \"NULL\");\n        String str = format.toString();\n        assertTrue(str.contains(\"NullString=<NULL>\"));\n    }\n\n    @Test\n    void testToString_WithRecordSeparator() throws Exception {\n        CSVFormat format = createCSVFormatWithField(\"recordSeparator\", \"\\n\");\n        String str = format.toString();\n        assertTrue(str.contains(\"RecordSeparator=<\\n>\") || str.contains(\"RecordSeparator=<\\r\\n>\"));\n    }\n\n    @Test\n    void testToString_IgnoreFlags() throws Exception {\n        CSVFormat format = csvFormat\n                .withIgnoreEmptyLines(false)\n                .withIgnoreSurroundingSpaces(false)\n                .withIgnoreHeaderCase(false);\n        String str = format.toString();\n        assertFalse(str.contains(\"EmptyLines:ignored\"));\n        assertFalse(str.contains(\"SurroundingSpaces:ignored\"));\n        assertFalse(str.contains(\"IgnoreHeaderCase:ignored\"));\n\n        format = csvFormat\n                .withIgnoreEmptyLines(true)\n                .withIgnoreSurroundingSpaces(true)\n                .withIgnoreHeaderCase(true);\n        str = format.toString();\n        assertTrue(str.contains(\"EmptyLines:ignored\"));\n        assertTrue(str.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(str.contains(\"IgnoreHeaderCase:ignored\"));\n    }\n\n    @Test\n    void testToString_WithHeaderCommentsAndHeader() throws Exception {\n        CSVFormat format = csvFormat\n                .withHeaderComments(\"comment1\", \"comment2\")\n                .withHeader(\"header1\", \"header2\");\n        String str = format.toString();\n        assertTrue(str.contains(\"HeaderComments:[comment1, comment2]\"));\n        assertTrue(str.contains(\"Header:[header1, header2]\"));\n    }\n\n    @Test\n    void testToString_SkipHeaderRecordTrue() throws Exception {\n        CSVFormat format = csvFormat.withSkipHeaderRecord(true);\n        String str = format.toString();\n        assertTrue(str.contains(\"SkipHeaderRecord:true\"));\n    }\n\n    // Helper method to create a new CSVFormat with a private field set via reflection\n    private CSVFormat createCSVFormatWithField(String fieldName, Object value) throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Create a new CSVFormat instance copying DEFAULT and overriding the field\n        CSVFormat newFormat = CSVFormat.DEFAULT;\n        // Because CSVFormat is immutable, we use 'with' methods if available for public fields\n        switch (fieldName) {\n            case \"escapeCharacter\":\n                newFormat = format.withEscape((Character) value);\n                break;\n            case \"commentMarker\":\n                newFormat = format.withCommentMarker((Character) value);\n                break;\n            case \"nullString\":\n                newFormat = format.withNullString((String) value);\n                break;\n            case \"recordSeparator\":\n                newFormat = format.withRecordSeparator((String) value);\n                break;\n            default:\n                // For other fields, try to set via reflection on a new instance\n                // But CSVFormat is final and immutable, so we rely on with* methods\n                break;\n        }\n        return newFormat;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767686926,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 975,
+    "prompt_tokens": 2100,
+    "total_tokens": 3075,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 2048
+    },
+    "llm_elapsed_time_seconds": 13.22
+  }
+}

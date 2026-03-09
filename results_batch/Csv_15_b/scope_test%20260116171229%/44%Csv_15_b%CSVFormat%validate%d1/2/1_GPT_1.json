@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaJtfFSFbNHw3ADnpAAhVVWA9V4m",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatValidateTest {\n\n    private CSVFormat csvFormat;\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Using DEFAULT as base, will modify fields via reflection if needed\n        csvFormat = CSVFormat.DEFAULT;\n\n        // Access private validate() method\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Exception {\n        validateMethod.invoke(format);\n    }\n\n    @Test\n    public void testValidate_validDefaults() throws Exception {\n        // DEFAULT is valid, should not throw\n        assertDoesNotThrow(() -> invokeValidate(csvFormat));\n    }\n\n    @Test\n    public void testValidate_delimiterIsLineBreak_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat('\\n');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        // message check\n        assert(cause.getMessage().contains(\"delimiter cannot be a line break\"));\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote(',');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"quoteChar character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withEscape(',');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"escape character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_commentMarkerEqualsDelimiter_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withCommentMarker(',');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"comment start character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsCommentMarker_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote('\\'').withCommentMarker('\\'');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"comment start character and the quoteChar cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_escapeCharEqualsCommentMarker_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withEscape('!').withCommentMarker('!');\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"comment start and the escape character cannot be the same\"));\n    }\n\n    @Test\n    public void testValidate_escapeCharNullAndQuoteModeNone_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withEscape((Character) null).withQuoteMode(QuoteMode.NONE);\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"No quotes mode set but no escape character is set\"));\n    }\n\n    @Test\n    public void testValidate_headerWithDuplicates_throws() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withHeader(\"one\", \"two\", \"one\");\n        Exception ex = assertThrows(Exception.class, () -> invokeValidate(format));\n        Throwable cause = ex.getCause();\n        assertThrows(IllegalArgumentException.class, () -> { throw cause; });\n        assert(cause.getMessage().contains(\"header contains a duplicate entry\"));\n        assert(cause.getMessage().contains(\"one\"));\n        assert(cause.getMessage().contains(Arrays.toString(new String[]{\"one\", \"two\", \"one\"})));\n    }\n\n    @Test\n    public void testValidate_headerUnique_noThrow() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withHeader(\"a\", \"b\", \"c\");\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555329,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1104,
+    "prompt_tokens": 2149,
+    "total_tokens": 3253,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.79
+  }
+}

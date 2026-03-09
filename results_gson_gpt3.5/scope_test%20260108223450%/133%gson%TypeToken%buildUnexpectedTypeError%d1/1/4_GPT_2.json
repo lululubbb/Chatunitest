@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmAVBHP2RRCh4rCNAdSVIukNwAjV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertTrue;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class TypeTokenTest {\n\n  @Test\n  void testBuildUnexpectedTypeError_withSingleExpectedClass() throws Exception {\n    Type token = String.class;\n    Class<?>[] expected = new Class<?>[]{Integer.class};\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Unexpected type. Expected one of: \"));\n    assertTrue(message.contains(Integer.class.getName()));\n    assertTrue(message.contains(token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_withMultipleExpectedClasses() throws Exception {\n    Type token = Double.class;\n    Class<?>[] expected = new Class<?>[]{Integer.class, String.class, Number.class};\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Unexpected type. Expected one of: \"));\n    Arrays.stream(expected).forEach(clazz -> assertTrue(message.contains(clazz.getName())));\n    assertTrue(message.contains(token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_withEmptyExpectedClasses() throws Exception {\n    Type token = Float.class;\n    Class<?>[] expected = new Class<?>[0];\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    AssertionError error = (AssertionError) method.invoke(null, token, expected);\n\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Unexpected type. Expected one of: \"));\n    // No expected class names should be present except the fixed string\n    assertTrue(message.contains(\"but got: \"));\n    assertTrue(message.contains(token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_withNullToken_throwsNullPointerException() throws Exception {\n    Class<?>[] expected = new Class<?>[]{Integer.class};\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    // Passing null token will cause NullPointerException on token.getClass()\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(null, (Object) null, expected);\n    });\n    assertTrue(thrown.getCause() instanceof NullPointerException);\n  }\n\n  @Test\n  void testBuildUnexpectedTypeError_withNullExpectedArray() throws Exception {\n    Type token = String.class;\n\n    Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n\n    // Passing null as expected varargs should cause NullPointerException in the for loop\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(null, token, (Object) null);\n    });\n    assertTrue(thrown.getCause() instanceof NullPointerException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885891,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 761,
+    "prompt_tokens": 2084,
+    "total_tokens": 2845,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.55
+  }
+}

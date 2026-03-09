@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class Gson_toJsonTree_Test {\n\n    private Gson gson;\n\n    @BeforeEach\n    public void setUp() {\n        gson = new Gson();\n    }\n\n    @Test\n    public void testToJsonTree_NullInput_ReturnsJsonNullInstance() {\n        JsonElement result = gson.toJsonTree(null);\n        assertSame(JsonNull.INSTANCE, result);\n    }\n\n    @Test\n    public void testToJsonTree_NonNullInput_UsesOverloadedMethod() throws Exception {\n        String testString = \"test\";\n\n        // Use reflection to access private toJsonTree(Object, Type) method\n        Method toJsonTreeWithType = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class, java.lang.reflect.Type.class);\n        toJsonTreeWithType.setAccessible(true);\n\n        // Spy on gson to verify call to private method\n        Gson spyGson = spy(gson);\n\n        // Call the public toJsonTree(Object) method\n        JsonElement result = spyGson.toJsonTree(testString);\n\n        // Verify that the private toJsonTree(Object, Type) method was called with correct args\n        verify(spyGson).toJsonTree(testString, testString.getClass());\n\n        // Also invoke the private method directly and compare results\n        JsonElement directResult = (JsonElement) toJsonTreeWithType.invoke(gson, testString, testString.getClass());\n        assertEquals(directResult, result);\n    }\n\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/331%gson%Gson%toJsonTree%d1/2/temp/Gson_331_2Test.java:14: 错误: 类 Gson_toJsonTree_Test 是公共的, 应在名为 Gson_toJsonTree_Test.java 的文件中声明\npublic class Gson_toJsonTree_Test {\n       ^\n1 个错误\n",
+  "prompt_tokens": 1605,
+  "completion_tokens": 358,
+  "total_tokens": 1963,
+  "llm_elapsed_time_seconds": 5.22
+}

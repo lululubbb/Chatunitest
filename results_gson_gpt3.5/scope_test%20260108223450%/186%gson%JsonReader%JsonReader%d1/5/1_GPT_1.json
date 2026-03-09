@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlwk03WVbZT1QUSToXemakrRe6lt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.DisplayName;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n    @Test\n    @DisplayName(\"Constructor should initialize JsonReader with non-null Reader\")\n    void constructor_WithValidReader_ShouldInitialize() throws Exception {\n        Reader mockReader = mock(Reader.class);\n        JsonReader jsonReader = new JsonReader(mockReader);\n\n        // Use reflection to verify private fields\n        var inField = JsonReader.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        Object inValue = inField.get(jsonReader);\n        assertSame(mockReader, inValue);\n\n        var posField = JsonReader.class.getDeclaredField(\"pos\");\n        posField.setAccessible(true);\n        assertEquals(0, posField.getInt(jsonReader));\n\n        var limitField = JsonReader.class.getDeclaredField(\"limit\");\n        limitField.setAccessible(true);\n        assertEquals(0, limitField.getInt(jsonReader));\n\n        var peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n        peekedField.setAccessible(true);\n        assertEquals(0, peekedField.getInt(jsonReader)); // PEEKED_NONE = 0\n    }\n\n    @Test\n    @DisplayName(\"Constructor with null Reader should throw NullPointerException\")\n    void constructor_WithNullReader_ShouldThrow() {\n        NullPointerException npe = assertThrows(NullPointerException.class, () -> new JsonReader(null));\n        assertEquals(\"in == null\", npe.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885038,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 356,
+    "prompt_tokens": 1005,
+    "total_tokens": 1361,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.82
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwynGY4osobk7v4FfP8h1yW0w5Gk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_ValidQuoteChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char quoteChar = '\\'';\n        CSVFormat result = original.withQuote(quoteChar);\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        // Ensure other properties remain unchanged\n        assertEquals(original.getDelimiter(), result.getDelimiter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getCommentMarker(), result.getCommentMarker());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertArrayEquals(original.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(original.getHeader(), result.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), result.getTrim());\n        assertEquals(original.getTrailingDelimiter(), result.getTrailingDelimiter());\n        assertEquals(original.getAutoFlush(), result.getAutoFlush());\n    }\n\n    @Test\n    public void testWithQuote_NullQuoteChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat result = original.withQuote((Character) null);\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n    }\n\n    @Test\n    public void testWithQuote_LineBreakQuoteChar_ThrowsException() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        // Use reflection to invoke private static isLineBreak(Character) method\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test with '\\n' line break character\n        Character lf = '\\n';\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, lf));\n        IllegalArgumentException thrownLf = assertThrows(IllegalArgumentException.class, () -> {\n            original.withQuote(lf);\n        });\n        assertEquals(\"The quoteChar cannot be a line break\", thrownLf.getMessage());\n\n        // Test with '\\r' line break character\n        Character cr = '\\r';\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, cr));\n        IllegalArgumentException thrownCr = assertThrows(IllegalArgumentException.class, () -> {\n            original.withQuote(cr);\n        });\n        assertEquals(\"The quoteChar cannot be a line break\", thrownCr.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689121,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 620,
+    "prompt_tokens": 2347,
+    "total_tokens": 2967,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.56
+  }
+}

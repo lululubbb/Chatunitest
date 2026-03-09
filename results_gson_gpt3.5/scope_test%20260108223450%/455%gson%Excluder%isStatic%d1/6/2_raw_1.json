@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n  private Method isStaticMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    excluder = new Excluder();\n    isStaticMethod = Excluder.class.getDeclaredMethod(\"isStatic\", Class.class);\n    isStaticMethod.setAccessible(true);\n  }\n\n  @Test\n  void testIsStatic_withStaticClass() throws Exception {\n    // Static nested class\n    class Outer {\n      static class StaticNested {}\n    }\n    boolean result = (boolean) isStaticMethod.invoke(excluder, Outer.StaticNested.class);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsStatic_withNonStaticClass() throws Exception {\n    // Non-static nested class (inner class)\n    class Outer {\n      class Inner {}\n    }\n    boolean result = (boolean) isStaticMethod.invoke(excluder, Outer.Inner.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsStatic_withTopLevelClass() throws Exception {\n    // Top-level classes are never static\n    boolean result = (boolean) isStaticMethod.invoke(excluder, String.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsStatic_withAnonymousClass() throws Exception {\n    Object anon = new Object() {};\n    boolean result = (boolean) isStaticMethod.invoke(excluder, anon.getClass());\n    assertFalse(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/455%gson%Excluder%isStatic%d1/6/temp/Excluder_455_6Test.java:30: 错误: 此处不允许使用修饰符static\n      static class StaticNested {}\n             ^\n1 个错误\n",
+  "prompt_tokens": 595,
+  "completion_tokens": 353,
+  "total_tokens": 948,
+  "llm_elapsed_time_seconds": 7.85
+}

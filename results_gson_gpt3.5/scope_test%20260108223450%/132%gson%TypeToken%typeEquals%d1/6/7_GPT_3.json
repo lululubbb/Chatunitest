@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm51iojFH7lVfYYsMAMIqDirG4tT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeToken_typeEquals_Test {\n\n  private static ParameterizedType createParameterizedType(final Type rawType, final Type... typeArguments) {\n    return new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return typeArguments;\n      }\n\n      @Override\n      public Type getRawType() {\n        return rawType;\n      }\n\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n\n      @Override\n      public boolean equals(Object o) {\n        if (!(o instanceof ParameterizedType)) return false;\n        ParameterizedType that = (ParameterizedType) o;\n        return rawType.equals(that.getRawType()) &&\n               java.util.Arrays.equals(typeArguments, that.getActualTypeArguments()) &&\n               getOwnerType() == that.getOwnerType();\n      }\n\n      @Override\n      public int hashCode() {\n        return rawType.hashCode() ^ java.util.Arrays.hashCode(typeArguments) ^\n               (getOwnerType() == null ? 0 : getOwnerType().hashCode());\n      }\n\n      @Override\n      public String toString() {\n        StringBuilder sb = new StringBuilder();\n        sb.append(rawType.getTypeName());\n        if (typeArguments.length > 0) {\n          sb.append(\"<\");\n          for (int i = 0; i < typeArguments.length; i++) {\n            if (i != 0) sb.append(\", \");\n            sb.append(typeArguments[i].getTypeName());\n          }\n          sb.append(\">\");\n        }\n        return sb.toString();\n      }\n    };\n  }\n\n  private static java.lang.reflect.Method getTypeEqualsMethod() throws Exception {\n    java.lang.reflect.Method method = TypeToken.class.getDeclaredMethod(\"typeEquals\", ParameterizedType.class, ParameterizedType.class, Map.class);\n    method.setAccessible(true);\n    return method;\n  }\n\n  @Test\n  void typeEquals_sameRawTypeAndMatchingArgs_returnsTrue() throws Exception {\n    // Arrange\n    Type rawType = String.class;\n    Type arg1 = Integer.class;\n    Type arg2 = Double.class;\n\n    ParameterizedType from = createParameterizedType(rawType, arg1, arg2);\n    ParameterizedType to = createParameterizedType(rawType, arg1, arg2);\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n\n    // Act\n    var method = getTypeEqualsMethod();\n    boolean result = (boolean) method.invoke(null, from, to, typeVarMap);\n\n    // Assert\n    assertTrue(result);\n  }\n\n  @Test\n  void typeEquals_sameRawTypeAndNonMatchingArgs_returnsFalse() throws Exception {\n    // Arrange\n    Type rawType = String.class;\n    Type arg1From = Integer.class;\n    Type arg2From = Double.class;\n    Type arg1To = Integer.class;\n    Type arg2To = Float.class; // different\n\n    ParameterizedType from = createParameterizedType(rawType, arg1From, arg2From);\n    ParameterizedType to = createParameterizedType(rawType, arg1To, arg2To);\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n\n    // Act\n    var method = getTypeEqualsMethod();\n    boolean result = (boolean) method.invoke(null, from, to, typeVarMap);\n\n    // Assert\n    assertFalse(result);\n  }\n\n  @Test\n  void typeEquals_differentRawType_returnsFalse() throws Exception {\n    // Arrange\n    Type rawTypeFrom = String.class;\n    Type rawTypeTo = Integer.class; // different raw type\n    Type arg1 = Integer.class;\n\n    ParameterizedType from = createParameterizedType(rawTypeFrom, arg1);\n    ParameterizedType to = createParameterizedType(rawTypeTo, arg1);\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n\n    // Act\n    var method = getTypeEqualsMethod();\n    boolean result = (boolean) method.invoke(null, from, to, typeVarMap);\n\n    // Assert\n    assertFalse(result);\n  }\n\n  @Test\n  void typeEquals_emptyTypeArguments_returnsTrue() throws Exception {\n    // Arrange\n    Type rawType = String.class;\n\n    ParameterizedType from = createParameterizedType(rawType);\n    ParameterizedType to = createParameterizedType(rawType);\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n\n    // Act\n    var method = getTypeEqualsMethod();\n    boolean result = (boolean) method.invoke(null, from, to, typeVarMap);\n\n    // Assert\n    assertTrue(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885551,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 987,
+    "prompt_tokens": 2743,
+    "total_tokens": 3730,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.01
+  }
+}

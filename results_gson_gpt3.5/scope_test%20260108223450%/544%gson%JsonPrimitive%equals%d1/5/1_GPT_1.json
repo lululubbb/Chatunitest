@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpzPjUBB9QRRl16x7xV6fvNDbr5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveEqualsTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonPrimitive = new JsonPrimitive(\"initial\");\n  }\n\n  private void setValue(JsonPrimitive jp, Object value) throws Exception {\n    Field field = JsonPrimitive.class.getDeclaredField(\"value\");\n    field.setAccessible(true);\n    field.set(jp, value);\n  }\n\n  private boolean invokeIsIntegral(JsonPrimitive jp) throws Exception {\n    Method method = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, jp);\n  }\n\n  @Test\n  public void testEquals_sameInstance() {\n    assertTrue(jsonPrimitive.equals(jsonPrimitive));\n  }\n\n  @Test\n  public void testEquals_nullObject() {\n    assertFalse(jsonPrimitive.equals(null));\n  }\n\n  @Test\n  public void testEquals_differentClass() {\n    assertFalse(jsonPrimitive.equals(\"string\"));\n  }\n\n  @Test\n  public void testEquals_bothValuesNull() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(\"x\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"y\");\n    setValue(jp1, null);\n    setValue(jp2, null);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_oneValueNull() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(\"x\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"y\");\n    setValue(jp1, null);\n    setValue(jp2, \"not null\");\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_bothIntegralEqualLong() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(42);\n    JsonPrimitive jp2 = new JsonPrimitive(42L);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_bothIntegralNotEqualLong() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(42);\n    JsonPrimitive jp2 = new JsonPrimitive(43L);\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_bothNumberDoubleEqual() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(42.0);\n    JsonPrimitive jp2 = new JsonPrimitive(42.0);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_bothNumberDoubleNotEqual() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(42.0);\n    JsonPrimitive jp2 = new JsonPrimitive(43.0);\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_bothNumberDoubleNaN() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(Double.NaN);\n    JsonPrimitive jp2 = new JsonPrimitive(Double.NaN);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_valueEquals() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(\"test\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"test\");\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testEquals_valueNotEquals() throws Exception {\n    JsonPrimitive jp1 = new JsonPrimitive(\"test1\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"test2\");\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  public void testIsIntegral_reflection() throws Exception {\n    JsonPrimitive jpInt = new JsonPrimitive(1);\n    JsonPrimitive jpLong = new JsonPrimitive(1L);\n    JsonPrimitive jpBigInt = new JsonPrimitive(BigInteger.ONE);\n    JsonPrimitive jpDouble = new JsonPrimitive(1.0);\n    JsonPrimitive jpString = new JsonPrimitive(\"1\");\n\n    assertTrue(invokeIsIntegral(jpInt));\n    assertTrue(invokeIsIntegral(jpLong));\n    assertTrue(invokeIsIntegral(jpBigInt));\n    assertFalse(invokeIsIntegral(jpDouble));\n    assertFalse(invokeIsIntegral(jpString));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888463,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 951,
+    "prompt_tokens": 590,
+    "total_tokens": 1541,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.05
+  }
+}

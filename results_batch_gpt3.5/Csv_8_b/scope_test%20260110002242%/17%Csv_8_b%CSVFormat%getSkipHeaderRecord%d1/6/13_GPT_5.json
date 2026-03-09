@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9rpnkymgKVDRctopNLjHGnqW0G4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetSkipHeaderRecord_DefaultFalse() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // Use reflection to set skipHeaderRecord to false for testing if needed\n        CSVFormat modifiedFormat = setSkipHeaderRecord(format, false);\n        assertFalse(modifiedFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    void testGetSkipHeaderRecord_CustomTrue() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withSkipHeaderRecord(true);\n        // Use reflection to confirm the field is true\n        CSVFormat modifiedFormat = setSkipHeaderRecord(format, true);\n        assertTrue(modifiedFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    void testGetSkipHeaderRecord_CustomFalse() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withSkipHeaderRecord(false);\n        // Use reflection to confirm the field is false\n        CSVFormat modifiedFormat = setSkipHeaderRecord(format, false);\n        assertFalse(modifiedFormat.getSkipHeaderRecord());\n    }\n\n    private CSVFormat setSkipHeaderRecord(CSVFormat format, boolean value) throws Exception {\n        // Because CSVFormat is immutable and fields are final, we cannot just set the field value.\n        // Instead, create a new CSVFormat instance with the same parameters but different skipHeaderRecord.\n        // Use reflection to get all fields and invoke constructor with changed skipHeaderRecord.\n\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Field[] fields = clazz.getDeclaredFields();\n\n        // Collect all parameters needed for constructor\n        char delimiter = getFieldValue(format, \"delimiter\");\n        Character quoteChar = getFieldValue(format, \"quoteChar\");\n        Object quotePolicy = getFieldValue(format, \"quotePolicy\");\n        Character commentStart = getFieldValue(format, \"commentStart\");\n        Character escape = getFieldValue(format, \"escape\");\n        boolean ignoreSurroundingSpaces = getFieldValue(format, \"ignoreSurroundingSpaces\");\n        boolean ignoreEmptyLines = getFieldValue(format, \"ignoreEmptyLines\");\n        String recordSeparator = getFieldValue(format, \"recordSeparator\");\n        String nullString = getFieldValue(format, \"nullString\");\n        String[] header = getFieldValue(format, \"header\");\n\n        // Find the private constructor\n        // Constructor signature:\n        // CSVFormat(char delimiter, Character quoteChar, Quote quotePolicy, Character commentStart,\n        //           Character escape, boolean ignoreSurroundingSpaces, boolean ignoreEmptyLines,\n        //           String recordSeparator, String nullString, String[] header, boolean skipHeaderRecord)\n\n        java.lang.reflect.Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class,\n                Character.class,\n                Class.forName(\"org.apache.commons.csv.Quote\"),\n                Character.class,\n                Character.class,\n                boolean.class,\n                boolean.class,\n                String.class,\n                String.class,\n                String[].class,\n                boolean.class\n        );\n        constructor.setAccessible(true);\n\n        return constructor.newInstance(\n                delimiter,\n                quoteChar,\n                quotePolicy,\n                commentStart,\n                escape,\n                ignoreSurroundingSpaces,\n                ignoreEmptyLines,\n                recordSeparator,\n                nullString,\n                header,\n                value\n        );\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getFieldValue(CSVFormat format, String fieldName) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return (T) field.get(format);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976989,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 770,
+    "prompt_tokens": 1262,
+    "total_tokens": 2032,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.69
+  }
+}

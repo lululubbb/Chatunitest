@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZp6e0V8PWsqQiXFU78Ph0jUdMP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  // Create a helper interface with the same method signature as ReflectionHelper.RecordHelper\n  private interface DummyRecordHelperInterface {\n    String[] getRecordComponentNames(Class<?> raw);\n  }\n\n  @BeforeAll\n  static void setUp() throws Exception {\n    // Use reflection to get the private static final RECORD_HELPER field in ReflectionHelper\n    Field field = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    field.setAccessible(true);\n\n    // Remove final modifier if needed\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    // Find the RecordHelper interface declared inside ReflectionHelper\n    Class<?> recordHelperInterface = null;\n    for (Class<?> innerClass : ReflectionHelper.class.getDeclaredClasses()) {\n      if (\"RecordHelper\".equals(innerClass.getSimpleName()) && innerClass.isInterface()) {\n        recordHelperInterface = innerClass;\n        break;\n      }\n    }\n    if (recordHelperInterface == null) {\n      throw new IllegalStateException(\"Could not find RecordHelper interface\");\n    }\n\n    // Create a proxy instance implementing the RecordHelper interface\n    Object proxyInstance = Proxy.newProxyInstance(\n        ReflectionHelper.class.getClassLoader(),\n        new Class<?>[] { recordHelperInterface },\n        (proxy, method, args) -> {\n          if (\"getRecordComponentNames\".equals(method.getName())) {\n            Class<?> raw = (Class<?>) args[0];\n            if (raw == null) {\n              throw new NullPointerException();\n            }\n            if (raw == String.class) {\n              return new String[] { \"name\", \"value\" };\n            }\n            return new String[0];\n          }\n          throw new UnsupportedOperationException(\"Unsupported method: \" + method.getName());\n        });\n\n    // Set the RECORD_HELPER field to the proxy instance\n    field.set(null, proxyInstance);\n  }\n\n  @Test\n  void getRecordComponentNames_nullClass_throwsNPE() {\n    assertThrows(NullPointerException.class, () -> ReflectionHelper.getRecordComponentNames(null));\n  }\n\n  @Test\n  void getRecordComponentNames_knownClass_returnsExpectedNames() {\n    String[] names = ReflectionHelper.getRecordComponentNames(String.class);\n    assertArrayEquals(new String[] { \"name\", \"value\" }, names);\n  }\n\n  @Test\n  void getRecordComponentNames_unknownClass_returnsEmptyArray() {\n    String[] names = ReflectionHelper.getRecordComponentNames(Integer.class);\n    assertNotNull(names);\n    assertEquals(0, names.length);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887461,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 600,
+    "prompt_tokens": 1777,
+    "total_tokens": 2377,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.93
+  }
+}

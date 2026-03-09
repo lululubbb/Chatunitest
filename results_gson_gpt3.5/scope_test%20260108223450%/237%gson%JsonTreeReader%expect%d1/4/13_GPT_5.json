@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlms5pABgY577pf9DvqmcOq0FtFK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n    private Method expectMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a minimal JsonElement to instantiate JsonTreeReader\n        JsonElement element = new JsonNull();\n\n        jsonTreeReader = new JsonTreeReader(element);\n\n        // Access private expect method via reflection\n        expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n        expectMethod.setAccessible(true);\n    }\n\n    @Test\n    public void expect_whenTokenMatches_doesNotThrow() throws Exception {\n        // Arrange\n        // We need to mock peek() to return the expected token.\n        // Since peek() is public, override it with a spy.\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        JsonToken expected = JsonToken.NULL;\n        doReturn(expected).when(spyReader).peek();\n\n        // Act & Assert\n        expectMethod.invoke(spyReader, expected);\n    }\n\n    @Test\n    public void expect_whenTokenDoesNotMatch_throwsIllegalStateException() throws Exception {\n        // Arrange\n        JsonToken expected = JsonToken.BEGIN_OBJECT;\n        JsonToken actual = JsonToken.END_ARRAY;\n\n        // Create a spy on the original jsonTreeReader\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n\n        // Mock peek() to return the actual token (mismatch)\n        doReturn(actual).when(spyReader).peek();\n\n        // Also mock getPath() to return \" at path $\" to match the exception message fully\n        doReturn(\" at path $\").when(spyReader).getPath();\n\n        // Act & Assert\n        InvocationTargetException thrown = assertThrows(InvocationTargetException.class,\n                () -> expectMethod.invoke(spyReader, expected));\n\n        Throwable cause = thrown.getCause();\n        assertNotNull(cause);\n        assertTrue(cause instanceof IllegalStateException);\n        assertEquals(\"Expected \" + expected + \" but was \" + actual + \" at path $\", cause.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884426,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 502,
+    "prompt_tokens": 1418,
+    "total_tokens": 1920,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.85
+  }
+}

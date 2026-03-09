@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZcbIrxXVhXga4EtjvhCMLoimXO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  private static class DummyRecordHelper extends RecordHelper {\n    Method accessor;\n\n    DummyRecordHelper(Method accessor) {\n      this.accessor = accessor;\n    }\n\n    @Override\n    public Method getAccessor(Class<?> raw, Field field) {\n      return accessor;\n    }\n  }\n\n  private static Method dummyMethod;\n  private static Field dummyField;\n\n  @BeforeAll\n  static void setup() throws NoSuchFieldException, NoSuchMethodException {\n    dummyField = DummyClass.class.getDeclaredField(\"value\");\n    dummyMethod = DummyClass.class.getDeclaredMethod(\"getValue\");\n  }\n\n  @Test\n  void getAccessor_returnsMethodFromRecordHelper() throws Exception {\n    // Use reflection to set private static final RECORD_HELPER field to a dummy instance\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n    RecordHelper originalRecordHelper = (RecordHelper) recordHelperField.get(null);\n    try {\n      RecordHelper dummyRecordHelper = new DummyRecordHelper(dummyMethod);\n      recordHelperField.set(null, dummyRecordHelper);\n\n      Method result = ReflectionHelper.getAccessor(DummyClass.class, dummyField);\n      assertNotNull(result);\n      assertEquals(dummyMethod, result);\n    } finally {\n      recordHelperField.set(null, originalRecordHelper);\n    }\n  }\n\n  // Dummy class to use for reflection\n  private static class DummyClass {\n    private int value;\n\n    public int getValue() {\n      return value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887448,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 383,
+    "prompt_tokens": 390,
+    "total_tokens": 773,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.89
+  }
+}

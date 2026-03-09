@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMU3zd0aByj6wcn9LAJtyvxHa4R",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private Writer mockWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  void flush_withOpenWriter_flushesOut() throws IOException, NoSuchFieldException, IllegalAccessException {\n    // Arrange: stackSize must be > 0 to avoid IllegalStateException\n    setStackSize(jsonWriter, 1);\n\n    // Act\n    jsonWriter.flush();\n\n    // Assert\n    verify(mockWriter).flush();\n  }\n\n  @Test\n  void flush_withClosedWriter_throwsIllegalStateException() throws NoSuchFieldException, IllegalAccessException {\n    // Arrange: stackSize = 0 means closed\n    setStackSize(jsonWriter, 0);\n\n    // Act & Assert\n    IllegalStateException exception = assertThrows(IllegalStateException.class, () -> jsonWriter.flush());\n    assertEquals(\"JsonWriter is closed.\", exception.getMessage());\n  }\n\n  private void setStackSize(JsonWriter writer, int size) throws NoSuchFieldException, IllegalAccessException {\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(writer, size);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890478,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 330,
+    "prompt_tokens": 743,
+    "total_tokens": 1073,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.45
+  }
+}

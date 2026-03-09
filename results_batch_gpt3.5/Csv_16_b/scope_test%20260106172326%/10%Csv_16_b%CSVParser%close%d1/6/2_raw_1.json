@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private Lexer mockLexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a CSVParser instance with a mock Lexer\n        csvParser = new CSVParser(mock(Reader.class), mock(CSVFormat.class));\n\n        mockLexer = mock(Lexer.class);\n\n        // Use reflection to set the private final lexer field\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, mockLexer);\n    }\n\n    @Test\n    void close_lexerNotNull_closesLexer() throws IOException {\n        csvParser.close();\n        verify(mockLexer, times(1)).close();\n    }\n\n    @Test\n    void close_lexerNull_doesNotThrow() throws Exception {\n        // Set lexer to null via reflection\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, null);\n\n        assertDoesNotThrow(() -> csvParser.close());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_16_b/scope_test%20260106172326%/10%Csv_16_b%CSVParser%close%d1/6/runtemp/Csv_16_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n/home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_16_b/scope_test%20260106172326%/10%Csv_16_b%CSVParser%close%d1/6/runtemp/Csv_16_b/.test_suite/org/apache/commons/csv/CSVParser_10_6Test.java:21: 错误: 找不到符号\n        csvParser = new CSVParser(mock(Reader.class), mock(CSVFormat.class));\n                                       ^\n  符号:   类 Reader\n  位置: 类 CSVParser_10_6Test\n1 个错误\n1 个警告",
+  "prompt_tokens": 615,
+  "completion_tokens": 274,
+  "total_tokens": 889,
+  "llm_elapsed_time_seconds": 5.19
+}

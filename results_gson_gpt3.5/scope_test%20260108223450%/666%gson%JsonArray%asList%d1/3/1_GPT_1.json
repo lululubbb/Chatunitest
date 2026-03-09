@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlkt2Jb7be6MqBjnO42lsLw8pChI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  void asList_returnsNonNullElementWrapperListWrappingElements() throws Exception {\n    // Prepare a real ArrayList<JsonElement> with some mocked JsonElement objects\n    ArrayList<JsonElement> elementsList = new ArrayList<>();\n    JsonElement mockElement1 = mock(JsonElement.class);\n    JsonElement mockElement2 = mock(JsonElement.class);\n    elementsList.add(mockElement1);\n    elementsList.add(mockElement2);\n\n    // Use reflection to set the private final field 'elements' in jsonArray\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, elementsList);\n\n    // Call the focal method\n    List<JsonElement> result = jsonArray.asList();\n\n    // Assert the returned list is a NonNullElementWrapperList and wraps the same elements list\n    assertNotNull(result);\n    assertTrue(result instanceof NonNullElementWrapperList);\n\n    // Because NonNullElementWrapperList is a wrapper, its underlying list should equal elementsList\n    // We can check that the contents are the same\n    assertEquals(elementsList.size(), result.size());\n    assertTrue(result.containsAll(elementsList));\n  }\n\n  @Test\n  void asList_withEmptyElements_returnsEmptyNonNullElementWrapperList() throws Exception {\n    // Set private final field 'elements' to an empty ArrayList\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, new ArrayList<>());\n\n    List<JsonElement> result = jsonArray.asList();\n\n    assertNotNull(result);\n    assertTrue(result instanceof NonNullElementWrapperList);\n    assertTrue(result.isEmpty());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884303,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 463,
+    "prompt_tokens": 485,
+    "total_tokens": 948,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.03
+  }
+}

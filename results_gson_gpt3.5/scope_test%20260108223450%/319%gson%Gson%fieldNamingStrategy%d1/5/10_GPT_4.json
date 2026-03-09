@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn8NWTCw6XnYB7oFXo2JA9e7SkQG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.FieldNamingStrategy;\nimport com.google.gson.FieldNamingPolicy;\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass GsonFieldNamingStrategyTest {\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create Gson instance with default constructor\n    gson = new Gson();\n  }\n\n  @Test\n  public void testFieldNamingStrategy_Default() {\n    FieldNamingStrategy strategy = gson.fieldNamingStrategy();\n    assertNotNull(strategy);\n    assertEquals(FieldNamingPolicy.IDENTITY, strategy);\n  }\n\n  @Test\n  public void testFieldNamingStrategy_Custom() throws Exception {\n    // Create a mock FieldNamingStrategy\n    FieldNamingStrategy mockStrategy = mock(FieldNamingStrategy.class);\n\n    // Use reflection to set the private final fieldNamingStrategy field to mockStrategy\n    Field field = Gson.class.getDeclaredField(\"fieldNamingStrategy\");\n    field.setAccessible(true);\n\n    // Remove final modifier from the field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    field.set(gson, mockStrategy);\n\n    FieldNamingStrategy retrievedStrategy = gson.fieldNamingStrategy();\n    assertSame(mockStrategy, retrievedStrategy);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889603,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 315,
+    "prompt_tokens": 2754,
+    "total_tokens": 3069,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.39
+  }
+}

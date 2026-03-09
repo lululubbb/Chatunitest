@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlbBvDQvtgCW5qmvAvEkVHmXfIuY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  private int invokeParseDotted(String javaVersion) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    method.setAccessible(true);\n    return (int) method.invoke(null, javaVersion);\n  }\n\n  @Test\n  public void testParseDotted_SimpleVersion() throws Exception {\n    assertEquals(8, invokeParseDotted(\"8\"));\n    assertEquals(9, invokeParseDotted(\"9\"));\n    assertEquals(11, invokeParseDotted(\"11\"));\n  }\n\n  @Test\n  public void testParseDotted_VersionWithUnderscore() throws Exception {\n    assertEquals(8, invokeParseDotted(\"8_0\"));\n    assertEquals(9, invokeParseDotted(\"9_1\"));\n  }\n\n  @Test\n  public void testParseDotted_VersionWithDot() throws Exception {\n    assertEquals(8, invokeParseDotted(\"8.0\"));\n    assertEquals(9, invokeParseDotted(\"9.1\"));\n  }\n\n  @Test\n  public void testParseDotted_Java1Version() throws Exception {\n    assertEquals(6, invokeParseDotted(\"1.6\"));\n    assertEquals(7, invokeParseDotted(\"1.7\"));\n    assertEquals(8, invokeParseDotted(\"1.8\"));\n  }\n\n  @Test\n  public void testParseDotted_Java1VersionWithExtraParts() throws Exception {\n    assertEquals(6, invokeParseDotted(\"1.6.0\"));\n    assertEquals(7, invokeParseDotted(\"1.7.0_80\"));\n  }\n\n  @Test\n  public void testParseDotted_InvalidNumberFormat() throws Exception {\n    assertEquals(-1, invokeParseDotted(\"abc\"));\n    assertEquals(-1, invokeParseDotted(\"1.a\"));\n    assertEquals(-1, invokeParseDotted(\"1_\"));\n    assertEquals(-1, invokeParseDotted(\"\"));\n    assertEquals(-1, invokeParseDotted(\".\"));\n    assertEquals(-1, invokeParseDotted(\"_\"));\n  }\n\n  @Test\n  public void testParseDotted_NullInput() throws Exception {\n    // Method does not handle null explicitly, expecting NullPointerException\n    try {\n      invokeParseDotted(null);\n    } catch (InvocationTargetException e) {\n      assertEquals(NullPointerException.class, e.getCause().getClass());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883701,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 569,
+    "prompt_tokens": 1199,
+    "total_tokens": 1768,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.46
+  }
+}

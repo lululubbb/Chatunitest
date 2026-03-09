@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = mock(ArrayList.class);\n    // Use reflection to instantiate NonNullElementWrapperList with the mocked delegate\n    list = new NonNullElementWrapperList<>(delegateMock);\n  }\n\n  @Test\n  void testContains_delegateReturnsTrue() {\n    String element = \"test\";\n    when(delegateMock.contains(element)).thenReturn(true);\n\n    boolean result = list.contains(element);\n\n    assertTrue(result);\n    verify(delegateMock).contains(element);\n  }\n\n  @Test\n  void testContains_delegateReturnsFalse() {\n    String element = \"absent\";\n    when(delegateMock.contains(element)).thenReturn(false);\n\n    boolean result = list.contains(element);\n\n    assertFalse(result);\n    verify(delegateMock).contains(element);\n  }\n\n  @Test\n  void testContains_nullElement() {\n    when(delegateMock.contains(null)).thenReturn(false);\n\n    boolean result = list.contains(null);\n\n    assertFalse(result);\n    verify(delegateMock).contains(null);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 372,
+  "completion_tokens": 287,
+  "total_tokens": 659,
+  "llm_elapsed_time_seconds": 4.85
+}

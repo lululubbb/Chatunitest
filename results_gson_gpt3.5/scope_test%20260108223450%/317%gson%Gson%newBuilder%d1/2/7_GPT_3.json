@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmSpjdHdk1uEwKvO7TWJPvJZmIsK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass GsonTest {\n\n  @Test\n  void testNewBuilder() throws Exception {\n    Gson gson = new Gson();\n\n    // Direct call test\n    GsonBuilder builder = gson.newBuilder();\n    assertNotNull(builder);\n    // The builder should be initialized with the Gson instance passed\n    // Use reflection to access the private field 'gson' inside GsonBuilder to verify\n    Field gsonField = GsonBuilder.class.getDeclaredField(\"builderGson\");\n    gsonField.setAccessible(true);\n    Gson internalGson = (Gson) gsonField.get(builder);\n    assertSame(gson, internalGson);\n\n    // Additionally, test invoking newBuilder via reflection\n    Method newBuilderMethod = Gson.class.getDeclaredMethod(\"newBuilder\");\n    newBuilderMethod.setAccessible(true);\n    Object result = newBuilderMethod.invoke(gson);\n    assertTrue(result instanceof GsonBuilder);\n    assertSame(builder.getClass(), result.getClass());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887027,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 229,
+    "prompt_tokens": 2120,
+    "total_tokens": 2349,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.16
+  }
+}

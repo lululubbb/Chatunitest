@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonReaderInternalAccessTest {\n\n    private JsonReaderInternalAccess jsonReaderInternalAccess;\n    private JsonReader jsonReader;\n\n    @BeforeEach\n    void setUp() {\n        // Create a concrete subclass to test promoteNameToValue\n        jsonReaderInternalAccess = new JsonReaderInternalAccess() {\n            @Override\n            public void promoteNameToValue(JsonReader reader) throws IOException {\n                throw new AbstractMethodError();\n            }\n        };\n        // Use a non-null Reader to avoid NullPointerException\n        jsonReader = new JsonReader(new StringReader(\"{}\"));\n    }\n\n    @Test\n    void testPromoteNameToValue_invocation() throws IOException {\n        // Use reflection to invoke promoteNameToValue\n        try {\n            Method method = JsonReaderInternalAccess.class.getDeclaredMethod(\"promoteNameToValue\", JsonReader.class);\n            method.setAccessible(true);\n            // Invocation should throw AbstractMethodError because of our override\n            Throwable thrown = assertThrows(Throwable.class, () -> method.invoke(jsonReaderInternalAccess, jsonReader));\n            Throwable cause = thrown.getCause() != null ? thrown.getCause() : thrown;\n            assertTrue(cause instanceof AbstractMethodError);\n        } catch (NoSuchMethodException e) {\n            fail(\"Method promoteNameToValue not found\");\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 837,
+  "completion_tokens": 327,
+  "total_tokens": 1164,
+  "llm_elapsed_time_seconds": 5.72
+}

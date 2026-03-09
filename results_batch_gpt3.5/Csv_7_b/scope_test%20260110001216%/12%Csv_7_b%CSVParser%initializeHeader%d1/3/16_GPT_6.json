@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9U3XNgpB68qpOkU9DPXmnFIGEPK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserInitializeHeaderTest {\n\n    private CSVParser parser;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n    }\n\n    private Map<String, Integer> invokeInitializeHeader(CSVParser parser) throws Throwable {\n        Method method = CSVParser.class.getDeclaredMethod(\"initializeHeader\");\n        method.setAccessible(true);\n        try {\n            return (Map<String, Integer>) method.invoke(parser);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    // Helper class to simulate CSVRecord since CSVRecord constructor is not accessible\n    private static class CSVRecordStub {\n        private final String[] values;\n\n        CSVRecordStub(String[] values) {\n            this.values = values;\n        }\n\n        public String[] values() {\n            return values;\n        }\n    }\n\n    // Helper class implementing CSVParser interface by delegation, since CSVParser is final\n    private static class CSVParserDelegate extends CSVParser {\n        private final CSVFormat format;\n        private final CSVRecordStub nextRecordStub;\n        private boolean nextRecordCalled = false;\n\n        CSVParserDelegate(Reader reader, CSVFormat format, CSVRecordStub nextRecordStub) {\n            super(reader, format);\n            this.format = format;\n            this.nextRecordStub = nextRecordStub;\n        }\n\n        @Override\n        public CSVRecord nextRecord() {\n            nextRecordCalled = true;\n            if (nextRecordStub == null) {\n                return null;\n            }\n            return new CSVRecordAdapter(nextRecordStub);\n        }\n\n        public boolean wasNextRecordCalled() {\n            return nextRecordCalled;\n        }\n\n        @Override\n        public CSVFormat getFormat() {\n            return format;\n        }\n    }\n\n    // Adapter class to convert CSVRecordStub to CSVRecord via delegation\n    private static class CSVRecordAdapter extends CSVRecord {\n        private final CSVRecordStub stub;\n\n        CSVRecordAdapter(CSVRecordStub stub) {\n            super(null, null, null, 0L);\n            this.stub = stub;\n        }\n\n        @Override\n        public String[] values() {\n            return stub.values();\n        }\n    }\n\n    @Test\n    void testInitializeHeader_formatHeaderNull() throws Throwable {\n        when(formatMock.getHeader()).thenReturn(null);\n        parser = new CSVParserDelegate(mock(Reader.class), formatMock, null);\n        Map<String, Integer> result = invokeInitializeHeader(parser);\n        assertNull(result);\n    }\n\n    @Test\n    void testInitializeHeader_formatHeaderEmpty_nextRecordNonNull() throws Throwable {\n        when(formatMock.getHeader()).thenReturn(new String[0]);\n        CSVRecordStub recordStub = new CSVRecordStub(new String[]{\"a\", \"b\", \"c\"});\n        parser = new CSVParserDelegate(mock(Reader.class), formatMock, recordStub);\n        Map<String, Integer> result = invokeInitializeHeader(parser);\n        assertNotNull(result);\n        assertEquals(3, result.size());\n        assertEquals(Integer.valueOf(0), result.get(\"a\"));\n        assertEquals(Integer.valueOf(1), result.get(\"b\"));\n        assertEquals(Integer.valueOf(2), result.get(\"c\"));\n    }\n\n    @Test\n    void testInitializeHeader_formatHeaderEmpty_nextRecordNull() throws Throwable {\n        when(formatMock.getHeader()).thenReturn(new String[0]);\n        parser = new CSVParserDelegate(mock(Reader.class), formatMock, null);\n        Map<String, Integer> result = invokeInitializeHeader(parser);\n        assertNotNull(result);\n        assertTrue(result.isEmpty());\n    }\n\n    @Test\n    void testInitializeHeader_formatHeaderNonEmpty_skipHeaderRecordTrue() throws Throwable {\n        String[] header = new String[]{\"x\", \"y\"};\n        when(formatMock.getHeader()).thenReturn(header);\n        when(formatMock.getSkipHeaderRecord()).thenReturn(true);\n        CSVRecordStub recordStub = new CSVRecordStub(new String[]{\"ignore\"});\n        CSVParserDelegate stubParser = new CSVParserDelegate(mock(Reader.class), formatMock, recordStub);\n        parser = stubParser;\n        Map<String, Integer> result = invokeInitializeHeader(parser);\n        assertNotNull(result);\n        assertEquals(2, result.size());\n        assertEquals(Integer.valueOf(0), result.get(\"x\"));\n        assertEquals(Integer.valueOf(1), result.get(\"y\"));\n        // nextRecord should be called once to skip header record\n        assertTrue(stubParser.wasNextRecordCalled());\n    }\n\n    @Test\n    void testInitializeHeader_formatHeaderNonEmpty_skipHeaderRecordFalse() throws Throwable {\n        String[] header = new String[]{\"col1\", \"col2\"};\n        when(formatMock.getHeader()).thenReturn(header);\n        when(formatMock.getSkipHeaderRecord()).thenReturn(false);\n        parser = new CSVParserDelegate(mock(Reader.class), formatMock, null) {\n            @Override\n            public CSVRecord nextRecord() {\n                fail(\"nextRecord should not be called when skipHeaderRecord is false and header is non-empty\");\n                return null;\n            }\n        };\n        Map<String, Integer> result = invokeInitializeHeader(parser);\n        assertNotNull(result);\n        assertEquals(2, result.size());\n        assertEquals(Integer.valueOf(0), result.get(\"col1\"));\n        assertEquals(Integer.valueOf(1), result.get(\"col2\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975515,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1174,
+    "prompt_tokens": 2138,
+    "total_tokens": 3312,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.85
+  }
+}

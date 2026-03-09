@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmoJgvELeCM7id8QL9c3eax12bK8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.sql;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.sql.Timestamp;\nimport java.util.Date;\n\nclass SqlTimestampTypeAdapterTest {\n\n  private TypeAdapter<Date> mockDateAdapter;\n  private SqlTimestampTypeAdapter adapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    mockDateAdapter = mock(TypeAdapter.class);\n    Constructor<SqlTimestampTypeAdapter> constructor = SqlTimestampTypeAdapter.class.getDeclaredConstructor(TypeAdapter.class);\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance(mockDateAdapter);\n  }\n\n  @Test\n  void testRead_nullJson_returnsNull() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(com.google.gson.stream.JsonToken.NULL);\n    // Remove doNothing().when(reader).nextNull(); because nextNull() is void and does nothing by default\n\n    Timestamp result = adapter.read(reader);\n\n    assertNull(result);\n    verify(reader).nextNull();\n    verifyNoMoreInteractions(mockDateAdapter);\n  }\n\n  @Test\n  void testRead_nonNullJson_delegatesToDateAdapter() throws Exception {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(com.google.gson.stream.JsonToken.STRING);\n    Date date = new Date(123456789L);\n    when(mockDateAdapter.read(reader)).thenReturn(date);\n\n    Timestamp result = adapter.read(reader);\n\n    assertNotNull(result);\n    assertEquals(date.getTime(), result.getTime());\n    verify(mockDateAdapter).read(reader);\n  }\n\n  @Test\n  void testWrite_nullValue_writesNull() throws IOException {\n    JsonWriter writer = mock(JsonWriter.class);\n\n    adapter.write(writer, null);\n\n    verify(writer).nullValue();\n    verifyNoMoreInteractions(mockDateAdapter);\n  }\n\n  @Test\n  void testWrite_nonNullValue_delegatesToDateAdapter() throws IOException {\n    JsonWriter writer = mock(JsonWriter.class);\n    Timestamp timestamp = new Timestamp(987654321L);\n\n    adapter.write(writer, timestamp);\n\n    ArgumentCaptor<Date> captor = ArgumentCaptor.forClass(Date.class);\n    verify(mockDateAdapter).write(eq(writer), captor.capture());\n    Date passedDate = captor.getValue();\n    assertEquals(timestamp.getTime(), passedDate.getTime());\n  }\n\n  @Test\n  void testFactory_create_withTimestampType_returnsAdapter() {\n    Gson gson = mock(Gson.class);\n    TypeToken<Timestamp> timestampTypeToken = TypeToken.get(Timestamp.class);\n    TypeAdapter<Date> dateAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(Date.class)).thenReturn(dateAdapter);\n\n    TypeAdapter<?> result = SqlTimestampTypeAdapter.FACTORY.create(gson, timestampTypeToken);\n\n    assertNotNull(result);\n    assertTrue(result instanceof SqlTimestampTypeAdapter);\n  }\n\n  @Test\n  void testFactory_create_withNonTimestampType_returnsNull() {\n    Gson gson = mock(Gson.class);\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<?> result = SqlTimestampTypeAdapter.FACTORY.create(gson, stringTypeToken);\n\n    assertNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888359,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 737,
+    "prompt_tokens": 1806,
+    "total_tokens": 2543,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.75
+  }
+}

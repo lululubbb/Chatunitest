@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm2lzOkYrs9svUNK5z7Opp4V3fMx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonArray otherArray;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n    otherArray = new JsonArray();\n  }\n\n  @Test\n  void addAll_shouldAddAllElementsFromOtherArray() throws Exception {\n    // Prepare elements to add in otherArray\n    JsonElement element1 = mock(JsonElement.class);\n    JsonElement element2 = mock(JsonElement.class);\n\n    // Use reflection to add elements to otherArray's private elements list\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n\n    ArrayList<JsonElement> otherElements = new ArrayList<>();\n    otherElements.add(element1);\n    otherElements.add(element2);\n    elementsField.set(otherArray, otherElements);\n\n    // Initially jsonArray's elements list is empty\n    ArrayList<JsonElement> jsonElements = new ArrayList<>();\n    elementsField.set(jsonArray, jsonElements);\n\n    // Call addAll\n    jsonArray.addAll(otherArray);\n\n    // Verify jsonArray's elements now contain all elements from otherArray\n    ArrayList<JsonElement> resultElements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    assertEquals(2, resultElements.size());\n    assertTrue(resultElements.contains(element1));\n    assertTrue(resultElements.contains(element2));\n  }\n\n  @Test\n  void addAll_shouldAddEmptyWhenOtherArrayIsEmpty() throws Exception {\n    // otherArray elements empty list\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n\n    ArrayList<JsonElement> emptyOtherElements = new ArrayList<>();\n    elementsField.set(otherArray, emptyOtherElements);\n\n    ArrayList<JsonElement> jsonElements = new ArrayList<>();\n    elementsField.set(jsonArray, jsonElements);\n\n    jsonArray.addAll(otherArray);\n\n    ArrayList<JsonElement> resultElements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    assertTrue(resultElements.isEmpty());\n  }\n\n  @Test\n  void addAll_shouldAppendToExistingElements() throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n\n    JsonElement existing = mock(JsonElement.class);\n    ArrayList<JsonElement> jsonElements = new ArrayList<>();\n    jsonElements.add(existing);\n    elementsField.set(jsonArray, jsonElements);\n\n    JsonElement newElement = mock(JsonElement.class);\n    ArrayList<JsonElement> otherElements = new ArrayList<>();\n    otherElements.add(newElement);\n    elementsField.set(otherArray, otherElements);\n\n    jsonArray.addAll(otherArray);\n\n    ArrayList<JsonElement> resultElements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    assertEquals(2, resultElements.size());\n    assertTrue(resultElements.contains(existing));\n    assertTrue(resultElements.contains(newElement));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885411,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 650,
+    "prompt_tokens": 481,
+    "total_tokens": 1131,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.99
+  }
+}

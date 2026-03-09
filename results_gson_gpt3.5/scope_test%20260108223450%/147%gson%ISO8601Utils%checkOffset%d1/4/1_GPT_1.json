@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmuPlsB5dwcd3rmhItyQTM1hzJZ5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind.util;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class ISO8601UtilsTest {\n\n    private static Method checkOffsetMethod;\n\n    @BeforeAll\n    public static void setUp() throws NoSuchMethodException {\n        checkOffsetMethod = ISO8601Utils.class.getDeclaredMethod(\"checkOffset\", String.class, int.class, char.class);\n        checkOffsetMethod.setAccessible(true);\n    }\n\n    private boolean invokeCheckOffset(String value, int offset, char expected) {\n        try {\n            return (boolean) checkOffsetMethod.invoke(null, value, offset, expected);\n        } catch (IllegalAccessException | InvocationTargetException e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    public void testCheckOffset_OffsetLessThanLength_CharMatches() {\n        String value = \"2023-06-20T12:34:56Z\";\n        int offset = 4;\n        char expected = '-';\n        boolean result = invokeCheckOffset(value, offset, expected);\n        assertTrue(result);\n    }\n\n    @Test\n    public void testCheckOffset_OffsetLessThanLength_CharDoesNotMatch() {\n        String value = \"2023-06-20T12:34:56Z\";\n        int offset = 4;\n        char expected = 'X';\n        boolean result = invokeCheckOffset(value, offset, expected);\n        assertFalse(result);\n    }\n\n    @Test\n    public void testCheckOffset_OffsetEqualsLength() {\n        String value = \"2023-06-20T12:34:56Z\";\n        int offset = value.length();\n        char expected = 'Z';\n        boolean result = invokeCheckOffset(value, offset, expected);\n        assertFalse(result);\n    }\n\n    @Test\n    public void testCheckOffset_OffsetGreaterThanLength() {\n        String value = \"2023-06-20T12:34:56Z\";\n        int offset = value.length() + 1;\n        char expected = 'Z';\n        boolean result = invokeCheckOffset(value, offset, expected);\n        assertFalse(result);\n    }\n\n    @Test\n    public void testCheckOffset_EmptyString() {\n        String value = \"\";\n        int offset = 0;\n        char expected = 'Z';\n        boolean result = invokeCheckOffset(value, offset, expected);\n        assertFalse(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888737,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 526,
+    "prompt_tokens": 362,
+    "total_tokens": 888,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.12
+  }
+}

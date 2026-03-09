@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testSize_empty() {\n    assertEquals(0, jsonObject.size());\n  }\n\n  @Test\n  public void testSize_nonEmpty() throws Exception {\n    // Use reflection to access private field 'members'\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    com.google.gson.internal.LinkedTreeMap<String, JsonElement> members =\n        (com.google.gson.internal.LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    // Initially empty\n    assertEquals(0, jsonObject.size());\n\n    // Add one member\n    members.put(\"key1\", new JsonPrimitive(\"value1\"));\n    assertEquals(1, jsonObject.size());\n\n    // Add another member\n    members.put(\"key2\", new JsonPrimitive(123));\n    assertEquals(2, jsonObject.size());\n\n    // Remove a member\n    members.remove(\"key1\");\n    assertEquals(1, jsonObject.size());\n\n    // Clear all members\n    members.clear();\n    assertEquals(0, jsonObject.size());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 389,
+  "completion_tokens": 309,
+  "total_tokens": 698,
+  "llm_elapsed_time_seconds": 5.64
+}

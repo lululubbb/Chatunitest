@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMNhkmQpJjGLH8RLT5I6f7pyDwS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testToJson_withJsonPrimitive() {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"testString\");\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"\\\"testString\\\"\", json);\n  }\n\n  @Test\n  public void testToJson_withJsonElement_null() {\n    String json = gson.toJson((JsonElement) null);\n    assertEquals(\"null\", json);\n  }\n\n  @Test\n  public void testToJson_invokesPrivateToJsonJsonElementWriter() throws Exception {\n    JsonElement jsonElement = new JsonPrimitive(\"privateTest\");\n    StringWriter stringWriter = new StringWriter();\n\n    Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class, java.io.Writer.class);\n    toJsonMethod.setAccessible(true);\n    toJsonMethod.invoke(gson, jsonElement, stringWriter);\n\n    assertEquals(\"\\\"privateTest\\\"\", stringWriter.toString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890471,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 294,
+    "prompt_tokens": 1600,
+    "total_tokens": 1894,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.85
+  }
+}

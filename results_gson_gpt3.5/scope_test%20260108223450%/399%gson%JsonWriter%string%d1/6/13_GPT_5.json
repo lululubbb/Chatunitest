@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnB98PU0QRLiMvz3WwzIP6TuHjn6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_string_Test {\n\n  private JsonWriter jsonWriter;\n  private Writer out;\n\n  private String[] replacementChars;\n  private String[] htmlSafeReplacementChars;\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException, IllegalAccessException {\n    out = mock(Writer.class);\n    jsonWriter = new JsonWriter(out);\n\n    // Access private static final String[] REPLACEMENT_CHARS via reflection\n    Field replacementCharsField = JsonWriter.class.getDeclaredField(\"REPLACEMENT_CHARS\");\n    replacementCharsField.setAccessible(true);\n    replacementChars = (String[]) replacementCharsField.get(null);\n\n    // Access private static final String[] HTML_SAFE_REPLACEMENT_CHARS via reflection\n    Field htmlSafeReplacementCharsField = JsonWriter.class.getDeclaredField(\"HTML_SAFE_REPLACEMENT_CHARS\");\n    htmlSafeReplacementCharsField.setAccessible(true);\n    htmlSafeReplacementChars = (String[]) htmlSafeReplacementCharsField.get(null);\n  }\n\n  private void invokeString(String value) throws Throwable {\n    Method stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n    try {\n      stringMethod.invoke(jsonWriter, value);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  void string_writesSimpleString() throws Throwable {\n    String input = \"simple\";\n    invokeString(input);\n    verify(out).write('\\\"');\n    verify(out).write(input, 0, input.length());\n    verify(out).write('\\\"');\n  }\n\n  @Test\n  void string_escapesAsciiControlCharacters() throws Throwable {\n    String input = \"a\\u0000b\\u0001c\\u001Fb\";\n    // '\\u0000' -> replacement chars at 0\n    // '\\u0001' -> replacement chars at 1\n    // '\\u001f' -> replacement chars at 31\n    invokeString(input);\n    verify(out).write('\\\"');\n    // The method writes parts of the string and replacements separately\n    verify(out).write(input, 0, 1); // 'a'\n    verify(out).write(replacementChars[0]);\n    verify(out).write(input, 2, 1); // 'b'\n    verify(out).write(replacementChars[1]);\n    verify(out).write(input, 4, 1); // 'c'\n    verify(out).write(replacementChars[31]);\n    verify(out).write(input, 5, 1); // 'b'\n    verify(out).write('\\\"');\n  }\n\n  @Test\n  void string_escapesUnicode2028And2029() throws Throwable {\n    String input = \"a\\u2028b\\u2029c\";\n    invokeString(input);\n    verify(out).write('\\\"');\n    verify(out).write(input, 0, 1); // 'a'\n    verify(out).write(\"\\\\u2028\");\n    verify(out).write(input, 2, 1); // 'b'\n    verify(out).write(\"\\\\u2029\");\n    verify(out).write(input, 4, 1); // 'c'\n    verify(out).write('\\\"');\n  }\n\n  @Test\n  void string_htmlSafeReplacements() throws Throwable {\n    // Enable htmlSafe to use HTML_SAFE_REPLACEMENT_CHARS\n    jsonWriter.setHtmlSafe(true);\n    String input = \"<>&\\\"'\";\n    // These characters have htmlSafe replacements\n    invokeString(input);\n    verify(out).write('\\\"');\n    verify(out).write(input, 0, 1); // '<'\n    verify(out).write(htmlSafeReplacementChars['<']);\n    verify(out).write(input, 1, 1); // '>'\n    verify(out).write(htmlSafeReplacementChars['>']);\n    verify(out).write(input, 2, 1); // '&'\n    verify(out).write(htmlSafeReplacementChars['&']);\n    verify(out).write(input, 3, 1); // '\"'\n    verify(out).write(htmlSafeReplacementChars['\"']);\n    verify(out).write(input, 4, 1); // '\\''\n    verify(out).write(htmlSafeReplacementChars['\\'']);\n    verify(out).write('\\\"');\n  }\n\n  @Test\n  void string_emptyString() throws Throwable {\n    String input = \"\";\n    invokeString(input);\n    verify(out).write('\\\"');\n    verify(out).write('\\\"');\n  }\n\n  @Test\n  void string_allUnescapedChars() throws Throwable {\n    // String with no chars needing escaping\n    String input = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \";\n    invokeString(input);\n    verify(out).write('\\\"');\n    verify(out).write(input, 0, input.length());\n    verify(out).write('\\\"');\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889775,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1067,
+    "prompt_tokens": 2733,
+    "total_tokens": 3800,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.5
+  }
+}

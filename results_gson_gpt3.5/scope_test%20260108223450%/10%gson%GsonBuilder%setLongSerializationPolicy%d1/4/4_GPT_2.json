@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwYUZ3W9HDsb7f9Tk58AqLGFnzX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void testSetLongSerializationPolicy_WithValidPolicy_ShouldSetFieldAndReturnThis() throws Exception {\n    LongSerializationPolicy mockPolicy = mock(LongSerializationPolicy.class);\n\n    GsonBuilder returned = gsonBuilder.setLongSerializationPolicy(mockPolicy);\n\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to verify private field longSerializationPolicy is set\n    Field field = GsonBuilder.class.getDeclaredField(\"longSerializationPolicy\");\n    field.setAccessible(true);\n    Object fieldValue = field.get(gsonBuilder);\n    assertSame(mockPolicy, fieldValue);\n  }\n\n  @Test\n  void testSetLongSerializationPolicy_WithNull_ShouldThrowNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.setLongSerializationPolicy(null);\n    });\n    // The actual message from Objects.requireNonNull is \"serializationPolicy is marked non-null but is null\"\n    // But it might be null if no message is set, so just check that the message contains \"serializationPolicy\" and \"null\"\n    String message = thrown.getMessage();\n    assertNotNull(message, \"Expected NullPointerException to have a message\");\n    assertTrue(message.contains(\"serializationPolicy\") && message.contains(\"null\"),\n      \"Expected NullPointerException message to mention null argument\");\n  }\n\n  @Test\n  void testSetLongSerializationPolicy_WithSameInstanceMultipleTimes() throws Exception {\n    LongSerializationPolicy mockPolicy = mock(LongSerializationPolicy.class);\n\n    GsonBuilder returned1 = gsonBuilder.setLongSerializationPolicy(mockPolicy);\n    GsonBuilder returned2 = gsonBuilder.setLongSerializationPolicy(mockPolicy);\n\n    assertSame(gsonBuilder, returned1);\n    assertSame(gsonBuilder, returned2);\n\n    Field field = GsonBuilder.class.getDeclaredField(\"longSerializationPolicy\");\n    field.setAccessible(true);\n    Object fieldValue = field.get(gsonBuilder);\n    assertSame(mockPolicy, fieldValue);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888870,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 473,
+    "prompt_tokens": 1848,
+    "total_tokens": 2321,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.06
+  }
+}

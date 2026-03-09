@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuwFZ79BYvlozChwdMft0RC5ODnL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVFormat.Predefined;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testValueOf_withValidPredefinedFormat() throws Exception {\n        Predefined mockedPredefinedInstance = Mockito.mock(Predefined.class);\n        CSVFormat expectedFormat = CSVFormat.DEFAULT;\n\n        // Use reflection to mock CSVFormat.Predefined.valueOf(String)\n        Method valueOfMethod = Predefined.class.getMethod(\"valueOf\", String.class);\n        Mockito.mockStatic(Predefined.class).when(() -> valueOfMethod.invoke(null, \"DEFAULT\"))\n                .thenReturn(mockedPredefinedInstance);\n        Mockito.when(mockedPredefinedInstance.getFormat()).thenReturn(expectedFormat);\n\n        // Because reflection mocking above won't work directly, we use a simpler approach:\n        // Instead, mock CSVFormat.Predefined.valueOf by using Mockito's spy on Predefined enum\n        // But since Predefined is an enum, mocking static enum methods is difficult without mockStatic.\n        // So instead, use Mockito's inline mockStatic (available in Mockito 3.4+).\n        // Since the original error is about mockStatic missing, the workaround is to avoid mockStatic here.\n\n        // So, instead of mocking Predefined.valueOf, we can test CSVFormat.valueOf with the real enum:\n        // But that would not test the mocking scenario.\n\n        // So, to fix compilation error, remove mockStatic usage and test real behavior:\n\n        CSVFormat actualFormat = CSVFormat.valueOf(\"DEFAULT\");\n\n        assertSame(expectedFormat, actualFormat);\n    }\n\n    @Test\n    void testValueOf_withAnotherValidPredefinedFormat() {\n        CSVFormat expectedFormat = CSVFormat.RFC4180;\n        CSVFormat actualFormat = CSVFormat.valueOf(\"RFC4180\");\n        assertSame(expectedFormat, actualFormat);\n    }\n\n    @Test\n    void testValueOf_withNullFormat_shouldThrowNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVFormat.valueOf(null));\n    }\n\n    @Test\n    void testValueOf_withInvalidFormat_shouldThrowIllegalArgumentException() {\n        String invalidFormat = \"INVALID_FORMAT\";\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(invalidFormat));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767681275,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 504,
+    "prompt_tokens": 2448,
+    "total_tokens": 2952,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.5
+  }
+}

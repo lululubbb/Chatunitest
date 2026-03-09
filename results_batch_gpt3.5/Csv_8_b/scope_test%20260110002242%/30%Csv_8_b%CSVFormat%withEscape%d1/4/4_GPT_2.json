@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9sBVe23wMUAKLnkHHUbbLNGBnFs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithEscapeTest {\n\n    @Test\n    void testWithEscape_validEscapeChar() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Character escapeChar = '\\\\';\n\n        CSVFormat newFormat = format.withEscape(escapeChar);\n\n        assertNotNull(newFormat);\n        assertEquals(escapeChar, newFormat.getEscape());\n        assertEquals(format.getDelimiter(), newFormat.getDelimiter());\n        assertEquals(format.getQuoteChar(), newFormat.getQuoteChar());\n        assertEquals(format.getQuotePolicy(), newFormat.getQuotePolicy());\n        assertEquals(format.getCommentStart(), newFormat.getCommentStart());\n        assertEquals(format.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(format.getNullString(), newFormat.getNullString());\n        assertArrayEquals(format.getHeader(), newFormat.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    void testWithEscape_nullEscapeChar() {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVFormat newFormat = format.withEscape(null);\n\n        assertNotNull(newFormat);\n        assertNull(newFormat.getEscape());\n        assertEquals(format.getDelimiter(), newFormat.getDelimiter());\n        assertEquals(format.getQuoteChar(), newFormat.getQuoteChar());\n        assertEquals(format.getQuotePolicy(), newFormat.getQuotePolicy());\n        assertEquals(format.getCommentStart(), newFormat.getCommentStart());\n        assertEquals(format.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(format.getNullString(), newFormat.getNullString());\n        assertArrayEquals(format.getHeader(), newFormat.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    void testWithEscape_lineBreakEscapeCharThrows() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to access private static isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test with line break characters: '\\n' (LF), '\\r' (CR)\n        Character[] lineBreaks = new Character[] { '\\n', '\\r' };\n\n        for (Character lb : lineBreaks) {\n            // Confirm isLineBreak returns true for line break chars\n            boolean isLineBreak = (Boolean) isLineBreakMethod.invoke(null, lb);\n            assertTrue(isLineBreak);\n\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                format.withEscape(lb);\n            });\n            assertEquals(\"The escape character cannot be a line break\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977011,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 658,
+    "prompt_tokens": 1796,
+    "total_tokens": 2454,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.48
+  }
+}

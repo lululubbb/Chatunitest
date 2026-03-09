@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmhmx6LhNJiOmuBy1zRS9DBWUDVu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Date;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        dateTypeAdapter = new DateTypeAdapter();\n    }\n\n    @Test\n    public void testRead_NullToken_ReturnsNull() throws IOException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.NULL);\n\n        Date result = dateTypeAdapter.read(in);\n\n        verify(in).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    public void testRead_ValidDateToken_ReturnsDate() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        JsonReader in = mock(JsonReader.class);\n        when(in.peek()).thenReturn(JsonToken.STRING);\n\n        // Using reflection to invoke private method deserializeToDate\n        Method deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        // We mock deserializeToDate to return a specific date to isolate read() method test\n        Date expectedDate = new Date();\n        DateTypeAdapter spyAdapter = Mockito.spy(dateTypeAdapter);\n        doReturn(expectedDate).when(spyAdapter).deserializeToDate(in);\n\n        Date actualDate = spyAdapter.read(in);\n\n        assertEquals(expectedDate, actualDate);\n    }\n\n    @Test\n    public void testDeserializeToDate_WithValidDateString() throws Exception {\n        JsonReader in = mock(JsonReader.class);\n        when(in.nextString()).thenReturn(\"Jan 1, 2020, 12:00:00 AM\");\n        when(in.peek()).thenReturn(JsonToken.STRING);\n\n        Method deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        Date result = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, in);\n\n        assertNotNull(result);\n    }\n\n    @Test\n    public void testDeserializeToDate_WithInvalidDateString_ThrowsJsonSyntaxException() throws Exception {\n        JsonReader in = mock(JsonReader.class);\n        when(in.nextString()).thenReturn(\"invalid-date\");\n        when(in.peek()).thenReturn(JsonToken.STRING);\n\n        Method deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        assertThrows(RuntimeException.class, () -> {\n            try {\n                deserializeToDateMethod.invoke(dateTypeAdapter, in);\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887954,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 628,
+    "prompt_tokens": 1084,
+    "total_tokens": 1712,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.63
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnPh9kGS3QpZJB4P9MSjSI2vqrDO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_value_Test {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void value_true_writesTrue() throws IOException {\n    jsonWriter.value(true);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  void value_false_writesFalse() throws IOException {\n    jsonWriter.value(false);\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  void value_deferredName_writtenBeforeValue() throws Exception {\n    // Use reflection to set deferredName to a non-null value to trigger writeDeferredName()\n    var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(jsonWriter, \"name\");\n\n    // Also need to set stack and stackSize so beforeValue() does not throw\n    var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = new int[32];\n    stack[0] = JsonScope.EMPTY_OBJECT; // fake state to allow beforeValue to work\n    stackField.set(jsonWriter, stack);\n    var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, 1);\n\n    // We call value(true) which calls writeDeferredName internally\n    jsonWriter.value(true);\n\n    // The output should contain the deferred name and the value true\n    String output = stringWriter.toString();\n    assertTrue(output.contains(\"name\"));\n    assertTrue(output.contains(\"true\"));\n  }\n\n  @Test\n  void value_beforeValue_called() throws Exception {\n    // Spy on JsonWriter to verify beforeValue() is called\n    JsonWriter spyWriter = spy(new JsonWriter(stringWriter));\n\n    // Setup stack and stackSize for beforeValue\n    var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = new int[32];\n    stack[0] = JsonScope.EMPTY_DOCUMENT;\n    stackField.set(spyWriter, stack);\n    var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(spyWriter, 1);\n\n    // Use reflection to invoke private beforeValue() to verify it is called\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    spyWriter.value(false);\n\n    // Verify beforeValue() was called once via reflection invocation count\n    // Since verify(spyWriter).beforeValue() cannot be used (private method),\n    // we instead check indirectly by spying on the value method and intercepting beforeValue via reflection.\n    // Alternatively, use reflection to invoke beforeValue and check no exception thrown.\n    // Here, we verify that value(false) produces expected output,\n    // implying beforeValue() was called internally without error.\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  void value_returnsThis() throws IOException {\n    JsonWriter returned = jsonWriter.value(true);\n    assertSame(jsonWriter, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890677,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 758,
+    "prompt_tokens": 1443,
+    "total_tokens": 2201,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.83
+  }
+}

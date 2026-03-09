@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmaHyGN8sUJWHFk4vgvS65G4eHnT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  private static Class<?> recordClassMock;\n  private static String[] expectedNames;\n\n  @BeforeAll\n  static void setUp() {\n    recordClassMock = String.class; // Using String.class as a dummy class for testing\n    expectedNames = new String[] {\"name1\", \"name2\"};\n  }\n\n  @Test\n  void testGetRecordComponentNames_returnsExpected() {\n    try {\n      // Create a proxy instance of RecordHelper interface with mocked behavior:\n      Object recordHelperProxy = java.lang.reflect.Proxy.newProxyInstance(\n          getRecordHelperClass().getClassLoader(),\n          new Class<?>[] {getRecordHelperClass()},\n          (proxy, m, args) -> {\n            if (\"getRecordComponentNames\".equals(m.getName()) && args.length == 1 && args[0] == recordClassMock) {\n              return expectedNames;\n            }\n            return null;\n          });\n\n      setFinalStatic(ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\"), recordHelperProxy);\n\n      String[] actual = ReflectionHelper.getRecordComponentNames(recordClassMock);\n      assertArrayEquals(expectedNames, actual);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  void testGetRecordComponentNames_nullClass() {\n    try {\n      // Create proxy that returns null when argument is null\n      Object recordHelperProxy = java.lang.reflect.Proxy.newProxyInstance(\n          getRecordHelperClass().getClassLoader(),\n          new Class<?>[] {getRecordHelperClass()},\n          (proxy, m, args) -> {\n            if (\"getRecordComponentNames\".equals(m.getName()) && args.length == 1 && args[0] == null) {\n              return null;\n            }\n            return null;\n          });\n\n      setFinalStatic(ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\"), recordHelperProxy);\n\n      String[] actual = ReflectionHelper.getRecordComponentNames(null);\n      assertNull(actual);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n\n  /**\n   * Helper method to get the Class object of the private static nested interface RecordHelper from ReflectionHelper.\n   */\n  private static Class<?> getRecordHelperClass() {\n    for (Class<?> innerClass : ReflectionHelper.class.getDeclaredClasses()) {\n      if (\"RecordHelper\".equals(innerClass.getSimpleName())) {\n        return innerClass;\n      }\n    }\n    throw new IllegalStateException(\"RecordHelper class not found\");\n  }\n\n  /**\n   * Sets a static final field via reflection.\n   */\n  private static void setFinalStatic(Field field, Object newValue) throws NoSuchFieldException, IllegalAccessException {\n    field.setAccessible(true);\n\n    // Remove final modifier from field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n    field.set(null, newValue);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887489,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 696,
+    "prompt_tokens": 1974,
+    "total_tokens": 2670,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.82
+  }
+}

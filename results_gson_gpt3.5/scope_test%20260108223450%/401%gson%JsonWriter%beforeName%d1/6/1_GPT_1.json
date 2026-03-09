@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmwdASfZd4LrAleu3LuG08WCoBBQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonWriterBeforeNameTest {\n\n    private JsonWriter jsonWriter;\n    private Writer mockWriter;\n    private Method beforeNameMethod;\n    private Method peekMethod;\n    private Method replaceTopMethod;\n    private Method newlineMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        mockWriter = mock(Writer.class);\n        jsonWriter = new JsonWriter(mockWriter);\n\n        beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n        beforeNameMethod.setAccessible(true);\n\n        peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n\n        replaceTopMethod = JsonWriter.class.getDeclaredMethod(\"replaceTop\", int.class);\n        replaceTopMethod.setAccessible(true);\n\n        newlineMethod = JsonWriter.class.getDeclaredMethod(\"newline\");\n        newlineMethod.setAccessible(true);\n    }\n\n    private void setStackAndStackSize(int[] stack, int stackSize) throws Exception {\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(jsonWriter, stack);\n\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, stackSize);\n    }\n\n    @Test\n    void beforeName_firstInObject_writesCommaAndCallsNewlineAndReplaceTop() throws Throwable {\n        // Setup stack so that peek() returns NONEMPTY_OBJECT (1)\n        // NONEMPTY_OBJECT = 1\n        setStackAndStackSize(new int[]{1}, 1);\n\n        beforeNameMethod.invoke(jsonWriter);\n\n        // verify comma written\n        verify(mockWriter).write(',');\n\n        // newline() and replaceTop(DANGLING_NAME) called - we verify by spying on methods via reflection\n        // We cannot directly verify private method calls, so we rely on no exceptions and expected behavior\n\n        // To verify replaceTop was called with DANGLING_NAME (6)\n        // We use reflection to get the top of stack after call\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        int[] stackAfter = (int[]) stackField.get(jsonWriter);\n        assertEquals(6, stackAfter[0]);\n    }\n\n    @Test\n    void beforeName_emptyObject_noCommaWrittenCallsNewlineAndReplaceTop() throws Throwable {\n        // EMPTY_OBJECT = 3\n        setStackAndStackSize(new int[]{3}, 1);\n\n        beforeNameMethod.invoke(jsonWriter);\n\n        // verify no comma written\n        verify(mockWriter, never()).write(',');\n\n        // verify stack top replaced with DANGLING_NAME (6)\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        int[] stackAfter = (int[]) stackField.get(jsonWriter);\n        assertEquals(6, stackAfter[0]);\n    }\n\n    @Test\n    void beforeName_notObject_throwsIllegalStateException() throws Throwable {\n        // Use context != NONEMPTY_OBJECT and != EMPTY_OBJECT, e.g. 0 (EMPTY_ARRAY)\n        setStackAndStackSize(new int[]{0}, 1);\n\n        InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n            beforeNameMethod.invoke(jsonWriter);\n        });\n        assertTrue(thrown.getCause() instanceof IllegalStateException);\n        assertEquals(\"Nesting problem.\", thrown.getCause().getMessage());\n\n        // verify no comma written\n        verify(mockWriter, never()).write(',');\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888875,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 795,
+    "prompt_tokens": 783,
+    "total_tokens": 1578,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.99
+  }
+}

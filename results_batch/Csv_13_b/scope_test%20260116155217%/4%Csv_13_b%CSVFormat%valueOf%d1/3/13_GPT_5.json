@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZc7DXpyeumNCen3FuP4FLTRLuZ7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testValueOf_withValidPredefinedFormats() throws Exception {\n        // Use reflection to get the Predefined enum class inside CSVFormat\n        Class<?> predefinedClass = null;\n        for (Class<?> innerClass : CSVFormat.class.getDeclaredClasses()) {\n            if (\"Predefined\".equals(innerClass.getSimpleName())) {\n                predefinedClass = innerClass;\n                break;\n            }\n        }\n        assertNotNull(predefinedClass, \"Predefined enum class not found\");\n\n        // Use reflection to get enum constants\n        Object[] enumConstants = predefinedClass.getEnumConstants();\n        assertNotNull(enumConstants);\n        assertTrue(enumConstants.length > 0);\n\n        // Use reflection to get the getFormat() method\n        var getFormatMethod = predefinedClass.getMethod(\"getFormat\");\n\n        // Check that CSVFormat.DEFAULT etc. are not null\n        assertNotNull(CSVFormat.DEFAULT);\n        assertNotNull(CSVFormat.RFC4180);\n        assertNotNull(CSVFormat.EXCEL);\n        assertNotNull(CSVFormat.TDF);\n        assertNotNull(CSVFormat.MYSQL);\n\n        // For each predefined enum constant, test CSVFormat.valueOf returns the same instance as getFormat()\n        for (Object enumConst : enumConstants) {\n            String name = ((Enum<?>) enumConst).name();\n            CSVFormat expectedFormat = (CSVFormat) getFormatMethod.invoke(enumConst);\n            CSVFormat actualFormat = CSVFormat.valueOf(name);\n            assertSame(expectedFormat, actualFormat, \"CSVFormat.valueOf(\\\"\" + name + \"\\\") did not return expected format\");\n        }\n    }\n\n    @Test\n    void testValueOf_withCaseInsensitive() {\n        // The original CSVFormat.valueOf(String) is case-sensitive and will throw IllegalArgumentException on lowercase.\n        // Lowercase should throw IllegalArgumentException\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"default\"));\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"rfc4180\"));\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"excel\"));\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"tdf\"));\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"mysql\"));\n    }\n\n    @Test\n    void testValueOf_withInvalidFormat_throwsException() {\n        // Expect IllegalArgumentException for unknown format name\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"UnknownFormat\"));\n        assertThrows(IllegalArgumentException.class, () -> CSVFormat.valueOf(\"\"));\n        assertThrows(NullPointerException.class, () -> CSVFormat.valueOf(null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552615,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 596,
+    "prompt_tokens": 1658,
+    "total_tokens": 2254,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.65
+  }
+}

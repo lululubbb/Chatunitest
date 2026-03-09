@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIQQot5k560NpVT5o0H44yarhZQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass TypeTokenGetParameterizedTest {\n\n  @Test\n  void getParameterized_nullRawType_throwsNullPointerException() {\n    Type rawType = null;\n    Type[] typeArguments = new Type[0];\n    assertThrows(NullPointerException.class, () -> TypeToken.getParameterized(rawType, typeArguments));\n  }\n\n  @Test\n  void getParameterized_nullTypeArguments_throwsNullPointerException() {\n    Type rawType = String.class;\n    Type[] typeArguments = null;\n    assertThrows(NullPointerException.class, () -> TypeToken.getParameterized(rawType, typeArguments));\n  }\n\n  @Test\n  void getParameterized_rawTypeNotClass_throwsIllegalArgumentException() {\n    Type rawType = mock(Type.class);\n    // Make sure rawType is not Class instance\n    assertFalse(rawType instanceof Class);\n    Type[] typeArguments = new Type[0];\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,\n        () -> TypeToken.getParameterized(rawType, typeArguments));\n    assertTrue(ex.getMessage().contains(\"rawType must be of type Class\"));\n  }\n\n  @Test\n  void getParameterized_typeArgumentsCountMismatch_throwsIllegalArgumentException() {\n    Class<?> rawType = HashMap.class; // HashMap<K,V> has 2 type parameters\n    Type[] typeArguments = new Type[] { String.class };\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,\n        () -> TypeToken.getParameterized(rawType, typeArguments));\n    assertTrue(ex.getMessage().contains(\"requires 2 type arguments, but got 1\"));\n  }\n\n  @Test\n  void getParameterized_typeArgumentDoesNotSatisfyBounds_throwsIllegalArgumentException() {\n    // Create a rawType with a type variable that has bounds\n    class Bounded<T extends Number> {}\n    Class<?> rawType = Bounded.class;\n    Type[] typeArguments = new Type[] { String.class }; // String does not extend Number\n\n    try (MockedStatic<$Gson$Types> gsonTypesMock = Mockito.mockStatic($Gson$Types.class)) {\n      // Mock getRawType for the type argument and bound\n      gsonTypesMock.when(() -> $Gson$Types.getRawType(typeArguments[0])).thenReturn(String.class);\n\n      TypeVariable<?>[] typeVariables = rawType.getTypeParameters();\n      TypeVariable<?> tv = typeVariables[0];\n      Type bound = tv.getBounds()[0];\n      gsonTypesMock.when(() -> $Gson$Types.getRawType(bound)).thenReturn(Number.class);\n\n      // For newParameterizedTypeWithOwner, call real method to avoid NullPointerException\n      gsonTypesMock.when(() -> $Gson$Types.newParameterizedTypeWithOwner(null, rawType, typeArguments))\n          .thenCallRealMethod();\n\n      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,\n          () -> TypeToken.getParameterized(rawType, typeArguments));\n      assertTrue(ex.getMessage().contains(\"does not satisfy bounds\"));\n    }\n  }\n\n  @Test\n  void getParameterized_validParameters_returnsTypeToken() {\n    Class<?> rawType = HashMap.class;\n    Type keyType = String.class;\n    Type valueType = Integer.class;\n    Type[] typeArguments = new Type[] { keyType, valueType };\n\n    try (MockedStatic<$Gson$Types> gsonTypesMock = Mockito.mockStatic($Gson$Types.class)) {\n      gsonTypesMock.when(() -> $Gson$Types.getRawType(keyType)).thenReturn(String.class);\n      gsonTypesMock.when(() -> $Gson$Types.getRawType(valueType)).thenReturn(Integer.class);\n\n      TypeVariable<?>[] typeVariables = rawType.getTypeParameters();\n      for (TypeVariable<?> tv : typeVariables) {\n        for (Type bound : tv.getBounds()) {\n          gsonTypesMock.when(() -> $Gson$Types.getRawType(bound)).thenAnswer(invocation -> {\n            Type b = invocation.getArgument(0);\n            if (b instanceof Class) return b;\n            return Object.class;\n          });\n        }\n      }\n\n      ParameterizedType parameterizedType = mock(ParameterizedType.class);\n      gsonTypesMock.when(() -> $Gson$Types.newParameterizedTypeWithOwner(null, rawType, typeArguments))\n          .thenReturn(parameterizedType);\n\n      TypeToken<?> result = TypeToken.getParameterized(rawType, typeArguments);\n\n      assertNotNull(result);\n      assertEquals(parameterizedType, result.getType());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890226,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1011,
+    "prompt_tokens": 2787,
+    "total_tokens": 3798,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.17
+  }
+}

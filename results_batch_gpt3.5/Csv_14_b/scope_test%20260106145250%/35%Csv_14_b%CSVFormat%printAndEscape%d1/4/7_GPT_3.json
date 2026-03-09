@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvP8cReAPZpmd04zzdOSmtmNGTRR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintAndEscapeTest {\n\n    private CSVFormat csvFormat;\n    private Method printAndEscapeMethod;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Use DEFAULT instance for tests; can be customized if needed\n        csvFormat = CSVFormat.DEFAULT;\n\n        // Access private method printAndEscape via reflection\n        printAndEscapeMethod = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class, Appendable.class);\n        printAndEscapeMethod.setAccessible(true);\n    }\n\n    @Test\n    void testPrintAndEscape_noSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        StringBuilder out = new StringBuilder();\n\n        // Invoke private method\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // No escaping, output equals input\n        assertEquals(input, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withDelimiter() throws Throwable {\n        char delim = csvFormat.getDelimiter();\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        String input = \"start\" + delim + \"end\";\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // The delimiter should be escaped\n        String expected = \"start\" + escape + delim + \"end\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withEscapeChar() throws Throwable {\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        String input = \"before\" + escape + \"after\";\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // The escape character itself should be escaped by prefixing another escape char\n        String expected = \"before\" + escape + escape + \"after\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withLF() throws Throwable {\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        String input = \"line1\\nline2\";\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // LF replaced by 'n' and escaped\n        String expected = \"line1\" + escape + 'n' + \"line2\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withCR() throws Throwable {\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        String input = \"line1\\rline2\";\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // CR replaced by 'r' and escaped\n        String expected = \"line1\" + escape + 'r' + \"line2\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_emptyInput() throws Throwable {\n        String input = \"\";\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, 0, out);\n\n        // Output should be empty\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_partialInput() throws Throwable {\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        String input = \"abc\\ndef\";\n        StringBuilder out = new StringBuilder();\n\n        // Only print substring \"bc\\nd\"\n        printAndEscapeMethod.invoke(csvFormat, input, 1, 4, out);\n\n        // substring is \"bc\\nd\"\n        // '\\n' is escaped to \\n\n        String expected = \"bc\" + escape + 'n' + \"d\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_allSpecialCharsTogether() throws Throwable {\n        char delim = csvFormat.getDelimiter();\n        Character escapeChar = csvFormat.getEscapeCharacter();\n        assertNotNull(escapeChar, \"Escape character must not be null\");\n        char escape = escapeChar;\n\n        // Use explicit char values for CR and LF since CSVFormat.CR and CSVFormat.LF do not exist\n        char CR = '\\r';\n        char LF = '\\n';\n        String input = \"\" + CR + LF + delim + escape;\n        StringBuilder out = new StringBuilder();\n\n        printAndEscapeMethod.invoke(csvFormat, input, 0, input.length(), out);\n\n        // Each char replaced and escaped:\n        // CR -> \\r, LF -> \\n, delim -> \\delim, escape -> \\escape\n        String expected = \"\" + escape + 'r' + escape + 'n' + escape + delim + escape + escape;\n        assertEquals(expected, out.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683066,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1178,
+    "prompt_tokens": 2242,
+    "total_tokens": 3420,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.01
+  }
+}

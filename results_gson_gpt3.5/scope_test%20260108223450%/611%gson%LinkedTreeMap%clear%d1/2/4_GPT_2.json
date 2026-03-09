@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnRrwbwZodivW3knm5fRAL2RFHo8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\nclass LinkedTreeMapClearTest {\n\n    private LinkedTreeMap<String, String> map;\n\n    @BeforeEach\n    void setUp() {\n        map = new LinkedTreeMap<>();\n    }\n\n    @Test\n    void testClearOnEmptyMap() throws Exception {\n        // Initially empty\n        assertEquals(0, map.size());\n\n        // Access header and modCount before clear\n        Field headerField = LinkedTreeMap.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        Object header = headerField.get(map);\n        Field modCountField = LinkedTreeMap.class.getDeclaredField(\"modCount\");\n        modCountField.setAccessible(true);\n        int modCountBefore = modCountField.getInt(map);\n\n        // Access header.next and header.prev before clear\n        Field nextField = header.getClass().getDeclaredField(\"next\");\n        nextField.setAccessible(true);\n        Object nextBefore = nextField.get(header);\n        Field prevField = header.getClass().getDeclaredField(\"prev\");\n        prevField.setAccessible(true);\n        Object prevBefore = prevField.get(header);\n\n        map.clear();\n\n        // After clear size is zero\n        assertEquals(0, map.size());\n\n        // root is null\n        Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n        rootField.setAccessible(true);\n        assertNull(rootField.get(map));\n\n        // modCount incremented by 1\n        int modCountAfter = modCountField.getInt(map);\n        assertEquals(modCountBefore + 1, modCountAfter);\n\n        // header.next and header.prev point to header itself\n        Object nextAfter = nextField.get(header);\n        Object prevAfter = prevField.get(header);\n        assertSame(header, nextAfter);\n        assertSame(header, prevAfter);\n\n        // Before clear header.next and header.prev should not both be header (usually)\n        // But since map is empty, they might already be header, so no assert here\n    }\n\n    @Test\n    void testClearOnNonEmptyMap() throws Exception {\n        // Put some entries\n        map.put(\"one\", \"1\");\n        map.put(\"two\", \"2\");\n        map.put(\"three\", \"3\");\n\n        assertEquals(3, map.size());\n\n        // Access header and modCount before clear\n        Field headerField = LinkedTreeMap.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        Object header = headerField.get(map);\n        Field modCountField = LinkedTreeMap.class.getDeclaredField(\"modCount\");\n        modCountField.setAccessible(true);\n        int modCountBefore = modCountField.getInt(map);\n\n        // Access header.next and header.prev before clear\n        Field nextField = header.getClass().getDeclaredField(\"next\");\n        nextField.setAccessible(true);\n        Object nextBefore = nextField.get(header);\n        Field prevField = header.getClass().getDeclaredField(\"prev\");\n        prevField.setAccessible(true);\n        Object prevBefore = prevField.get(header);\n\n        // root not null before clear\n        Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n        rootField.setAccessible(true);\n        Object rootBefore = rootField.get(map);\n        assertNotNull(rootBefore);\n\n        map.clear();\n\n        // After clear size is zero\n        assertEquals(0, map.size());\n\n        // root is null\n        Object rootAfter = rootField.get(map);\n        assertNull(rootAfter);\n\n        // modCount incremented by 1\n        int modCountAfter = modCountField.getInt(map);\n        assertEquals(modCountBefore + 1, modCountAfter);\n\n        // header.next and header.prev point to header itself\n        Object nextAfter = nextField.get(header);\n        Object prevAfter = prevField.get(header);\n        assertSame(header, nextAfter);\n        assertSame(header, prevAfter);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890811,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 832,
+    "prompt_tokens": 2752,
+    "total_tokens": 3584,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.11
+  }
+}

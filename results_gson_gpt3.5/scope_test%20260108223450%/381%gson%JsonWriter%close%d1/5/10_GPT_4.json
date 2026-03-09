@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm80DAc1H9bi7avmQfOXmjpnLZAI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\nclass JsonWriterCloseTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    void closeMethod_validEmptyContext_writesCloseBracketAndReturnsThis() throws Throwable {\n        // Use reflection to access private close(int,int,char) method\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Prepare stack and stackSize to simulate empty context\n        setStackAndStackSize(1, new int[]{JsonScope.EMPTY_ARRAY});\n\n        // deferredName must be null\n        setDeferredName(null);\n\n        // Call close with empty=EMPTY_ARRAY, nonempty=NONEMPTY_ARRAY, closeBracket=']'\n        Object returned = closeMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, ']');\n\n        // Verify returned object is jsonWriter itself\n        assertSame(jsonWriter, returned);\n\n        // Verify stackSize decremented\n        int stackSize = getStackSize();\n        assertEquals(0, stackSize);\n\n        // Verify output contains closeBracket ']'\n        assertTrue(stringWriter.toString().endsWith(\"]\"));\n    }\n\n    @Test\n    void closeMethod_validNonEmptyContext_writesNewlineAndCloseBracket() throws Throwable {\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Setup stack with NONEMPTY_OBJECT context\n        // stackSize must be 1 for peek() to return correct context\n        JsonWriter spyWriter = spy(jsonWriter);\n\n        setStackAndStackSize(spyWriter, 1, new int[]{JsonScope.NONEMPTY_OBJECT});\n        setDeferredName(spyWriter, null);\n\n        // Create a spy on the Writer to detect if newline() writes something\n        Writer spyOut = spy(stringWriter);\n        setOut(spyWriter, spyOut);\n\n        Object returned = closeMethod.invoke(spyWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n\n        assertSame(spyWriter, returned);\n        int stackSize = getStackSize(spyWriter);\n        assertEquals(0, stackSize);\n\n        // Capture all write calls to spyOut\n        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);\n        verify(spyOut, atLeastOnce()).write(captor.capture());\n\n        boolean newlineWritten = captor.getAllValues().stream().anyMatch(s -> s.contains(\"\\n\"));\n\n        assertTrue(newlineWritten, \"Expected newline() to write a newline character\");\n\n        // Verify output ends with '}'\n        assertTrue(stringWriter.toString().endsWith(\"}\"));\n    }\n\n    @Test\n    void closeMethod_invalidContext_throwsIllegalStateException() throws Throwable {\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Setup stack with context that is not empty or nonempty\n        setStackAndStackSize(1, new int[]{JsonScope.EMPTY_DOCUMENT});\n\n        setDeferredName(null);\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                closeMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, ']');\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n\n        assertEquals(\"Nesting problem.\", thrown.getMessage());\n    }\n\n    @Test\n    void closeMethod_withDeferredName_throwsIllegalStateException() throws Throwable {\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        setStackAndStackSize(1, new int[]{JsonScope.EMPTY_OBJECT});\n\n        setDeferredName(\"name\");\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n\n        assertEquals(\"Dangling name: name\", thrown.getMessage());\n    }\n\n    // Helper methods to set private fields using reflection\n\n    private void setStackAndStackSize(int stackSize, int[] stackContents) throws Exception {\n        setStackAndStackSize(jsonWriter, stackSize, stackContents);\n    }\n\n    private void setStackAndStackSize(JsonWriter writer, int stackSize, int[] stackContents) throws Exception {\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(writer, stackContents);\n\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(writer, stackSize);\n    }\n\n    private int getStackSize() throws Exception {\n        return getStackSize(jsonWriter);\n    }\n\n    private int getStackSize(JsonWriter writer) throws Exception {\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        return stackSizeField.getInt(writer);\n    }\n\n    private void setDeferredName(String name) throws Exception {\n        setDeferredName(jsonWriter, name);\n    }\n\n    private void setDeferredName(JsonWriter writer, String name) throws Exception {\n        var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(writer, name);\n    }\n\n    private void setOut(JsonWriter writer, Writer out) throws Exception {\n        Field outField = JsonWriter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(writer, out);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885736,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1314,
+    "prompt_tokens": 2765,
+    "total_tokens": 4079,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.21
+  }
+}

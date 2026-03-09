@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuNYmVoz9vxANzRrV90cdxbBy8Iy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport org.apache.commons.csv.CSVFormat;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithQuotePrimitiveChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char quoteChar = '\\'';\n\n        CSVFormat result = original.withQuote(quoteChar);\n\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        // Original remains unchanged\n        assertEquals(Character.valueOf('\"'), original.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuoteNullCharacter() throws Exception {\n        // Using reflection to access private withQuote(Character) method\n        CSVFormat original = CSVFormat.DEFAULT;\n        Character quoteChar = null;\n\n        java.lang.reflect.Method withQuoteCharMethod = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        withQuoteCharMethod.setAccessible(true);\n        CSVFormat result = (CSVFormat) withQuoteCharMethod.invoke(original, quoteChar);\n\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n        // Original remains unchanged\n        assertEquals(Character.valueOf('\"'), original.getQuoteCharacter());\n    }\n\n    @Test\n    void testWithQuoteCharacterSameAsOriginal() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        Character quoteChar = original.getQuoteCharacter();\n\n        java.lang.reflect.Method withQuoteCharMethod = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        withQuoteCharMethod.setAccessible(true);\n        CSVFormat result = (CSVFormat) withQuoteCharMethod.invoke(original, quoteChar);\n\n        // Should be same instance if no change\n        assertSame(original, result);\n    }\n\n    @Test\n    void testWithQuoteCharacterDifferent() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        Character newQuoteChar = '\\'';\n\n        java.lang.reflect.Method withQuoteCharMethod = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        withQuoteCharMethod.setAccessible(true);\n        CSVFormat result = (CSVFormat) withQuoteCharMethod.invoke(original, newQuoteChar);\n\n        assertNotNull(result);\n        assertEquals(newQuoteChar, result.getQuoteCharacter());\n        assertNotSame(original, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679124,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 471,
+    "prompt_tokens": 1138,
+    "total_tokens": 1609,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.1
+  }
+}

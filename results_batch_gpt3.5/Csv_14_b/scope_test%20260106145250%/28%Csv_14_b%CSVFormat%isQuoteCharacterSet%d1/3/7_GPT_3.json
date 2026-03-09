@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvTd6NAXf7UHOzbp7GmqEw30rC3M",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testIsQuoteCharacterSetWhenQuoteCharacterIsSet() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // By default, DEFAULT has quoteCharacter set to DOUBLE_QUOTE_CHAR\n        assertTrue(format.isQuoteCharacterSet());\n    }\n\n    @Test\n    public void testIsQuoteCharacterSetWhenQuoteCharacterIsNull() throws Exception {\n        // Create a CSVFormat instance with quoteCharacter set to null using reflection\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // The quoteCharacter field is final, so to modify it via reflection we need to remove final modifier\n        Field quoteCharacterField = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n        quoteCharacterField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(quoteCharacterField, quoteCharacterField.getModifiers() & ~Modifier.FINAL);\n\n        quoteCharacterField.set(format, null);\n        assertFalse(format.isQuoteCharacterSet());\n    }\n\n    @Test\n    public void testIsQuoteCharacterSetWithCustomInstanceWithNullQuote() {\n        CSVFormat format = CSVFormat.MYSQL; // MYSQL has quoteCharacter null\n        assertFalse(format.isQuoteCharacterSet());\n    }\n\n    @Test\n    public void testIsQuoteCharacterSetWithCustomInstanceWithNonNullQuote() {\n        CSVFormat format = CSVFormat.INFORMIX_UNLOAD; // quoteCharacter set to DOUBLE_QUOTE_CHAR\n        assertTrue(format.isQuoteCharacterSet());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683345,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 369,
+    "prompt_tokens": 1966,
+    "total_tokens": 2335,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.88
+  }
+}

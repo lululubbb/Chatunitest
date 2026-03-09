@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n  private LinkedTreeMap<String, JsonElement> members;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonObject = new JsonObject();\n\n    // Access private field 'members' via reflection\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    // Clear members map before each test to ensure isolation\n    members.clear();\n  }\n\n  @Test\n  public void testGetAsJsonObject_existingMember_returnsJsonObject() {\n    JsonObject expected = new JsonObject();\n    members.put(\"testMember\", expected);\n\n    JsonObject actual = jsonObject.getAsJsonObject(\"testMember\");\n\n    assertSame(expected, actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_nonExistingMember_returnsNull() {\n    JsonObject actual = jsonObject.getAsJsonObject(\"nonExisting\");\n\n    assertNull(actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_memberIsNotJsonObject_throwsClassCastException() {\n    JsonElement mockElement = mock(JsonElement.class);\n    members.put(\"notJsonObject\", mockElement);\n\n    assertThrows(ClassCastException.class, () -> jsonObject.getAsJsonObject(\"notJsonObject\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 398,
+  "completion_tokens": 350,
+  "total_tokens": 748,
+  "llm_elapsed_time_seconds": 13.78
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9kOaf4N8rDeBNjQ2FGiyPJ1RBnx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.Quote;\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testCSVFormatConstructor_validParameters() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        char delimiter = ';';\n        Character quoteChar = '\"';\n        Quote quotePolicy = Quote.MINIMAL;\n        Character commentStart = '#';\n        Character escape = '\\\\';\n        boolean ignoreSurroundingSpaces = true;\n        boolean ignoreEmptyLines = false;\n        String recordSeparator = \"\\n\";\n        String nullString = \"NULL\";\n        String[] header = new String[] {\"a\", \"b\", \"c\"};\n        boolean skipHeaderRecord = true;\n\n        CSVFormat csvFormat = constructor.newInstance(delimiter, quoteChar, quotePolicy, commentStart,\n                escape, ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header, skipHeaderRecord);\n\n        assertEquals(delimiter, csvFormat.getDelimiter());\n        assertEquals(quoteChar, csvFormat.getQuoteChar());\n        assertEquals(quotePolicy, csvFormat.getQuotePolicy());\n        assertEquals(commentStart, csvFormat.getCommentStart());\n        assertEquals(escape, csvFormat.getEscape());\n        assertEquals(ignoreSurroundingSpaces, csvFormat.getIgnoreSurroundingSpaces());\n        assertEquals(ignoreEmptyLines, csvFormat.getIgnoreEmptyLines());\n        assertEquals(recordSeparator, csvFormat.getRecordSeparator());\n        assertEquals(nullString, csvFormat.getNullString());\n        assertArrayEquals(header, csvFormat.getHeader());\n        assertEquals(skipHeaderRecord, csvFormat.getSkipHeaderRecord());\n    }\n\n    @Test\n    void testCSVFormatConstructor_headerNull() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat csvFormat = constructor.newInstance(',', '\"', Quote.ALL, null,\n                null, false, true, \"\\r\\n\", null, (Object) null, false);\n\n        assertNull(csvFormat.getHeader());\n    }\n\n    @Test\n    void testCSVFormatConstructor_invalidDelimiterLineBreak() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        char[] lineBreaks = {'\\r', '\\n'};\n        for (char lb : lineBreaks) {\n            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {\n                constructor.newInstance(lb, '\"', Quote.MINIMAL, null,\n                        null, false, true, \"\\r\\n\", null, (Object) null, false);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", ex.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976528,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 706,
+    "prompt_tokens": 1820,
+    "total_tokens": 2526,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.14
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4WDlNDDuW5mexcns6sMZnDLbin",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.AnnotatedType;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeToken_typeEqualsTest {\n\n  private ParameterizedType fromType;\n  private ParameterizedType toTypeEqual;\n  private ParameterizedType toTypeNotEqualRaw;\n  private ParameterizedType toTypeNotEqualArgs;\n\n  private Map<String, Type> typeVarMap;\n\n  @BeforeEach\n  void setup() throws Exception {\n    // Create ParameterizedType instances for testing\n\n    // fromType: Map<String, Integer>\n    fromType = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // toTypeEqual: Map<String, Integer>\n    toTypeEqual = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // toTypeNotEqualRaw: HashMap<String, Integer> (different raw type)\n    toTypeNotEqualRaw = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return HashMap.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // toTypeNotEqualArgs: Map<String, String> (same raw type, different args)\n    toTypeNotEqualArgs = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, String.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    typeVarMap = new HashMap<>();\n  }\n\n  @Test\n  void typeEquals_returnsTrue_whenRawTypeAndArgsMatch() throws Exception {\n    boolean result = invokeTypeEquals(fromType, toTypeEqual, typeVarMap);\n    assertTrue(result);\n  }\n\n  @Test\n  void typeEquals_returnsFalse_whenRawTypeDiffers() throws Exception {\n    boolean result = invokeTypeEquals(fromType, toTypeNotEqualRaw, typeVarMap);\n    assertFalse(result);\n  }\n\n  @Test\n  void typeEquals_returnsFalse_whenArgsDiffer() throws Exception {\n    boolean result = invokeTypeEquals(fromType, toTypeNotEqualArgs, typeVarMap);\n    assertFalse(result);\n  }\n\n  @Test\n  void typeEquals_returnsTrue_whenArgsContainTypeVariablesMatching() throws Exception {\n    // fromType with TypeVariable argument\n    ParameterizedType fromWithTypeVar = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {new DummyTypeVariable(\"K\"), Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // toType with concrete types matching typeVarMap\n    ParameterizedType toWithConcrete = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[] {String.class, Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Map.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    Map<String, Type> typeVarMap = new HashMap<>();\n    typeVarMap.put(\"K\", String.class);\n\n    boolean result = invokeTypeEquals(fromWithTypeVar, toWithConcrete, typeVarMap);\n    assertTrue(result);\n  }\n\n  // Helper method to invoke private static typeEquals via reflection\n  private boolean invokeTypeEquals(ParameterizedType from, ParameterizedType to, Map<String, Type> map) throws Exception {\n    java.lang.reflect.Method method = TypeToken.class.getDeclaredMethod(\"typeEquals\", ParameterizedType.class, ParameterizedType.class, Map.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, from, to, map);\n  }\n\n  // Dummy TypeVariable implementation for testing\n  private static class DummyTypeVariable implements TypeVariable<Class<DummyTypeVariable>> {\n\n    private final String name;\n\n    DummyTypeVariable(String name) {\n      this.name = name;\n    }\n\n    @Override\n    public Type[] getBounds() {\n      return new Type[] {Object.class};\n    }\n\n    @Override\n    public Class<DummyTypeVariable> getGenericDeclaration() {\n      return DummyTypeVariable.class;\n    }\n\n    @Override\n    public String getName() {\n      return name;\n    }\n\n    @Override\n    public AnnotatedType[] getAnnotatedBounds() {\n      return new AnnotatedType[0];\n    }\n\n    @Override\n    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {\n      return null;\n    }\n\n    @Override\n    public Annotation[] getAnnotations() {\n      return new Annotation[0];\n    }\n\n    @Override\n    public Annotation[] getDeclaredAnnotations() {\n      return new Annotation[0];\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885520,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1248,
+    "prompt_tokens": 2328,
+    "total_tokens": 3576,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.48
+  }
+}

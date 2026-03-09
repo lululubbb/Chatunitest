@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn9rcwhlTs6QgzhOlXekUwO7Gzrn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_string_Test {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  private Method stringMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n\n    // Access private method string(String)\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  void string_writesSimpleStringWithoutReplacements() throws Throwable {\n    String input = \"simple text\";\n    invokeString(input);\n    assertEquals(\"\\\"simple text\\\"\", stringWriter.toString());\n  }\n\n  @Test\n  void string_escapesControlCharacters() throws Throwable {\n    // Control chars < 128 with replacements in REPLACEMENT_CHARS\n    // We test a string with quotes, backslash, tab, newline\n    String input = \"a\\\"b\\\\c\\td\\ne\\rf\";\n    invokeString(input);\n    // Expected output should escape \", \\, \\t, \\n, \\r as per REPLACEMENT_CHARS rules\n    // REPLACEMENT_CHARS escapes: \\b, \\t, \\n, \\f, \\r, \" and \\\\\n    String expected = \"\\\"a\\\\\\\"b\\\\\\\\c\\\\td\\\\ne\\\\rf\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_escapesUnicode2028And2029() throws Throwable {\n    String input = \"line separator\\u2028paragraph separator\\u2029end\";\n    invokeString(input);\n    String expected = \"\\\"line separator\\\\u2028paragraph separator\\\\u2029end\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_writesHtmlSafeEscapes() throws Throwable {\n    // Enable htmlSafe to use HTML_SAFE_REPLACEMENT_CHARS\n    jsonWriter.setHtmlSafe(true);\n    String input = \"<script>\";\n    invokeString(input);\n    // HTML_SAFE_REPLACEMENT_CHARS escapes < and > among others\n    // So < becomes \\u003c and > becomes \\u003e\n    String expected = \"\\\"\\\\u003cscript\\\\u003e\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  @Test\n  void string_writesEmptyString() throws Throwable {\n    String input = \"\";\n    invokeString(input);\n    assertEquals(\"\\\"\\\"\", stringWriter.toString());\n  }\n\n  @Test\n  void string_writesStringWithMultipleReplacements() throws Throwable {\n    // String with multiple chars that require replacements\n    String input = \"a\\\"b\\\\c\\u2028\\u2029<>\";\n    jsonWriter.setHtmlSafe(true);\n    invokeString(input);\n    String expected = \"\\\"a\\\\\\\"b\\\\\\\\c\\\\u2028\\\\u2029\\\\u003c\\\\u003e\\\"\";\n    assertEquals(expected, stringWriter.toString());\n  }\n\n  private void invokeString(String input) throws Throwable {\n    try {\n      stringMethod.invoke(jsonWriter, input);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889695,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 731,
+    "prompt_tokens": 929,
+    "total_tokens": 1660,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.2
+  }
+}

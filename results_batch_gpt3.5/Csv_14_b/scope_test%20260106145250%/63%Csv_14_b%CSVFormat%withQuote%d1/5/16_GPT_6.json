@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvX5cvsGvl0v2uEd3KCX1BBDXVz6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_char() throws Exception {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n\n        // Direct call to withQuote(char)\n        char quoteChar = '\\'';\n        CSVFormat resultFormat = baseFormat.withQuote(quoteChar);\n\n        // The resulting format should not be the same instance\n        assertNotSame(baseFormat, resultFormat);\n\n        // The quote character should be set correctly\n        assertEquals(Character.valueOf(quoteChar), resultFormat.getQuoteCharacter());\n\n        // Using reflection to invoke public withQuote(Character) method to confirm delegation\n        Method withQuoteCharMethod = CSVFormat.class.getMethod(\"withQuote\", Character.class);\n        CSVFormat reflectedResult = (CSVFormat) withQuoteCharMethod.invoke(baseFormat, quoteChar);\n        assertEquals(resultFormat, reflectedResult);\n\n        // Test with quoteChar as double quote (standard)\n        Character baseQuoteChar = baseFormat.getQuoteCharacter();\n        if (baseQuoteChar != null) {\n            CSVFormat doubleQuoteFormat = baseFormat.withQuote(baseQuoteChar.charValue());\n            assertEquals(baseQuoteChar, doubleQuoteFormat.getQuoteCharacter());\n        }\n\n        // Test with quoteChar as null character (edge case)\n        // Since char is primitive, cannot pass null, but can test with some unusual char\n        char unusualChar = '\\0';\n        CSVFormat unusualFormat = baseFormat.withQuote(unusualChar);\n        assertEquals(Character.valueOf(unusualChar), unusualFormat.getQuoteCharacter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683559,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 346,
+    "prompt_tokens": 1950,
+    "total_tokens": 2296,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.37
+  }
+}

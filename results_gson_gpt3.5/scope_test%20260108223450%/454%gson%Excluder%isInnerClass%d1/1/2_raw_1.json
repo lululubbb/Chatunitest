@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n  }\n\n  private boolean invokeIsInnerClass(Class<?> clazz) throws Exception {\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(excluder, clazz);\n  }\n\n  static class StaticNestedClass {}\n\n  class NonStaticInnerClass {}\n\n  @Test\n  void testIsInnerClass_withStaticNestedClass() throws Exception {\n    // Static nested class isMemberClass()=true but isStatic()=true => should return false\n    boolean result = invokeIsInnerClass(StaticNestedClass.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonStaticInnerClass() throws Exception {\n    // Non-static inner class isMemberClass()=true and isStatic()=false => should return true\n    boolean result = invokeIsInnerClass(NonStaticInnerClass.class);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsInnerClass_withTopLevelClass() throws Exception {\n    // Top-level class isMemberClass()=false => should return false\n    boolean result = invokeIsInnerClass(String.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withAnonymousClass() throws Exception {\n    Object anonymous = new Object() {};\n    boolean result = invokeIsInnerClass(anonymous.getClass());\n    // anonymous class isMemberClass()=false => should return false\n    assertFalse(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 593,
+  "completion_tokens": 391,
+  "total_tokens": 984,
+  "llm_elapsed_time_seconds": 7.24
+}

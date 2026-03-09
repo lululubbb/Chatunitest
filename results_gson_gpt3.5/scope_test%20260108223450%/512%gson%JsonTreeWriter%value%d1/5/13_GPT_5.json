@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvldKwUa5O7mKV1XUoUpKc1keJNcG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n    private JsonTreeWriter jsonTreeWriter;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        jsonTreeWriter = new JsonTreeWriter();\n\n        // Initialize the stack with a root element to avoid empty stack errors\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(new JsonObject());\n\n        // Clear pendingName field to avoid IllegalStateException in put()\n        Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameField.setAccessible(true);\n        pendingNameField.set(jsonTreeWriter, null);\n    }\n\n    @Test\n    public void testValue_WithNonNullString_AddsJsonPrimitiveAndReturnsThis() throws Exception {\n        String testValue = \"testString\";\n\n        JsonWriter returned = jsonTreeWriter.value(testValue);\n\n        assertSame(jsonTreeWriter, returned);\n\n        // Using reflection to access private field 'stack'\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n        assertFalse(stack.isEmpty());\n        JsonElement element = stack.get(stack.size() - 1);\n        assertTrue(element instanceof JsonPrimitive);\n        assertEquals(testValue, ((JsonPrimitive) element).getAsString());\n    }\n\n    @Test\n    public void testValue_WithNullString_CallsNullValueAndReturnsItsResult() throws IOException {\n        JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n\n        doReturn(spyWriter).when(spyWriter).nullValue();\n\n        // Cast null to String to resolve ambiguous method call\n        JsonWriter returned = spyWriter.value((String) null);\n\n        verify(spyWriter).nullValue();\n        assertSame(spyWriter, returned);\n    }\n\n    @Test\n    public void testPut_AddsElementToStack() throws Exception {\n        // Using reflection to invoke private put method\n        Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n        putMethod.setAccessible(true);\n\n        // Ensure stack initialized with root element\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(new JsonObject());\n\n        // Clear pendingName field to avoid IllegalStateException in put()\n        Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameField.setAccessible(true);\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonPrimitive primitive = new JsonPrimitive(\"hello\");\n        putMethod.invoke(jsonTreeWriter, primitive);\n\n        assertFalse(stack.isEmpty());\n        assertEquals(primitive, stack.get(stack.size() - 1));\n    }\n\n    @Test\n    public void testValue_WithEmptyString_AddsJsonPrimitiveAndReturnsThis() throws Exception {\n        String testValue = \"\";\n\n        // Ensure stack initialized with root element before calling value()\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n        stack.clear();\n        stack.add(new JsonObject());\n\n        // Clear pendingName field to avoid IllegalStateException in put()\n        Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n        pendingNameField.setAccessible(true);\n        pendingNameField.set(jsonTreeWriter, null);\n\n        JsonWriter returned = jsonTreeWriter.value(testValue);\n\n        assertSame(jsonTreeWriter, returned);\n\n        assertFalse(stack.isEmpty());\n        JsonElement element = stack.get(stack.size() - 1);\n        assertTrue(element instanceof JsonPrimitive);\n        assertEquals(testValue, ((JsonPrimitive) element).getAsString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883834,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 939,
+    "prompt_tokens": 2218,
+    "total_tokens": 3157,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.76
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlxESVGGbq4bQSf2DDeOYu7Wy3nt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.EOFException;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n    private Reader mockReader;\n\n    @BeforeEach\n    void setup() {\n        mockReader = mock(Reader.class);\n    }\n\n    @Test\n    void constructor_nullReader_throwsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            new JsonReader(null);\n        });\n        assertEquals(\"in == null\", thrown.getMessage());\n    }\n\n    @Test\n    void constructor_initializesFieldsCorrectly() throws Exception {\n        JsonReader jsonReader = new JsonReader(mockReader);\n\n        // Validate the 'in' field is set correctly\n        Field inField = JsonReader.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        Reader inValue = (Reader) inField.get(jsonReader);\n        assertSame(mockReader, inValue);\n\n        // Validate initial peeked value is PEEKED_NONE (0)\n        Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n        peekedField.setAccessible(true);\n        int peekedValue = (int) peekedField.get(jsonReader);\n        assertEquals(0, peekedValue);\n\n        // Validate buffer length\n        Field bufferField = JsonReader.class.getDeclaredField(\"buffer\");\n        bufferField.setAccessible(true);\n        char[] buffer = (char[]) bufferField.get(jsonReader);\n        assertEquals(1024, buffer.length);\n\n        // Validate pos and limit are zero\n        Field posField = JsonReader.class.getDeclaredField(\"pos\");\n        posField.setAccessible(true);\n        int posValue = (int) posField.get(jsonReader);\n        assertEquals(0, posValue);\n\n        Field limitField = JsonReader.class.getDeclaredField(\"limit\");\n        limitField.setAccessible(true);\n        int limitValue = (int) limitField.get(jsonReader);\n        assertEquals(0, limitValue);\n\n        // Validate lenient default false\n        Field lenientField = JsonReader.class.getDeclaredField(\"lenient\");\n        lenientField.setAccessible(true);\n        boolean lenientValue = (boolean) lenientField.get(jsonReader);\n        assertFalse(lenientValue);\n    }\n\n    @Test\n    void constructor_readerReadThrowsIOException_fieldInitialization() throws Exception {\n        Reader throwingReader = mock(Reader.class);\n        when(throwingReader.read(any(char[].class), anyInt(), anyInt())).thenThrow(new IOException(\"read error\"));\n        JsonReader jsonReader = new JsonReader(throwingReader);\n\n        // The constructor itself does not read, so no exception expected here\n        // But we can test that calling fillBuffer (private) will throw IOException\n\n        // Use reflection to invoke private fillBuffer method to confirm IOException propagates\n        Method fillBufferMethod = JsonReader.class.getDeclaredMethod(\"fillBuffer\", int.class);\n        fillBufferMethod.setAccessible(true);\n\n        Throwable thrown = assertThrows(Throwable.class, () -> {\n            fillBufferMethod.invoke(jsonReader, 1);\n        });\n\n        // The thrown is InvocationTargetException, unwrap cause to check IOException\n        Throwable cause = thrown.getCause();\n        assertNotNull(cause);\n        assertTrue(cause instanceof IOException);\n        assertTrue(cause.getMessage().contains(\"read error\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885068,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 731,
+    "prompt_tokens": 2120,
+    "total_tokens": 2851,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.89
+  }
+}

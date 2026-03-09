@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm9pMig5I9VqD3lOnE6gHmUcHSOw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonReaderFillBufferTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  private boolean invokeFillBuffer(int minimum) throws Throwable {\n    Method fillBufferMethod = JsonReader.class.getDeclaredMethod(\"fillBuffer\", int.class);\n    fillBufferMethod.setAccessible(true);\n    try {\n      return (boolean) fillBufferMethod.invoke(jsonReader, minimum);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  void testFillBuffer_NoData_ReadReturnsMinusOne() throws Throwable {\n    when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenReturn(-1);\n\n    boolean result = invokeFillBuffer(1);\n\n    assertFalse(result);\n    assertEquals(0, getField(\"limit\"));\n    assertEquals(0, getField(\"pos\"));\n  }\n\n  @Test\n  void testFillBuffer_PartialBuffer_ShiftsData() throws Throwable {\n    // Setup internal buffer with some data and pos/limit set to simulate partial consumption\n    char[] buffer = getField(\"buffer\");\n    buffer[0] = 'a';\n    buffer[1] = 'b';\n    setField(\"pos\", 1);\n    setField(\"limit\", 2);\n    setField(\"lineStart\", 5);\n\n    // Reader returns 1 char 'c'\n    when(mockReader.read(any(char[].class), eq(1), anyInt())).thenAnswer(invocation -> {\n      char[] buf = invocation.getArgument(0);\n      int off = invocation.getArgument(1);\n      buf[off] = 'c';\n      return 1;\n    });\n\n    boolean result = invokeFillBuffer(2);\n\n    assertTrue(result);\n    assertEquals(0, getField(\"pos\"));\n    assertEquals(2, getField(\"limit\"));\n    // buffer should now be ['b', 'c', ...]\n    assertEquals('b', buffer[0]);\n    assertEquals('c', buffer[1]);\n  }\n\n  @Test\n  void testFillBuffer_ConsumesBomOnFirstRead() throws Throwable {\n    // Prepare buffer with BOM char at start and simulate first read\n    char[] buffer = getField(\"buffer\");\n    buffer[0] = '\\ufeff';\n\n    setField(\"pos\", 0);\n    setField(\"limit\", 0);\n    setField(\"lineNumber\", 0);\n    setField(\"lineStart\", 0);\n\n    // Reader returns 1 char (the BOM)\n    when(mockReader.read(any(char[].class), eq(0), anyInt())).thenAnswer(invocation -> {\n      char[] buf = invocation.getArgument(0);\n      int off = invocation.getArgument(1);\n      buf[off] = '\\ufeff';\n      return 1;\n    }).thenReturn(-1);\n\n    // minimum is 1, after BOM increment minimum becomes 2, so fillBuffer returns false\n    boolean result = invokeFillBuffer(1);\n\n    assertFalse(result);\n    assertEquals(1, getField(\"pos\"));\n    assertEquals(1, getField(\"lineStart\"));\n  }\n\n  @Test\n  void testFillBuffer_SuccessfulReadWithoutBom() throws Throwable {\n    char[] buffer = getField(\"buffer\");\n\n    setField(\"pos\", 0);\n    setField(\"limit\", 0);\n    setField(\"lineNumber\", 1);\n    setField(\"lineStart\", 0);\n\n    when(mockReader.read(any(char[].class), eq(0), anyInt())).thenAnswer(invocation -> {\n      char[] buf = invocation.getArgument(0);\n      int off = invocation.getArgument(1);\n      buf[off] = 'x';\n      return 1;\n    });\n\n    boolean result = invokeFillBuffer(1);\n\n    assertTrue(result);\n    assertEquals(0, getField(\"pos\"));\n    assertEquals(1, getField(\"limit\"));\n    assertEquals('x', buffer[0]);\n  }\n\n  private <T> T getField(String fieldName) throws Throwable {\n    var field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    T value = (T) field.get(jsonReader);\n    return value;\n  }\n\n  private void setField(String fieldName, Object value) throws Throwable {\n    var field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(jsonReader, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885849,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1022,
+    "prompt_tokens": 1167,
+    "total_tokens": 2189,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 28.87
+  }
+}

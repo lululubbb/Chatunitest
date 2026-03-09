@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA4lKxZr62pdUl50YCVyGVbeU2RB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private Map<String, Integer> mapping;\n    private String[] values;\n    private CSVRecord record;\n\n    enum TestEnum {\n        FIELD1,\n        FIELD2,\n        FIELD3\n    }\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"FIELD1\", 0);\n        mapping.put(\"FIELD2\", 1);\n        mapping.put(\"FIELD3\", 2);\n        values = new String[] { \"value1\", \"value2\", \"value3\" };\n        record = new CSVRecord(values, mapping, null, 1L);\n    }\n\n    @Test\n    void testGet_withEnum_existingField() {\n        String result = record.get((Enum<?>) TestEnum.FIELD1);\n        assertEquals(\"value1\", result);\n\n        result = record.get((Enum<?>) TestEnum.FIELD2);\n        assertEquals(\"value2\", result);\n\n        result = record.get((Enum<?>) TestEnum.FIELD3);\n        assertEquals(\"value3\", result);\n    }\n\n    @Test\n    void testGet_withEnum_nonExistingField() {\n        // Use a mock Enum instance with toString() returning \"UNKNOWN\"\n        TestEnum unknownEnum = mock(TestEnum.class);\n        when(unknownEnum.toString()).thenReturn(\"UNKNOWN\");\n\n        String result = record.get((Enum<?>) unknownEnum);\n        assertNull(result);\n    }\n\n    @Test\n    void testGet_withEnum_nullEnum() {\n        assertThrows(NullPointerException.class, () -> record.get((Enum<?>) null));\n    }\n\n    @Test\n    void testPrivateMethod_values_usingReflection() throws Exception {\n        Method valuesMethod = CSVRecord.class.getDeclaredMethod(\"values\");\n        valuesMethod.setAccessible(true);\n        String[] returnedValues = (String[]) valuesMethod.invoke(record);\n        assertArrayEquals(values, returnedValues);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977791,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 441,
+    "prompt_tokens": 887,
+    "total_tokens": 1328,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.52
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Y3G6KsGvsRHQVfxspBklIPkz6E",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuoteChar_validChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        Character newQuote = '\\'';\n        CSVFormat updated = original.withQuoteChar(newQuote);\n        assertNotNull(updated);\n        assertEquals(newQuote, updated.getQuoteChar());\n        // Original should remain unchanged\n        assertEquals(CSVFormat.DEFAULT.getQuoteChar(), original.getQuoteChar());\n    }\n\n    @Test\n    public void testWithQuoteChar_nullChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat updated = original.withQuoteChar(null);\n        assertNotNull(updated);\n        assertNull(updated.getQuoteChar());\n        // Original should remain unchanged\n        assertEquals(CSVFormat.DEFAULT.getQuoteChar(), original.getQuoteChar());\n    }\n\n    @Test\n    public void testWithQuoteChar_lineBreakCharThrows() {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        Character[] lineBreaks = new Character[] {'\\n', '\\r'};\n\n        for (Character c : lineBreaks) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                original.withQuoteChar(c);\n            });\n            assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    public void testIsLineBreak_privateStaticMethod() throws Exception {\n        Method isLineBreakCharMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakCharMethod.setAccessible(true);\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\r'));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, 'a'));\n\n        Method isLineBreakCharacterMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakCharacterMethod.setAccessible(true);\n        assertTrue((Boolean) isLineBreakCharacterMethod.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreakCharacterMethod.invoke(null, '\\r'));\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, 'a'));\n        assertFalse((Boolean) isLineBreakCharacterMethod.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975763,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 508,
+    "prompt_tokens": 977,
+    "total_tokens": 1485,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.15
+  }
+}

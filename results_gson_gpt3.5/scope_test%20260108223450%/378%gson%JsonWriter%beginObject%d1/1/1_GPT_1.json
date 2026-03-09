@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmyIo8Lbaa4lBp8UYAM24Td19znC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void beginObject_shouldReturnJsonWriterAndWriteOpeningBrace() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    // Spy on writeDeferredName and open methods\n    doNothing().when(spyWriter).writeDeferredName();\n    doReturn(spyWriter).when(spyWriter).open(JsonScope.EMPTY_OBJECT, '{');\n\n    JsonWriter result = spyWriter.beginObject();\n\n    verify(spyWriter).writeDeferredName();\n    verify(spyWriter).open(JsonScope.EMPTY_OBJECT, '{');\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  void beginObject_realOpenAndWriteDeferredName_shouldWriteCorrectly() throws IOException {\n    // We test the real behavior of beginObject including real open and writeDeferredName\n    JsonWriter writer = new JsonWriter(stringWriter);\n\n    // Use reflection to set stackSize and stack to simulate EMPTY_DOCUMENT state\n    try {\n      Method pushMethod = JsonWriter.class.getDeclaredMethod(\"push\", int.class);\n      pushMethod.setAccessible(true);\n      pushMethod.invoke(writer, JsonScope.EMPTY_DOCUMENT);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Reflection setup failed: \" + e);\n    }\n\n    JsonWriter result = writer.beginObject();\n\n    assertSame(writer, result);\n    // The output should start with '{' because beginObject calls open with '{'\n    String output = stringWriter.toString();\n    assertTrue(output.startsWith(\"{\"));\n  }\n\n  @Test\n  void beginObject_writeDeferredNameThrows_shouldThrowIOException() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n    doThrow(new IOException(\"fail\")).when(spyWriter).writeDeferredName();\n\n    IOException thrown = assertThrows(IOException.class, spyWriter::beginObject);\n    assertEquals(\"fail\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888978,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 502,
+    "prompt_tokens": 730,
+    "total_tokens": 1232,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.66
+  }
+}

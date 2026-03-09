@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvliEFRxz6kKFgK7qpAxtRde4MIZy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.Map;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testFromJson_withJsonElementAndType() throws Exception {\n    // Prepare a JsonElement (JsonPrimitive) and a Type (String.class)\n    JsonElement jsonElement = new JsonPrimitive(\"testString\");\n    Type type = String.class;\n\n    // Call fromJson(JsonElement, Type) - the focal method\n    String result = gson.fromJson(jsonElement, type);\n\n    // Assert the result equals the original string\n    assertEquals(\"testString\", result);\n  }\n\n  @Test\n  public void testFromJson_withJsonElementAndTypeToken() throws Exception {\n    // Use reflection to access private fromJson(JsonElement, TypeToken) method\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, TypeToken.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Prepare JsonElement and TypeToken\n    JsonElement jsonElement = new JsonPrimitive(123);\n    TypeToken<Integer> typeToken = TypeToken.get(Integer.class);\n\n    // Invoke private method\n    Object result = fromJsonMethod.invoke(gson, jsonElement, typeToken);\n\n    // Assert result equals 123 (Integer)\n    assertEquals(123, ((Number) result).intValue());\n  }\n\n  @Test\n  public void testFromJson_withJsonElementNull() throws Exception {\n    // fromJson(JsonElement, Type) with null JsonElement should return null\n    String result = gson.fromJson((JsonElement) null, String.class);\n    assertNull(result);\n  }\n\n  @Test\n  public void testFromJson_withJsonElementAndComplexType() throws Exception {\n    // Prepare a JsonElement representing a Map<String, Integer>\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.addProperty(\"key1\", 1);\n    jsonObject.addProperty(\"key2\", 2);\n    Type type = new TypeToken<Map<String, Integer>>() {}.getType();\n\n    Map<String, Integer> result = gson.fromJson(jsonObject, type);\n\n    assertNotNull(result);\n    assertEquals(2, result.size());\n    assertEquals(1, result.get(\"key1\"));\n    assertEquals(2, result.get(\"key2\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884138,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 545,
+    "prompt_tokens": 2770,
+    "total_tokens": 3315,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.59
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9TG0NcIQvwJrTSd1AgDO7TOaNnX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        CSVFormat format = mock(CSVFormat.class);\n\n        // Use public constructor with empty reader and mocked format\n        parser = new CSVParser(new java.io.StringReader(\"\"), format);\n\n        // Use reflection to set the final 'headerMap' field to a non-null default map to avoid NPE in getHeaderMap()\n        setFinalField(parser, \"headerMap\", new LinkedHashMap<String, Integer>());\n    }\n\n    @Test\n    void testGetHeaderMap_whenHeaderMapIsNull() throws Exception {\n        setFinalField(parser, \"headerMap\", null);\n\n        Map<String, Integer> result = parser.getHeaderMap();\n        assertNull(result, \"Expected null when headerMap field is null\");\n    }\n\n    @Test\n    void testGetHeaderMap_whenHeaderMapIsNotNull() throws Exception {\n        LinkedHashMap<String, Integer> originalMap = new LinkedHashMap<>();\n        originalMap.put(\"col1\", 0);\n        originalMap.put(\"col2\", 1);\n\n        setFinalField(parser, \"headerMap\", originalMap);\n\n        Map<String, Integer> result = parser.getHeaderMap();\n\n        assertNotNull(result, \"Expected non-null map when headerMap field is set\");\n        assertEquals(originalMap.size(), result.size(), \"Map size should be equal\");\n        assertEquals(originalMap, result, \"Returned map should be equal to original\");\n        assertNotSame(originalMap, result, \"Returned map should be a new instance\");\n    }\n\n    // Helper method to set final field via reflection\n    private static void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVParser.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975466,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 498,
+    "prompt_tokens": 1047,
+    "total_tokens": 1545,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.04
+  }
+}

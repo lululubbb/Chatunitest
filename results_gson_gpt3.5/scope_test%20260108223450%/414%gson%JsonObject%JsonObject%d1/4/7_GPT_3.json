@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNxFjLrdlB0q21zDHomAJB5sCPf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testConstructor_initialState() throws Exception {\n    // Use reflection to access private field 'members'\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    Object members = membersField.get(jsonObject);\n    assertNotNull(members);\n    assertTrue(members instanceof LinkedTreeMap);\n    LinkedTreeMap<?, ?> map = (LinkedTreeMap<?, ?>) members;\n    assertTrue(map.isEmpty());\n  }\n\n  @Test\n  public void testAddAndGetAndHasAndRemove() {\n    JsonPrimitive value = new JsonPrimitive(\"value\");\n    jsonObject.add(\"key\", value);\n    assertTrue(jsonObject.has(\"key\"));\n    assertEquals(value, jsonObject.get(\"key\"));\n\n    JsonElement removed = jsonObject.remove(\"key\");\n    assertEquals(value, removed);\n    assertFalse(jsonObject.has(\"key\"));\n    assertNull(jsonObject.get(\"key\"));\n  }\n\n  @Test\n  public void testAddPropertyWithVariousTypes() {\n    jsonObject.addProperty(\"string\", \"str\");\n    jsonObject.addProperty(\"number\", 123);\n    jsonObject.addProperty(\"bool\", true);\n    jsonObject.addProperty(\"char\", 'c');\n\n    assertEquals(new JsonPrimitive(\"str\"), jsonObject.get(\"string\"));\n    assertEquals(new JsonPrimitive(123), jsonObject.get(\"number\"));\n    assertEquals(new JsonPrimitive(true), jsonObject.get(\"bool\"));\n    assertEquals(new JsonPrimitive('c'), jsonObject.get(\"char\"));\n  }\n\n  @Test\n  public void testEntrySetKeySetSizeIsEmpty() {\n    assertTrue(jsonObject.isEmpty());\n    assertEquals(0, jsonObject.size());\n    assertTrue(jsonObject.entrySet().isEmpty());\n    assertTrue(jsonObject.keySet().isEmpty());\n\n    jsonObject.addProperty(\"key\", \"value\");\n\n    assertFalse(jsonObject.isEmpty());\n    assertEquals(1, jsonObject.size());\n    Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();\n    assertEquals(1, entries.size());\n    Set<String> keys = jsonObject.keySet();\n    assertEquals(1, keys.size());\n    assertTrue(keys.contains(\"key\"));\n  }\n\n  @Test\n  public void testGetAsJsonPrimitiveJsonArrayJsonObject() {\n    JsonPrimitive primitive = new JsonPrimitive(\"prim\");\n    JsonArray array = new JsonArray();\n    JsonObject innerObject = new JsonObject();\n\n    jsonObject.add(\"primitive\", primitive);\n    jsonObject.add(\"array\", array);\n    jsonObject.add(\"object\", innerObject);\n\n    assertEquals(primitive, jsonObject.getAsJsonPrimitive(\"primitive\"));\n    assertEquals(array, jsonObject.getAsJsonArray(\"array\"));\n    assertEquals(innerObject, jsonObject.getAsJsonObject(\"object\"));\n\n    // Test null returns when not present or wrong type\n    assertNull(jsonObject.getAsJsonPrimitive(\"nonexistent\"));\n\n    // Safely test getAsJsonArray and getAsJsonObject by checking type before casting\n    JsonElement elemPrimitive = jsonObject.get(\"primitive\");\n    if (elemPrimitive instanceof JsonArray) {\n      assertEquals(elemPrimitive, jsonObject.getAsJsonArray(\"primitive\"));\n    } else {\n      assertNull(jsonObject.getAsJsonArray(\"primitive\"));\n    }\n\n    if (elemPrimitive instanceof JsonObject) {\n      assertEquals(elemPrimitive, jsonObject.getAsJsonObject(\"primitive\"));\n    } else {\n      assertNull(jsonObject.getAsJsonObject(\"primitive\"));\n    }\n  }\n\n  @Test\n  public void testAsMapReflectsMembers() {\n    jsonObject.addProperty(\"key\", \"value\");\n    Map<String, JsonElement> map = jsonObject.asMap();\n    assertNotNull(map);\n    assertEquals(1, map.size());\n    assertTrue(map.containsKey(\"key\"));\n    assertEquals(new JsonPrimitive(\"value\"), map.get(\"key\"));\n  }\n\n  @Test\n  public void testEqualsAndHashCode() {\n    JsonObject other = new JsonObject();\n    assertEquals(jsonObject, other);\n    assertEquals(jsonObject.hashCode(), other.hashCode());\n\n    jsonObject.addProperty(\"key\", \"value\");\n    assertNotEquals(jsonObject, other);\n    other.addProperty(\"key\", \"value\");\n    assertEquals(jsonObject, other);\n    assertEquals(jsonObject.hashCode(), other.hashCode());\n\n    other.addProperty(\"key2\", \"value2\");\n    assertNotEquals(jsonObject, other);\n  }\n\n  @Test\n  public void testDeepCopyCreatesIndependentCopy() {\n    jsonObject.addProperty(\"key\", \"value\");\n    JsonObject copy = jsonObject.deepCopy();\n    assertNotSame(jsonObject, copy);\n    assertEquals(jsonObject, copy);\n\n    copy.addProperty(\"key2\", \"value2\");\n    assertNotEquals(jsonObject, copy);\n    assertFalse(jsonObject.has(\"key2\"));\n  }\n\n  @Test\n  public void testInvokeDeepCopyByReflection() throws Exception {\n    Method deepCopyMethod = JsonObject.class.getDeclaredMethod(\"deepCopy\");\n    deepCopyMethod.setAccessible(true);\n    Object copy = deepCopyMethod.invoke(jsonObject);\n    assertNotNull(copy);\n    assertTrue(copy instanceof JsonObject);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886725,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1170,
+    "prompt_tokens": 1842,
+    "total_tokens": 3012,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.42
+  }
+}

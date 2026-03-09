@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  void testIsInnerClass_withStaticMemberClass() throws Exception {\n    class Outer {\n      static class StaticMember {}\n    }\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, Outer.StaticMember.class);\n    assertFalse(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonStaticMemberClass() throws Exception {\n    class Outer {\n      class NonStaticMember {}\n    }\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, Outer.NonStaticMember.class);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsInnerClass_withNonMemberClass() throws Exception {\n    Excluder excluder = Excluder.DEFAULT;\n    Method method = Excluder.class.getDeclaredMethod(\"isInnerClass\", Class.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(excluder, String.class);\n    assertFalse(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/454%gson%Excluder%isInnerClass%d1/5/temp/Excluder_454_5Test.java:15: 错误: 此处不允许使用修饰符static\n      static class StaticMember {}\n             ^\n1 个错误\n",
+  "prompt_tokens": 593,
+  "completion_tokens": 307,
+  "total_tokens": 900,
+  "llm_elapsed_time_seconds": 3.49
+}

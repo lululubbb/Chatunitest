@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaY6ER0ltoOK1CENMfmwsBcJsDyI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.Arrays;\n\nclass CSVFormatHashCodeTest {\n\n    @Test\n    void testHashCode_DefaultInstance() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        int expected = computeExpectedHashCode(format);\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_AllFieldsNullOrDefaults() throws Exception {\n        CSVFormat format = createCSVFormatWithFields(\n                ',', // delimiter\n                null, // quoteMode\n                null, // quoteCharacter\n                null, // commentMarker\n                null, // escapeCharacter\n                null, // nullString\n                false, // ignoreSurroundingSpaces\n                false, // ignoreHeaderCase\n                false, // ignoreEmptyLines\n                false, // skipHeaderRecord\n                null, // recordSeparator\n                null // header\n        );\n        int expected = computeExpectedHashCode(format);\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_AllFieldsNonNullAndMixedBooleans() throws Exception {\n        String[] header = new String[] {\"a\", \"b\"};\n        CSVFormat format = createCSVFormatWithFields(\n                ';',\n                QuoteMode.ALL_NON_NULL,\n                'Q',\n                '#',\n                '\\\\',\n                \"NULL\",\n                true,\n                false,\n                true,\n                false,\n                \"\\n\",\n                header\n        );\n        int expected = computeExpectedHashCode(format);\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_HeaderArrayEmpty() throws Exception {\n        CSVFormat format = createCSVFormatWithFields(\n                ',',\n                QuoteMode.MINIMAL,\n                '\\\"',\n                '!',\n                '\\\\',\n                \"null\",\n                false,\n                true,\n                false,\n                true,\n                \"\\r\\n\",\n                new String[0]\n        );\n        int expected = computeExpectedHashCode(format);\n        assertEquals(expected, format.hashCode());\n    }\n\n    private CSVFormat createCSVFormatWithFields(char delimiter,\n                                                QuoteMode quoteMode,\n                                                Character quoteCharacter,\n                                                Character commentMarker,\n                                                Character escapeCharacter,\n                                                String nullString,\n                                                boolean ignoreSurroundingSpaces,\n                                                boolean ignoreHeaderCase,\n                                                boolean ignoreEmptyLines,\n                                                boolean skipHeaderRecord,\n                                                String recordSeparator,\n                                                String[] header) throws Exception {\n        // Create a new instance via reflection using the constructor\n        // since CSVFormat fields are final, modifying them via reflection won't work reliably.\n        // The constructor signature is:\n        // CSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n        // Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        // boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        // Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        // boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n        // boolean trailingDelimiter, boolean autoFlush)\n        Class<CSVFormat> clazz = CSVFormat.class;\n        java.lang.reflect.Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class,\n                boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class,\n                boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n\n        constructor.setAccessible(true);\n\n        // For fields not set in test, use defaults from CSVFormat.DEFAULT\n        CSVFormat defaultFormat = CSVFormat.DEFAULT;\n\n        // For headerComments, pass null\n        Object[] headerComments = null;\n        // For allowMissingColumnNames, trim, trailingDelimiter, autoFlush use defaultFormat's getters\n        boolean allowMissingColumnNames = defaultFormat.getAllowMissingColumnNames();\n        boolean trim = defaultFormat.getTrim();\n        boolean trailingDelimiter = defaultFormat.getTrailingDelimiter();\n        boolean autoFlush = defaultFormat.getAutoFlush();\n\n        return constructor.newInstance(\n                delimiter,\n                quoteCharacter,\n                quoteMode,\n                commentMarker,\n                escapeCharacter,\n                ignoreSurroundingSpaces,\n                ignoreEmptyLines,\n                recordSeparator,\n                nullString,\n                headerComments,\n                header,\n                skipHeaderRecord,\n                allowMissingColumnNames,\n                ignoreHeaderCase,\n                trim,\n                trailingDelimiter,\n                autoFlush\n        );\n    }\n\n    private int computeExpectedHashCode(CSVFormat format) {\n        final int prime = 31;\n        int result = 1;\n\n        result = prime * result + format.getDelimiter();\n        result = prime * result + ((format.getQuoteMode() == null) ? 0 : format.getQuoteMode().hashCode());\n        result = prime * result + ((format.getQuoteCharacter() == null) ? 0 : format.getQuoteCharacter().hashCode());\n        result = prime * result + ((format.getCommentMarker() == null) ? 0 : format.getCommentMarker().hashCode());\n        result = prime * result + ((format.getEscapeCharacter() == null) ? 0 : format.getEscapeCharacter().hashCode());\n        result = prime * result + ((format.getNullString() == null) ? 0 : format.getNullString().hashCode());\n        result = prime * result + (format.getIgnoreSurroundingSpaces() ? 1231 : 1237);\n        result = prime * result + (format.getIgnoreHeaderCase() ? 1231 : 1237);\n        result = prime * result + (format.getIgnoreEmptyLines() ? 1231 : 1237);\n        result = prime * result + (format.getSkipHeaderRecord() ? 1231 : 1237);\n        result = prime * result + ((format.getRecordSeparator() == null) ? 0 : format.getRecordSeparator().hashCode());\n        result = prime * result + Arrays.hashCode(format.getHeader());\n\n        return result;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556210,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1264,
+    "prompt_tokens": 2303,
+    "total_tokens": 3567,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.02
+  }
+}

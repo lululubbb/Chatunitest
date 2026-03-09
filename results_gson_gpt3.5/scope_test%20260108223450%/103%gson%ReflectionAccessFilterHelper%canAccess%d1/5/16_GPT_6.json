@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnU6q6BPborfudpQYRWvETQYmKz6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.extension.ExtendWith;\nimport org.mockito.MockedStatic;\nimport org.mockito.junit.jupiter.MockitoExtension;\n\n@ExtendWith(MockitoExtension.class)\nclass ReflectionAccessFilterHelperTest {\n\n  interface AccessCheckerInterface {\n    boolean canAccess(AccessibleObject accessibleObject, Object obj);\n  }\n\n  @Test\n  void canAccess_returnsTrue_whenAccessCheckerReturnsTrue() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    Object obj = new Object();\n\n    AccessCheckerInterface proxyInstance = (AccessCheckerInterface) Proxy.newProxyInstance(\n        AccessCheckerInterface.class.getClassLoader(),\n        new Class<?>[]{AccessCheckerInterface.class},\n        (proxy, method, args) -> {\n          if (\"canAccess\".equals(method.getName())\n              && args.length == 2\n              && args[0] == accessibleObject\n              && args[1] == obj) {\n            return true;\n          }\n          return false;\n        });\n\n    try (MockedStatic<AccessCheckerHolder> accessCheckerMockedStatic = mockStatic(AccessCheckerHolder.class)) {\n      accessCheckerMockedStatic.when(AccessCheckerHolder::getInstance).thenReturn(proxyInstance);\n\n      try (MockedStatic<AccessCheckerHolder> accessCheckerStatic = mockStatic(AccessCheckerHolder.class)) {\n        accessCheckerStatic.when(AccessCheckerHolder::getInstance).thenReturn(proxyInstance);\n\n        boolean result = ReflectionAccessFilterHelper.canAccess(accessibleObject, obj);\n        assertTrue(result);\n      }\n    }\n  }\n\n  @Test\n  void canAccess_returnsFalse_whenAccessCheckerReturnsFalse() throws Exception {\n    AccessibleObject accessibleObject = mock(AccessibleObject.class);\n    Object obj = new Object();\n\n    AccessCheckerInterface proxyInstance = (AccessCheckerInterface) Proxy.newProxyInstance(\n        AccessCheckerInterface.class.getClassLoader(),\n        new Class<?>[]{AccessCheckerInterface.class},\n        (proxy, method, args) -> {\n          if (\"canAccess\".equals(method.getName())\n              && args.length == 2\n              && args[0] == accessibleObject\n              && args[1] == obj) {\n            return false;\n          }\n          return false;\n        });\n\n    try (MockedStatic<AccessCheckerHolder> accessCheckerMockedStatic = mockStatic(AccessCheckerHolder.class)) {\n      accessCheckerMockedStatic.when(AccessCheckerHolder::getInstance).thenReturn(proxyInstance);\n\n      try (MockedStatic<AccessCheckerHolder> accessCheckerStatic = mockStatic(AccessCheckerHolder.class)) {\n        accessCheckerStatic.when(AccessCheckerHolder::getInstance).thenReturn(proxyInstance);\n\n        boolean result = ReflectionAccessFilterHelper.canAccess(accessibleObject, obj);\n        assertFalse(result);\n      }\n    }\n  }\n\n  @Test\n  void privateConstructor_isPrivate() throws Exception {\n    var constructor = ReflectionAccessFilterHelper.class.getDeclaredConstructor();\n    assertTrue(Modifier.isPrivate(constructor.getModifiers()));\n    constructor.setAccessible(true);\n    constructor.newInstance();\n  }\n\n  // Helper class to abstract AccessChecker.INSTANCE access for mocking\n  static class AccessCheckerHolder {\n    static AccessCheckerInterface getInstance() {\n      try {\n        Class<?> accessCheckerClass = Class.forName(\"com.google.gson.internal.AccessChecker\");\n        Object instance = accessCheckerClass.getField(\"INSTANCE\").get(null);\n        return (AccessCheckerInterface) Proxy.newProxyInstance(\n            AccessCheckerInterface.class.getClassLoader(),\n            new Class<?>[]{AccessCheckerInterface.class},\n            (proxy, method, args) -> {\n              Method m = accessCheckerClass.getMethod(method.getName(), method.getParameterTypes());\n              return m.invoke(instance, args);\n            });\n      } catch (Exception e) {\n        throw new RuntimeException(e);\n      }\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890950,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 827,
+    "prompt_tokens": 1785,
+    "total_tokens": 2612,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.51
+  }
+}

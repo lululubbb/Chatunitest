@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmjg6qawBwGQIsN07fyWBHWqiczi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader reader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a JsonTreeReader instance with a JsonNull element (using reflection)\n        var jsonNullClass = Class.forName(\"com.google.gson.JsonNull\");\n        var instanceField = jsonNullClass.getField(\"INSTANCE\");\n        Object jsonNullInstance = instanceField.get(null);\n        reader = new JsonTreeReader((com.google.gson.JsonElement) jsonNullInstance);\n\n        // Inject stack and stackSize for testing\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(reader, new Object[32]);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(reader, 0);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        pathIndicesField.set(reader, new int[32]);\n    }\n\n    @Test\n    public void testNextNull_withStackSizeZero() throws Exception {\n        // Setup stackSize = 0\n        setStackSize(0);\n\n        // Push JsonNull onto stack to simulate current token\n        pushStack(JsonNull.INSTANCE);\n\n        // Call nextNull()\n        reader.nextNull();\n\n        // After nextNull, stackSize should be decremented\n        int stackSizeAfter = getStackSize();\n        assertEquals(0, stackSizeAfter);\n\n        // pathIndices should not be incremented because stackSize == 0\n        int[] pathIndices = getPathIndices();\n        assertEquals(0, pathIndices[0]);\n    }\n\n    @Test\n    public void testNextNull_withStackSizeGreaterThanZero() throws Exception {\n        // Setup stackSize = 2\n        setStackSize(2);\n\n        // Prepare stack with JsonNull on top\n        pushStack(JsonNull.INSTANCE);\n        pushStack(JsonNull.INSTANCE);\n\n        // Initialize pathIndices\n        int[] pathIndices = getPathIndices();\n        pathIndices[1] = 5; // set some value for index 1\n\n        // Call nextNull()\n        reader.nextNull();\n\n        // After nextNull, stackSize should be decremented to 1\n        int stackSizeAfter = getStackSize();\n        assertEquals(1, stackSizeAfter);\n\n        // pathIndices[stackSize -1] should be incremented (index 0)\n        pathIndices = getPathIndices();\n        assertEquals(1, pathIndices[0]);\n    }\n\n    @Test\n    public void testNextNull_expectThrowsIOException() throws Exception {\n        // Use reflection to create a spy that throws IOException on expect(JsonToken.NULL)\n\n        JsonTreeReader readerSpy = mock(JsonTreeReader.class, invocation -> {\n            Method method = invocation.getMethod();\n            if (\"nextNull\".equals(method.getName())) {\n                // call real nextNull method on real instance\n                return invocation.callRealMethod();\n            }\n            if (\"expect\".equals(method.getName())) {\n                throw new IOException(\"Forced exception\");\n            }\n            return invocation.callRealMethod();\n        });\n\n        // Setup the internal state of readerSpy similar to reader so nextNull can run\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(readerSpy, new Object[32]);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(readerSpy, 1);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        pathIndicesField.set(readerSpy, new int[32]);\n\n        // Push JsonNull onto stack\n        Object[] stack = (Object[]) stackField.get(readerSpy);\n        stack[0] = JsonNull.INSTANCE;\n\n        // Verify that nextNull throws IOException\n        assertThrows(IOException.class, () -> readerSpy.nextNull());\n    }\n\n    private void setStackSize(int size) throws Exception {\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(reader, size);\n    }\n\n    private int getStackSize() throws Exception {\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        return stackSizeField.getInt(reader);\n    }\n\n    private int[] getPathIndices() throws Exception {\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        return (int[]) pathIndicesField.get(reader);\n    }\n\n    private void pushStack(Object obj) throws Exception {\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = (Object[]) stackField.get(reader);\n\n        int stackSize = getStackSize();\n        stack[stackSize] = obj;\n\n        setStackSize(stackSize + 1);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888072,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1136,
+    "prompt_tokens": 1842,
+    "total_tokens": 2978,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.34
+  }
+}

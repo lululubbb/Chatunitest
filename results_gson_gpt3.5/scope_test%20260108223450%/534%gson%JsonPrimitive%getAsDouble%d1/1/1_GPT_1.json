@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmCH1UlEbt3egNllTNB6zZKCXelW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  public void setUp() {\n    // no-op, each test will instantiate its own JsonPrimitive as needed\n  }\n\n  @Test\n  public void testGetAsDouble_whenIsNumberTrue_returnsNumberDoubleValue() {\n    JsonPrimitive spyPrimitive = spy(new JsonPrimitive(42));\n\n    doReturn(true).when(spyPrimitive).isNumber();\n    Number mockNumber = mock(Number.class);\n    when(spyPrimitive.getAsNumber()).thenReturn(mockNumber);\n    when(mockNumber.doubleValue()).thenReturn(123.456);\n\n    double result = spyPrimitive.getAsDouble();\n\n    assertEquals(123.456, result, 0.0);\n    verify(spyPrimitive).isNumber();\n    verify(spyPrimitive).getAsNumber();\n    verify(mockNumber).doubleValue();\n  }\n\n  @Test\n  public void testGetAsDouble_whenIsNumberFalse_parsesString() {\n    JsonPrimitive spyPrimitive = spy(new JsonPrimitive(\"3.14159\"));\n\n    doReturn(false).when(spyPrimitive).isNumber();\n    when(spyPrimitive.getAsString()).thenReturn(\"3.14159\");\n\n    double result = spyPrimitive.getAsDouble();\n\n    assertEquals(3.14159, result, 0.0);\n    verify(spyPrimitive).isNumber();\n    verify(spyPrimitive).getAsString();\n  }\n\n  @Test\n  public void testGetAsDouble_whenIsNumberFalse_parsesNegativeNumberString() {\n    JsonPrimitive spyPrimitive = spy(new JsonPrimitive(\"-987.654\"));\n\n    doReturn(false).when(spyPrimitive).isNumber();\n    when(spyPrimitive.getAsString()).thenReturn(\"-987.654\");\n\n    double result = spyPrimitive.getAsDouble();\n\n    assertEquals(-987.654, result, 0.0);\n    verify(spyPrimitive).isNumber();\n    verify(spyPrimitive).getAsString();\n  }\n\n  @Test\n  public void testPrivateIsIntegralMethod() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(123);\n\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    boolean result = (boolean) isIntegralMethod.invoke(null, primitive);\n\n    assertTrue(result);\n  }\n\n  @Test\n  public void testPrivateIsIntegralMethod_withNonIntegral() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(12.34);\n\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    boolean result = (boolean) isIntegralMethod.invoke(null, primitive);\n\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886001,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 611,
+    "prompt_tokens": 426,
+    "total_tokens": 1037,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.87
+  }
+}

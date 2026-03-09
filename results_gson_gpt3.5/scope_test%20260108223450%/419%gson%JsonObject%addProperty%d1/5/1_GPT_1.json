@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWjJZGyWSnUIu83fGZexH8Jpfvc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testAddProperty_withNonNullNumber_addsJsonPrimitive() throws Exception {\n    // Arrange\n    String property = \"age\";\n    Number value = 42;\n\n    // Spy on jsonObject to verify add call\n    JsonObject spyJsonObject = spy(jsonObject);\n\n    // Act\n    spyJsonObject.addProperty(property, value);\n\n    // Assert\n    // Verify add was called with property and JsonPrimitive wrapping the number\n    verify(spyJsonObject).add(eq(property), argThat(jsonElement -> {\n      if (!(jsonElement instanceof JsonPrimitive)) return false;\n      JsonPrimitive primitive = (JsonPrimitive) jsonElement;\n      try {\n        Method getAsNumber = JsonPrimitive.class.getDeclaredMethod(\"getAsNumber\");\n        getAsNumber.setAccessible(true);\n        Number n = (Number) getAsNumber.invoke(primitive);\n        return value.equals(n);\n      } catch (Exception e) {\n        return false;\n      }\n    }));\n\n    // Also verify internal members map contains the property with correct JsonPrimitive\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(spyJsonObject);\n    assertTrue(members.containsKey(property));\n    JsonElement element = members.get(property);\n    assertTrue(element instanceof JsonPrimitive);\n    JsonPrimitive primitive = (JsonPrimitive) element;\n    Method getAsNumber = JsonPrimitive.class.getDeclaredMethod(\"getAsNumber\");\n    getAsNumber.setAccessible(true);\n    Number storedNumber = (Number) getAsNumber.invoke(primitive);\n    assertEquals(value, storedNumber);\n  }\n\n  @Test\n  public void testAddProperty_withNullNumber_addsJsonNull() throws Exception {\n    // Arrange\n    String property = \"height\";\n    Number value = null;\n\n    // Spy on jsonObject to verify add call\n    JsonObject spyJsonObject = spy(jsonObject);\n\n    // Act\n    spyJsonObject.addProperty(property, value);\n\n    // Assert\n    // Verify add was called with property and JsonNull.INSTANCE\n    verify(spyJsonObject).add(eq(property), eq(JsonNull.INSTANCE));\n\n    // Also verify internal members map contains the property with JsonNull.INSTANCE\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(spyJsonObject);\n    assertTrue(members.containsKey(property));\n    JsonElement element = members.get(property);\n    assertSame(JsonNull.INSTANCE, element);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883425,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 671,
+    "prompt_tokens": 402,
+    "total_tokens": 1073,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.53
+  }
+}

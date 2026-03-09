@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmakuaQph5BxlZGrOOqgpB2n4S1I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nimport static org.mockito.Mockito.*;\n\nclass ReflectionHelperTest {\n\n  static DummyRecordHelper dummyRecordHelper;\n\n  static class DummyRecordHelper {\n    Method accessor;\n    Class<?> rawArg;\n    Field fieldArg;\n\n    public Method getAccessor(Class<?> raw, Field field) {\n      this.rawArg = raw;\n      this.fieldArg = field;\n      return accessor;\n    }\n  }\n\n  @BeforeAll\n  static void setup() throws Exception {\n    dummyRecordHelper = new DummyRecordHelper();\n\n    // Get the RECORD_HELPER field from ReflectionHelper\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from the field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    // Create a Mockito mock of the actual RecordHelper interface type\n    Class<?> recordHelperType = recordHelperField.getType();\n    Object mockRecordHelper = mock(recordHelperType);\n\n    // Setup mock behavior to delegate to dummyRecordHelper.getAccessor\n    Method getAccessorMethod = recordHelperType.getMethod(\"getAccessor\", Class.class, Field.class);\n\n    // Use Mockito's Answer to delegate calls\n    when(getAccessorMethod.invoke(mockRecordHelper, any(), any())).thenAnswer(invocation -> {\n      Class<?> raw = (Class<?>) invocation.getArgument(0);\n      Field field = (Field) invocation.getArgument(1);\n      return dummyRecordHelper.getAccessor(raw, field);\n    });\n\n    // Since Mockito's when().thenAnswer() doesn't work directly on reflection invoke,\n    // we use Mockito's doAnswer on mock's method proxy:\n    // So instead, we cast mockRecordHelper to the interface and use Mockito.when on it:\n\n    // Cast mock to interface type\n    Object typedMock = mockRecordHelper;\n    // Because of type erasure, we cannot directly cast, so we create a proxy that delegates to dummyRecordHelper\n\n    Object proxy = java.lang.reflect.Proxy.newProxyInstance(\n        ReflectionHelper.class.getClassLoader(),\n        new Class<?>[]{recordHelperType},\n        (proxyObj, method, args) -> {\n          if (\"getAccessor\".equals(method.getName())) {\n            Class<?> raw = (Class<?>) args[0];\n            Field field = (Field) args[1];\n            return dummyRecordHelper.getAccessor(raw, field);\n          }\n          throw new UnsupportedOperationException(\"Unsupported method: \" + method.getName());\n        });\n\n    recordHelperField.set(null, proxy);\n  }\n\n  @Test\n  void getAccessor_returnsMethodFromRecordHelper() throws NoSuchFieldException {\n    Method expectedMethod = DummyRecord.class.getDeclaredMethods()[0];\n    dummyRecordHelper.accessor = expectedMethod;\n\n    Field field = DummyRecord.class.getDeclaredField(\"value\");\n    Method actualMethod = ReflectionHelper.getAccessor(DummyRecord.class, field);\n\n    assertSame(expectedMethod, actualMethod);\n    assertSame(DummyRecord.class, dummyRecordHelper.rawArg);\n    assertSame(field, dummyRecordHelper.fieldArg);\n  }\n\n  static class DummyRecord {\n    private final int value;\n\n    public DummyRecord(int value) {\n      this.value = value;\n    }\n\n    public int value() {\n      return value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887518,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 748,
+    "prompt_tokens": 1469,
+    "total_tokens": 2217,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.17
+  }
+}

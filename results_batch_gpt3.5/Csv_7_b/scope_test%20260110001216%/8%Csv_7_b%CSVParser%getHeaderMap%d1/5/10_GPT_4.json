@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9ShRreyRVIKQZWFuvZwBf0r8rpj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a CSVParser instance with dummy CSVFormat and Reader\n        parser = new CSVParser(new java.io.StringReader(\"header1,header2\\nvalue1,value2\"), CSVFormat.DEFAULT);\n\n        // Use reflection to set the private final headerMap field to null for one test\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n\n        // Remove final modifier on headerMap field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerMapField, headerMapField.getModifiers() & ~Modifier.FINAL);\n\n        headerMapField.set(parser, null);\n    }\n\n    @Test\n    void testGetHeaderMap_ReturnsNull_WhenHeaderMapIsNull() throws Exception {\n        // headerMap is null from setUp\n        Map<String, Integer> headerMap = parser.getHeaderMap();\n        assertNull(headerMap);\n    }\n\n    @Test\n    void testGetHeaderMap_ReturnsCopyOfHeaderMap_WhenHeaderMapIsNotNull() throws Exception {\n        // Prepare a LinkedHashMap to set as headerMap\n        LinkedHashMap<String, Integer> originalMap = new LinkedHashMap<>();\n        originalMap.put(\"A\", 0);\n        originalMap.put(\"B\", 1);\n\n        // Set the private final headerMap field to our map using reflection\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n\n        // Remove final modifier on headerMap field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerMapField, headerMapField.getModifiers() & ~Modifier.FINAL);\n\n        headerMapField.set(parser, originalMap);\n\n        Map<String, Integer> returnedMap = parser.getHeaderMap();\n\n        assertNotNull(returnedMap);\n        assertEquals(2, returnedMap.size());\n        assertEquals(0, returnedMap.get(\"A\"));\n        assertEquals(1, returnedMap.get(\"B\"));\n\n        // Verify returned map is a new instance (not the same reference)\n        assertNotSame(originalMap, returnedMap);\n\n        // Modify returned map should not affect original map\n        returnedMap.put(\"C\", 2);\n        assertFalse(originalMap.containsKey(\"C\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975431,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 592,
+    "prompt_tokens": 1144,
+    "total_tokens": 1736,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.75
+  }
+}

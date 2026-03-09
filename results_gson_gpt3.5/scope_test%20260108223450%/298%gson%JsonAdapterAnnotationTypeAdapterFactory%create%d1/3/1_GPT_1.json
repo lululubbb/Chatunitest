@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXHlqgBNqfDRmvcoxJus86DWDnv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.annotations.JsonAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Method;\n\npublic class JsonAdapterAnnotationTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor constructorConstructor;\n  @Mock\n  private Gson gson;\n  @Mock\n  private TypeAdapter<?> typeAdapter;\n\n  private JsonAdapterAnnotationTypeAdapterFactory factory;\n\n  @BeforeEach\n  public void setUp() {\n    MockitoAnnotations.openMocks(this);\n    factory = new JsonAdapterAnnotationTypeAdapterFactory(constructorConstructor);\n  }\n\n  @JsonAdapter(TestTypeAdapter.class)\n  private static class AnnotatedClass {}\n\n  private static class NonAnnotatedClass {}\n\n  private static class TestTypeAdapter extends TypeAdapter<Object> {\n    @Override\n    public Object read(com.google.gson.stream.JsonReader in) {\n      return null;\n    }\n\n    @Override\n    public void write(com.google.gson.stream.JsonWriter out, Object value) {}\n  }\n\n  @Test\n  public void create_returnsNullIfNoAnnotation() {\n    TypeToken<NonAnnotatedClass> typeToken = TypeToken.get(NonAnnotatedClass.class);\n    TypeAdapter<NonAnnotatedClass> adapter = factory.create(gson, typeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_returnsTypeAdapterFromGetTypeAdapter() throws Exception {\n    TypeToken<AnnotatedClass> typeToken = TypeToken.get(AnnotatedClass.class);\n\n    // Use reflection to access private getTypeAdapter method\n    Method getTypeAdapterMethod = JsonAdapterAnnotationTypeAdapterFactory.class\n        .getDeclaredMethod(\"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    getTypeAdapterMethod.setAccessible(true);\n\n    JsonAdapter annotation = AnnotatedClass.class.getAnnotation(JsonAdapter.class);\n\n    // Mock getTypeAdapter to return our mocked typeAdapter\n    JsonAdapterAnnotationTypeAdapterFactory spyFactory = spy(factory);\n    doReturn(typeAdapter).when(spyFactory).getTypeAdapter(constructorConstructor, gson, typeToken, annotation);\n\n    TypeAdapter<AnnotatedClass> adapter = spyFactory.create(gson, typeToken);\n\n    assertNotNull(adapter);\n    assertSame(typeAdapter, adapter);\n  }\n\n  @Test\n  public void getTypeAdapter_invocationViaReflection_notNull() throws Exception {\n    TypeToken<AnnotatedClass> typeToken = TypeToken.get(AnnotatedClass.class);\n    JsonAdapter annotation = AnnotatedClass.class.getAnnotation(JsonAdapter.class);\n\n    Method method = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\"getTypeAdapter\",\n        ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    method.setAccessible(true);\n\n    Object result = method.invoke(factory, constructorConstructor, gson, typeToken, annotation);\n\n    assertNotNull(result);\n    assertTrue(result instanceof TypeAdapter<?>);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887303,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 660,
+    "prompt_tokens": 396,
+    "total_tokens": 1056,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.19
+  }
+}

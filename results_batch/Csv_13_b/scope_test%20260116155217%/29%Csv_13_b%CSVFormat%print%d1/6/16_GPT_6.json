@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZXvYvSXpbiVRoCYRlfDHKNmoI41",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        appendable = mock(Appendable.class);\n    }\n\n    @Test\n    void testPrint_ReturnsCSVPrinter() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CSVPrinter printer = csvFormat.print(appendable);\n        assertNotNull(printer);\n\n        // Access 'out' field declared in CSVPrinter's superclass or CSVPrinter itself\n        Object outField = getField(printer, \"out\");\n        assertSame(appendable, outField);\n\n        Object formatField = getField(printer, \"format\");\n        assertSame(csvFormat, formatField);\n    }\n\n    @Test\n    void testPrint_WithIOException() throws IOException {\n        Appendable throwingAppendable = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) throws IOException {\n                throw new IOException(\"forced\");\n            }\n\n            @Override\n            public Appendable append(char c) throws IOException {\n                throw new IOException(\"forced\");\n            }\n\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) throws IOException {\n                throw new IOException(\"forced\");\n            }\n        };\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        IOException thrown = assertThrows(IOException.class, () -> csvFormat.print(throwingAppendable));\n        assertEquals(\"forced\", thrown.getMessage());\n    }\n\n    // Helper method to access private fields via reflection, including superclasses\n    private Object getField(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {\n        Class<?> clazz = obj.getClass();\n        while (clazz != null) {\n            try {\n                Field field = clazz.getDeclaredField(fieldName);\n                field.setAccessible(true);\n                return field.get(obj);\n            } catch (NoSuchFieldException e) {\n                clazz = clazz.getSuperclass();\n            }\n        }\n        throw new NoSuchFieldException(\"Field '\" + fieldName + \"' not found in class hierarchy\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552355,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 483,
+    "prompt_tokens": 1699,
+    "total_tokens": 2182,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.6
+  }
+}

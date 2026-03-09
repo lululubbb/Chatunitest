@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaMJ8BjNyMOwiEJxUwnsV0FLApOK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrint_ReturnsCSVPrinter() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Appendable appendable = new StringBuilder();\n        CSVPrinter printer = csvFormat.print(appendable);\n        assertNotNull(printer);\n\n        // Use reflection to get the private 'out' field from CSVPrinter\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        Object out = outField.get(printer);\n        assertSame(appendable, out);\n\n        // Use reflection to get the private 'format' field from CSVPrinter\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object format = formatField.get(printer);\n        assertEquals(csvFormat, format);\n    }\n\n    @Test\n    void testPrint_WithDifferentCSVFormat() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat format = CSVFormat.EXCEL.withDelimiter(';').withQuote('|');\n        Appendable appendable = new StringBuilder();\n        CSVPrinter printer = format.print(appendable);\n        assertNotNull(printer);\n\n        // Use reflection to get the private 'out' field from CSVPrinter\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        Object out = outField.get(printer);\n        assertSame(appendable, out);\n\n        // Use reflection to get the private 'format' field from CSVPrinter\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object printerFormat = formatField.get(printer);\n\n        assertEquals(format, printerFormat);\n        assertEquals(';', ((CSVFormat) printerFormat).getDelimiter());\n        assertEquals(Character.valueOf('|'), ((CSVFormat) printerFormat).getQuoteCharacter());\n    }\n\n    @Test\n    void testPrint_ThrowsIOException() {\n        Appendable appendable = mock(Appendable.class);\n        try {\n            doThrow(new IOException(\"test exception\")).when(appendable).append(any(CharSequence.class));\n        } catch (IOException e) {\n            fail(\"Mock setup failure\");\n        }\n        // CSVFormat.print does not invoke append, so IOException won't be thrown here.\n        // But CSVPrinter constructor does not throw IOException.\n        // So we test that print does not throw IOException even if Appendable is mock throwing IOException on append.\n        assertDoesNotThrow(() -> csvFormat.print(appendable));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555479,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 601,
+    "prompt_tokens": 2240,
+    "total_tokens": 2841,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.83
+  }
+}

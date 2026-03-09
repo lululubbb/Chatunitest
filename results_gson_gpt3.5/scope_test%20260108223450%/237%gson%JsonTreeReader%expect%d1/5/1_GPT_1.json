@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvllJ19J88Qg2WheYkDRYkLy0RLqf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a minimal JsonElement mock for constructor argument (can be null if constructor accepts)\n        // But since constructor is public JsonTreeReader(JsonElement element), we can pass null or a mock.\n        jsonTreeReader = new JsonTreeReader(null);\n    }\n\n    @Test\n    public void testExpect_withMatchingToken() throws Exception {\n        // We need to mock peek() to return the expected token.\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        when(spyReader.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n\n        Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n        expectMethod.setAccessible(true);\n\n        // Should not throw when peek() returns expected token\n        assertDoesNotThrow(() -> expectMethod.invoke(spyReader, JsonToken.BEGIN_ARRAY));\n    }\n\n    @Test\n    public void testExpect_withNonMatchingToken_throwsIllegalStateException() throws Exception {\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        when(spyReader.peek()).thenReturn(JsonToken.STRING);\n\n        Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n        expectMethod.setAccessible(true);\n\n        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n            try {\n                expectMethod.invoke(spyReader, JsonToken.NUMBER);\n            } catch (java.lang.reflect.InvocationTargetException e) {\n                // unwrap the cause from reflection invocation\n                throw e.getCause();\n            }\n        });\n\n        String message = exception.getMessage();\n        assertTrue(message.contains(\"Expected NUMBER but was STRING\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884329,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 422,
+    "prompt_tokens": 582,
+    "total_tokens": 1004,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.01
+  }
+}

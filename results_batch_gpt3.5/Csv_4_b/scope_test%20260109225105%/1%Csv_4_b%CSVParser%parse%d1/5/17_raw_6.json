@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseFileTest {\n\n    @Test\n    void parse_nullFile_throwsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse((File) null, CSVFormat.DEFAULT));\n        assertEquals(\"file\", ex.getMessage());\n    }\n\n    @Test\n    void parse_nullFormat_throwsNullPointerException() throws IOException {\n        Path tempFile = Files.createTempFile(\"csvparser-test\", \".csv\");\n        try {\n            NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(tempFile.toFile(), null));\n            assertEquals(\"format\", ex.getMessage());\n        } finally {\n            Files.deleteIfExists(tempFile);\n        }\n    }\n\n    @Test\n    void parse_validFileAndFormat_returnsCSVParser() throws IOException {\n        Path tempFile = Files.createTempFile(\"csvparser-test\", \".csv\");\n        Files.write(tempFile, \"header1,header2\\nvalue1,value2\".getBytes(StandardCharsets.UTF_8));\n        try {\n            CSVParser parser = CSVParser.parse(tempFile.toFile(), CSVFormat.DEFAULT.withHeader());\n            assertNotNull(parser);\n            assertTrue(parser instanceof CSVParser);\n        } finally {\n            Files.deleteIfExists(tempFile);\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_4_b/scope_test%20260109225105%/1%Csv_4_b%CSVParser%parse%d1/5/runtemp/Csv_4_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 883,
+  "completion_tokens": 322,
+  "total_tokens": 1205,
+  "llm_elapsed_time_seconds": 4.02
+}

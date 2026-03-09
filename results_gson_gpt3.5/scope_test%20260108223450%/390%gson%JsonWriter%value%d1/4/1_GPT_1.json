@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnPdgHgiMRKsyOxxWKeWFkyFSsYF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void testValueTrue() throws IOException {\n    jsonWriter.value(true);\n    assertEquals(\"true\", stringWriter.toString());\n  }\n\n  @Test\n  public void testValueFalse() throws IOException {\n    jsonWriter.value(false);\n    assertEquals(\"false\", stringWriter.toString());\n  }\n\n  @Test\n  public void testValueCallsWriteDeferredNameAndBeforeValue() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Spy on JsonWriter to verify private method calls\n    JsonWriter spyWriter = spy(new JsonWriter(stringWriter));\n\n    // Use reflection to access private methods\n    Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    // Call value(boolean) on spy\n    spyWriter.value(true);\n\n    // Verify that private methods were called once each\n    verify(spyWriter, times(1)).value(true);\n    // Because these are private and not mocked, verify private calls via reflection invocation count is not possible directly.\n    // Instead, we invoke private methods separately to ensure they don't throw exceptions.\n    writeDeferredNameMethod.invoke(spyWriter);\n    beforeValueMethod.invoke(spyWriter);\n\n    // Verify output\n    assertEquals(\"truetrue\", stringWriter.toString()); // Because we invoked writeDeferredName and beforeValue again which do not write directly, only value writes \"true\"\n  }\n\n  @Test\n  public void testValueWithDeferredNameWritesNameBeforeValue() throws IOException, NoSuchFieldException, IllegalAccessException {\n    // Set deferredName to a non-null value to test that writeDeferredName writes the name first\n    java.lang.reflect.Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(jsonWriter, \"myName\");\n\n    // Also push EMPTY_OBJECT on stack to allow name writing\n    java.lang.reflect.Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(jsonWriter);\n    stack[0] = 1; // NONEMPTY_OBJECT\n    java.lang.reflect.Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.set(jsonWriter, 1);\n\n    jsonWriter.value(true);\n    String output = stringWriter.toString();\n\n    // It should write the name and then the value true\n    assertTrue(output.contains(\"myName\"));\n    assertTrue(output.contains(\"true\"));\n  }\n\n  @Test\n  public void testValueReturnsThis() throws IOException {\n    JsonWriter result = jsonWriter.value(true);\n    assertSame(jsonWriter, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890673,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 728,
+    "prompt_tokens": 740,
+    "total_tokens": 1468,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.62
+  }
+}

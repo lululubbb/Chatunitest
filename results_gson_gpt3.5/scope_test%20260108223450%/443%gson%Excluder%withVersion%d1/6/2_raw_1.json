@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  @Test\n  void withVersion_shouldReturnNewExcluderWithGivenVersion() {\n    Excluder original = new Excluder();\n\n    double newVersion = 1.5;\n    Excluder result = original.withVersion(newVersion);\n\n    assertNotNull(result);\n    assertNotSame(original, result);\n\n    // Use reflection to verify private field 'version' in result\n    try {\n      var versionField = Excluder.class.getDeclaredField(\"version\");\n      versionField.setAccessible(true);\n      double versionValue = (double) versionField.get(result);\n      assertEquals(newVersion, versionValue, 0.0);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error accessing version field: \" + e.getMessage());\n    }\n\n    // Also verify original's version remains unchanged (IGNORE_VERSIONS = -1.0)\n    try {\n      var versionField = Excluder.class.getDeclaredField(\"version\");\n      versionField.setAccessible(true);\n      double originalVersion = (double) versionField.get(original);\n      assertEquals(-1.0d, originalVersion, 0.0);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error accessing version field: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 599,
+  "completion_tokens": 312,
+  "total_tokens": 911,
+  "llm_elapsed_time_seconds": 8.96
+}

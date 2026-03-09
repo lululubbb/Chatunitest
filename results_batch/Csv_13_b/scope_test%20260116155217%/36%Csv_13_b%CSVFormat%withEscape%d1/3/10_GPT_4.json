@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZMsFtGc7tmhBebx0CEtOULAHTBB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\nclass CSVFormatWithEscapeTest {\n\n    @Test\n    void testWithEscape_validEscapeCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        char escapeChar = '\\\\';\n\n        CSVFormat newFormat = format.withEscape(escapeChar);\n\n        assertNotNull(newFormat);\n        assertEquals(Character.valueOf(escapeChar), newFormat.getEscapeCharacter());\n        assertEquals(format.getDelimiter(), newFormat.getDelimiter());\n        assertEquals(format.getQuoteCharacter(), newFormat.getQuoteCharacter());\n        assertEquals(format.getQuoteMode(), newFormat.getQuoteMode());\n        assertEquals(format.getCommentMarker(), newFormat.getCommentMarker());\n        assertEquals(format.getIgnoreSurroundingSpaces(), newFormat.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), newFormat.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), newFormat.getRecordSeparator());\n        assertEquals(format.getNullString(), newFormat.getNullString());\n        assertArrayEquals(format.getHeaderComments(), newFormat.getHeaderComments());\n        assertArrayEquals(format.getHeader(), newFormat.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), newFormat.getSkipHeaderRecord());\n        assertEquals(format.getAllowMissingColumnNames(), newFormat.getAllowMissingColumnNames());\n        assertEquals(format.getIgnoreHeaderCase(), newFormat.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testWithEscape_nullEscapeCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVFormat newFormat = format.withEscape((Character) null);\n\n        assertNotNull(newFormat);\n        assertNull(newFormat.getEscapeCharacter());\n    }\n\n    @Test\n    void testWithEscape_lineBreakEscapeCharacter_throwsIllegalArgumentException() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to access private static isLineBreak(Character) method\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Test line break characters: '\\n' (LF), '\\r' (CR)\n        Character[] lineBreakChars = new Character[] { '\\n', '\\r' };\n\n        for (Character lbChar : lineBreakChars) {\n            // Confirm isLineBreak returns true for line break characters\n            Boolean result = (Boolean) isLineBreakMethod.invoke(null, lbChar);\n            assertTrue(result);\n\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                format.withEscape(lbChar);\n            });\n            assertEquals(\"The escape character cannot be a line break\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551670,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 584,
+    "prompt_tokens": 1862,
+    "total_tokens": 2446,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.51
+  }
+}

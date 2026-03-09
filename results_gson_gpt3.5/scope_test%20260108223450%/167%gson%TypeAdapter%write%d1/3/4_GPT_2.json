@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmVQZBHoUqNgtzbZadhZ3h0tc6SP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass TypeAdapterWriteTest {\n\n    private TypeAdapter<String> typeAdapter;\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n\n        // Create a concrete subclass of TypeAdapter<String> for testing\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                if (value == null) {\n                    out.nullValue();\n                } else {\n                    out.value(value);\n                }\n            }\n\n            @Override\n            public String read(JsonReader in) {\n                return null; // Not needed for this test\n            }\n        };\n    }\n\n    @Test\n    void write_shouldWriteNullValueWhenValueIsNull() throws IOException {\n        typeAdapter.write(jsonWriter, null);\n        jsonWriter.flush();\n        assertEquals(\"null\", stringWriter.toString());\n    }\n\n    @Test\n    void write_shouldWriteStringValueWhenValueIsNotNull() throws IOException {\n        String testValue = \"test string\";\n        typeAdapter.write(jsonWriter, testValue);\n        jsonWriter.flush();\n        assertEquals(\"\\\"test string\\\"\", stringWriter.toString());\n    }\n\n    @Test\n    void write_shouldThrowIOException_whenJsonWriterThrows() throws IOException {\n        JsonWriter mockWriter = mock(JsonWriter.class);\n        doThrow(new IOException(\"mock IO exception\")).when(mockWriter).value(anyString());\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            typeAdapter.write(mockWriter, \"value\");\n        });\n        assertEquals(\"mock IO exception\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887188,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 412,
+    "prompt_tokens": 2710,
+    "total_tokens": 3122,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.83
+  }
+}

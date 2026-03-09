@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapTest {\n\n  @Test\n  void testNoArgConstructorCreatesEmptyMap() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n    Constructor<LinkedTreeMap> constructor = LinkedTreeMap.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    LinkedTreeMap<String, String> map = constructor.newInstance();\n\n    assertNotNull(map);\n    assertEquals(0, map.size());\n    assertFalse(map.containsKey(\"anyKey\"));\n    assertNull(map.get(\"anyKey\"));\n  }\n\n  @Test\n  void testConstructorWithComparatorAndAllowNullValues() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n    Constructor<LinkedTreeMap> constructor = LinkedTreeMap.class.getDeclaredConstructor(java.util.Comparator.class, boolean.class);\n    constructor.setAccessible(true);\n\n    // Use natural order comparator explicitly and allowNullValues = false\n    LinkedTreeMap<String, String> map = constructor.newInstance(java.util.Comparator.naturalOrder(), false);\n    assertNotNull(map);\n    assertEquals(0, map.size());\n\n    // Put and get a value to verify basic functionality\n    map.put(\"key\", \"value\");\n    assertEquals(\"value\", map.get(\"key\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 709,
+  "completion_tokens": 301,
+  "total_tokens": 1010,
+  "llm_elapsed_time_seconds": 6.33
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmiEEUAC9etbnHTuWEbeZjUvROfI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.Date;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n\n    @BeforeEach\n    public void setUp() {\n        dateTypeAdapter = new DateTypeAdapter();\n    }\n\n    @Test\n    public void testRead_NullToken_ReturnsNull() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        Date result = dateTypeAdapter.read(jsonReader);\n\n        verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    public void testRead_ValidDate_ReturnsDate() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n\n        // Create a spy of dateTypeAdapter\n        DateTypeAdapter spyAdapter = Mockito.spy(dateTypeAdapter);\n\n        Date expectedDate = new Date();\n\n        // Use reflection to get the private method\n        Method deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n\n        // Stub the private method call using doAnswer and reflection\n        doAnswer(invocation -> expectedDate)\n                .when(spyAdapter, \"deserializeToDate\", jsonReader);\n\n        Date actualDate = spyAdapter.read(jsonReader);\n\n        assertEquals(expectedDate, actualDate);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887982,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 361,
+    "prompt_tokens": 885,
+    "total_tokens": 1246,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.2
+  }
+}

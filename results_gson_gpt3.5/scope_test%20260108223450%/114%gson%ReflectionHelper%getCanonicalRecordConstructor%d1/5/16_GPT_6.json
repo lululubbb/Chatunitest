@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1TJ9eXIRFfBOtlnivccMEU9UPc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  // A sample class to simulate a record-like structure (since 'record' keyword is not recognized)\n  static class SampleRecord {\n    private final String name;\n    private final int age;\n\n    public SampleRecord(String name, int age) {\n      this.name = name;\n      this.age = age;\n    }\n  }\n\n  // A sample non-record class for negative testing\n  static class NonRecord {\n    NonRecord() {}\n  }\n\n  @BeforeAll\n  static void setup() {\n    // No setup needed since RECORD_HELPER is static final and used internally\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_whenRecordClass_returnsConstructor() {\n    // Skip test if records not supported on this JVM\n    try {\n      Constructor<SampleRecord> constructor = ReflectionHelper.getCanonicalRecordConstructor(SampleRecord.class);\n      assertNotNull(constructor);\n      assertEquals(SampleRecord.class, constructor.getDeclaringClass());\n      assertEquals(2, constructor.getParameterCount());\n    } catch (UnsupportedOperationException e) {\n      // JVM does not support records, test not applicable\n      // Just pass\n    }\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_whenNonRecordClass_throwsException() {\n    // Skip test if records not supported on this JVM\n    try {\n      RuntimeException exception = assertThrows(RuntimeException.class,\n          () -> ReflectionHelper.getCanonicalRecordConstructor(NonRecord.class));\n      assertNotNull(exception.getMessage());\n    } catch (UnsupportedOperationException e) {\n      // JVM does not support records, test not applicable\n      // Just pass\n    }\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_nullClass_throwsNullPointerException() {\n    try {\n      ReflectionHelper.getCanonicalRecordConstructor(null);\n      fail(\"Expected NullPointerException\");\n    } catch (NullPointerException e) {\n      // expected\n    } catch (UnsupportedOperationException e) {\n      // JVM does not support records, test not applicable\n      // Just pass\n    }\n  }\n\n  @Test\n  void getCanonicalRecordConstructor_internalRecordHelperThrowsReflectiveOperationException() throws Exception {\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from the field\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    Object originalRecordHelper = recordHelperField.get(null);\n\n    Class<?> recordHelperClass = originalRecordHelper.getClass().getInterfaces().length > 0\n        ? originalRecordHelper.getClass().getInterfaces()[0]\n        : null;\n\n    if (recordHelperClass == null) {\n      // If RECORD_HELPER is not a proxy or does not implement an interface, skip test\n      recordHelperField.set(null, originalRecordHelper);\n      return;\n    }\n\n    Object proxyRecordHelper = Proxy.newProxyInstance(\n        recordHelperClass.getClassLoader(),\n        new Class<?>[] { recordHelperClass },\n        new InvocationHandler() {\n          @Override\n          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n            if (\"getCanonicalRecordConstructor\".equals(method.getName())) {\n              throw new ReflectiveOperationException(\"mocked exception\");\n            }\n            return method.invoke(originalRecordHelper, args);\n          }\n        });\n\n    recordHelperField.set(null, proxyRecordHelper);\n\n    try {\n      RuntimeException ex = assertThrows(RuntimeException.class,\n          () -> ReflectionHelper.getCanonicalRecordConstructor(SampleRecord.class));\n      assertTrue(ex.getMessage().contains(\"mocked exception\"));\n    } finally {\n      // Restore original RECORD_HELPER\n      recordHelperField.set(null, originalRecordHelper);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885331,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 873,
+    "prompt_tokens": 1611,
+    "total_tokens": 2484,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.56
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwrJWT6VzTnKV7J1xpKCzS60UQYJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testGetHeaderReturnsCloneWhenHeaderNotNull() throws Exception {\n        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(\"a\", \"b\", \"c\");\n\n        // Use reflection to get the private header field\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        String[] originalHeader = (String[]) headerField.get(csvFormat);\n\n        String[] returnedHeader = csvFormat.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(originalHeader, returnedHeader, \"Returned header should equal original header\");\n        assertNotSame(originalHeader, returnedHeader, \"Returned header should be a clone, not the same instance\");\n\n        // Modify returnedHeader and check originalHeader not affected\n        returnedHeader[0] = \"modified\";\n        assertNotEquals(originalHeader[0], returnedHeader[0], \"Original header should not be affected by changes to returned array\");\n    }\n\n    @Test\n    public void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        // Create CSVFormat instance with header field set to null\n        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader((String[]) null);\n\n        // Use reflection to set header field to null explicitly\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        headerField.set(csvFormat, null);\n\n        String[] returnedHeader = csvFormat.getHeader();\n\n        assertNull(returnedHeader, \"Returned header should be null when header field is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688657,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 368,
+    "prompt_tokens": 2229,
+    "total_tokens": 2597,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.82
+  }
+}

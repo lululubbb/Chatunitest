@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlhP3xp7n9rg4zVeWqs4EZJUciVU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_withJsonElementAndType_returnsExpectedObject() throws Exception {\n    // Arrange\n    String jsonString = \"{\\\"name\\\":\\\"test\\\"}\";\n    Type type = String.class;\n\n    // Create a JsonElement by parsing the string using Gson's internal method\n    // Using reflection to create JsonElement from jsonString\n    Method parseStringToJsonElement = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class);\n    parseStringToJsonElement.setAccessible(true);\n    JsonElement jsonElement = (JsonElement) parseStringToJsonElement.invoke(gson, jsonString);\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    Object result = fromJsonMethod.invoke(gson, jsonElement, type);\n\n    // Assert\n    assertNotNull(result);\n    assertTrue(result instanceof String);\n    assertEquals(jsonString, result);\n  }\n\n  @Test\n  void fromJson_withNullJsonElement_returnsNull() throws Exception {\n    // Arrange\n    JsonElement jsonElement = null;\n    Type type = String.class;\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    Object result = fromJsonMethod.invoke(gson, jsonElement, type);\n\n    // Assert\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_withInvalidJson_throwsJsonSyntaxException() throws Exception {\n    // Arrange\n    String invalidJson = \"invalid json\";\n    Type type = String.class;\n\n    Method parseStringToJsonElement = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class);\n    parseStringToJsonElement.setAccessible(true);\n    JsonElement jsonElement = (JsonElement) parseStringToJsonElement.invoke(gson, invalidJson);\n\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Act & Assert\n    try {\n      fromJsonMethod.invoke(gson, jsonElement, type);\n      // No exception thrown, fail the test\n      fail(\"Expected JsonSyntaxException\");\n    } catch (Exception e) {\n      Throwable cause = e.getCause();\n      assertTrue(cause instanceof JsonSyntaxException || cause == null);\n    }\n  }\n\n  @Test\n  void fromJson_withComplexTypeToken_returnsExpectedObject() throws Exception {\n    // Arrange\n    String jsonString = \"[\\\"one\\\", \\\"two\\\"]\";\n    TypeToken<java.util.List<String>> typeToken = new TypeToken<java.util.List<String>>() {};\n\n    Method parseStringToJsonElement = Gson.class.getDeclaredMethod(\"toJsonTree\", Object.class);\n    parseStringToJsonElement.setAccessible(true);\n    JsonElement jsonElement = (JsonElement) parseStringToJsonElement.invoke(gson, jsonString);\n\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Act\n    Object result = fromJsonMethod.invoke(gson, jsonElement, typeToken.getType());\n\n    // Assert\n    assertNotNull(result);\n    assertTrue(result instanceof java.util.List);\n    @SuppressWarnings(\"unchecked\")\n    java.util.List<String> list = (java.util.List<String>) result;\n    assertEquals(2, list.size());\n    assertEquals(\"one\", list.get(0));\n    assertEquals(\"two\", list.get(1));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884087,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 838,
+    "prompt_tokens": 1601,
+    "total_tokens": 2439,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.79
+  }
+}

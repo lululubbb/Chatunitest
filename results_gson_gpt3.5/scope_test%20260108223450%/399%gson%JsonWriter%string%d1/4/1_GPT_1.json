@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn9riwzLKvFeb9COXbYXZd46V8R9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriter_string_Test {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n  private Method stringMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n    // Access private method string(String)\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  void string_writesQuotedStringWithoutReplacements() throws IOException, InvocationTargetException, IllegalAccessException {\n    String input = \"simpleText123\";\n    // htmlSafe = false by default\n    setField(jsonWriter, \"htmlSafe\", false);\n\n    stringMethod.invoke(jsonWriter, input);\n\n    // Verify output: starts and ends with quote, writes the entire string once\n    verify(mockWriter).write('\\\"');\n    verify(mockWriter).write(input, 0, input.length());\n    verify(mockWriter, times(2)).write('\\\"');\n  }\n\n  @Test\n  void string_writesQuotedStringWithReplacementChars() throws IOException, InvocationTargetException, IllegalAccessException {\n    // Prepare a string with characters that need replacement (e.g. control chars)\n    // According to REPLACEMENT_CHARS, chars < 128 with non-null replacement cause replacement\n    // We'll test with char 0x00 (null char), which is replaced by \"\\\\u0000\" in REPLACEMENT_CHARS\n    String input = \"a\\u0000b\";\n    setField(jsonWriter, \"htmlSafe\", false);\n\n    stringMethod.invoke(jsonWriter, input);\n\n    // Should write: \"a\\u0000b\"\n    // So: write('\"'), write(\"a\",0,1), write(\"\\\\u0000\"), write(\"b\",2,1), write('\"')\n    verify(mockWriter).write('\\\"');\n    verify(mockWriter).write(input, 0, 1);\n    verify(mockWriter).write(\"\\\\u0000\");\n    verify(mockWriter).write(input, 2, 1);\n    verify(mockWriter).write('\\\"');\n  }\n\n  @Test\n  void string_writesQuotedStringWithHtmlSafeReplacementChars() throws IOException, InvocationTargetException, IllegalAccessException {\n    // Enable htmlSafe to use HTML_SAFE_REPLACEMENT_CHARS array\n    setField(jsonWriter, \"htmlSafe\", true);\n\n    // Use character that is replaced in HTML_SAFE_REPLACEMENT_CHARS but not in REPLACEMENT_CHARS\n    // For example, '<' character (char code 60) replaced by \"\\\\u003c\"\n    String input = \"x<y\";\n\n    stringMethod.invoke(jsonWriter, input);\n\n    verify(mockWriter).write('\\\"');\n    verify(mockWriter).write(input, 0, 1);\n    verify(mockWriter).write(\"\\\\u003c\");\n    verify(mockWriter).write(input, 2, 1);\n    verify(mockWriter).write('\\\"');\n  }\n\n  @Test\n  void string_writesQuotedStringWithUnicode2028And2029() throws IOException, InvocationTargetException, IllegalAccessException {\n    // Test with \\u2028 and \\u2029 characters which have special replacement strings\n    String input = \"a\\u2028b\\u2029c\";\n    setField(jsonWriter, \"htmlSafe\", false);\n\n    stringMethod.invoke(jsonWriter, input);\n\n    verify(mockWriter).write('\\\"');\n    verify(mockWriter).write(input, 0, 1); // \"a\"\n    verify(mockWriter).write(\"\\\\u2028\");\n    verify(mockWriter).write(input, 2, 1); // \"b\"\n    verify(mockWriter).write(\"\\\\u2029\");\n    verify(mockWriter).write(input, 4, 1); // \"c\"\n    verify(mockWriter).write('\\\"');\n  }\n\n  @Test\n  void string_writesEmptyString() throws IOException, InvocationTargetException, IllegalAccessException {\n    String input = \"\";\n    setField(jsonWriter, \"htmlSafe\", false);\n\n    stringMethod.invoke(jsonWriter, input);\n\n    verify(mockWriter).write('\\\"');\n    verify(mockWriter, never()).write(any(String.class), anyInt(), anyInt());\n    verify(mockWriter).write('\\\"');\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      var field = JsonWriter.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (ReflectiveOperationException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889695,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1022,
+    "prompt_tokens": 929,
+    "total_tokens": 1951,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.53
+  }
+}

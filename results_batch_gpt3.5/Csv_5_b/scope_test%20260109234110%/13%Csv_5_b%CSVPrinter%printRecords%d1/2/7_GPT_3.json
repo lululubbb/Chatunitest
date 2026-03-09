@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8ydw1x08OWrnZhbdWf6MW6ve6HV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withArrayContainingObjectArray_Iterable_andOther() throws IOException {\n        Object[] nestedArray = new Object[] {\"nested1\", \"nested2\"};\n        Iterable<String> iterable = Arrays.asList(\"iter1\", \"iter2\");\n        String other = \"other\";\n\n        Object[] values = new Object[] {nestedArray, iterable, other};\n\n        // Spy on printer to verify internal printRecord calls\n        CSVPrinter spyPrinter = spy(printer);\n        spyPrinter.printRecords(values);\n\n        // Verify printRecord(Object[]) called with nestedArray\n        verify(spyPrinter).printRecord((Object[]) nestedArray);\n\n        // Verify printRecord(Iterable<?>) called with iterable\n        verify(spyPrinter).printRecord((Iterable<?>) iterable);\n\n        // Verify printRecord(Object) called with other\n        verify(spyPrinter).printRecord((Object) other);\n    }\n\n    @Test\n    void testPrintRecords_withEmptyArray() throws IOException {\n        Object[] values = new Object[0];\n\n        // Should not throw and no printRecord calls\n        CSVPrinter spyPrinter = spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, never()).printRecord(any(Object[].class));\n        verify(spyPrinter, never()).printRecord(any(Iterable.class));\n        verify(spyPrinter, never()).printRecord(any());\n    }\n\n    @Test\n    void testPrintRecords_withNullValueInsideArray() throws IOException {\n        Object[] values = new Object[] {null};\n\n        CSVPrinter spyPrinter = spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter).printRecord((Object) null);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973567,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 459,
+    "prompt_tokens": 1018,
+    "total_tokens": 1477,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.45
+  }
+}

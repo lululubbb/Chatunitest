@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWWmnYelIO0mwyoO1kzfXCwZTdK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n  @Test\n  void testNewFactoryCreatesFactoryThatReturnsAdapterForNumber() throws Exception {\n    // Use reflection to access private static method newFactory\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n\n    // Use ToNumberPolicy.LAZILY_PARSED_NUMBER as argument (a known static final ToNumberStrategy)\n    Object factoryObj = newFactoryMethod.invoke(null, ToNumberPolicy.LAZILY_PARSED_NUMBER);\n    assertNotNull(factoryObj);\n    assertTrue(factoryObj instanceof TypeAdapterFactory);\n\n    TypeAdapterFactory factory = (TypeAdapterFactory) factoryObj;\n\n    // Mock Gson instance (not used in create method, so can be null or mock)\n    Gson gson = mock(Gson.class);\n\n    // Create TypeToken for Number.class\n    TypeToken<Number> numberTypeToken = TypeToken.get(Number.class);\n    TypeAdapter<Number> adapter = factory.create(gson, numberTypeToken);\n    assertNotNull(adapter, \"Factory should create adapter for Number.class\");\n\n    // Create TypeToken for a different class, e.g. String.class\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n    TypeAdapter<String> stringAdapter = factory.create(gson, stringTypeToken);\n    assertNull(stringAdapter, \"Factory should return null for non-Number types\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883412,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 372,
+    "prompt_tokens": 429,
+    "total_tokens": 801,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.64
+  }
+}

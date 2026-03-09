@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZRStPssGm8rrUWFoLQTb2Vt4bRe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormat_withNormalValues() {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    public void testFormat_withNullValue() {\n        CSVFormat formatWithNullString = csvFormat.withNullString(\"NULL\");\n        String result = formatWithNullString.format(\"a\", null, \"c\");\n        assertEquals(\"a,NULL,c\", result);\n    }\n\n    @Test\n    public void testFormat_withEmptyValues() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testFormat_withQuoteCharacter() {\n        CSVFormat formatWithQuote = csvFormat.withQuote('\"');\n        String result = formatWithQuote.format(\"a,b\", \"c\\\"d\", \"e\");\n        assertTrue(result.contains(\"\\\"a,b\\\"\"));\n        assertTrue(result.contains(\"\\\"c\\\"\\\"d\\\"\"));\n    }\n\n    @Test\n    public void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Mock StringWriter to throw IOException on write\n        StringWriter mockWriter = mock(StringWriter.class);\n        doThrow(new IOException(\"mock IO exception\")).when(mockWriter).write(any(char[].class), anyInt(), anyInt());\n\n        // Use reflection to instantiate CSVPrinter with mockWriter and csvFormat\n        Constructor<CSVPrinter> constructor = CSVPrinter.class.getDeclaredConstructor(Appendable.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        CSVPrinter printer = constructor.newInstance(mockWriter, csvFormat);\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                printer.printRecord(\"a\");\n            } catch (IOException e) {\n                throw new IllegalStateException(e);\n            }\n        });\n\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"mock IO exception\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551954,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 505,
+    "prompt_tokens": 1760,
+    "total_tokens": 2265,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.39
+  }
+}

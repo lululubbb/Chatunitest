@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuucrrFtYicEkIKCnP4WLZscIliJI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    private CSVFormat baseFormat;\n\n    @BeforeEach\n    public void setUp() {\n        baseFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testWithHeader_NullHeader() throws Exception {\n        CSVFormat formatWithNullHeader = baseFormat.withHeader((String[]) null);\n        assertNotNull(formatWithNullHeader);\n        assertNull(formatWithNullHeader.getHeader());\n        // Ensure original format header is unchanged\n        assertNull(baseFormat.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_EmptyHeader() throws Exception {\n        CSVFormat formatWithEmptyHeader = baseFormat.withHeader(new String[0]);\n        assertNotNull(formatWithEmptyHeader);\n        assertNotNull(formatWithEmptyHeader.getHeader());\n        assertEquals(0, formatWithEmptyHeader.getHeader().length);\n        // Original format header remains null\n        assertNull(baseFormat.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_NonEmptyHeader() throws Exception {\n        String[] header = new String[] {\"col1\", \"col2\", \"col3\"};\n        CSVFormat formatWithHeader = baseFormat.withHeader(header);\n        assertNotNull(formatWithHeader);\n        assertArrayEquals(header, formatWithHeader.getHeader());\n        // Original format header remains null\n        assertNull(baseFormat.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_Immutability() throws Exception {\n        String[] header = new String[] {\"a\", \"b\"};\n        CSVFormat format1 = baseFormat.withHeader(header);\n        CSVFormat format2 = format1.withHeader(\"x\", \"y\", \"z\");\n        assertArrayEquals(new String[] {\"a\", \"b\"}, format1.getHeader());\n        assertArrayEquals(new String[] {\"x\", \"y\", \"z\"}, format2.getHeader());\n        // baseFormat header still null\n        assertNull(baseFormat.getHeader());\n    }\n\n    @Test\n    public void testWithHeader_ReflectionInvocation() throws Exception {\n        Method withHeaderMethod = CSVFormat.class.getMethod(\"withHeader\", String[].class);\n        String[] header = new String[] {\"h1\",\"h2\"};\n        CSVFormat format = (CSVFormat) withHeaderMethod.invoke(baseFormat, (Object) header);\n        assertNotNull(format);\n        assertArrayEquals(header, format.getHeader());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680073,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 534,
+    "prompt_tokens": 1783,
+    "total_tokens": 2317,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.04
+  }
+}

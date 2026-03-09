@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmkIgciZ9ei0Koq5F3e78lFQOzQi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.MalformedJsonException;\nimport java.io.EOFException;\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Objects;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass StreamsTest {\n\n  private JsonReader mockReader;\n  private JsonWriter mockWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(JsonReader.class);\n    mockWriter = mock(JsonWriter.class);\n  }\n\n  @Test\n  void testPrivateConstructor_throwsUnsupportedOperationException() throws Exception {\n    var constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, () -> {\n      constructor.newInstance();\n    });\n    assertNotNull(thrown);\n  }\n\n  @Test\n  void parse_returnsJsonNull_whenEOFException() throws IOException {\n    when(mockReader.peek()).thenThrow(new EOFException());\n    JsonElement result = Streams.parse(mockReader);\n    assertSame(JsonNull.INSTANCE, result);\n  }\n\n  @Test\n  void parse_throwsJsonParseException_whenMalformedJsonException() throws IOException {\n    when(mockReader.peek()).thenThrow(new MalformedJsonException(\"malformed\"));\n    JsonParseException ex = assertThrows(JsonParseException.class, () -> Streams.parse(mockReader));\n    assertTrue(ex.getMessage().contains(\"malformed\"));\n  }\n\n  @Test\n  void parse_throwsJsonSyntaxException_whenIOException() throws IOException {\n    when(mockReader.peek()).thenThrow(new IOException(\"io error\"));\n    JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n    assertTrue(ex.getMessage().contains(\"io error\"));\n  }\n\n  @Test\n  void parse_throwsJsonIOException_whenRuntimeException() throws IOException {\n    when(mockReader.peek()).thenThrow(new RuntimeException(\"runtime\"));\n    JsonIOException ex = assertThrows(JsonIOException.class, () -> Streams.parse(mockReader));\n    assertTrue(ex.getMessage().contains(\"runtime\"));\n  }\n\n  @Test\n  void write_callsTypeAdaptersWrite() throws IOException {\n    JsonElement element = mock(JsonElement.class);\n    doNothing().when(mockWriter).flush();\n    // We spy TypeAdapters.JSON_ELEMENT to verify write is called\n    JsonElement spyElement = spy(element);\n    Streams.write(spyElement, mockWriter);\n    // Since write is static in TypeAdapters.JSON_ELEMENT, we cannot verify it directly here.\n    // But we verify that mockWriter flush is called (assuming write calls flush).\n    verify(mockWriter).flush();\n  }\n\n  @Test\n  void writerForAppendable_returnsWriter_forAppendable() throws IOException {\n    Appendable appendable = new StringBuilder();\n    Writer writer = Streams.writerForAppendable(appendable);\n    assertNotNull(writer);\n    assertEquals(appendable, writer);\n  }\n\n  @Test\n  void writerForAppendable_returnsWriter_forWriter() throws IOException {\n    Writer writer = mock(Writer.class);\n    Writer result = Streams.writerForAppendable(writer);\n    assertSame(writer, result);\n  }\n\n  @Test\n  void writerForAppendable_throwsNullPointerException_forNull() {\n    assertThrows(NullPointerException.class, () -> Streams.writerForAppendable(null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888110,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 778,
+    "prompt_tokens": 302,
+    "total_tokens": 1080,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.88
+  }
+}

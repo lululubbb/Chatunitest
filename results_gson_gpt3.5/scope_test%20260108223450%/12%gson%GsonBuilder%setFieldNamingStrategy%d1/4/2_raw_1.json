@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void setFieldNamingStrategy_shouldSetFieldNamingStrategy_whenNotNull() throws Exception {\n    FieldNamingStrategy mockStrategy = mock(FieldNamingStrategy.class);\n\n    GsonBuilder returned = gsonBuilder.setFieldNamingStrategy(mockStrategy);\n\n    assertSame(gsonBuilder, returned);\n\n    // Access private field fieldNamingPolicy using reflection to verify it was set correctly\n    Field field = GsonBuilder.class.getDeclaredField(\"fieldNamingPolicy\");\n    field.setAccessible(true);\n    Object fieldValue = field.get(gsonBuilder);\n    assertSame(mockStrategy, fieldValue);\n  }\n\n  @Test\n  void setFieldNamingStrategy_shouldThrowNullPointerException_whenNull() {\n    assertThrows(NullPointerException.class, () -> gsonBuilder.setFieldNamingStrategy(null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1072,
+  "completion_tokens": 237,
+  "total_tokens": 1309,
+  "llm_elapsed_time_seconds": 5.58
+}

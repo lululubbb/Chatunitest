@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZ49e06iHVXQo3XJwvodaibVxHrA",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects() throws IOException {\n        Iterable<Object> values = Arrays.asList(\"a\", \"b\", \"c\");\n\n        // Spy printer to verify printRecord(Object) call\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(3)).printRecord((Object) any());\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfIterable() throws IOException {\n        Iterable<Object> innerIterable1 = Arrays.asList(\"x\", \"y\");\n        Iterable<Object> innerIterable2 = Collections.singletonList(\"z\");\n        Iterable<Object> values = Arrays.asList(innerIterable1, innerIterable2);\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, times(2)).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjectArrays() throws IOException {\n        Object[] array1 = new Object[] {1, 2};\n        Object[] array2 = new Object[] {3, 4};\n        Iterable<Object> values = Arrays.asList(array1, array2);\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(2)).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_mixedTypes() throws IOException {\n        Object[] array = new Object[] {\"array\"};\n        Iterable<Object> iterable = Arrays.asList(\"iter1\", \"iter2\");\n        Object single = \"single\";\n\n        Iterable<Object> values = Arrays.asList(array, iterable, single);\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, times(1)).printRecord((Object[]) eq(array));\n        verify(spyPrinter, times(1)).printRecord((Iterable<?>) eq(iterable));\n        verify(spyPrinter, times(1)).printRecord((Object) eq(single));\n    }\n\n    @Test\n    void testPrintRecords_emptyIterable() throws IOException {\n        Iterable<Object> values = Collections.emptyList();\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter, never()).printRecord((Object) any());\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n    }\n\n    @Test\n    void testPrintRecords_privateMethodInvocation() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // Use reflection to invoke private printRecords(Object...) method with mixed inputs\n        Method privatePrintRecords = CSVPrinter.class.getDeclaredMethod(\"printRecords\", Object[].class);\n        privatePrintRecords.setAccessible(true);\n\n        Object[] params = new Object[] { \"one\", new Object[] { \"two\", \"three\" }, Arrays.asList(\"four\", \"five\") };\n\n        // Spy to verify calls to printRecord methods\n        CSVPrinter spyPrinter = spy(printer);\n\n        // Invoke private method\n        privatePrintRecords.invoke(spyPrinter, (Object) params);\n\n        verify(spyPrinter, times(1)).printRecord((Object) \"one\");\n        verify(spyPrinter, times(1)).printRecord((Object[]) eq(new Object[] { \"two\", \"three\" }));\n        verify(spyPrinter, times(1)).printRecord((Iterable<?>) eq(Arrays.asList(\"four\", \"five\")));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550509,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 947,
+    "prompt_tokens": 1948,
+    "total_tokens": 2895,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.46
+  }
+}

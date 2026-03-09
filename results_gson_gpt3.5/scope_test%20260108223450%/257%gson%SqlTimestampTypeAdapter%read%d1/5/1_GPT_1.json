@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlVRWo4ZyXWLEqHLhle9sGhb4Mb9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.sql;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.sql.Timestamp;\nimport java.util.Date;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass SqlTimestampTypeAdapterTest {\n\n  private SqlTimestampTypeAdapter adapter;\n  private com.google.gson.TypeAdapter<Date> mockDateTypeAdapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Mock the Date TypeAdapter\n    mockDateTypeAdapter = mock(com.google.gson.TypeAdapter.class);\n\n    // Use reflection to get the private constructor\n    Constructor<SqlTimestampTypeAdapter> constructor =\n        SqlTimestampTypeAdapter.class.getDeclaredConstructor(com.google.gson.TypeAdapter.class);\n    constructor.setAccessible(true);\n\n    adapter = constructor.newInstance(mockDateTypeAdapter);\n  }\n\n  @Test\n  void read_shouldReturnNull_whenDateTypeAdapterReturnsNull() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n\n    when(mockDateTypeAdapter.read(in)).thenReturn(null);\n\n    Timestamp result = adapter.read(in);\n\n    assertNull(result);\n    verify(mockDateTypeAdapter).read(in);\n  }\n\n  @Test\n  void read_shouldReturnTimestamp_whenDateTypeAdapterReturnsDate() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    Date date = new Date(123456789L);\n\n    when(mockDateTypeAdapter.read(in)).thenReturn(date);\n\n    Timestamp result = adapter.read(in);\n\n    assertNotNull(result);\n    assertEquals(date.getTime(), result.getTime());\n    verify(mockDateTypeAdapter).read(in);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883345,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 365,
+    "prompt_tokens": 427,
+    "total_tokens": 792,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.96
+  }
+}

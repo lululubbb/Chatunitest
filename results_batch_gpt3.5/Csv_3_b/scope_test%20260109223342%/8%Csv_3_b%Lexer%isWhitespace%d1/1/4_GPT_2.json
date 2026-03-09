@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw81e9Fc5n6psHs6r57aFwj4NigDq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerIsWhitespaceTest {\n\n    private Lexer lexer;\n    private CSVFormat formatMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        formatMock = mock(CSVFormat.class);\n        ExtendedBufferedReader inMock = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass of Lexer because Lexer is abstract\n        lexer = new Lexer(formatMock, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsWhitespace_charIsDelimiter() throws Exception {\n        // delimiter char\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        // use reflection to access package-private method\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Pass delimiter char as int\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, (int) delimiter);\n        assertFalse(result, \"Delimiter char should not be considered whitespace\");\n    }\n\n    @Test\n    void testIsWhitespace_charIsWhitespaceButNotDelimiter() throws Exception {\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Test space character (whitespace but not delimiter)\n        int space = ' ';\n        boolean resultSpace = (boolean) isWhitespaceMethod.invoke(lexer, space);\n        assertTrue(resultSpace, \"Space should be considered whitespace when not delimiter\");\n\n        // Test tab character (whitespace but not delimiter)\n        int tab = '\\t';\n        boolean resultTab = (boolean) isWhitespaceMethod.invoke(lexer, tab);\n        assertTrue(resultTab, \"Tab should be considered whitespace when not delimiter\");\n\n        // Test newline character (whitespace but not delimiter)\n        int newline = '\\n';\n        boolean resultNewline = (boolean) isWhitespaceMethod.invoke(lexer, newline);\n        assertTrue(resultNewline, \"Newline should be considered whitespace when not delimiter\");\n    }\n\n    @Test\n    void testIsWhitespace_charIsNotWhitespaceAndNotDelimiter() throws Exception {\n        char delimiter = ',';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        int letterA = 'A';\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, letterA);\n        assertFalse(result, \"Non-whitespace non-delimiter char should return false\");\n    }\n\n    @Test\n    void testIsWhitespace_charIsDelimiterAndWhitespace() throws Exception {\n        // Unlikely scenario: delimiter is whitespace char, e.g. space\n        char delimiter = ' ';\n        when(formatMock.getDelimiter()).thenReturn(delimiter);\n\n        Method isWhitespaceMethod = Lexer.class.getDeclaredMethod(\"isWhitespace\", int.class);\n        isWhitespaceMethod.setAccessible(true);\n\n        // Pass space char which is also delimiter\n        int space = ' ';\n        boolean result = (boolean) isWhitespaceMethod.invoke(lexer, space);\n        assertFalse(result, \"Delimiter char should not be considered whitespace even if whitespace char\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969910,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 728,
+    "prompt_tokens": 1236,
+    "total_tokens": 1964,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.21
+  }
+}

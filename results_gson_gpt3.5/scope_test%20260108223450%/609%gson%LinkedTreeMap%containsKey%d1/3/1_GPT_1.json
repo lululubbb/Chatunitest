@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmschy9JlEJMeEiS9hcgkmcTCf7N",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void containsKey_whenKeyPresent_returnsTrue() throws Exception {\n    // Put a key to ensure it is present\n    map.put(\"key1\", \"value1\");\n\n    // containsKey should return true for existing key\n    assertTrue(map.containsKey(\"key1\"));\n  }\n\n  @Test\n  void containsKey_whenKeyAbsent_returnsFalse() throws Exception {\n    // containsKey should return false for non-existing key\n    assertFalse(map.containsKey(\"absentKey\"));\n  }\n\n  @Test\n  void containsKey_withNullKey_whenNullAllowed_returnsTrue() throws Exception {\n    // Create map allowing null values (and keys)\n    LinkedTreeMap<String, String> nullAllowedMap = new LinkedTreeMap<>(null, true);\n    nullAllowedMap.put(null, \"nullValue\");\n\n    assertTrue(nullAllowedMap.containsKey(null));\n  }\n\n  @Test\n  void containsKey_withNullKey_whenNullNotAllowed_returnsFalse() throws Exception {\n    // Default map does not allow null keys, containsKey should return false\n    assertFalse(map.containsKey(null));\n  }\n\n  @Test\n  void containsKey_invokesFindByObject_correctly() throws Exception {\n    // Use reflection to get private findByObject method\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n\n    // Put a key-value pair\n    map.put(\"key2\", \"value2\");\n\n    // Invoke findByObject directly and check it returns non-null for existing key\n    Object node = findByObject.invoke(map, \"key2\");\n    assertNotNull(node);\n\n    // Invoke findByObject directly and check it returns null for absent key\n    Object absentNode = findByObject.invoke(map, \"absentKey\");\n    assertNull(absentNode);\n\n    // containsKey should be consistent with findByObject\n    assertEquals(node != null, map.containsKey(\"key2\"));\n    assertEquals(absentNode != null, map.containsKey(\"absentKey\"));\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888626,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 511,
+    "prompt_tokens": 703,
+    "total_tokens": 1214,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.9
+  }
+}

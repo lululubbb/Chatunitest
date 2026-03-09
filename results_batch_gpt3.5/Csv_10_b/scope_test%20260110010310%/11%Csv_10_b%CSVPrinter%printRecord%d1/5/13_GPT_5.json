@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAFQRrHfwSwXvdYwPC5jZ9RpK1je",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues_callsPrintAndPrintln() throws IOException {\n        // Arrange\n        Object[] values = {\"value1\", 123, null, \"value4\"};\n\n        // Spy the printer to verify calls to print(Object) and println()\n        CSVPrinter spyPrinter = spy(printer);\n\n        // Act\n        spyPrinter.printRecord(values);\n\n        // Assert\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNoValues_callsOnlyPrintln() throws IOException {\n        // Spy the printer to verify calls to print(Object) and println()\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord();\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrivatePrintAndEscape_invokedViaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        // Prepare a string with special characters to test escaping\n        String value = \"a,b\\\"c\";\n\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        // Act\n        method.invoke(printer, value, 0, value.length());\n\n        // Verify that Appendable.append was called at least once (escaping writes to out)\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrivatePrintAndQuote_invokedViaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        String value = \"quoted\";\n\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        method.invoke(printer, value, value, 0, value.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrivatePrint_invokedViaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        // print(Object, CharSequence, int, int) is private, test via reflection\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        String value = \"test\";\n        printMethod.invoke(printer, value, value, 0, value.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978452,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 694,
+    "prompt_tokens": 1195,
+    "total_tokens": 1889,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.13
+  }
+}

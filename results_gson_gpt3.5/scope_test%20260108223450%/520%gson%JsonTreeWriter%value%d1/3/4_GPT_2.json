@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmEvdgLg6IZvgejkin2o9znNlW2v",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nclass JsonTreeWriter_value_Test {\n\n    private JsonTreeWriter writer;\n\n    @BeforeEach\n    public void setUp() {\n        writer = new JsonTreeWriter();\n    }\n\n    @Test\n    public void value_NullValue_CallsNullValue() throws IOException {\n        JsonTreeWriter spyWriter = spy(writer);\n        doReturn(true).when(spyWriter).isLenient();\n        doReturn(spyWriter).when(spyWriter).nullValue();\n\n        JsonWriter result = spyWriter.value((Number) null);\n\n        verify(spyWriter).nullValue();\n        assertSame(spyWriter, result);\n    }\n\n    @Test\n    public void value_NonLenientWithNaN_ThrowsIllegalArgumentException() {\n        Number nan = Double.NaN;\n        JsonTreeWriter spyWriter = spy(writer);\n        doReturn(false).when(spyWriter).isLenient();\n\n        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n            spyWriter.value(nan);\n        });\n        assertTrue(exception.getMessage().contains(\"NaN\"));\n    }\n\n    @Test\n    public void value_NonLenientWithInfinite_ThrowsIllegalArgumentException() {\n        Number infinite = Double.POSITIVE_INFINITY;\n        JsonTreeWriter spyWriter = spy(writer);\n        doReturn(false).when(spyWriter).isLenient();\n\n        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {\n            spyWriter.value(infinite);\n        });\n        assertTrue(exception.getMessage().contains(\"infinities\"));\n    }\n\n    @Test\n    public void value_ValidNumber_PutsJsonPrimitiveAndReturnsThis() throws Exception {\n        Number number = 42;\n        JsonTreeWriter spyWriter = spy(writer);\n        doReturn(true).when(spyWriter).isLenient();\n\n        JsonWriter result = spyWriter.value(number);\n\n        assertSame(spyWriter, result);\n\n        Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<?> stack = (List<?>) stackField.get(spyWriter);\n\n        assertFalse(stack.isEmpty());\n        assertTrue(stack.get(stack.size() - 1) instanceof JsonPrimitive);\n        JsonPrimitive primitive = (JsonPrimitive) stack.get(stack.size() - 1);\n        assertEquals(number.intValue(), primitive.getAsInt());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886165,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 570,
+    "prompt_tokens": 1216,
+    "total_tokens": 1786,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.65
+  }
+}

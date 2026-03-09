@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmPIm00kTosqNAydWpkiP1gvXJpi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.Test;\n\nclass TreeTypeAdapterTest {\n\n  @Test\n  void newFactoryWithMatchRawType_exactTypeEqualsRawType_shouldMatchRawTypeTrue() throws Exception {\n    // Arrange\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<String> exactType = mock(TypeToken.class);\n    Object typeAdapter = new Object();\n\n    when(exactType.getType()).thenReturn((Type) String.class);\n    // Use wildcard capture to match the generic signature of getRawType()\n    when(exactType.getRawType()).thenReturn((Class<?>) (Class<?>) String.class);\n\n    // Act\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactoryWithMatchRawType(exactType, typeAdapter);\n\n    // Assert\n    assertNotNull(factory);\n    // Using reflection to verify SingleTypeFactory.matchRawType field is true\n    Class<?> singleTypeFactoryClass = Class.forName(\"com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory\");\n    assertTrue(singleTypeFactoryClass.isInstance(factory));\n\n    java.lang.reflect.Field matchRawTypeField = singleTypeFactoryClass.getDeclaredField(\"matchRawType\");\n    matchRawTypeField.setAccessible(true);\n    boolean matchRawTypeValue = (boolean) matchRawTypeField.get(factory);\n    assertTrue(matchRawTypeValue);\n\n    java.lang.reflect.Field typeAdapterField = singleTypeFactoryClass.getDeclaredField(\"typeAdapter\");\n    typeAdapterField.setAccessible(true);\n    assertSame(typeAdapter, typeAdapterField.get(factory));\n\n    java.lang.reflect.Field exactTypeField = singleTypeFactoryClass.getDeclaredField(\"exactType\");\n    exactTypeField.setAccessible(true);\n    assertSame(exactType, exactTypeField.get(factory));\n  }\n\n  @Test\n  void newFactoryWithMatchRawType_exactTypeNotEqualsRawType_shouldMatchRawTypeFalse() throws Exception {\n    // Arrange\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<String> exactType = mock(TypeToken.class);\n    Object typeAdapter = new Object();\n\n    when(exactType.getType()).thenReturn((Type) String.class);\n    // Use wildcard capture to match the generic signature of getRawType()\n    when(exactType.getRawType()).thenReturn((Class<?>) (Class<?>) Object.class);\n\n    // Act\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactoryWithMatchRawType(exactType, typeAdapter);\n\n    // Assert\n    assertNotNull(factory);\n    // Using reflection to verify SingleTypeFactory.matchRawType field is false\n    Class<?> singleTypeFactoryClass = Class.forName(\"com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory\");\n    assertTrue(singleTypeFactoryClass.isInstance(factory));\n\n    java.lang.reflect.Field matchRawTypeField = singleTypeFactoryClass.getDeclaredField(\"matchRawType\");\n    matchRawTypeField.setAccessible(true);\n    boolean matchRawTypeValue = (boolean) matchRawTypeField.get(factory);\n    assertFalse(matchRawTypeValue);\n\n    java.lang.reflect.Field typeAdapterField = singleTypeFactoryClass.getDeclaredField(\"typeAdapter\");\n    typeAdapterField.setAccessible(true);\n    assertSame(typeAdapter, typeAdapterField.get(factory));\n\n    java.lang.reflect.Field exactTypeField = singleTypeFactoryClass.getDeclaredField(\"exactType\");\n    exactTypeField.setAccessible(true);\n    assertSame(exactType, exactTypeField.get(factory));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886808,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 735,
+    "prompt_tokens": 1670,
+    "total_tokens": 2405,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.66
+  }
+}

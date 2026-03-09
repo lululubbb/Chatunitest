@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvllGGSR6FrtaKeJtrT1Zzq9xLMMi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n    private Method expectMethod;\n    private Method peekMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        // Create a JsonElement to pass to constructor, using JsonNull since it's simplest\n        JsonElement element = JsonNull.INSTANCE;\n        jsonTreeReader = new JsonTreeReader(element);\n\n        expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n        expectMethod.setAccessible(true);\n\n        peekMethod = JsonTreeReader.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n    }\n\n    @Test\n    public void expect_whenPeekMatchesExpected_doesNotThrow() throws Throwable {\n        // We need to set the stack so that peek() returns expected JsonToken\n        // peek() is overridden and depends on stack, so we simulate it by pushing a JsonToken\n        // But stack holds JsonElement or similar, so we push a JsonArray to cause peek() to return BEGIN_ARRAY etc.\n\n        // push a JsonArray to stack to simulate peek() returning BEGIN_ARRAY\n        JsonArray jsonArray = new JsonArray();\n        pushStack(jsonArray);\n\n        // invoke expect with expected = BEGIN_ARRAY, should not throw\n        try {\n            expectMethod.invoke(jsonTreeReader, JsonToken.BEGIN_ARRAY);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    public void expect_whenPeekDoesNotMatchExpected_throwsIllegalStateException() throws Throwable {\n        // push JsonArray so peek() returns BEGIN_ARRAY\n        JsonArray jsonArray = new JsonArray();\n        pushStack(jsonArray);\n\n        // invoke expect with expected = BEGIN_OBJECT, should throw IllegalStateException\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                expectMethod.invoke(jsonTreeReader, JsonToken.BEGIN_OBJECT);\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n\n        assertTrue(thrown.getMessage().contains(\"Expected BEGIN_OBJECT but was BEGIN_ARRAY\"));\n    }\n\n    @Test\n    public void expect_whenStackEmpty_throwsIllegalStateException() throws Throwable {\n        // stack is empty by default, peek() will throw or return something else\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                expectMethod.invoke(jsonTreeReader, JsonToken.BEGIN_OBJECT);\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n\n        assertTrue(thrown.getMessage().contains(\"Expected BEGIN_OBJECT but was\"));\n    }\n\n    // Helper method to push an element onto the private stack field\n    private void pushStack(JsonElement element) {\n        try {\n            var stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n            stackField.setAccessible(true);\n            var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n            stackSizeField.setAccessible(true);\n\n            Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n            int stackSize = stackSizeField.getInt(jsonTreeReader);\n\n            stack[stackSize] = element;\n            stackSizeField.setInt(jsonTreeReader, stackSize + 1);\n\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884326,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 792,
+    "prompt_tokens": 582,
+    "total_tokens": 1374,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.37
+  }
+}

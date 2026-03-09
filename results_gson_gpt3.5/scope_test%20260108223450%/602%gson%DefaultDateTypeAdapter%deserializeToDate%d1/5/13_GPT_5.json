@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlkBCfKt0KaAAmLFmWisIAwsezm2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.DefaultDateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.ParsePosition;\nimport java.text.SimpleDateFormat;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\nimport java.util.Locale;\n\nclass DefaultDateTypeAdapterDeserializeToDateTest {\n\n    private DefaultDateTypeAdapter<?> adapter;\n    private JsonReader jsonReaderMock;\n\n    // A minimal implementation of DateType to satisfy constructor\n    private static class DummyDateType implements DefaultDateTypeAdapter.DateType<Date> {\n        @Override\n        public Date cast(Object value) {\n            return (Date) value;\n        }\n\n        @Override\n        public Class<Date> getDateClass() {\n            return Date.class;\n        }\n    }\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a dummy DateType to satisfy constructor parameter\n        DefaultDateTypeAdapter.DateType<Date> dateTypeDummy = new DummyDateType();\n\n        // Use reflection to access private constructor:\n        var constructors = DefaultDateTypeAdapter.class.getDeclaredConstructors();\n        var ctor = constructors[0];\n        ctor.setAccessible(true);\n\n        // Create instance with dummy dateType and datePattern\n        adapter = (DefaultDateTypeAdapter<?>) ctor.newInstance(dateTypeDummy, \"yyyy-MM-dd\");\n\n        // Inject a dateFormat into dateFormats list to test parsing\n        Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n        dateFormats.clear();\n        dateFormats.add(new SimpleDateFormat(\"yyyy-MM-dd\", Locale.US));\n\n        // Mock JsonReader\n        jsonReaderMock = mock(JsonReader.class);\n    }\n\n    @Test\n    public void testDeserializeToDate_successfulParseWithDateFormats() throws Exception {\n        String dateStr = \"2023-06-15\";\n        when(jsonReaderMock.nextString()).thenReturn(dateStr);\n\n        Method method = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        method.setAccessible(true);\n\n        Date result = (Date) method.invoke(adapter, jsonReaderMock);\n\n        assertNotNull(result);\n        SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.US);\n        assertEquals(sdf.parse(dateStr), result);\n    }\n\n    @Test\n    public void testDeserializeToDate_successfulParseWithISO8601Utils() throws Exception {\n        // Clear dateFormats so that parsing with dateFormats fails\n        Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n        dateFormats.clear();\n\n        // Provide an ISO8601 string\n        String iso8601Str = \"2023-06-15T12:34:56Z\";\n        when(jsonReaderMock.nextString()).thenReturn(iso8601Str);\n\n        Method method = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        method.setAccessible(true);\n\n        Date result = (Date) method.invoke(adapter, jsonReaderMock);\n\n        assertNotNull(result);\n\n        // We expect the date to be parsed to the given ISO8601 date-time\n        // We can verify by formatting back or checking year/month/day\n        SimpleDateFormat isoFormat = new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\", Locale.US);\n        Date expectedDate = isoFormat.parse(iso8601Str);\n        assertEquals(expectedDate, result);\n    }\n\n    @Test\n    public void testDeserializeToDate_parseExceptionThrowsJsonSyntaxException() throws Exception {\n        // Clear dateFormats so that parsing with dateFormats fails\n        Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n        dateFormats.clear();\n\n        String invalidDateStr = \"invalid-date-string\";\n        when(jsonReaderMock.nextString()).thenReturn(invalidDateStr);\n        when(jsonReaderMock.getPreviousPath()).thenReturn(\"$.date\");\n\n        Method method = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        method.setAccessible(true);\n\n        JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> {\n            try {\n                method.invoke(adapter, jsonReaderMock);\n            } catch (java.lang.reflect.InvocationTargetException e) {\n                // unwrap and throw the cause to be caught by assertThrows\n                throw e.getCause();\n            }\n        });\n\n        assertTrue(thrown.getMessage().contains(\"Failed parsing\"));\n        assertTrue(thrown.getMessage().contains(invalidDateStr));\n        assertTrue(thrown.getMessage().contains(\"$.date\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884259,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1099,
+    "prompt_tokens": 1944,
+    "total_tokens": 3043,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.51
+  }
+}

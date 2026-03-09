@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwcyoaBaT5Myiaa00rfqzripQTzM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.OutputStream;\nimport java.io.PrintStream;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Proxy;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private PrintStream originalOut;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.newFormat(',');\n        // Save original System.out\n        originalOut = System.out;\n    }\n\n    @AfterEach\n    void tearDown() {\n        // Restore original System.out\n        System.setOut(originalOut);\n    }\n\n    @Test\n    void testPrinterNotNull() throws IOException {\n        CSVPrinter printer = csvFormat.printer();\n        assertNotNull(printer);\n    }\n\n    @Test\n    void testPrinterUsesSystemOut() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Create a spy on an OutputStream wrapping System.out to detect usage\n        OutputStream originalOutputStream = getOutputStreamFromPrintStream(originalOut);\n        OutputStream spyOut = spy(originalOutputStream);\n\n        // Create a PrintStream that uses the spyOut OutputStream\n        PrintStream spyPrintStream = new PrintStream(spyOut, true);\n        System.setOut(spyPrintStream);\n\n        CSVPrinter printer = csvFormat.printer();\n        assertNotNull(printer);\n\n        // Use reflection to get the private 'out' field of CSVPrinter\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        Object outObject = outField.get(printer);\n\n        // Write to printer and verify that spyOut's write method was called\n        printer.print(\"test\");\n\n        verify(spyOut, atLeastOnce()).write(any(byte[].class), anyInt(), anyInt());\n    }\n\n    private OutputStream getOutputStreamFromPrintStream(PrintStream printStream) {\n        try {\n            // Try to get the private 'out' field of PrintStream (the underlying OutputStream)\n            Field outField = PrintStream.class.getDeclaredField(\"out\");\n            outField.setAccessible(true);\n            Object outObj = outField.get(printStream);\n            if (outObj instanceof OutputStream) {\n                return (OutputStream) outObj;\n            }\n        } catch (Exception e) {\n            // ignore and fallback below\n        }\n        // Fallback: wrap original PrintStream in an OutputStream that delegates to it\n        return new OutputStream() {\n            @Override\n            public void write(int b) throws IOException {\n                printStream.write(b);\n            }\n\n            @Override\n            public void write(byte[] b, int off, int len) throws IOException {\n                printStream.write(b, off, len);\n            }\n        };\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687768,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 610,
+    "prompt_tokens": 2329,
+    "total_tokens": 2939,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.19
+  }
+}

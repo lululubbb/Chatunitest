@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0orb0GntLvlhrkJdTFCuDxjPr5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\nclass JsonWriterOpenTest {\n\n  private JsonWriter jsonWriter;\n  private Writer mockWriter;\n\n  @BeforeEach\n  public void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  public void testOpen_withEmptyArray() throws Throwable {\n    // empty = JsonScope.EMPTY_ARRAY = 1 (from Gson source)\n    // openBracket = '['\n    int emptyArray = 1;\n    char openBracket = '[';\n\n    // invoke private method open(int, char)\n    JsonWriter result = invokeOpen(jsonWriter, emptyArray, openBracket);\n\n    assertSame(jsonWriter, result);\n    verify(mockWriter).write(openBracket);\n  }\n\n  @Test\n  public void testOpen_withEmptyObject() throws Throwable {\n    // empty = JsonScope.EMPTY_OBJECT = 3 (from Gson source)\n    // openBracket = '{'\n    int emptyObject = 3;\n    char openBracket = '{';\n\n    JsonWriter result = invokeOpen(jsonWriter, emptyObject, openBracket);\n\n    assertSame(jsonWriter, result);\n    verify(mockWriter).write(openBracket);\n  }\n\n  @Test\n  public void testOpen_beforeValueThrowsIOException() throws Throwable {\n    JsonWriter spyWriter = spy(new JsonWriter(mockWriter));\n\n    // Stub the private method beforeValue() to throw IOException using doAnswer\n    Method beforeValueMethod = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValueMethod.setAccessible(true);\n\n    doAnswer(invocation -> {\n      throw new IOException(\"beforeValue error\");\n    }).when(spyWriter).beforeValue();\n\n    Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n    openMethod.setAccessible(true);\n\n    IOException thrown = assertThrows(IOException.class, () -> {\n      try {\n        openMethod.invoke(spyWriter, 1, '[');\n      } catch (InvocationTargetException e) {\n        // unwrap the cause\n        Throwable cause = e.getCause();\n        if (cause instanceof IOException) {\n          throw cause;\n        } else {\n          throw e;\n        }\n      }\n    });\n\n    assertEquals(\"beforeValue error\", thrown.getMessage());\n  }\n\n  private JsonWriter invokeOpen(JsonWriter writer, int empty, char openBracket) throws Throwable {\n    Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n    openMethod.setAccessible(true);\n    try {\n      return (JsonWriter) openMethod.invoke(writer, empty, openBracket);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889134,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 614,
+    "prompt_tokens": 1453,
+    "total_tokens": 2067,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.81
+  }
+}

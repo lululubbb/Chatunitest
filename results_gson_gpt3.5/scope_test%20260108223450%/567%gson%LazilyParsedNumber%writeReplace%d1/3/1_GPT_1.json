@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn5vzLMDupsLj2mn5gW2USb4AczB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectStreamException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LazilyParsedNumberTest {\n\n  private LazilyParsedNumber lazilyParsedNumber;\n\n  @BeforeEach\n  void setUp() {\n    lazilyParsedNumber = new LazilyParsedNumber(\"123.456\");\n  }\n\n  @Test\n  void testWriteReplaceReturnsBigDecimalWithCorrectValue()\n      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ObjectStreamException {\n    Method writeReplaceMethod = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    Object result = writeReplaceMethod.invoke(lazilyParsedNumber);\n\n    assertNotNull(result);\n    assertTrue(result instanceof BigDecimal);\n    assertEquals(new BigDecimal(\"123.456\"), result);\n  }\n\n  @Test\n  void testWriteReplaceWithNegativeValue()\n      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ObjectStreamException {\n    LazilyParsedNumber negativeNumber = new LazilyParsedNumber(\"-987.654\");\n    Method writeReplaceMethod = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    Object result = writeReplaceMethod.invoke(negativeNumber);\n\n    assertNotNull(result);\n    assertTrue(result instanceof BigDecimal);\n    assertEquals(new BigDecimal(\"-987.654\"), result);\n  }\n\n  @Test\n  void testWriteReplaceWithZeroValue()\n      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ObjectStreamException {\n    LazilyParsedNumber zeroNumber = new LazilyParsedNumber(\"0\");\n    Method writeReplaceMethod = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplaceMethod.setAccessible(true);\n\n    Object result = writeReplaceMethod.invoke(zeroNumber);\n\n    assertNotNull(result);\n    assertTrue(result instanceof BigDecimal);\n    assertEquals(BigDecimal.ZERO, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889451,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 447,
+    "prompt_tokens": 303,
+    "total_tokens": 750,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.82
+  }
+}

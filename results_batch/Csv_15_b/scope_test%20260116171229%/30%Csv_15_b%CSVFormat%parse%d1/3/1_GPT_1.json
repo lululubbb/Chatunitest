@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaPzz0zg4Gl0HzrpCRvQ1FrWTOXj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVFormatTest {\n\n    @Mock\n    private Reader mockReader;\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        MockitoAnnotations.openMocks(this);\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testParseReturnsCSVParser() throws IOException {\n        CSVParser parser = csvFormat.parse(mockReader);\n        assertNotNull(parser, \"CSVParser should not be null\");\n        assertEquals(mockReader, parser.getReader(), \"Reader passed should be the one used by CSVParser\");\n        assertEquals(csvFormat, parser.getFormat(), \"CSVFormat passed should be the one used by CSVParser\");\n    }\n\n    @Test\n    void testParseThrowsIOException() throws IOException {\n        // Mock Reader to throw IOException on read\n        doThrow(new IOException(\"Test IOException\")).when(mockReader).read(any(char[].class), anyInt(), anyInt());\n        assertThrows(IOException.class, () -> csvFormat.parse(mockReader));\n    }\n\n    @Test\n    void testParseWithDifferentFormats() throws IOException {\n        CSVFormat formatExcel = CSVFormat.EXCEL;\n        CSVParser parserExcel = formatExcel.parse(mockReader);\n        assertNotNull(parserExcel);\n        assertEquals(formatExcel, parserExcel.getFormat());\n\n        CSVFormat formatMysql = CSVFormat.MYSQL;\n        CSVParser parserMysql = formatMysql.parse(mockReader);\n        assertNotNull(parserMysql);\n        assertEquals(formatMysql, parserMysql.getFormat());\n\n        CSVFormat formatTdf = CSVFormat.TDF;\n        CSVParser parserTdf = formatTdf.parse(mockReader);\n        assertNotNull(parserTdf);\n        assertEquals(formatTdf, parserTdf.getFormat());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555707,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 423,
+    "prompt_tokens": 1785,
+    "total_tokens": 2208,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.61
+  }
+}

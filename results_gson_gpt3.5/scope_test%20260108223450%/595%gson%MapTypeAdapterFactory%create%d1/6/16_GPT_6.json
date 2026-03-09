@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnOsKu0HY6blCia4SLjURp3ZiYaq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.Map;\n\nclass MapTypeAdapterFactoryTest {\n\n  @Mock Gson gson;\n  @Mock ConstructorConstructor constructorConstructor;\n  @Mock ObjectConstructor<Object> objectConstructor;\n\n  MapTypeAdapterFactory factory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    factory = new MapTypeAdapterFactory(constructorConstructor, true);\n  }\n\n  @Test\n  void create_whenTypeIsNotMap_returnsNull() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_whenTypeIsMap_returnsAdapter() throws Exception {\n    TypeToken<Map<String, Integer>> typeToken = new TypeToken<Map<String, Integer>>() {};\n    Type keyType = String.class;\n    Type valueType = Integer.class;\n\n    // Mock gson.getAdapter for value type with correct generic capture\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Integer> valueAdapter = mock(TypeAdapter.class);\n    when(gson.<Integer>getAdapter((TypeToken<Integer>) (TypeToken<?>) TypeToken.get(valueType))).thenReturn(valueAdapter);\n\n    // Mock constructorConstructor.get to return objectConstructor\n    when(constructorConstructor.get(typeToken)).thenReturn((ObjectConstructor) objectConstructor);\n\n    // Mock gson.getAdapter for key type as well, because getKeyAdapter internally calls gson.getAdapter\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<String> keyAdapterMock = mock(TypeAdapter.class);\n    when(gson.<String>getAdapter((TypeToken<String>) (TypeToken<?>) TypeToken.get(keyType))).thenReturn(keyAdapterMock);\n\n    // Use reflection to get private getKeyAdapter method and invoke it to get the keyAdapter\n    java.lang.reflect.Method getKeyAdapterMethod = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, Type.class);\n    getKeyAdapterMethod.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<?> keyAdapter = (TypeAdapter<?>) getKeyAdapterMethod.invoke(factory, gson, keyType);\n\n    // Call the real create method on factory\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Map<String, Integer>> adapter = (TypeAdapter<Map<String, Integer>>) factory.create(gson, typeToken);\n\n    assertNotNull(adapter);\n    // The returned adapter should be an instance of MapTypeAdapterFactory.Adapter\n    assertEquals(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n\n    // Use reflection to verify that the keyAdapter inside Adapter is an instance of the same class as obtained from getKeyAdapter\n    Field keyAdapterField = adapter.getClass().getDeclaredField(\"keyTypeAdapter\");\n    keyAdapterField.setAccessible(true);\n    Object actualKeyAdapter = keyAdapterField.get(adapter);\n\n    assertNotNull(actualKeyAdapter);\n    // Because create wraps the keyAdapter in a TypeAdapterRuntimeTypeWrapper, we check the wrapped delegate\n    Class<?> actualClass = actualKeyAdapter.getClass();\n\n    // If actualKeyAdapter is a TypeAdapterRuntimeTypeWrapper, unwrap it to get the delegate\n    if (\"com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper\".equals(actualClass.getName())) {\n      Field delegateField = actualClass.getDeclaredField(\"delegate\");\n      delegateField.setAccessible(true);\n      Object delegate = delegateField.get(actualKeyAdapter);\n      assertSame(keyAdapter, delegate);\n    } else {\n      // Otherwise, assert same directly\n      assertSame(keyAdapter, actualKeyAdapter);\n    }\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890626,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 839,
+    "prompt_tokens": 1688,
+    "total_tokens": 2527,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.02
+  }
+}

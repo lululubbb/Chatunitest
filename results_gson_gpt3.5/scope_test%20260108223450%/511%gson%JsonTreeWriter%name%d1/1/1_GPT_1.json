@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnDnHiCglRcxrUlhMGvwRIjxICRW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testName_nullName_throwsNullPointerException() {\n    NullPointerException ex = assertThrows(NullPointerException.class, () -> writer.name(null));\n    assertEquals(\"name == null\", ex.getMessage());\n  }\n\n  @Test\n  public void testName_stackEmpty_throwsIllegalStateException() throws Exception {\n    // stack is empty initially\n    IllegalStateException ex = assertThrows(IllegalStateException.class, () -> writer.name(\"any\"));\n    assertNotNull(ex);\n  }\n\n  @Test\n  public void testName_pendingNameNotNull_throwsIllegalStateException() throws Exception {\n    setStackWithJsonObject();\n    setPendingName(\"alreadySet\");\n    IllegalStateException ex = assertThrows(IllegalStateException.class, () -> writer.name(\"newName\"));\n    assertNotNull(ex);\n  }\n\n  @Test\n  public void testName_topOfStackIsJsonObject_setsPendingNameAndReturnsThis() throws Exception {\n    setStackWithJsonObject();\n    setPendingName(null);\n    JsonWriter result = writer.name(\"myName\");\n    assertSame(writer, result);\n    assertEquals(\"myName\", getPendingName());\n  }\n\n  @Test\n  public void testName_topOfStackNotJsonObject_throwsIllegalStateException() throws Exception {\n    setStackWithJsonArray();\n    setPendingName(null);\n    IllegalStateException ex = assertThrows(IllegalStateException.class, () -> writer.name(\"name\"));\n    assertNotNull(ex);\n  }\n\n  private void setStackWithJsonObject() throws Exception {\n    List<JsonElement> stack = getStack();\n    stack.clear();\n    stack.add(new JsonObject());\n    setStack(stack);\n  }\n\n  private void setStackWithJsonArray() throws Exception {\n    List<JsonElement> stack = getStack();\n    stack.clear();\n    // Use reflection to create a JsonArray instance\n    Class<?> jsonArrayClass = Class.forName(\"com.google.gson.JsonArray\");\n    JsonElement jsonArray = (JsonElement) jsonArrayClass.getDeclaredConstructor().newInstance();\n    stack.add(jsonArray);\n    setStack(stack);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private List<JsonElement> getStack() throws Exception {\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    return (List<JsonElement>) stackField.get(writer);\n  }\n\n  private void setStack(List<JsonElement> stack) throws Exception {\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    stackField.set(writer, stack);\n  }\n\n  private String getPendingName() throws Exception {\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    return (String) pendingNameField.get(writer);\n  }\n\n  private void setPendingName(String name) throws Exception {\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    pendingNameField.set(writer, name);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889939,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 779,
+    "prompt_tokens": 572,
+    "total_tokens": 1351,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.75
+  }
+}

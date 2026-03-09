@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZFNLiJLvp6NdqPuI2jqwabU9WGw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    private CSVPrinter createPrinterWithFormat(Appendable out, CSVFormat format) throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        // Use reflection to set the private final field 'format' to the mock\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        formatField.set(printer, format);\n        return printer;\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        printer = createPrinterWithFormat(out, format);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        verify(format).getNullString();\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNotNull() throws Exception {\n        when(format.getNullString()).thenReturn(\"NULL\");\n\n        printer = createPrinterWithFormat(out, format);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.print((Object) null);\n\n        verify(format).getNullString();\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        printer = createPrinterWithFormat(out, format);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        String testValue = \"value123\";\n\n        spyPrinter.print(testValue);\n\n        verify(format, never()).getNullString();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551205,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 404,
+    "prompt_tokens": 866,
+    "total_tokens": 1270,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.5
+  }
+}

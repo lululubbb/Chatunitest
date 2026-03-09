@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnIVun2ZMcMvjpGCEF5BSeBjARqi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass JsonObjectEqualsTest {\n\n  private JsonObject jsonObject;\n  private LinkedTreeMap<String, JsonElement> membersMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonObject = new JsonObject();\n\n    // Use reflection to set the private final members field to a mock\n    membersMock = mock(LinkedTreeMap.class);\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    membersField.set(jsonObject, membersMock);\n  }\n\n  @Test\n  public void testEquals_sameReference() {\n    assertTrue(jsonObject.equals(jsonObject));\n  }\n\n  @Test\n  public void testEquals_nullObject() {\n    assertFalse(jsonObject.equals(null));\n  }\n\n  @Test\n  public void testEquals_notInstanceOfJsonObject() {\n    Object other = new Object();\n    assertFalse(jsonObject.equals(other));\n  }\n\n  @Test\n  public void testEquals_differentMembers() {\n    JsonObject other = new JsonObject();\n    // mock members of other\n    LinkedTreeMap<String, JsonElement> otherMembersMock = mock(LinkedTreeMap.class);\n    setMembersField(other, otherMembersMock);\n\n    when(otherMembersMock.equals(membersMock)).thenReturn(false);\n\n    assertFalse(jsonObject.equals(other));\n\n    verify(otherMembersMock).equals(membersMock);\n  }\n\n  @Test\n  public void testEquals_sameMembers() {\n    JsonObject other = new JsonObject();\n    // mock members of other\n    LinkedTreeMap<String, JsonElement> otherMembersMock = mock(LinkedTreeMap.class);\n    setMembersField(other, otherMembersMock);\n\n    when(otherMembersMock.equals(membersMock)).thenReturn(true);\n\n    assertTrue(jsonObject.equals(other));\n\n    verify(otherMembersMock).equals(membersMock);\n  }\n\n  private void setMembersField(JsonObject obj, LinkedTreeMap<String, JsonElement> members) {\n    try {\n      Field membersField = JsonObject.class.getDeclaredField(\"members\");\n      membersField.setAccessible(true);\n      membersField.set(obj, members);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890231,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 517,
+    "prompt_tokens": 1056,
+    "total_tokens": 1573,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.83
+  }
+}

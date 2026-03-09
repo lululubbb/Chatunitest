@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Method;\n\nclass LazilyParsedNumberTest {\n\n  @Test\n  void floatValue_ValidFloatString_ReturnsParsedFloat() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123.45\");\n    float result = number.floatValue();\n    assertEquals(123.45f, result, 0.0001f);\n  }\n\n  @Test\n  void floatValue_InvalidFloatString_ThrowsNumberFormatException() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"abc\");\n    assertThrows(NumberFormatException.class, number::floatValue);\n  }\n\n  @Test\n  void writeReplace_IsPrivateAndReturnsObject() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1.23\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(number);\n    assertNotNull(result);\n  }\n\n  @Test\n  void readObject_IsPrivateAndThrowsInvalidObjectException() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1.23\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", java.io.ObjectInputStream.class);\n    readObject.setAccessible(true);\n    assertThrows(InvalidObjectException.class, () -> readObject.invoke(number, (Object) null));\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/564%gson%LazilyParsedNumber%floatValue%d1/6/temp/LazilyParsedNumber_564_6Test.java:42: 错误: 找不到符号\n    assertThrows(InvalidObjectException.class, () -> readObject.invoke(number, (Object) null));\n                 ^\n  符号:   类 InvalidObjectException\n  位置: 类 LazilyParsedNumber_564_6Test\n1 个错误\n",
+  "prompt_tokens": 301,
+  "completion_tokens": 321,
+  "total_tokens": 622,
+  "llm_elapsed_time_seconds": 5.12
+}

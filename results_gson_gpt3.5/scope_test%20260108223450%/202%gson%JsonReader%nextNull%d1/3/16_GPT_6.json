@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmhT1AlL2ygi5lqKwjsr3GOuUUv2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  public void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  public void nextNull_peekedIsPeekedNull_shouldConsumeNull() throws Exception {\n    // Set peeked field to PEEKED_NULL (7)\n    setField(jsonReader, \"peeked\", 7);\n\n    // Set stackSize to 1 and pathIndices array with initial value 0\n    setField(jsonReader, \"stackSize\", 1);\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    // Call nextNull and verify peeked reset and pathIndices incremented\n    jsonReader.nextNull();\n\n    int peekedAfter = getField(jsonReader, \"peeked\");\n    assertEquals(0, peekedAfter, \"peeked should be reset to PEEKED_NONE (0)\");\n\n    int[] pathIndicesAfter = getField(jsonReader, \"pathIndices\");\n    assertEquals(1, pathIndicesAfter[0], \"pathIndices[0] should be incremented by 1\");\n  }\n\n  @Test\n  public void nextNull_peekedIsPeekedNone_doPeekReturnsPeekedNull_shouldConsumeNull() throws Exception {\n    // Set peeked to PEEKED_NONE (0)\n    setField(jsonReader, \"peeked\", 0);\n\n    // Spy on jsonReader to mock doPeek() and peek()\n    JsonReader spyReader = spy(jsonReader);\n\n    // Mock doPeek to return PEEKED_NULL (7)\n    doReturn(7).when(spyReader).doPeek();\n\n    // Set stackSize and pathIndices\n    setField(spyReader, \"stackSize\", 1);\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0;\n    setField(spyReader, \"pathIndices\", pathIndices);\n\n    // Call nextNull\n    spyReader.nextNull();\n\n    // Verify peeked reset and pathIndices incremented\n    int peekedAfter = getField(spyReader, \"peeked\");\n    assertEquals(0, peekedAfter);\n\n    int[] pathIndicesAfter = getField(spyReader, \"pathIndices\");\n    assertEquals(1, pathIndicesAfter[0]);\n  }\n\n  @Test\n  public void nextNull_peekedIsNotNull_shouldThrowIllegalStateException() throws Exception {\n    // Set peeked to a value not null and not none, e.g. PEEKED_TRUE (5)\n    setField(jsonReader, \"peeked\", 5);\n\n    // Spy on jsonReader to mock peek() and locationString()\n    JsonReader spyReader = spy(jsonReader);\n\n    // Mock peek() to return JsonReader.JsonToken.TRUE (use fully qualified enum constant)\n    doReturn(JsonReader.JsonToken.TRUE).when(spyReader).peek();\n\n    // Mock locationString() to return \": at path $\"\n    doReturn(\": at path $\").when(spyReader).locationString();\n\n    IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::nextNull);\n    assertTrue(thrown.getMessage().contains(\"Expected null but was TRUE: at path $\"));\n  }\n\n  // Helper method to set private fields via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object instance, String fieldName) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(instance);\n  }\n\n  private void setField(Object instance, String fieldName, Object value) {\n    try {\n      Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(instance, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887935,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 891,
+    "prompt_tokens": 2015,
+    "total_tokens": 2906,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.96
+  }
+}

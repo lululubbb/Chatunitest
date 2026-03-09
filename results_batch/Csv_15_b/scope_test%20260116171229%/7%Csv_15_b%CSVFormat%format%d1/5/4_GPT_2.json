@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaKyp9JWcMi5gwtA2GgW7K4E6qCy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport org.mockito.stubbing.Answer;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Proxy;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withNormalValues() throws IOException {\n        String result = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        // Default delimiter is comma, default quote char is \"\n        assertEquals(\"\\\"value1\\\",\\\"value2\\\",\\\"value3\\\"\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format(\"\", null, \" \");\n        // null is printed as empty string by default\n        assertEquals(\"\\\"\\\",\\\"\\\",\\\" \\\"\", result);\n    }\n\n    @Test\n    void testFormat_withNoValues() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Use reflection and proxy to mock CSVPrinter constructor and methods\n        Constructor<CSVPrinter> constructor = CSVPrinter.class.getDeclaredConstructor(Appendable.class, CSVFormat.class);\n        constructor.setAccessible(true);\n\n        // Create a proxy for CSVPrinter that throws IOException on printRecord\n        CSVPrinter proxyPrinter = (CSVPrinter) Proxy.newProxyInstance(\n                CSVPrinter.class.getClassLoader(),\n                new Class<?>[]{CSVPrinter.class, AutoCloseable.class},\n                new InvocationHandler() {\n                    private boolean closed = false;\n\n                    @Override\n                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n                        String methodName = method.getName();\n                        if (\"printRecord\".equals(methodName)) {\n                            throw new IOException(\"io error\");\n                        } else if (\"close\".equals(methodName)) {\n                            closed = true;\n                            return null;\n                        } else if (\"toString\".equals(methodName)) {\n                            return \"\";\n                        }\n                        return null;\n                    }\n                });\n\n        // Use a spy CSVFormat that overrides format to use the proxyPrinter instead of new CSVPrinter\n        CSVFormat csvFormatSpy = new CSVFormat(csvFormat.getDelimiter(),\n                csvFormat.getQuoteCharacter(),\n                csvFormat.getQuoteMode(),\n                csvFormat.getCommentMarker(),\n                csvFormat.getEscapeCharacter(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                csvFormat.getHeaderComments(),\n                csvFormat.getHeader(),\n                csvFormat.getSkipHeaderRecord(),\n                csvFormat.getAllowMissingColumnNames(),\n                csvFormat.getIgnoreHeaderCase(),\n                csvFormat.getTrim(),\n                csvFormat.getTrailingDelimiter(),\n                csvFormat.getAutoFlush()) {\n            @Override\n            public String format(final Object... values) {\n                final StringWriter out = new StringWriter();\n                try (final CSVPrinter csvPrinter = proxyPrinter) {\n                    csvPrinter.printRecord(values);\n                    return out.toString().trim();\n                } catch (final IOException e) {\n                    // should not happen because a StringWriter does not do IO.\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatSpy.format(\"a\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"io error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555396,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 789,
+    "prompt_tokens": 2398,
+    "total_tokens": 3187,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.75
+  }
+}

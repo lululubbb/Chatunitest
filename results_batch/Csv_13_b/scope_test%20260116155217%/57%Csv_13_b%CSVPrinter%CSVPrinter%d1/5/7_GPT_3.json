@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYw0E6jHaCtlleTbnYcjIFisSPic",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_nullOut_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, format));\n        assertEquals(\"out\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_nullFormat_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(out, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_withHeaderCommentsAndHeader_printsCommentsAndHeader() throws IOException {\n        String[] headerComments = new String[] { \"comment1\", null, \"comment2\" };\n        when(format.getHeaderComments()).thenReturn(headerComments);\n        when(format.getHeader()).thenReturn(new String[] { \"h1\", \"h2\" });\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        // verify printComment called for non-null header comments\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testConstructor_withHeader_skipHeaderRecordTrue_printsCommentsOnly() throws IOException {\n        String[] headerComments = new String[] { \"comment1\" };\n        when(format.getHeaderComments()).thenReturn(headerComments);\n        when(format.getHeader()).thenReturn(new String[] { \"h1\", \"h2\" });\n        when(format.getSkipHeaderRecord()).thenReturn(true);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testConstructor_noHeaderCommentsNoHeader() throws IOException {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(null);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        assertNotNull(printer);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550004,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 491,
+    "prompt_tokens": 1439,
+    "total_tokens": 1930,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.68
+  }
+}

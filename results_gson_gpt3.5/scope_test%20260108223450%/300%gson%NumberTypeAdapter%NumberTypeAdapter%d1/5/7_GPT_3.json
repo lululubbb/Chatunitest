@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlRlQbTjxQLpwZldnRy38hlzrGQG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NumberTypeAdapterTest {\n\n  private ToNumberStrategy toNumberStrategy;\n  private NumberTypeAdapter adapter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    toNumberStrategy = mock(ToNumberStrategy.class);\n    Constructor<NumberTypeAdapter> constructor = NumberTypeAdapter.class.getDeclaredConstructor(ToNumberStrategy.class);\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance(toNumberStrategy);\n  }\n\n  @Test\n  void testRead_NullValue() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(in).nextNull();\n\n    Number result = adapter.read(in);\n\n    verify(in).peek();\n    verify(in).nextNull();\n    assertNull(result);\n  }\n\n  @Test\n  void testRead_ValidNumber() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NUMBER);\n    Number expectedNumber = 42;\n    when(toNumberStrategy.readNumber(in)).thenReturn(expectedNumber);\n\n    Number result = adapter.read(in);\n\n    verify(in).peek();\n    verify(toNumberStrategy).readNumber(in);\n    assertEquals(expectedNumber, result);\n  }\n\n  @Test\n  void testRead_InvalidNumber_ThrowsJsonSyntaxException() throws IOException {\n    JsonReader in = mock(JsonReader.class);\n    when(in.peek()).thenReturn(JsonToken.NUMBER);\n    when(toNumberStrategy.readNumber(in)).thenThrow(new NumberFormatException(\"bad number\"));\n\n    JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> adapter.read(in));\n\n    assertTrue(ex.getMessage().contains(\"bad number\"));\n    verify(in).peek();\n    verify(toNumberStrategy).readNumber(in);\n  }\n\n  @Test\n  void testWrite_NullValue() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n\n    adapter.write(out, null);\n\n    verify(out).nullValue();\n  }\n\n  @Test\n  void testWrite_ValidNumber() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n    Number value = 123;\n\n    adapter.write(out, value);\n\n    verify(out).value(value);\n  }\n\n  @Test\n  void testNewFactory_andGetFactory() throws Exception {\n    // Use reflection to invoke private static newFactory method\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n\n    ToNumberStrategy strategy = ToNumberPolicy.LAZILY_PARSED_NUMBER;\n    Object factory = newFactoryMethod.invoke(null, strategy);\n    assertNotNull(factory);\n\n    TypeAdapterFactory factoryFromGetFactory = NumberTypeAdapter.getFactory(strategy);\n    assertNotNull(factoryFromGetFactory);\n  }\n\n  @Test\n  void testLAZILY_PARSED_NUMBER_FACTORY_notNull() throws Exception {\n    // Access private static field LAZILY_PARSED_NUMBER_FACTORY\n    var field = NumberTypeAdapter.class.getDeclaredField(\"LAZILY_PARSED_NUMBER_FACTORY\");\n    field.setAccessible(true);\n    Object factory = field.get(null);\n    assertNotNull(factory);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883117,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 761,
+    "prompt_tokens": 1795,
+    "total_tokens": 2556,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.79
+  }
+}

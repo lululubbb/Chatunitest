@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmF5TAqecqHPKa5vVd21D5wy5hsM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.math.BigInteger;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create instance without using public constructors by reflection\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getDeclaredConstructor(Object.class);\n    constructor.setAccessible(true);\n    jsonPrimitive = constructor.newInstance((Object) null);\n\n    // Set accessible true for private field\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    // Clear value for each test\n    valueField.set(jsonPrimitive, null);\n  }\n\n  @Test\n  void testGetAsBigInteger_whenValueIsBigInteger() throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    BigInteger bigInt = new BigInteger(\"12345678901234567890\");\n    valueField.set(jsonPrimitive, bigInt);\n\n    BigInteger result = jsonPrimitive.getAsBigInteger();\n\n    assertSame(bigInt, result);\n  }\n\n  @Test\n  void testGetAsBigInteger_whenValueIsStringRepresentingInteger() throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    String stringValue = \"98765432109876543210\";\n    valueField.set(jsonPrimitive, stringValue);\n\n    BigInteger result = jsonPrimitive.getAsBigInteger();\n\n    assertEquals(new BigInteger(stringValue), result);\n  }\n\n  @Test\n  void testGetAsBigInteger_whenValueIsNumber() throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Number numValue = 12345L;\n    valueField.set(jsonPrimitive, numValue);\n\n    BigInteger result = jsonPrimitive.getAsBigInteger();\n\n    assertEquals(new BigInteger(numValue.toString()), result);\n  }\n\n  @Test\n  void testGetAsBigInteger_whenValueIsLazilyParsedNumber() throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    LazilyParsedNumber lpn = new LazilyParsedNumber(\"123456789\");\n    valueField.set(jsonPrimitive, lpn);\n\n    BigInteger result = jsonPrimitive.getAsBigInteger();\n\n    assertEquals(new BigInteger(lpn.toString()), result);\n  }\n\n  @Test\n  void testGetAsBigInteger_whenValueIsOtherObject() throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Object other = new Object() {\n      @Override\n      public String toString() {\n        return \"42\";\n      }\n    };\n    valueField.set(jsonPrimitive, other);\n\n    BigInteger result = jsonPrimitive.getAsBigInteger();\n\n    assertEquals(BigInteger.valueOf(42), result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886175,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 652,
+    "prompt_tokens": 1170,
+    "total_tokens": 1822,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.72
+  }
+}

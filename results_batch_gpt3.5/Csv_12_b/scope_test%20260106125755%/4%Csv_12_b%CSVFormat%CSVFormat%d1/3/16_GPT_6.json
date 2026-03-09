@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutZeOu2qKJihL7776jIeOT2jFKwC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testConstructorValidParameters() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        char delimiter = ';';\n        Character quoteChar = '\"';\n        QuoteMode quoteMode = QuoteMode.ALL;\n        Character commentStart = '#';\n        Character escape = '\\\\';\n        boolean ignoreSurroundingSpaces = true;\n        boolean ignoreEmptyLines = false;\n        String recordSeparator = \"\\n\";\n        String nullString = \"NULL\";\n        String[] header = new String[] {\"col1\", \"col2\"};\n        boolean skipHeaderRecord = true;\n        boolean allowMissingColumnNames = true;\n\n        CSVFormat csvFormat = constructor.newInstance(delimiter, quoteChar, quoteMode, commentStart, escape,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, (Object) header,\n                skipHeaderRecord, allowMissingColumnNames);\n\n        assertEquals(delimiter, csvFormat.getDelimiter());\n        assertEquals(quoteChar, csvFormat.getQuoteCharacter());\n        assertEquals(quoteMode, csvFormat.getQuoteMode());\n        assertEquals(commentStart, csvFormat.getCommentMarker());\n        assertEquals(escape, csvFormat.getEscapeCharacter());\n        assertEquals(ignoreSurroundingSpaces, csvFormat.getIgnoreSurroundingSpaces());\n        assertEquals(ignoreEmptyLines, csvFormat.getIgnoreEmptyLines());\n        assertEquals(recordSeparator, csvFormat.getRecordSeparator());\n        assertEquals(nullString, csvFormat.getNullString());\n        assertArrayEquals(header, csvFormat.getHeader());\n        assertEquals(skipHeaderRecord, csvFormat.getSkipHeaderRecord());\n        assertEquals(allowMissingColumnNames, csvFormat.getAllowMissingColumnNames());\n    }\n\n    @Test\n    void testConstructorDelimiterIsLineBreakThrows() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        char[] lineBreaks = {'\\n', '\\r'};\n        for (char lb : lineBreaks) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                constructor.newInstance(lb, null, null, null, null,\n                        false, false, \"\\n\", null, (Object) null, false, false);\n            });\n            assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n        }\n    }\n\n    @Test\n    void testConstructorHeaderWithDuplicatesThrows() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] duplicateHeader = {\"col1\", \"col2\", \"col1\"};\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            constructor.newInstance(',', null, null, null, null,\n                    false, false, \"\\r\\n\", null, (Object) duplicateHeader,\n                    false, false);\n        });\n        assertTrue(thrown.getMessage().contains(\"The header contains a duplicate entry: 'col1'\"));\n    }\n\n    @Test\n    void testConstructorNullHeader() throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat csvFormat = constructor.newInstance(',', null, null, null, null,\n                false, false, \"\\r\\n\", null, (Object) null, false, false);\n\n        assertNull(csvFormat.getHeader());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676030,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 927,
+    "prompt_tokens": 2171,
+    "total_tokens": 3098,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.45
+  }
+}

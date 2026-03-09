@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxh0BpRGgDWixuuvgZRR4FvRndxR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.lang.reflect.Field;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setup() throws IOException {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        charset = Charset.forName(\"UTF-8\");\n        format = mock(CSVFormat.class);\n\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n    }\n\n    @Test\n    void parse_NullUrl_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse((URL) null, charset, format));\n        assertEquals(\"url\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullCharset_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(mockUrl, null, format));\n        assertEquals(\"charset\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(mockUrl, charset, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidArguments_ReturnsCSVParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Mock InputStreamReader to avoid actual stream reading\n        // Since CSVParser constructor expects a Reader, we must mock or spy on CSVParser\n        // Instead of mocking CSVParser internals, we let it run with mocked InputStream\n\n        CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n\n        assertNotNull(parser);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(format, formatField.get(parser));\n    }\n\n    @Test\n    void parse_UrlOpenStreamThrows_PropagatesIOException() throws IOException {\n        when(mockUrl.openStream()).thenThrow(new IOException(\"stream error\"));\n\n        IOException ex = assertThrows(IOException.class,\n                () -> CSVParser.parse(mockUrl, charset, format));\n        assertEquals(\"stream error\", ex.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691862,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 532,
+    "prompt_tokens": 1186,
+    "total_tokens": 1718,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.92
+  }
+}

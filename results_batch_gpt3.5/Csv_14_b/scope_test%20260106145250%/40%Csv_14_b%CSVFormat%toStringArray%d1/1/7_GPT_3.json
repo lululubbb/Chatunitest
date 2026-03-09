@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvPbVyEW2Kfc9kXH0S5PMkVlQJrE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private Method toStringArrayMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        csvFormat = CSVFormat.DEFAULT;\n        toStringArrayMethod = CSVFormat.class.getDeclaredMethod(\"toStringArray\", Object[].class);\n        toStringArrayMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testToStringArray_NullInput() throws InvocationTargetException, IllegalAccessException {\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { null });\n        assertNull(result);\n    }\n\n    @Test\n    public void testToStringArray_EmptyArray() throws InvocationTargetException, IllegalAccessException {\n        Object[] input = new Object[0];\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertNotNull(result);\n        assertEquals(0, result.length);\n    }\n\n    @Test\n    public void testToStringArray_ArrayWithNulls() throws InvocationTargetException, IllegalAccessException {\n        Object[] input = new Object[] { null, \"test\", 123, null };\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertNotNull(result);\n        assertEquals(4, result.length);\n        assertNull(result[0]);\n        assertEquals(\"test\", result[1]);\n        assertEquals(\"123\", result[2]);\n        assertNull(result[3]);\n    }\n\n    @Test\n    public void testToStringArray_ArrayWithVariousObjects() throws InvocationTargetException, IllegalAccessException {\n        Object[] input = new Object[] { \"string\", 42, 3.14, true, new Object() {\n            @Override\n            public String toString() {\n                return \"customObject\";\n            }\n        }};\n        String[] result = (String[]) toStringArrayMethod.invoke(csvFormat, new Object[] { input });\n        assertNotNull(result);\n        assertEquals(5, result.length);\n        assertEquals(\"string\", result[0]);\n        assertEquals(\"42\", result[1]);\n        assertEquals(\"3.14\", result[2]);\n        assertEquals(\"true\", result[3]);\n        assertEquals(\"customObject\", result[4]);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683095,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 543,
+    "prompt_tokens": 2202,
+    "total_tokens": 2745,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.24
+  }
+}

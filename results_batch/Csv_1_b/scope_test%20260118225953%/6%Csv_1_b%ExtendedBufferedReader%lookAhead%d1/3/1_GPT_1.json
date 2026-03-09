@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOYanSaF0ylmtjPpuMX7kiqdTC5X",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader extendedBufferedReader;\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testLookAheadReturnsNextChar() throws IOException {\n        // Arrange\n        // When read() is called on the superclass BufferedReader, it will call read() on the Reader.\n        when(mockReader.read()).thenReturn((int) 'A');\n\n        // Act\n        int result = extendedBufferedReader.lookAhead();\n\n        // Assert\n        assertEquals('A', result);\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws IOException {\n        // Arrange\n        when(mockReader.read()).thenReturn(ExtendedBufferedReader.END_OF_STREAM);\n\n        // Act\n        int result = extendedBufferedReader.lookAhead();\n\n        // Assert\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n\n    @Test\n    void testLookAheadMultipleCalls() throws IOException {\n        // Arrange\n        when(mockReader.read()).thenReturn((int) 'B');\n\n        // Act\n        int firstCall = extendedBufferedReader.lookAhead();\n        int secondCall = extendedBufferedReader.lookAhead();\n\n        // Assert\n        assertEquals('B', firstCall);\n        assertEquals('B', secondCall);\n\n        // Verify that read() was called twice on the underlying Reader\n        verify(mockReader, times(2)).read();\n    }\n\n    @Test\n    void testLookAheadResetCalled() throws IOException {\n        // Spy on ExtendedBufferedReader to verify mark and reset calls\n        ExtendedBufferedReader spyReader = Mockito.spy(new ExtendedBufferedReader(mockReader));\n        when(mockReader.read()).thenReturn((int) 'C');\n\n        int result = spyReader.lookAhead();\n\n        assertEquals('C', result);\n        verify(spyReader).mark(1);\n        verify(spyReader).reset();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748440,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 471,
+    "prompt_tokens": 291,
+    "total_tokens": 762,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.0
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "chatcmpl-Cw8v4wP5Jy6YwAAwU6g5KXl1nbkxv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVPrinterTest {\n\n    @Mock\n    private Appendable out;\n\n    @Mock\n    private CSVFormat format;\n\n    private CSVPrinter printer;\n\n    private AutoCloseable mocks;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mocks = MockitoAnnotations.openMocks(this);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @AfterEach\n    void tearDown() throws Exception {\n        if (mocks != null) {\n            mocks.close();\n        }\n    }\n\n    @Test\n    void testPrintln_appendsRecordSeparatorAndSetsNewRecordTrue() throws IOException, NoSuchFieldException, IllegalAccessException {\n        String recordSeparator = \"\\n\";\n        when(format.getRecordSeparator()).thenReturn(recordSeparator);\n\n        // set newRecord initially false to verify it is set to true after println\n        Field newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        printer.println();\n\n        verify(out).append(recordSeparator);\n        assertTrue(newRecordField.getBoolean(printer));\n    }\n\n    @Test\n    void testPrintln_appendsCustomRecordSeparator() throws IOException {\n        String recordSeparator = \"\\r\\n\";\n        when(format.getRecordSeparator()).thenReturn(recordSeparator);\n\n        assertDoesNotThrow(() -> printer.println());\n\n        verify(out).append(recordSeparator);\n    }\n\n    @Test\n    void testPrintln_throwsIOException() throws IOException {\n        String recordSeparator = \"\\n\";\n        when(format.getRecordSeparator()).thenReturn(recordSeparator);\n        doThrow(new IOException(\"append failed\")).when(out).append(recordSeparator);\n\n        IOException exception = assertThrows(IOException.class, () -> printer.println());\n        assertEquals(\"append failed\", exception.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      },
+      "content_filter_result": {
+        "error": {
+          "code": "content_filter_error",
+          "message": "The contents are not filtered"
+        }
+      }
+    }
+  ],
+  "created": 1767973346,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 456,
+    "prompt_tokens": 1021,
+    "total_tokens": 1477,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.17
+  }
+}

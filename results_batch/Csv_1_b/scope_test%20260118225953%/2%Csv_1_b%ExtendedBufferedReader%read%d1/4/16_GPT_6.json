@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOcWTMrsicKvGPAG5VAHRCBYqaVs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.spy;\nimport static org.mockito.Mockito.doReturn;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader readerSpy;\n\n    @BeforeEach\n    void setUp() {\n        Reader dummyReader = new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                return -1; // EOF\n            }\n            @Override\n            public void close() {}\n            @Override\n            public int read() throws IOException {\n                return -1; // EOF default implementation for read()\n            }\n        };\n        readerSpy = spy(new ExtendedBufferedReader(dummyReader));\n    }\n\n    @Test\n    void testReadReturnsCharAndUpdatesLastCharWithoutNewline() throws IOException {\n        // Use doReturn to stub super.read() indirectly by spying on the underlying Reader\n        doReturn((int) 'a').when(readerSpy).read();\n        // Because read() is overridden, spying on read() itself causes recursion.\n        // Instead, we will mock the underlying Reader read() method.\n        // So, fix by spying the underlying Reader and injecting it.\n    }\n\n    @Test\n    void testReadReturnsNewlineAndIncrementsLineCounter() throws IOException {\n    }\n\n    @Test\n    void testReadReturnsEndOfStream() throws IOException {\n    }\n\n    private int getPrivateIntField(Object obj, String fieldName) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getInt(obj);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```\n\n---\n\n**Fixed version:**\n\n```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader reader;\n\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = Mockito.mock(Reader.class);\n        reader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadReturnsCharAndUpdatesLastCharWithoutNewline() throws IOException {\n        Mockito.when(mockReader.read()).thenReturn((int) 'a');\n        int result = reader.read();\n        assertEquals('a', result);\n        int lineCounter = getPrivateIntField(reader, \"lineCounter\");\n        assertEquals(0, lineCounter);\n        int lastChar = getPrivateIntField(reader, \"lastChar\");\n        assertEquals('a', lastChar);\n    }\n\n    @Test\n    void testReadReturnsNewlineAndIncrementsLineCounter() throws IOException {\n        Mockito.when(mockReader.read()).thenReturn((int) '\\n');\n        int result = reader.read();\n        assertEquals('\\n', result);\n        int lineCounter = getPrivateIntField(reader, \"lineCounter\");\n        assertEquals(1, lineCounter);\n        int lastChar = getPrivateIntField(reader, \"lastChar\");\n        assertEquals('\\n', lastChar);\n    }\n\n    @Test\n    void testReadReturnsEndOfStream() throws IOException {\n        Mockito.when(mockReader.read()).thenReturn(ExtendedBufferedReader.END_OF_STREAM);\n        int result = reader.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        int lineCounter = getPrivateIntField(reader, \"lineCounter\");\n        assertEquals(0, lineCounter);\n        int lastChar = getPrivateIntField(reader, \"lastChar\");\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n    }\n\n    private int getPrivateIntField(Object obj, String fieldName) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getInt(obj);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748684,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 877,
+    "prompt_tokens": 953,
+    "total_tokens": 1830,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.14
+  }
+}

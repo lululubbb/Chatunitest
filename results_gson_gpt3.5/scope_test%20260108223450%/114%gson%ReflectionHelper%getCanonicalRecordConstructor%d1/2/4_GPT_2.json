@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm00ePq4VPrZvY9FZ0GdTSOltkd4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  static class TestRecord {\n    final int x;\n    final String y;\n\n    public TestRecord(int x, String y) {\n      this.x = x;\n      this.y = y;\n    }\n  }\n\n  static class NonRecord {\n    public NonRecord() {}\n  }\n\n  // Since RecordHelper is package-private or private, we create a minimal interface to mock it\n  interface RecordHelper {\n    <T> Constructor<T> getCanonicalRecordConstructor(Class<T> raw);\n  }\n\n  @BeforeAll\n  static void setup() {\n    // No setup required for this static method test\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  @Test\n  void getCanonicalRecordConstructor_returnsConstructorForRecord() throws Exception {\n    RecordHelper mockRecordHelper = mock(RecordHelper.class);\n    Constructor<TestRecord> constructor = TestRecord.class.getDeclaredConstructor(int.class, String.class);\n    when(mockRecordHelper.getCanonicalRecordConstructor(TestRecord.class)).thenReturn(constructor);\n\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier using reflection (hack)\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    recordHelperField.set(null, mockRecordHelper);\n\n    Constructor<TestRecord> result = ReflectionHelper.getCanonicalRecordConstructor(TestRecord.class);\n\n    assertNotNull(result);\n    assertEquals(constructor, result);\n\n    verify(mockRecordHelper).getCanonicalRecordConstructor(TestRecord.class);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  @Test\n  void getCanonicalRecordConstructor_propagatesExceptionFromRecordHelper() throws Exception {\n    RecordHelper mockRecordHelper = mock(RecordHelper.class);\n    when(mockRecordHelper.getCanonicalRecordConstructor(NonRecord.class))\n        .thenThrow(new RuntimeException(\"Test exception\"));\n\n    Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    recordHelperField.set(null, mockRecordHelper);\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      ReflectionHelper.getCanonicalRecordConstructor(NonRecord.class);\n    });\n\n    assertEquals(\"Test exception\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885240,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 589,
+    "prompt_tokens": 1354,
+    "total_tokens": 1943,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.5
+  }
+}

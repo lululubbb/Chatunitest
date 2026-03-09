@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmOpS828tgiNqYzKiBGKv1PMgbdD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonWriterNewlineTest {\n\n    private JsonWriter jsonWriter;\n    private Writer mockWriter;\n\n    private Method newlineMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        mockWriter = mock(Writer.class);\n        jsonWriter = new JsonWriter(mockWriter);\n\n        // Access private newline() method via reflection\n        newlineMethod = JsonWriter.class.getDeclaredMethod(\"newline\");\n        newlineMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testNewline_IndentNull_NoWrite() throws IOException, InvocationTargetException, IllegalAccessException {\n        // indent is null by default, so newline should do nothing\n        newlineMethod.invoke(jsonWriter);\n        // Verify no write calls to the writer\n        verify(mockWriter, never()).write(anyInt());\n        verify(mockWriter, never()).write(anyString());\n    }\n\n    @Test\n    public void testNewline_WithIndent_WritesNewlineAndIndent() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n        // Set indent to some string\n        String indent = \"  \";\n        jsonWriter.setIndent(indent);\n\n        // Set stackSize to 1: loop will not execute (i=1, size=1, i<size false)\n        setPrivateField(jsonWriter, \"stackSize\", 1);\n        newlineMethod.invoke(jsonWriter);\n        // Should write newline once, no indent strings\n        verify(mockWriter).write('\\n');\n        verify(mockWriter, never()).write(indent);\n\n        reset(mockWriter);\n\n        // Set stackSize to 3: loop executes for i=1,2\n        setPrivateField(jsonWriter, \"stackSize\", 3);\n        newlineMethod.invoke(jsonWriter);\n        // Should write newline once\n        verify(mockWriter).write('\\n');\n        // Should write indent twice\n        verify(mockWriter, times(2)).write(indent);\n    }\n\n    private void setPrivateField(Object target, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {\n        var field = target.getClass().getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886779,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 519,
+    "prompt_tokens": 1333,
+    "total_tokens": 1852,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.54
+  }
+}

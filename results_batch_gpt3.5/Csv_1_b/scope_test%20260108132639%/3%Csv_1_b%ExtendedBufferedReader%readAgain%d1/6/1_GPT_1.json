@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcpc0EWefu1N4tTJPGbWzRffnFZ5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        Reader reader = new Reader() {\n            @Override\n            public int read(char[] cbuf, int off, int len) {\n                return -1; // simulate end of stream\n            }\n\n            @Override\n            public void close() {\n                // no-op\n            }\n        };\n        extendedBufferedReader = new ExtendedBufferedReader(reader);\n    }\n\n    @Test\n    void testReadAgain_whenLastCharIsUndefined() throws Exception {\n        // Use reflection to set private field lastChar to UNDEFINED\n        setLastCharField(ExtendedBufferedReader.UNDEFINED);\n        int result = invokeReadAgain();\n        assertEquals(ExtendedBufferedReader.UNDEFINED, result);\n    }\n\n    @Test\n    void testReadAgain_whenLastCharIsEndOfStream() throws Exception {\n        setLastCharField(ExtendedBufferedReader.END_OF_STREAM);\n        int result = invokeReadAgain();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n\n    @Test\n    void testReadAgain_whenLastCharIsPositive() throws Exception {\n        int testChar = 65; // 'A'\n        setLastCharField(testChar);\n        int result = invokeReadAgain();\n        assertEquals(testChar, result);\n    }\n\n    private void setLastCharField(int value) throws Exception {\n        var field = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        field.setAccessible(true);\n        field.setInt(extendedBufferedReader, value);\n    }\n\n    private int invokeReadAgain() throws Exception {\n        Method method = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        method.setAccessible(true);\n        return (int) method.invoke(extendedBufferedReader);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850000,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 422,
+    "prompt_tokens": 273,
+    "total_tokens": 695,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.71
+  }
+}

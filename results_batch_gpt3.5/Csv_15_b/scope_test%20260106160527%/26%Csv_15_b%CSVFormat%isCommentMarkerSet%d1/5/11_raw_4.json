@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsCommentMarkerSet_whenCommentMarkerIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');\n        // Use reflection to set the private final commentMarker field to null\n        Field commentMarkerField = CSVFormat.class.getDeclaredField(\"commentMarker\");\n        commentMarkerField.setAccessible(true);\n\n        // Remove final modifier (works on Java 8 and earlier; for later versions, use other means)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(commentMarkerField, commentMarkerField.getModifiers() & ~Modifier.FINAL);\n\n        commentMarkerField.set(format, null);\n\n        assertFalse(format.isCommentMarkerSet());\n    }\n\n    @Test\n    void testIsCommentMarkerSet_whenCommentMarkerIsSet() {\n        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');\n        assertTrue(format.isCommentMarkerSet());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260106160527%/26%Csv_15_b%CSVFormat%isCommentMarkerSet%d1/5/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2079,
+  "completion_tokens": 243,
+  "total_tokens": 2322,
+  "llm_elapsed_time_seconds": 4.29
+}

@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport static org.apache.commons.csv.Constants.COMMENT;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.LF;\nimport static org.apache.commons.csv.Constants.SP;\nimport java.io.Closeable;\nimport java.sql.ResultSet;\nimport java.sql.SQLException;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void flush_whenOutIsFlushable_invokesFlush() throws IOException, ReflectiveOperationException {\n        Flushable flushableOut = mock(Flushable.class);\n        // Construct CSVPrinter with a dummy Appendable, then replace 'out' with flushableOut via reflection\n        CSVPrinter printer = new CSVPrinter(new StringBuilder(), mockFormat);\n\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, flushableOut);\n\n        printer.flush();\n\n        verify(flushableOut, times(1)).flush();\n    }\n\n    @Test\n    void flush_whenOutIsNotFlushable_doesNotThrow() throws IOException {\n        Appendable nonFlushableOut = new StringBuilder();\n        CSVPrinter printer = new CSVPrinter(nonFlushableOut, mockFormat);\n\n        // should not throw any exception\n        assertDoesNotThrow(() -> printer.flush());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_5_b/scope_test%20260109234110%/3%Csv_5_b%CSVPrinter%flush%d1/1/runtemp/Csv_5_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 806,
+  "completion_tokens": 306,
+  "total_tokens": 1112,
+  "llm_elapsed_time_seconds": 6.72,
+  "repair_elapsed_time_seconds": 32.03,
+  "round_total_time_seconds": 32.03
+}

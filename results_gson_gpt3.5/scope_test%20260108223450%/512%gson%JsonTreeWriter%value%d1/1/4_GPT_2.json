@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlbk8yQNsjUI0ncCsOfCC1oYVhWy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n    // Initialize the stack by beginning an object to avoid IndexOutOfBounds\n    try {\n      jsonTreeWriter.beginObject();\n    } catch (IOException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  @Test\n  public void value_withNonNullString_callsPutAndReturnsThis() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    String testValue = \"testString\";\n\n    JsonWriter returned = jsonTreeWriter.value(testValue);\n\n    // Validate returned reference\n    assertSame(jsonTreeWriter, returned);\n\n    // Use reflection to access private peek method and verify stack content\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    Object topElement = peekMethod.invoke(jsonTreeWriter);\n    assertNotNull(topElement);\n    assertTrue(topElement instanceof JsonPrimitive);\n    assertEquals(testValue, ((JsonPrimitive) topElement).getAsString());\n  }\n\n  @Test\n  public void value_withNullString_callsNullValueAndReturnsThis() throws IOException {\n    JsonWriter returned = jsonTreeWriter.value((String) null);\n\n    // According to source, value(null) returns nullValue() which returns this\n    assertNotNull(returned);\n    assertSame(jsonTreeWriter, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883736,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 392,
+    "prompt_tokens": 1518,
+    "total_tokens": 1910,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.52
+  }
+}

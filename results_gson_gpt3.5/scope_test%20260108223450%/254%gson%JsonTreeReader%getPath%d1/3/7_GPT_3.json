@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmd8Ky90MqXCDbb18XBaQYgmxgvX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n  private Method getPathBooleanMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    // Initialize with a JsonElement (empty JsonObject)\n    jsonTreeReader = new JsonTreeReader(new JsonObject());\n\n    // Access private getPath(boolean) method via reflection\n    getPathBooleanMethod = JsonTreeReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathBooleanMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testGetPath_defaultUsesFalse() {\n    String path = jsonTreeReader.getPath();\n    // Since stackSize is 1 after construction, path should be \"$\"\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_withEmptyStack() throws Exception {\n    // Clear stackSize to 0 to test empty stack path\n    setField(jsonTreeReader, \"stackSize\", 0);\n    String path = (String) getPathBooleanMethod.invoke(jsonTreeReader, false);\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_withRootArray() throws Exception {\n    // Push a JsonArray on stack to simulate root array\n    JsonArray array = new JsonArray();\n    setField(jsonTreeReader, \"stackSize\", 1);\n    setField(jsonTreeReader, \"stack\", new Object[]{array});\n    setField(jsonTreeReader, \"pathIndices\", new int[]{0});\n    setField(jsonTreeReader, \"pathNames\", new String[32]);\n\n    // Also set pathIndices[0] to -1 to mimic actual JsonTreeReader state before increment\n    int[] pathIndices = new int[32];\n    pathIndices[0] = -1;\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    // Increment pathIndices[0] to 0 to simulate next index (this is how getPath works internally)\n    int[] updatedPathIndices = (int[]) getField(jsonTreeReader, \"pathIndices\");\n    updatedPathIndices[0] = 0;\n    setField(jsonTreeReader, \"pathIndices\", updatedPathIndices);\n\n    String path = (String) getPathBooleanMethod.invoke(jsonTreeReader, false);\n    // For root array, path should be \"$[0]\"\n    assertEquals(\"$[0]\", path);\n  }\n\n  @Test\n  public void testGetPath_withNestedObjectAndArray() throws Exception {\n    // Setup stack with root object and nested array\n    JsonObject rootObject = new JsonObject();\n    JsonArray nestedArray = new JsonArray();\n\n    Object[] stack = new Object[32];\n    stack[0] = rootObject;\n    stack[1] = nestedArray;\n\n    String[] pathNames = new String[32];\n    pathNames[0] = \"root\";\n    pathNames[1] = null;\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = -1; // mimic initial state before increment\n    pathIndices[1] = 2;\n\n    setField(jsonTreeReader, \"stack\", stack);\n    setField(jsonTreeReader, \"stackSize\", 2);\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    // Increment pathIndices[0] to 0 to simulate next index (how getPath logic works internally)\n    int[] updatedPathIndices = (int[]) getField(jsonTreeReader, \"pathIndices\");\n    updatedPathIndices[0] = 0;\n    setField(jsonTreeReader, \"pathIndices\", updatedPathIndices);\n\n    String path = (String) getPathBooleanMethod.invoke(jsonTreeReader, false);\n    // Expected path: $.root[2]\n    assertEquals(\"$.root[2]\", path);\n  }\n\n  @Test\n  public void testGetPath_withUsePreviousPathTrue() throws Exception {\n    // Setup stack with one object and pathNames\n    JsonObject rootObject = new JsonObject();\n\n    Object[] stack = new Object[32];\n    stack[0] = rootObject;\n\n    String[] pathNames = new String[32];\n    pathNames[0] = \"previousName\";\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = -1; // mimic initial state before increment\n\n    setField(jsonTreeReader, \"stack\", stack);\n    setField(jsonTreeReader, \"stackSize\", 1);\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    // Increment pathIndices[0] to 0 to simulate next index (how getPath logic works internally)\n    int[] updatedPathIndices = (int[]) getField(jsonTreeReader, \"pathIndices\");\n    updatedPathIndices[0] = 0;\n    setField(jsonTreeReader, \"pathIndices\", updatedPathIndices);\n\n    String path = (String) getPathBooleanMethod.invoke(jsonTreeReader, true);\n    // Expected path: $.previousName\n    assertEquals(\"$.previousName\", path);\n  }\n\n  @Test\n  public void testGetPath_withNullPathNamesAndArrayIndex() throws Exception {\n    // Setup stack with JsonArray and null pathNames element\n    JsonArray array = new JsonArray();\n\n    Object[] stack = new Object[32];\n    stack[0] = array;\n\n    String[] pathNames = new String[32];\n    pathNames[0] = null;\n\n    int[] pathIndices = new int[32];\n    pathIndices[0] = -1; // mimic initial state before increment\n\n    setField(jsonTreeReader, \"stack\", stack);\n    setField(jsonTreeReader, \"stackSize\", 1);\n    setField(jsonTreeReader, \"pathNames\", pathNames);\n    setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n    // Increment pathIndices[0] to 3 to simulate next index (how getPath logic works internally)\n    int[] updatedPathIndices = (int[]) getField(jsonTreeReader, \"pathIndices\");\n    updatedPathIndices[0] = 3;\n    setField(jsonTreeReader, \"pathIndices\", updatedPathIndices);\n\n    String path = (String) getPathBooleanMethod.invoke(jsonTreeReader, false);\n    // Expected path: $[3]\n    assertEquals(\"$[3]\", path);\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      java.lang.reflect.Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      java.lang.reflect.Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887666,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1588,
+    "prompt_tokens": 2713,
+    "total_tokens": 4301,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 38.29
+  }
+}

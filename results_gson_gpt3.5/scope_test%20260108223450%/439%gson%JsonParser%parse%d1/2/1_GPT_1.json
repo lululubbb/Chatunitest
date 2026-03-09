@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJlNYpmrM7AV0tiCpb2jDul57Ne",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\n\nclass JsonParserTest {\n\n  private JsonParser jsonParser;\n\n  @BeforeEach\n  void setUp() {\n    jsonParser = new JsonParser();\n  }\n\n  @Test\n  void parse_withValidJsonString_shouldReturnJsonElement() {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      JsonElement expectedElement = mock(JsonElement.class);\n      mockedStatic.when(() -> JsonParser.parseString(json)).thenReturn(expectedElement);\n\n      JsonElement actualElement = jsonParser.parse(json);\n\n      assertSame(expectedElement, actualElement);\n      mockedStatic.verify(() -> JsonParser.parseString(json));\n    }\n  }\n\n  @Test\n  void parse_withInvalidJsonString_shouldThrowJsonSyntaxException() {\n    String invalidJson = \"{key:\\\"value\\\"\"; // missing closing }\n\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      mockedStatic.when(() -> JsonParser.parseString(invalidJson)).thenThrow(new JsonSyntaxException(\"Malformed JSON\"));\n\n      assertThrows(JsonSyntaxException.class, () -> jsonParser.parse(invalidJson));\n      mockedStatic.verify(() -> JsonParser.parseString(invalidJson));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890309,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 339,
+    "prompt_tokens": 292,
+    "total_tokens": 631,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.69
+  }
+}

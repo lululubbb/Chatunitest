@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport static org.apache.commons.csv.Constants.BACKSPACE;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.END_OF_STREAM;\nimport static org.apache.commons.csv.Constants.FF;\nimport static org.apache.commons.csv.Constants.LF;\nimport static org.apache.commons.csv.Constants.TAB;\nimport static org.apache.commons.csv.Constants.UNDEFINED;\nimport java.io.IOException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a concrete subclass for abstract Lexer to instantiate\n        lexer = new Lexer(mock(CSVFormat.class), mock(ExtendedBufferedReader.class)) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Use reflection to set the private final field commmentStart (correct spelling)\n        Field commentStartField = Lexer.class.getDeclaredField(\"commmentStart\");\n        commentStartField.setAccessible(true);\n        commentStartField.setChar(lexer, '#');\n    }\n\n    @Test\n    void testIsCommentStart_WithCommentStartChar() {\n        assertTrue(lexer.isCommentStart('#'));\n    }\n\n    @Test\n    void testIsCommentStart_WithDifferentChar() {\n        assertFalse(lexer.isCommentStart('a'));\n        assertFalse(lexer.isCommentStart('\\n'));\n        assertFalse(lexer.isCommentStart(0));\n        assertFalse(lexer.isCommentStart(-1));\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_3_b/scope_test%20260109223342%/14%Csv_3_b%Lexer%isCommentStart%d1/4/runtemp/Csv_3_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 752,
+  "completion_tokens": 264,
+  "total_tokens": 1016,
+  "llm_elapsed_time_seconds": 5.08,
+  "repair_elapsed_time_seconds": 38.99,
+  "round_total_time_seconds": 38.99
+}

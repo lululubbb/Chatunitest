@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.util.Map;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonArray_existingMember_returnsJsonArray() {\n    JsonArray jsonArray = new JsonArray();\n    jsonObject.add(\"arrayMember\", jsonArray);\n\n    JsonArray result = jsonObject.getAsJsonArray(\"arrayMember\");\n\n    assertSame(jsonArray, result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_nonExistingMember_returnsNull() {\n    JsonArray result = jsonObject.getAsJsonArray(\"nonExisting\");\n    assertNull(result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_existingMemberNotJsonArray_returnsNull() {\n    JsonPrimitive primitive = new JsonPrimitive(\"stringValue\");\n    jsonObject.add(\"primitiveMember\", primitive);\n\n    JsonElement element = jsonObject.get(\"primitiveMember\");\n    JsonArray result = null;\n    if (element instanceof JsonArray) {\n      result = (JsonArray) element;\n    }\n\n    assertNull(result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_existingMemberNotJsonArray_throwsClassCastException() {\n    JsonPrimitive primitive = new JsonPrimitive(\"stringValue\");\n    jsonObject.add(\"primitiveMember\", primitive);\n\n    assertThrows(ClassCastException.class, () -> jsonObject.getAsJsonArray(\"primitiveMember\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1128,
+  "completion_tokens": 332,
+  "total_tokens": 1460,
+  "llm_elapsed_time_seconds": 6.16,
+  "repair_elapsed_time_seconds": 23.69,
+  "round_total_time_seconds": 23.69
+}

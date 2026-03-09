@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwmPmZAZaCrfJncyZYlEX2oc31zu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithHeaderTest {\n\n    private enum TestEnum {\n        FIRST, SECOND, THIRD\n    }\n\n    @Test\n    void testWithHeader_NullEnum() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader((Class<? extends Enum<?>>) null);\n        assertNotNull(result);\n        assertArrayEquals(null, result.getHeader());\n    }\n\n    @Test\n    void testWithHeader_EmptyEnum() {\n        class EmptyEnum implements Enum<EmptyEnum> {\n            @Override public String name() { return null; }\n            @Override public int ordinal() { return 0; }\n            @Override public int compareTo(EmptyEnum o) { return 0; }\n            @Override public Class<EmptyEnum> getDeclaringClass() { return EmptyEnum.class; }\n        }\n        // Create a dummy enum class with no constants using a mock\n        @SuppressWarnings(\"unchecked\")\n        Class<? extends Enum<?>> mockEnumClass = mock(Class.class);\n        when(mockEnumClass.getEnumConstants()).thenReturn(new Enum<?>[0]);\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(mockEnumClass);\n        assertNotNull(result);\n        assertArrayEquals(new String[0], result.getHeader());\n    }\n\n    @Test\n    void testWithHeader_NormalEnum() {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(TestEnum.class);\n        assertNotNull(result);\n        assertArrayEquals(new String[]{\"FIRST\", \"SECOND\", \"THIRD\"}, result.getHeader());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688353,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 369,
+    "prompt_tokens": 1854,
+    "total_tokens": 2223,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.73
+  }
+}

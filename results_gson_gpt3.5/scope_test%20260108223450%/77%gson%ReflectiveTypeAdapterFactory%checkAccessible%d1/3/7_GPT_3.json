@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn3plTXgrFfgpdTDd7Z9a13DTfp1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.ReflectionAccessFilterHelper;\nimport com.google.gson.internal.reflect.ReflectionHelper;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\n\nclass ReflectiveTypeAdapterFactoryCheckAccessibleTest {\n\n  private Object testObject;\n\n  private Field staticField;\n  private Field instanceField;\n  private Method instanceMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException, NoSuchMethodException {\n    testObject = new Object();\n\n    staticField = StaticTestClass.class.getDeclaredField(\"STATIC_FIELD\");\n    instanceField = StaticTestClass.class.getDeclaredField(\"instanceField\");\n    instanceMethod = StaticTestClass.class.getDeclaredMethod(\"instanceMethod\");\n  }\n\n  // Helper class with static and instance members for testing\n  static class StaticTestClass {\n    static final String STATIC_FIELD = \"static\";\n    private int instanceField = 1;\n    private void instanceMethod() {}\n  }\n\n  @Test\n  void checkAccessible_allowsAccess_whenCanAccessReturnsTrue_forStaticField() throws Exception {\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(true);\n\n      // Should not throw\n      ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n          .invoke(null, null, staticField);\n    }\n  }\n\n  @Test\n  void checkAccessible_allowsAccess_whenCanAccessReturnsTrue_forInstanceField() throws Exception {\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, testObject)).thenReturn(true);\n\n      // Should not throw\n      ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n          .invoke(null, testObject, instanceField);\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenCanAccessReturnsFalse_forStaticField() throws Exception {\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(staticField, null)).thenReturn(false);\n      String desc = \"Static field description\";\n      mockedHelperDesc.when(() -> ReflectionHelper.getAccessibleObjectDescription(staticField, true)).thenReturn(desc);\n\n      Exception ex = assertThrows(InvocationTargetException.class, () -> {\n        ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n            .invoke(null, null, staticField);\n      });\n      Throwable cause = ex.getCause();\n      assertTrue(cause instanceof JsonIOException);\n      assertTrue(cause.getMessage().contains(desc));\n      assertTrue(cause.getMessage().contains(\"is not accessible\"));\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenCanAccessReturnsFalse_forInstanceField() throws Exception {\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(instanceField, testObject)).thenReturn(false);\n      String desc = \"Instance field description\";\n      mockedHelperDesc.when(() -> ReflectionHelper.getAccessibleObjectDescription(instanceField, true)).thenReturn(desc);\n\n      Exception ex = assertThrows(InvocationTargetException.class, () -> {\n        ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n            .invoke(null, testObject, instanceField);\n      });\n      Throwable cause = ex.getCause();\n      assertTrue(cause instanceof JsonIOException);\n      assertTrue(cause.getMessage().contains(desc));\n      assertTrue(cause.getMessage().contains(\"is not accessible\"));\n    }\n  }\n\n  @Test\n  void checkAccessible_throwsJsonIOException_whenCanAccessReturnsFalse_forInstanceMethod() throws Exception {\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedHelper = Mockito.mockStatic(ReflectionAccessFilterHelper.class);\n         MockedStatic<ReflectionHelper> mockedHelperDesc = Mockito.mockStatic(ReflectionHelper.class)) {\n      mockedHelper.when(() -> ReflectionAccessFilterHelper.canAccess(instanceMethod, testObject)).thenReturn(false);\n      String desc = \"Instance method description\";\n      mockedHelperDesc.when(() -> ReflectionHelper.getAccessibleObjectDescription(instanceMethod, true)).thenReturn(desc);\n\n      Exception ex = assertThrows(InvocationTargetException.class, () -> {\n        ReflectiveTypeAdapterFactory.class.getDeclaredMethod(\"checkAccessible\", Object.class, AccessibleObject.class)\n            .invoke(null, testObject, instanceMethod);\n      });\n      Throwable cause = ex.getCause();\n      assertTrue(cause instanceof JsonIOException);\n      assertTrue(cause.getMessage().contains(desc));\n      assertTrue(cause.getMessage().contains(\"is not accessible\"));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889321,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1180,
+    "prompt_tokens": 2776,
+    "total_tokens": 3956,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.01
+  }
+}

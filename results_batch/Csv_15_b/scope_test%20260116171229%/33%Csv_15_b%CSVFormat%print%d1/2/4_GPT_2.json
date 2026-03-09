@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaW58dFbGU7o7ThiQh0QciUh5sdq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileOutputStream;\nimport java.io.IOException;\nimport java.io.OutputStreamWriter;\nimport java.lang.reflect.Method;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testPrint_FileCharset_success() throws IOException {\n        File mockFile = mock(File.class);\n        Charset charset = Charset.forName(\"UTF-8\");\n\n        // Mock FileOutputStream and OutputStreamWriter to avoid actual file IO\n        try (var mockedFOS = Mockito.mockStatic(FileOutputStream.class);\n             var mockedOSW = Mockito.mockConstruction(OutputStreamWriter.class,\n                (mock, context) -> {\n                    // no special behavior needed\n                })) {\n\n            mockedFOS.when(() -> new FileOutputStream(mockFile)).thenReturn(mock(FileOutputStream.class));\n\n            CSVPrinter printer = csvFormat.print(mockFile, charset);\n            assertNotNull(printer);\n        }\n    }\n\n    @Test\n    public void testPrint_FileCharset_nullCharset() {\n        File file = new File(\"test.csv\");\n        assertThrows(NullPointerException.class, () -> csvFormat.print(file, null));\n    }\n\n    @Test\n    public void testPrint_FileCharset_invalidFile() {\n        File file = new File(\"/invalid/path/to/file.csv\");\n        Charset charset = Charset.defaultCharset();\n        // This will throw IOException because file path is invalid or not writable\n        assertThrows(IOException.class, () -> csvFormat.print(file, charset));\n    }\n\n    @Test\n    public void testPrint_PrivatePrintMethod() throws Exception {\n        // Use reflection to invoke private print method:\n        // private void print(final Object object, final CharSequence value, final int offset, final int len,\n        // final Appendable out, final boolean newRecord)\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class,\n                int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        Appendable mockAppendable = mock(Appendable.class);\n\n        // Call with newRecord = true, offset and len within bounds\n        printMethod.invoke(csvFormat, \"value\", \"value\", 0, 5, mockAppendable, true);\n        verify(mockAppendable, atLeastOnce()).append(any(CharSequence.class));\n\n        // Call with newRecord = false, offset and len within bounds\n        printMethod.invoke(csvFormat, \"value\", \"value\", 0, 5, mockAppendable, false);\n        verify(mockAppendable, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    public void testPrint_PrivatePrintAndEscapeMethod() throws Exception {\n        Method printAndEscape = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class,\n                Appendable.class);\n        printAndEscape.setAccessible(true);\n\n        Appendable mockAppendable = mock(Appendable.class);\n\n        // Normal call\n        printAndEscape.invoke(csvFormat, \"escapeValue\", 0, 11, mockAppendable);\n        verify(mockAppendable, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    public void testPrint_PrivatePrintAndQuoteMethod() throws Exception {\n        Method printAndQuote = CSVFormat.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class,\n                int.class, Appendable.class, boolean.class);\n        printAndQuote.setAccessible(true);\n\n        Appendable mockAppendable = mock(Appendable.class);\n\n        // Call with newRecord = true\n        printAndQuote.invoke(csvFormat, \"object\", \"quoteValue\", 0, 10, mockAppendable, true);\n        verify(mockAppendable, atLeastOnce()).append(any(CharSequence.class));\n\n        // Call with newRecord = false\n        printAndQuote.invoke(csvFormat, \"object\", \"quoteValue\", 0, 10, mockAppendable, false);\n        verify(mockAppendable, atLeast(2)).append(any(CharSequence.class));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768556085,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 908,
+    "prompt_tokens": 1681,
+    "total_tokens": 2589,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.51
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmHrWybvHqEuEXpGJHd99R4rbry5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void addDeserializationExclusionStrategy_nullStrategy_throwsNullPointerException() {\n    NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.addDeserializationExclusionStrategy(null);\n    });\n    // The actual message from Objects.requireNonNull is null by default, so check that message is null\n    assertNull(exception.getMessage(), \"Exception message should be null\");\n  }\n\n  @Test\n  void addDeserializationExclusionStrategy_addsStrategyToExcluderAndReturnsThis() throws Exception {\n    ExclusionStrategy mockStrategy = mock(ExclusionStrategy.class);\n    // Use reflection to get the private excluder field before invocation\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder originalExcluder = (Excluder) excluderField.get(gsonBuilder);\n\n    // Mock Excluder and its withExclusionStrategy method\n    Excluder mockExcluder = mock(Excluder.class);\n    when(mockExcluder.withExclusionStrategy(mockStrategy, false, true)).thenReturn(mockExcluder);\n\n    // Use Mockito's MockedStatic to mock Excluder.DEFAULT to return originalExcluder as usual\n    try (MockedStatic<Excluder> mockedExcluderStatic = Mockito.mockStatic(Excluder.class, Mockito.CALLS_REAL_METHODS)) {\n      // Replace the excluder field with mockExcluder before calling method to simulate withExclusionStrategy call\n      excluderField.set(gsonBuilder, mockExcluder);\n\n      GsonBuilder returned = gsonBuilder.addDeserializationExclusionStrategy(mockStrategy);\n\n      // Verify withExclusionStrategy called with correct args\n      verify(mockExcluder).withExclusionStrategy(mockStrategy, false, true);\n\n      // Verify that the excluder field is updated to mockExcluder returned by withExclusionStrategy\n      Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n      assertSame(mockExcluder, updatedExcluder);\n\n      // Verify method returns this instance\n      assertSame(gsonBuilder, returned);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886347,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 571,
+    "prompt_tokens": 2010,
+    "total_tokens": 2581,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.29
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.doThrow;\nimport static org.mockito.Mockito.spy;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.JsonIOException;\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapterTest {\n\n  private TypeAdapter<String> typeAdapterSpy;\n\n  @BeforeEach\n  void setUp() {\n    TypeAdapter<String> typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) throws IOException {\n        // For testing, write the value as a JSON string\n        out.value(value);\n      }\n\n      @Override\n      public String read(JsonReader in) {\n        return null;\n      }\n    };\n    typeAdapterSpy = spy(typeAdapter);\n  }\n\n  @Test\n  void toJson_returnsCorrectJsonString() {\n    String input = \"testString\";\n    String json = typeAdapterSpy.toJson(input);\n    assertEquals(\"\\\"testString\\\"\", json);\n  }\n\n  @Test\n  void toJson_throwsJsonIOException_whenIOExceptionOccurs() throws IOException {\n    doThrow(new IOException(\"mock IOException\")).when(typeAdapterSpy).write(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> typeAdapterSpy.toJson(\"value\"));\n    assertEquals(\"java.io.IOException: mock IOException\", thrown.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/170%gson%TypeAdapter%toJson%d1/1/temp/TypeAdapter_170_1Test.java:31: 错误: 找不到符号\n      public String read(JsonReader in) {\n                         ^\n  符号: 类 JsonReader\n1 个错误\n",
+  "prompt_tokens": 375,
+  "completion_tokens": 325,
+  "total_tokens": 700,
+  "llm_elapsed_time_seconds": 5.92
+}

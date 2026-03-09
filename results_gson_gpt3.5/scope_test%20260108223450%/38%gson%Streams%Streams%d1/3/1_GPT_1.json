@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmkMxjXesPLDp3EYM9ImYSabzy7O",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass StreamsTest {\n\n  @Test\n  void testConstructorThrowsUnsupportedOperationException() throws Exception {\n    Constructor<Streams> constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, constructor::newInstance);\n    assertNotNull(thrown);\n  }\n\n  @Test\n  void testParse_validJsonElement() throws IOException {\n    // Prepare a JsonReader that returns a simple JSON null token\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(reader).nextNull();\n\n    JsonElement element = Streams.parse(reader);\n\n    assertNotNull(element);\n    assertTrue(element.isJsonNull());\n    verify(reader).nextNull();\n  }\n\n  @Test\n  void testParse_throwsJsonSyntaxExceptionOnMalformedJson() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenThrow(new MalformedJsonException(\"Malformed JSON\"));\n\n    JsonSyntaxException exception = assertThrows(JsonSyntaxException.class, () -> Streams.parse(reader));\n    assertTrue(exception.getMessage().contains(\"Malformed JSON\"));\n  }\n\n  @Test\n  void testParse_throwsJsonIOExceptionOnIOException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenThrow(new IOException(\"IO failure\"));\n\n    JsonIOException exception = assertThrows(JsonIOException.class, () -> Streams.parse(reader));\n    assertTrue(exception.getCause() instanceof IOException);\n  }\n\n  @Test\n  void testParse_throwsJsonParseExceptionOnNumberFormatException() throws IOException {\n    JsonReader reader = mock(JsonReader.class);\n    when(reader.peek()).thenReturn(JsonToken.NUMBER);\n    // Simulate TypeAdapters.JSON_ELEMENT.read(reader) throwing NumberFormatException\n    // We do this by mocking reader to throw NumberFormatException on nextDouble call\n    doThrow(new NumberFormatException(\"Number format\")).when(reader).nextDouble();\n\n    // Because Streams.parse calls TypeAdapters.JSON_ELEMENT.read(reader), which calls reader.nextDouble(),\n    // we simulate this by spying on TypeAdapters.JSON_ELEMENT or by using real JsonReader with malformed number.\n    // But here, we can only mock reader to throw NumberFormatException during reading.\n\n    // Since we cannot mock static final fields easily without additional tools,\n    // we test Streams.parse with a real JsonReader on malformed number instead.\n\n    String malformedNumberJson = \"NaN\";\n    JsonReader realReader = new JsonReader(new StringReader(malformedNumberJson));\n\n    JsonParseException exception = assertThrows(JsonParseException.class, () -> Streams.parse(realReader));\n    assertTrue(exception.getCause() instanceof NumberFormatException);\n  }\n\n  @Test\n  void testWrite_writesJsonElement() throws IOException {\n    JsonWriter writer = new JsonWriter(new StringWriter());\n    JsonElement element = JsonNull.INSTANCE;\n\n    Streams.write(element, writer);\n\n    // No exceptions means success\n  }\n\n  @Test\n  void testWrite_throwsJsonIOExceptionOnIOException() throws IOException {\n    JsonWriter writer = mock(JsonWriter.class);\n    doThrow(new IOException(\"IO error\")).when(writer).flush();\n\n    JsonElement element = JsonNull.INSTANCE;\n\n    JsonIOException exception = assertThrows(JsonIOException.class, () -> Streams.write(element, writer));\n    assertTrue(exception.getCause() instanceof IOException);\n  }\n\n  @Test\n  void testWriterForAppendable_withStringBuilder() throws IOException {\n    StringBuilder sb = new StringBuilder();\n    java.io.Writer writer = Streams.writerForAppendable(sb);\n    assertNotNull(writer);\n    writer.write(\"test\");\n    writer.flush();\n    assertEquals(\"test\", sb.toString());\n  }\n\n  @Test\n  void testWriterForAppendable_withWriter() throws IOException {\n    StringWriter sw = new StringWriter();\n    java.io.Writer writer = Streams.writerForAppendable(sw);\n    assertSame(sw, writer);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888114,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 942,
+    "prompt_tokens": 302,
+    "total_tokens": 1244,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.48
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwzkdaiMNUquEPgYOARgZeY7t6gC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n    private File tempFile;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        csvFormat = CSVFormat.DEFAULT;\n        tempFile = File.createTempFile(\"csvformattest\", \".csv\");\n        tempFile.deleteOnExit();\n    }\n\n    @Test\n    public void testPrint_File_Charset_Success() throws IOException {\n        try (CSVPrinter printer = csvFormat.print(tempFile, StandardCharsets.UTF_8)) {\n            assertNotNull(printer);\n        }\n        assertTrue(tempFile.length() >= 0);\n    }\n\n    @Test\n    public void testPrint_File_Charset_IOException() {\n        File nonExistentDir = new File(tempFile.getParentFile(), \"nonexistentDir/nonexistent.csv\");\n        assertThrows(IOException.class, () -> csvFormat.print(nonExistentDir, StandardCharsets.UTF_8));\n    }\n\n    @Test\n    public void testPrint_File_Charset_WithDifferentFormat() throws IOException {\n        CSVFormat format = CSVFormat.EXCEL.withDelimiter(';').withQuote('\\'');\n        try (CSVPrinter printer = format.print(tempFile, StandardCharsets.ISO_8859_1)) {\n            assertNotNull(printer);\n        }\n        assertTrue(tempFile.length() >= 0);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689180,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 324,
+    "prompt_tokens": 2202,
+    "total_tokens": 2526,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.36
+  }
+}

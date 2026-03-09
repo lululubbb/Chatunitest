@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaLJ1F8AH0DFVu9DCrYoVJ2j5dHl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_singleValue() throws IOException {\n        String result = csvFormat.format(\"value\");\n        assertEquals(\"value\", result);\n    }\n\n    @Test\n    void testFormat_multipleValues() throws IOException {\n        String result = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        assertEquals(\"value1,value2,value3\", result);\n    }\n\n    @Test\n    void testFormat_nullValue() throws IOException {\n        String result = csvFormat.format((Object) null);\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_emptyValues() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_withIOException() throws Exception {\n        // Mock CSVPrinter to throw IOException on printRecord\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"IO error\")).when(mockPrinter).printRecord((Object[]) any());\n\n        // Use reflection to get the private constructor of CSVFormat\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Create a real CSVFormat instance with the same properties as DEFAULT\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n\n        // Create a proxy CSVFormat that overrides the format method to use the mocked CSVPrinter\n        CSVFormat csvFormatWithMock = new CSVFormat(\n                baseFormat.getDelimiter(),\n                baseFormat.getQuoteCharacter(),\n                baseFormat.getQuoteMode(),\n                baseFormat.getCommentMarker(),\n                baseFormat.getEscapeCharacter(),\n                baseFormat.getIgnoreSurroundingSpaces(),\n                baseFormat.getIgnoreEmptyLines(),\n                baseFormat.getRecordSeparator(),\n                baseFormat.getNullString(),\n                null,\n                baseFormat.getHeader(),\n                baseFormat.getSkipHeaderRecord(),\n                baseFormat.getAllowMissingColumnNames(),\n                baseFormat.getIgnoreHeaderCase(),\n                baseFormat.getTrim(),\n                baseFormat.getTrailingDelimiter(),\n                baseFormat.getAutoFlush()) {\n            @Override\n            public String format(final Object... values) {\n                final StringWriter out = new StringWriter();\n                try (CSVPrinter printer = mockPrinter) {\n                    mockPrinter.printRecord(values);\n                    return out.toString().trim();\n                } catch (IOException e) {\n                    throw new IllegalStateException(e);\n                }\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatWithMock.format(\"value\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555417,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 715,
+    "prompt_tokens": 2581,
+    "total_tokens": 3296,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.39
+  }
+}

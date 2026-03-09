@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmKay96ztf7tNiAzVuLC7CpuNsRh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\n\nclass GsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void newJsonReader_shouldReturnJsonReaderWithLenientSet() throws Exception {\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n\n    // By default, Gson.lenient is false, test with default\n    JsonReader jsonReader = gson.newJsonReader(reader);\n    assertNotNull(jsonReader);\n    assertEquals(reader, getField(jsonReader, \"in\"));\n    assertFalse(jsonReader.isLenient());\n\n    // Set lenient to true via reflection and test again\n    setField(gson, \"lenient\", true);\n    JsonReader jsonReaderLenient = gson.newJsonReader(reader);\n    assertNotNull(jsonReaderLenient);\n    assertEquals(reader, getField(jsonReaderLenient, \"in\"));\n    assertTrue(jsonReaderLenient.isLenient());\n  }\n\n  // Helper method to get private field value via reflection\n  private Object getField(Object obj, String fieldName) throws Exception {\n    Field field = obj.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(obj);\n  }\n\n  // Helper method to set private field value via reflection\n  private void setField(Object obj, String fieldName, Object value) throws Exception {\n    Field field = obj.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(obj, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886516,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 379,
+    "prompt_tokens": 1603,
+    "total_tokens": 1982,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.17
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmGqqX9VItvAf1h1OR79YNNWTjkr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.Proxy;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenToStringTest {\n\n  @Test\n  void toString_returnsTypeToStringOfType() {\n    // Create a dynamic proxy for Type interface since Mockito.mock(Type.class) is not available\n    Type type = (Type) Proxy.newProxyInstance(\n        Type.class.getClassLoader(),\n        new Class<?>[] {Type.class},\n        (proxy, method, args) -> {\n          if (\"toString\".equals(method.getName())) {\n            return \"proxyType\";\n          }\n          throw new UnsupportedOperationException(\"Only toString() is supported\");\n        });\n\n    // Create a TypeToken instance using reflection to set private final fields\n    TypeToken<?> token = new TypeToken<Type>() {};\n\n    try {\n      var typeField = TypeToken.class.getDeclaredField(\"type\");\n      typeField.setAccessible(true);\n      typeField.set(token, type);\n\n      var rawTypeField = TypeToken.class.getDeclaredField(\"rawType\");\n      rawTypeField.setAccessible(true);\n      rawTypeField.set(token, Object.class);\n\n      var hashCodeField = TypeToken.class.getDeclaredField(\"hashCode\");\n      hashCodeField.setAccessible(true);\n      hashCodeField.set(token, 0);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n\n    String result = token.toString();\n\n    assertEquals(\"proxyType\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886284,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 331,
+    "prompt_tokens": 2739,
+    "total_tokens": 3070,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.93
+  }
+}

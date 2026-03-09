@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxim0tq0PGXhAFVCkLhAIch2p7sa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.net.URL;\nimport java.nio.charset.Charset;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        charset = Charset.forName(\"UTF-8\");\n        format = mock(CSVFormat.class);\n\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n    }\n\n    @Test\n    void parse_NullUrl_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse((URL) null, charset, format));\n        assertEquals(\"url\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullCharset_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(mockUrl, null, format));\n        assertEquals(\"charset\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(mockUrl, charset, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidParameters_ReturnsCSVParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        InputStream emptyInputStream = InputStream.nullInputStream();\n        URL realUrl = mock(URL.class);\n        when(realUrl.openStream()).thenReturn(emptyInputStream);\n\n        CSVParser result = CSVParser.parse(realUrl, charset, format);\n\n        assertNotNull(result);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(result);\n\n        assertEquals(format, actualFormat);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691972,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 458,
+    "prompt_tokens": 1163,
+    "total_tokens": 1621,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.77
+  }
+}

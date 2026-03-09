@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn7NrpMkHcHuP9KZsA2knY73vdvj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    // Create a Reader mock as it's required by JsonReader constructor but not used directly here\n    Reader reader = mock(Reader.class);\n    jsonReader = new JsonReader(reader);\n  }\n\n  private boolean invokeSkipTo(String toFind) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method skipToMethod = JsonReader.class.getDeclaredMethod(\"skipTo\", String.class);\n    skipToMethod.setAccessible(true);\n    return (boolean) skipToMethod.invoke(jsonReader, toFind);\n  }\n\n  @Test\n  public void testSkipTo_foundAtStart() throws Exception {\n    // Setup buffer with \"hello world\"\n    setBuffer(\"hello world\\nnext line\");\n    jsonReader.pos = 0;\n    jsonReader.limit = 16;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    boolean result = invokeSkipTo(\"hello\");\n    assertTrue(result);\n    // pos should be at the start of matched string (0)\n    assertEquals(0, jsonReader.pos);\n    // lineNumber and lineStart should not change because no newline before pos\n    assertEquals(0, jsonReader.lineNumber);\n    assertEquals(0, jsonReader.lineStart);\n  }\n\n  @Test\n  public void testSkipTo_foundAfterNewline() throws Exception {\n    // Setup buffer with \"line1\\nline2\\nline3\"\n    setBuffer(\"line1\\nline2\\nline3\");\n    jsonReader.pos = 6; // position at start of \"line2\"\n    jsonReader.limit = 17;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    boolean result = invokeSkipTo(\"line2\");\n    assertTrue(result);\n    // pos should be at 6 where \"line2\" starts\n    assertEquals(6, jsonReader.pos);\n    // lineNumber and lineStart should be updated because buffer[pos] was '\\n' at pos=5\n    assertEquals(1, jsonReader.lineNumber);\n    assertEquals(6, jsonReader.lineStart);\n  }\n\n  @Test\n  public void testSkipTo_notFound() throws Exception {\n    // Setup buffer with \"abcde\"\n    setBuffer(\"abcde\");\n    jsonReader.pos = 0;\n    jsonReader.limit = 5;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    boolean result = invokeSkipTo(\"xyz\");\n    assertFalse(result);\n    // pos should have incremented until limit - length\n    assertTrue(jsonReader.pos >= 0);\n  }\n\n  @Test\n  public void testSkipTo_handlesNewlinesCorrectly() throws Exception {\n    // Setup buffer with multiple newlines and target after them\n    setBuffer(\"a\\nb\\nc\\nhello\");\n    jsonReader.pos = 0;\n    jsonReader.limit = 11;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    boolean result = invokeSkipTo(\"hello\");\n    assertTrue(result);\n    // pos should be at 6 where \"hello\" starts\n    assertEquals(6, jsonReader.pos);\n    // lineNumber should be 3 (for 3 newlines)\n    assertEquals(3, jsonReader.lineNumber);\n    // lineStart should be pos after last newline (7)\n    assertEquals(7, jsonReader.lineStart);\n  }\n\n  @Test\n  public void testSkipTo_emptyToFind() throws Exception {\n    // Setup buffer with some content\n    setBuffer(\"anything\");\n    jsonReader.pos = 0;\n    jsonReader.limit = 8;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    // Empty string toFind should always return true immediately\n    boolean result = invokeSkipTo(\"\");\n    assertTrue(result);\n  }\n\n  @Test\n  public void testSkipTo_partialBufferFill() throws Exception {\n    // Setup buffer with partial data and simulate fillBuffer to extend it\n    setBuffer(\"abc\");\n    jsonReader.pos = 0;\n    jsonReader.limit = 3;\n    jsonReader.lineNumber = 0;\n    jsonReader.lineStart = 0;\n\n    // Spy on jsonReader to mock fillBuffer behavior\n    JsonReader spyReader = spy(jsonReader);\n    // Override fillBuffer to simulate adding \"def\" after \"abc\"\n    doAnswer(invocation -> {\n      char[] buf = getBuffer(spyReader);\n      System.arraycopy(\"def\".toCharArray(), 0, buf, 3, 3);\n      setLimit(spyReader, 6);\n      return true;\n    }).when(spyReader).fillBuffer(3);\n\n    Method skipToMethod = JsonReader.class.getDeclaredMethod(\"skipTo\", String.class);\n    skipToMethod.setAccessible(true);\n\n    boolean result = (boolean) skipToMethod.invoke(spyReader, \"def\");\n    assertTrue(result);\n    // pos should be at 3 where \"def\" starts\n    assertEquals(3, getPos(spyReader));\n  }\n\n  // Helper methods to set private fields using reflection\n\n  private void setBuffer(String content) throws Exception {\n    char[] buf = content.toCharArray();\n    System.arraycopy(buf, 0, getBuffer(jsonReader), 0, buf.length);\n  }\n\n  private char[] getBuffer(JsonReader reader) throws Exception {\n    var field = JsonReader.class.getDeclaredField(\"buffer\");\n    field.setAccessible(true);\n    return (char[]) field.get(reader);\n  }\n\n  private void setLimit(JsonReader reader, int limit) throws Exception {\n    var field = JsonReader.class.getDeclaredField(\"limit\");\n    field.setAccessible(true);\n    field.setInt(reader, limit);\n  }\n\n  private int getPos(JsonReader reader) throws Exception {\n    var field = JsonReader.class.getDeclaredField(\"pos\");\n    field.setAccessible(true);\n    return field.getInt(reader);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889541,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1323,
+    "prompt_tokens": 1099,
+    "total_tokens": 2422,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 17.8
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testHashCode_emptyMembers() throws Exception {\n    // members is empty initially\n    int expectedHashCode = getMembersField(jsonObject).hashCode();\n    assertEquals(expectedHashCode, jsonObject.hashCode());\n  }\n\n  @Test\n  public void testHashCode_withMembers() throws Exception {\n    JsonPrimitive value1 = new JsonPrimitive(\"value1\");\n    JsonPrimitive value2 = new JsonPrimitive(123);\n\n    jsonObject.add(\"key1\", value1);\n    jsonObject.add(\"key2\", value2);\n\n    int expectedHashCode = getMembersField(jsonObject).hashCode();\n    assertEquals(expectedHashCode, jsonObject.hashCode());\n  }\n\n  @Test\n  public void testHashCode_withNullMemberValue() throws Exception {\n    // Add a JsonNull value explicitly by reflection to simulate null member value\n    LinkedTreeMap<String, JsonElement> members = getMembersField(jsonObject);\n    members.put(\"nullKey\", JsonNull.INSTANCE);\n\n    int expectedHashCode = members.hashCode();\n    assertEquals(expectedHashCode, jsonObject.hashCode());\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private LinkedTreeMap<String, JsonElement> getMembersField(JsonObject obj) throws Exception {\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    return (LinkedTreeMap<String, JsonElement>) membersField.get(obj);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1102,
+  "completion_tokens": 382,
+  "total_tokens": 1484,
+  "llm_elapsed_time_seconds": 7.06
+}

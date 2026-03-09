@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvsRL8vH0dc8beShlddqww8ggFh0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithCommentMarker_validChar() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char commentChar = '#';\n\n        CSVFormat result = original.withCommentMarker(commentChar);\n\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertEquals(Character.valueOf(commentChar), result.getCommentMarker());\n        assertEquals(original.getDelimiter(), result.getDelimiter());\n        assertEquals(original.getQuoteCharacter(), result.getQuoteCharacter());\n        assertEquals(original.getQuoteMode(), result.getQuoteMode());\n        assertEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(original.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(original.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(original.getRecordSeparator(), result.getRecordSeparator());\n        assertEquals(original.getNullString(), result.getNullString());\n        assertArrayEquals(original.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(original.getHeader(), result.getHeader());\n        assertEquals(original.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(original.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(original.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n        assertEquals(original.getTrim(), result.getTrim());\n        assertEquals(original.getTrailingDelimiter(), result.getTrailingDelimiter());\n    }\n\n    @Test\n    public void testWithCommentMarker_null() {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        CSVFormat result = original.withCommentMarker((Character) null);\n\n        assertNotNull(result);\n        assertNotSame(original, result);\n        assertNull(result.getCommentMarker());\n    }\n\n    @Test\n    public void testWithCommentMarker_lineBreakChar_throwsException() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        // Access private static method isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Verify that '\\n' is a line break\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, Character.valueOf('\\n')));\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, Character.valueOf('\\r')));\n\n        // Test with '\\n' character - expect IllegalArgumentException\n        char lineBreakChar = '\\n';\n        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n            original.withCommentMarker(Character.valueOf(lineBreakChar));\n        });\n        assertEquals(\"The comment start marker character cannot be a line break\", thrown.getMessage());\n\n        // Test with '\\r' character - expect IllegalArgumentException\n        char carriageReturnChar = '\\r';\n        IllegalArgumentException thrown2 = assertThrows(IllegalArgumentException.class, () -> {\n            original.withCommentMarker(Character.valueOf(carriageReturnChar));\n        });\n        assertEquals(\"The comment start marker character cannot be a line break\", thrown2.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684883,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 653,
+    "prompt_tokens": 2329,
+    "total_tokens": 2982,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.02
+  }
+}

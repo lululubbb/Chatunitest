@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxhIcwOngwunVrxSPMnDwHzwidCw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserParseTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n    }\n\n    @Test\n    void parse_NullUrl_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse((URL) null, Charset.defaultCharset(), CSVFormat.DEFAULT));\n        assertEquals(\"url\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullCharset_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(mockUrl, null, CSVFormat.DEFAULT));\n        assertEquals(\"charset\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class,\n                () -> CSVParser.parse(mockUrl, Charset.defaultCharset(), null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidInputs_ReturnsCSVParser() throws IOException {\n        Charset charset = Charset.defaultCharset();\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // When openStream() is called, return a real InputStreamReader wrapping a dummy InputStream\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n\n        CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n        assertNotNull(parser);\n        // Validate internal state via reflection\n        Reader readerField = (Reader) getField(parser, \"reader\");\n        assertNotNull(readerField);\n        CSVFormat actualFormat = (CSVFormat) getField(parser, \"format\");\n        assertSame(format, actualFormat);\n\n        verify(mockUrl).openStream();\n    }\n\n    // Reflection helper\n    private Object getField(Object obj, String fieldName) {\n        try {\n            java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.get(obj);\n        } catch (Exception e) {\n            fail(\"Reflection failed: \" + e.getMessage());\n            return null;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691880,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 553,
+    "prompt_tokens": 1287,
+    "total_tokens": 1840,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.22
+  }
+}

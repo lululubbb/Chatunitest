@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private ArrayList<JsonElement> mockElements;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    jsonArray = new JsonArray();\n\n    // Use reflection to set private final field 'elements' to a mock\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n\n    mockElements = mock(ArrayList.class);\n    elementsField.set(jsonArray, mockElements);\n  }\n\n  @Test\n  void set_WithNonNullElement_ShouldCallSetOnElements() {\n    JsonElement element = mock(JsonElement.class);\n    JsonElement returned = mock(JsonElement.class);\n\n    when(mockElements.set(0, element)).thenReturn(returned);\n\n    JsonElement result = jsonArray.set(0, element);\n\n    assertSame(returned, result);\n    verify(mockElements).set(0, element);\n  }\n\n  @Test\n  void set_WithNullElement_ShouldReplaceWithJsonNullInstance() {\n    JsonElement returned = mock(JsonElement.class);\n\n    when(mockElements.set(eq(1), eq(JsonNull.INSTANCE))).thenReturn(returned);\n\n    JsonElement result = jsonArray.set(1, null);\n\n    assertSame(returned, result);\n    verify(mockElements).set(1, JsonNull.INSTANCE);\n  }\n\n  @Test\n  void set_WithIndexOutOfBounds_ShouldThrowException() {\n    JsonElement element = mock(JsonElement.class);\n\n    doThrow(new IndexOutOfBoundsException()).when(mockElements).set(5, element);\n\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.set(5, element));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 489,
+  "completion_tokens": 392,
+  "total_tokens": 881,
+  "llm_elapsed_time_seconds": 6.26
+}

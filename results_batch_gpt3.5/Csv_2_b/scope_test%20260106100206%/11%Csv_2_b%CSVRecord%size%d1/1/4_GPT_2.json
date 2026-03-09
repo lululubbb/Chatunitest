@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuqpU2lpAHiAlIF98LQW8vgJnKTVd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.util.Collections;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private Constructor<CSVRecord> constructor;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n    }\n\n    @Test\n    void testSize_withNonEmptyValuesArray() throws Exception {\n        String[] values = new String[] {\"a\", \"b\", \"c\"};\n        Map<String, Integer> mapping = Collections.emptyMap();\n        CSVRecord record = constructor.newInstance(values, mapping, null, 1L);\n\n        int size = record.size();\n\n        assertEquals(3, size);\n    }\n\n    @Test\n    void testSize_withEmptyValuesArray() throws Exception {\n        String[] values = new String[0];\n        Map<String, Integer> mapping = Collections.emptyMap();\n        CSVRecord record = constructor.newInstance(values, mapping, null, 1L);\n\n        int size = record.size();\n\n        assertEquals(0, size);\n    }\n\n    @Test\n    void testSize_withNullValuesArray() throws Exception {\n        String[] values = new String[] {\"x\"};\n        Map<String, Integer> mapping = Collections.emptyMap();\n        CSVRecord record = constructor.newInstance(values, mapping, null, 1L);\n\n        Field valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        valuesField.set(record, null);\n\n        try {\n            record.size();\n        } catch (NullPointerException e) {\n            // expected\n            return;\n        }\n        throw new AssertionError(\"Expected NullPointerException when values is null\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767665480,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 401,
+    "prompt_tokens": 889,
+    "total_tokens": 1290,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.64
+  }
+}

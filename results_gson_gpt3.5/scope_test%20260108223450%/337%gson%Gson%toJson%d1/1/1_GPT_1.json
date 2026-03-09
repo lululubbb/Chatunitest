@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmyxlcEh6NnWTnuvXPyLnFBVInDo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Type;\n\npublic class GsonToJsonTest {\n\n  private Gson gson;\n  private JsonWriter writer;\n  private TypeAdapter<Object> adapter;\n\n  @BeforeEach\n  public void setup() {\n    gson = new Gson();\n    writer = mock(JsonWriter.class);\n    adapter = mock(TypeAdapter.class);\n  }\n\n  @Test\n  public void testToJson_normalFlow() throws IOException {\n    Object src = new Object();\n    Type typeOfSrc = Object.class;\n\n    Gson spyGson = Mockito.spy(gson);\n    doReturn(adapter).when(spyGson).getAdapter(TypeToken.get(typeOfSrc));\n\n    when(writer.isLenient()).thenReturn(false);\n    when(writer.isHtmlSafe()).thenReturn(false);\n    when(writer.getSerializeNulls()).thenReturn(false);\n\n    spyGson.toJson(src, typeOfSrc, writer);\n\n    InOrder inOrder = inOrder(writer, adapter);\n    inOrder.verify(writer).isLenient();\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).isHtmlSafe();\n    inOrder.verify(writer).setHtmlSafe(spyGson.htmlSafe());\n    inOrder.verify(writer).getSerializeNulls();\n    inOrder.verify(writer).setSerializeNulls(spyGson.serializeNulls());\n    inOrder.verify(adapter).write(writer, src);\n    inOrder.verify(writer).setLenient(false);\n    inOrder.verify(writer).setHtmlSafe(false);\n    inOrder.verify(writer).setSerializeNulls(false);\n  }\n\n  @Test\n  public void testToJson_ioExceptionIsWrapped() throws IOException {\n    Object src = new Object();\n    Type typeOfSrc = Object.class;\n\n    Gson spyGson = Mockito.spy(gson);\n    doReturn(adapter).when(spyGson).getAdapter(TypeToken.get(typeOfSrc));\n\n    when(writer.isLenient()).thenReturn(true);\n    when(writer.isHtmlSafe()).thenReturn(true);\n    when(writer.getSerializeNulls()).thenReturn(true);\n\n    doThrow(new IOException(\"io error\")).when(adapter).write(writer, src);\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> {\n      spyGson.toJson(src, typeOfSrc, writer);\n    });\n\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"io error\", thrown.getCause().getMessage());\n\n    InOrder inOrder = inOrder(writer);\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).setHtmlSafe(spyGson.htmlSafe());\n    inOrder.verify(writer).setSerializeNulls(spyGson.serializeNulls());\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).setHtmlSafe(true);\n    inOrder.verify(writer).setSerializeNulls(true);\n  }\n\n  @Test\n  public void testToJson_assertionErrorIsWrapped() throws IOException {\n    Object src = new Object();\n    Type typeOfSrc = Object.class;\n\n    Gson spyGson = Mockito.spy(gson);\n    doReturn(adapter).when(spyGson).getAdapter(TypeToken.get(typeOfSrc));\n\n    when(writer.isLenient()).thenReturn(false);\n    when(writer.isHtmlSafe()).thenReturn(false);\n    when(writer.getSerializeNulls()).thenReturn(false);\n\n    AssertionError assertionError = new AssertionError(\"assertion failed\");\n    doThrow(assertionError).when(adapter).write(writer, src);\n\n    AssertionError thrown = assertThrows(AssertionError.class, () -> {\n      spyGson.toJson(src, typeOfSrc, writer);\n    });\n\n    assertTrue(thrown.getMessage().contains(\"AssertionError (GSON \"));\n    assertEquals(assertionError, thrown.getCause());\n\n    InOrder inOrder = inOrder(writer);\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).setHtmlSafe(spyGson.htmlSafe());\n    inOrder.verify(writer).setSerializeNulls(spyGson.serializeNulls());\n    inOrder.verify(writer).setLenient(false);\n    inOrder.verify(writer).setHtmlSafe(false);\n    inOrder.verify(writer).setSerializeNulls(false);\n  }\n\n  @Test\n  public void testToJson_restoresWriterSettingsOnException() throws IOException {\n    Object src = new Object();\n    Type typeOfSrc = Object.class;\n\n    Gson spyGson = Mockito.spy(gson);\n    doReturn(adapter).when(spyGson).getAdapter(TypeToken.get(typeOfSrc));\n\n    when(writer.isLenient()).thenReturn(true);\n    when(writer.isHtmlSafe()).thenReturn(false);\n    when(writer.getSerializeNulls()).thenReturn(true);\n\n    doThrow(new IOException(\"io error\")).when(adapter).write(writer, src);\n\n    try {\n      spyGson.toJson(src, typeOfSrc, writer);\n    } catch (JsonIOException ignored) {\n    }\n\n    InOrder inOrder = inOrder(writer);\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).setHtmlSafe(spyGson.htmlSafe());\n    inOrder.verify(writer).setSerializeNulls(spyGson.serializeNulls());\n    inOrder.verify(writer).setLenient(true);\n    inOrder.verify(writer).setHtmlSafe(false);\n    inOrder.verify(writer).setSerializeNulls(true);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889019,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1177,
+    "prompt_tokens": 1619,
+    "total_tokens": 2796,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.86
+  }
+}

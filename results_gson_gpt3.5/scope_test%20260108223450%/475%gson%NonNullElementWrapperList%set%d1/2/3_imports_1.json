@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = Mockito.mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void testSet_returnsDelegateSetValue() {\n    String oldValue = \"old\";\n    String newValue = \"new\";\n\n    when(delegate.set(1, newValue)).thenReturn(oldValue);\n\n    String result = list.set(1, newValue);\n\n    verify(delegate).set(1, newValue);\n    assertEquals(oldValue, result);\n  }\n\n  @Test\n  void testSet_callsNonNull_withNonNullElement() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    String element = \"test\";\n\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    Object nonNullResult = nonNullMethod.invoke(list, element);\n    assertEquals(element, nonNullResult);\n  }\n\n  @Test\n  void testSet_callsNonNull_withNullElement_throwsNPE() throws NoSuchMethodException {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    assertThrows(InvocationTargetException.class, () -> {\n      try {\n        nonNullMethod.invoke(list, (Object) null);\n      } catch (InvocationTargetException e) {\n        // The cause should be NullPointerException\n        assertTrue(e.getCause() instanceof NullPointerException);\n        throw e;\n      }\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 376,
+  "completion_tokens": 419,
+  "total_tokens": 795,
+  "llm_elapsed_time_seconds": 11.64,
+  "repair_elapsed_time_seconds": 20.33,
+  "round_total_time_seconds": 20.33
+}

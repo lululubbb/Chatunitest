@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwZuSFtCi6HlyKudFRLLuxTq1sxG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.PrintStream;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private PrintStream originalOut;\n\n    @BeforeEach\n    void setUp() {\n        // Save original System.out to restore later\n        originalOut = System.out;\n    }\n\n    @AfterEach\n    void tearDown() {\n        // Restore original System.out\n        System.setOut(originalOut);\n    }\n\n    @Test\n    void testPrinter_returnsCSVPrinter() throws Exception {\n        // Redirect System.out to a mock PrintStream to verify usage\n        PrintStream mockOut = mock(PrintStream.class);\n        System.setOut(mockOut);\n\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        CSVPrinter printer = format.printer();\n\n        assertNotNull(printer);\n        // Using reflection to check the CSVPrinter's out field is System.out (mockOut)\n        // CSVPrinter has a private final Appendable out field\n        Method getOut = CSVPrinter.class.getDeclaredMethod(\"getOut\");\n        getOut.setAccessible(true);\n        Appendable out = (Appendable) getOut.invoke(printer);\n        assertEquals(System.out, out);\n\n        // Also check that printer's format is the CSVFormat instance\n        Method getFormat = CSVPrinter.class.getDeclaredMethod(\"getFormat\");\n        getFormat.setAccessible(true);\n        CSVFormat usedFormat = (CSVFormat) getFormat.invoke(printer);\n        assertSame(format, usedFormat);\n    }\n\n    @Test\n    void testPrinter_multipleCalls_returnDistinctPrinters() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVPrinter printer1 = format.printer();\n        CSVPrinter printer2 = format.printer();\n\n        assertNotNull(printer1);\n        assertNotNull(printer2);\n        assertNotSame(printer1, printer2);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687578,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 422,
+    "prompt_tokens": 1786,
+    "total_tokens": 2208,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.63
+  }
+}

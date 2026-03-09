@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcpc0Efhued9FLn3emLw9TeHceaq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader) {\n            @Override\n            public String readLine() throws IOException {\n                return super.readLine();\n            }\n        };\n    }\n\n    @Test\n    void testReadLine_NonNullNonEmptyLine() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        // Mock super.readLine to return a non-empty string\n        doReturn(\"abc\").when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"abc\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(spyReader);\n        assertEquals('c', lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(spyReader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_NonNullEmptyLine() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        // Mock super.readLine to return an empty string\n        doReturn(\"\").when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertEquals(\"\", line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(spyReader);\n        // lastChar should remain unchanged (default UNDEFINED = -2)\n        assertEquals(-2, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(spyReader);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testReadLine_NullLine() throws IOException, NoSuchFieldException, IllegalAccessException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        // Mock super.readLine to return null (end of stream)\n        doReturn(null).when(spyReader).readLine();\n\n        String line = spyReader.readLine();\n\n        assertNull(line);\n\n        Field lastCharField = ExtendedBufferedReader.class.getDeclaredField(\"lastChar\");\n        lastCharField.setAccessible(true);\n        int lastChar = (int) lastCharField.get(spyReader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n\n        Field lineCounterField = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        lineCounterField.setAccessible(true);\n        int lineCounter = (int) lineCounterField.get(spyReader);\n        // lineCounter should not increment on null line\n        assertEquals(0, lineCounter);\n    }\n\n    @Test\n    void testReadLine_IOException() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        doThrow(new IOException(\"Test IO Exception\")).when(spyReader).readLine();\n\n        IOException thrown = assertThrows(IOException.class, spyReader::readLine);\n        assertEquals(\"Test IO Exception\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850000,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 798,
+    "prompt_tokens": 337,
+    "total_tokens": 1135,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.5
+  }
+}

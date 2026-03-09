@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cutn26jQICu2KZ0BpjO7nY6krT8Ma",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_char() {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char quoteChar = '\\'';\n\n        CSVFormat result = original.withQuote(quoteChar);\n\n        assertNotNull(result);\n        assertEquals(Character.valueOf(quoteChar), result.getQuoteCharacter());\n        // Original should remain unchanged (immutability)\n        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), original.getQuoteCharacter());\n        // Also test with quoteChar as DOUBLE_QUOTE_CHAR\n        CSVFormat result2 = original.withQuote(CSVFormat.DEFAULT.getQuoteCharacter());\n        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), result2.getQuoteCharacter());\n    }\n\n    @Test\n    public void testWithQuote_Character_null() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        // Access private withQuote(Character) method by reflection\n        Method withQuoteCharMethod = CSVFormat.class.getDeclaredMethod(\"withQuote\", Character.class);\n        withQuoteCharMethod.setAccessible(true);\n\n        // Test with null Character\n        CSVFormat result = (CSVFormat) withQuoteCharMethod.invoke(original, (Character) null);\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n\n        // Test with non-null Character\n        Character quoteChar = Character.valueOf('\\\"');\n        CSVFormat result2 = (CSVFormat) withQuoteCharMethod.invoke(original, quoteChar);\n        assertNotNull(result2);\n        assertEquals(quoteChar, result2.getQuoteCharacter());\n\n        // Test with different quote char\n        Character quoteChar2 = Character.valueOf('\\'');\n        CSVFormat result3 = (CSVFormat) withQuoteCharMethod.invoke(original, quoteChar2);\n        assertNotNull(result3);\n        assertEquals(quoteChar2, result3.getQuoteCharacter());\n\n        // Test that original remains unchanged\n        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), original.getQuoteCharacter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676860,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 437,
+    "prompt_tokens": 974,
+    "total_tokens": 1411,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.63
+  }
+}

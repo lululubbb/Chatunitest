@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\nimport static org.apache.commons.csv.Token.Type.TOKEN;\nimport java.io.Closeable;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.net.URL;\nimport java.nio.charset.Charset;\nimport java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.LinkedHashMap;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.NoSuchElementException;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n    private Lexer lexerMock;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a mock Lexer\n        lexerMock = mock(Lexer.class);\n\n        // Create a CSVParser instance with a dummy Reader and a non-null CSVFormat\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n\n        // Inject the mock Lexer into the csvParser instance via reflection\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @Test\n    public void testIsClosed_whenLexerIsClosed_returnsTrue() {\n        when(lexerMock.isClosed()).thenReturn(true);\n\n        boolean result = csvParser.isClosed();\n\n        assertTrue(result);\n        verify(lexerMock, times(1)).isClosed();\n    }\n\n    @Test\n    public void testIsClosed_whenLexerIsNotClosed_returnsFalse() {\n        when(lexerMock.isClosed()).thenReturn(false);\n\n        boolean result = csvParser.isClosed();\n\n        assertFalse(result);\n        verify(lexerMock, times(1)).isClosed();\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_4_b/scope_test%20260109225105%/12%Csv_4_b%CSVParser%isClosed%d1/2/runtemp/Csv_4_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 819,
+  "completion_tokens": 299,
+  "total_tokens": 1118,
+  "llm_elapsed_time_seconds": 5.23,
+  "repair_elapsed_time_seconds": 280.34,
+  "round_total_time_seconds": 280.34
+}

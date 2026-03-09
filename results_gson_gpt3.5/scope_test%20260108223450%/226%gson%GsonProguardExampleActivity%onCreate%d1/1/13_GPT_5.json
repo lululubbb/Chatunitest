@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJglrqkGeYR1kzv2YP70PqJM60q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android;\n\nimport static org.mockito.ArgumentMatchers.anyInt;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.spy;\nimport static org.mockito.Mockito.verify;\nimport static org.mockito.Mockito.when;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class GsonProguardExampleActivityTest {\n\n  private GsonProguardExampleActivity activity;\n  private Object mockTextView;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    activity = spy(new GsonProguardExampleActivity());\n\n    // Create a mock TextView using a dynamic proxy to avoid Android dependency\n    Class<?> textViewClass = Class.forName(\"android.widget.TextView\");\n    mockTextView = mock(textViewClass);\n    \n    // Mock findViewById to return the mocked TextView\n    when(activity.findViewById(anyInt())).thenReturn(mockTextView);\n\n    // Mock setContentView to do nothing\n    Mockito.doNothing().when(activity).setContentView(anyInt());\n  }\n\n  @Test\n  public void testOnCreate_callsExpectedMethods_setsTextViewTextAndInvalidates() throws Exception {\n    // Prepare a mock Bundle using dynamic proxy to avoid Android dependency\n    Class<?> bundleClass = Class.forName(\"android.os.Bundle\");\n    Object mockBundle = mock(bundleClass);\n\n    // Create a sample Cart object\n    Class<?> cartClass = Class.forName(\"com.google.gson.examples.android.model.Cart\");\n    Object sampleCart = cartClass.getDeclaredConstructor().newInstance();\n\n    // Use reflection to make private buildCart accessible\n    Method buildCartMethod = GsonProguardExampleActivity.class.getDeclaredMethod(\"buildCart\");\n    buildCartMethod.setAccessible(true);\n\n    // Mock private method buildCart to return sampleCart\n    Mockito.doReturn(sampleCart).when(activity).buildCart();\n\n    // Call onCreate\n    Method onCreateMethod = GsonProguardExampleActivity.class.getDeclaredMethod(\"onCreate\", bundleClass);\n    onCreateMethod.invoke(activity, mockBundle);\n\n    // Verify setContentView called with R.layout.main (use actual int value)\n    verify(activity).setContentView(getLayoutMain());\n\n    // Verify findViewById called with R.id.tv (use actual int value)\n    verify(activity).findViewById(getIdTv());\n\n    // Verify TextView setText called once with any String\n    Method setTextMethod = mockTextView.getClass().getMethod(\"setText\", CharSequence.class);\n    Mockito.verify(mockTextView).setText(Mockito.any(CharSequence.class));\n\n    // Verify TextView invalidate called once\n    Method invalidateMethod = mockTextView.getClass().getMethod(\"invalidate\");\n    Mockito.verify(mockTextView).invalidate();\n  }\n\n  // Helper methods to provide R.layout.main and R.id.tv values\n  private int getLayoutMain() {\n    // return the int value for R.layout.main\n    return 0x7f0a0000; // example placeholder value\n  }\n\n  private int getIdTv() {\n    // return the int value for R.id.tv\n    return 0x7f0b0000; // example placeholder value\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886460,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 662,
+    "prompt_tokens": 2410,
+    "total_tokens": 3072,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.54
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5mhQGUqQhci2yW5LgjflvKOKsK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nclass TypeAdapter_fromJsonTree_Test {\n\n  private TypeAdapter<String> typeAdapter;\n\n  @BeforeEach\n  public void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) {\n        // no-op for test\n      }\n\n      @Override\n      public String read(JsonReader in) throws IOException {\n        // For testing, just return a constant string or read a string token\n        if (in.peek() == JsonToken.STRING) {\n          return in.nextString();\n        } else if (in.peek() == JsonToken.NULL) {\n          in.nextNull();\n          return null;\n        }\n        return \"readValue\";\n      }\n    };\n  }\n\n  @Test\n  public void fromJsonTree_returnsReadValue() throws Exception {\n    JsonElement jsonElement = mock(JsonElement.class);\n    try (MockedStatic<JsonTreeReader> jsonTreeReaderStatic = mockStatic(JsonTreeReader.class)) {\n      JsonTreeReader jsonTreeReader = mock(JsonTreeReader.class);\n      jsonTreeReaderStatic.when(() -> new JsonTreeReader(jsonElement)).thenReturn(jsonTreeReader);\n      when(jsonTreeReader.peek()).thenReturn(JsonToken.STRING);\n      when(jsonTreeReader.nextString()).thenReturn(\"testValue\");\n\n      // We spy on typeAdapter to call real fromJsonTree but override read to return \"testValue\"\n      TypeAdapter<String> spyAdapter = spy(typeAdapter);\n      doReturn(\"testValue\").when(spyAdapter).read(jsonTreeReader);\n\n      String result = spyAdapter.fromJsonTree(jsonElement);\n\n      assertEquals(\"testValue\", result);\n      verify(spyAdapter).read(jsonTreeReader);\n    }\n  }\n\n  @Test\n  public void fromJsonTree_throwsJsonIOException_whenIOException() throws Exception {\n    JsonElement jsonElement = mock(JsonElement.class);\n    try (MockedStatic<JsonTreeReader> jsonTreeReaderStatic = mockStatic(JsonTreeReader.class)) {\n      JsonTreeReader jsonTreeReader = mock(JsonTreeReader.class);\n      jsonTreeReaderStatic.when(() -> new JsonTreeReader(jsonElement)).thenReturn(jsonTreeReader);\n\n      TypeAdapter<String> spyAdapter = spy(typeAdapter);\n      doThrow(new IOException(\"IO error\")).when(spyAdapter).read(jsonTreeReader);\n\n      JsonIOException thrown = assertThrows(JsonIOException.class, () -> spyAdapter.fromJsonTree(jsonElement));\n      assertEquals(\"java.io.IOException: IO error\", thrown.getCause().toString());\n    }\n  }\n\n  @Test\n  public void fromJsonTree_invokesPrivateMethodUsingReflection() throws Exception {\n    JsonElement jsonElement = mock(JsonElement.class);\n    JsonTreeReader jsonTreeReader = mock(JsonTreeReader.class);\n\n    Method fromJsonTreeMethod = TypeAdapter.class.getDeclaredMethod(\"fromJsonTree\", JsonElement.class);\n    fromJsonTreeMethod.setAccessible(true);\n\n    try (MockedStatic<JsonTreeReader> jsonTreeReaderStatic = mockStatic(JsonTreeReader.class)) {\n      jsonTreeReaderStatic.when(() -> new JsonTreeReader(jsonElement)).thenReturn(jsonTreeReader);\n\n      TypeAdapter<String> spyAdapter = spy(typeAdapter);\n      doReturn(\"reflectionValue\").when(spyAdapter).read(jsonTreeReader);\n\n      String result = (String) fromJsonTreeMethod.invoke(spyAdapter, jsonElement);\n      assertEquals(\"reflectionValue\", result);\n      verify(spyAdapter).read(jsonTreeReader);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885598,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 789,
+    "prompt_tokens": 1211,
+    "total_tokens": 2000,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.23
+  }
+}

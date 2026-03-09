@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlzcbFffSpRYvoGFO1w34kx990CD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n    private UnsafeAllocator unsafeAllocator;\n\n    @BeforeEach\n    void setUp() {\n        unsafeAllocator = UnsafeAllocator.INSTANCE;\n    }\n\n    @Test\n    void testNewInstance_withRegularClass() throws Exception {\n        class TestClass {\n            int x = 5;\n        }\n        TestClass instance = unsafeAllocator.newInstance(TestClass.class);\n        assertNotNull(instance);\n        assertEquals(5, instance.x);\n    }\n\n    @Test\n    void testNewInstance_withAbstractClass_shouldThrowException() {\n        abstract class AbstractClass {}\n\n        Exception exception = assertThrows(Exception.class, () -> {\n            unsafeAllocator.newInstance(AbstractClass.class);\n        });\n        assertNotNull(exception);\n    }\n\n    @Test\n    void testAssertInstantiable_withInterface_shouldThrowException() throws Exception {\n        Class<?> interfaceClass = Runnable.class;\n        Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n        assertInstantiableMethod.setAccessible(true);\n        Exception exception = assertThrows(Exception.class, () -> {\n            assertInstantiableMethod.invoke(null, interfaceClass);\n        });\n        assertNotNull(exception.getCause());\n    }\n\n    @Test\n    void testAssertInstantiable_withEnum_shouldThrowException() throws Exception {\n        Class<?> enumClass = Thread.State.class;\n        Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n        assertInstantiableMethod.setAccessible(true);\n        Exception exception = assertThrows(Exception.class, () -> {\n            assertInstantiableMethod.invoke(null, enumClass);\n        });\n        assertNotNull(exception.getCause());\n    }\n\n    @Test\n    void testCreate_returnsNonNullInstance() throws Exception {\n        Method createMethod = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n        createMethod.setAccessible(true);\n        Object instance = createMethod.invoke(null);\n        assertNotNull(instance);\n        assertTrue(instance instanceof UnsafeAllocator);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885216,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 459,
+    "prompt_tokens": 233,
+    "total_tokens": 692,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.24
+  }
+}

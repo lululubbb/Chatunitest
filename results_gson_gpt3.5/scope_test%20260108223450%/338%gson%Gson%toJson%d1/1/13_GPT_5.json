@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnNhqcGRfX5KN9TXM7f1SJs9zXOh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_withJsonNull_returnsJsonNullString() {\n    JsonElement jsonNull = JsonNull.INSTANCE;\n    String json = gson.toJson(jsonNull);\n    assertEquals(\"null\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveString_returnsQuotedString() {\n    JsonElement jsonPrimitive = new JsonPrimitive(\"test\");\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"\\\"test\\\"\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveNumber_returnsNumberString() {\n    JsonElement jsonPrimitive = new JsonPrimitive(123);\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"123\", json);\n  }\n\n  @Test\n  void toJson_withJsonPrimitiveBoolean_returnsBooleanString() {\n    JsonElement jsonPrimitive = new JsonPrimitive(true);\n    String json = gson.toJson(jsonPrimitive);\n    assertEquals(\"true\", json);\n  }\n\n  @Test\n  void toJson_reflectionInvoke_privateToJsonJsonElementWriter() throws Exception {\n    JsonElement element = new JsonPrimitive(\"reflect\");\n    Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class, com.google.gson.stream.JsonWriter.class);\n\n    toJsonMethod.setAccessible(true);\n\n    StringWriter stringWriter = new StringWriter();\n    com.google.gson.stream.JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    // invoke private method\n    toJsonMethod.invoke(gson, element, jsonWriter);\n    jsonWriter.close();\n\n    assertEquals(\"\\\"reflect\\\"\", stringWriter.toString());\n  }\n\n  @Test\n  void toJson_withEmptyJsonElement_returnsEmptyJson() {\n    JsonElement jsonElement = new JsonElement() {\n      @Override\n      public JsonElement deepCopy() {\n        return this;\n      }\n\n      // Removed @Override annotation to fix compilation error\n      public void write(com.google.gson.stream.JsonWriter writer) {\n        // Write nothing to simulate empty JsonElement\n      }\n    };\n    // This is a dummy JsonElement that does not override toString,\n    // so it will trigger default behavior.\n    String json = gson.toJson(jsonElement);\n    // The actual output depends on JsonElement implementation,\n    // but it should not be null or empty.\n    assertNotNull(json);\n    assertFalse(json.isEmpty());\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890553,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 588,
+    "prompt_tokens": 2289,
+    "total_tokens": 2877,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.02
+  }
+}

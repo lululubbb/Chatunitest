@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaLPDbDg72BVj0fX00xOoXlSD5sC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertDoesNotThrow;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private Method validateMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        // Access private validate method via reflection\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Throwable {\n        try {\n            validateMethod.invoke(format);\n        } catch (InvocationTargetException e) {\n            // Unwrap the IllegalArgumentException thrown by validate()\n            throw e.getCause();\n        }\n    }\n\n    @Test\n    void testValidateDelimiterIsLineBreak() {\n        CSVFormat format = CSVFormat.newFormat('\\n'); // '\\n' is a line break\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertEquals(\"The delimiter cannot be a line break\", thrown.getMessage());\n    }\n\n    @Test\n    void testValidateDelimiterEqualsQuoteCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote(','); // delimiter is ',' by default\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The quoteChar character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    void testValidateDelimiterEqualsEscapeCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape(','); // delimiter is ',' by default\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The escape character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    void testValidateDelimiterEqualsCommentMarker() {\n        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker(','); // delimiter is ',' by default\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The comment start character and the delimiter cannot be the same\"));\n    }\n\n    @Test\n    void testValidateQuoteCharacterEqualsCommentMarker() {\n        CSVFormat format = CSVFormat.DEFAULT.withQuote('#').withCommentMarker('#');\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The comment start character and the quoteChar cannot be the same\"));\n    }\n\n    @Test\n    void testValidateEscapeCharacterEqualsCommentMarker() {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('#').withCommentMarker('#');\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The comment start and the escape character cannot be the same\"));\n    }\n\n    @Test\n    void testValidateNoEscapeCharacterWithQuoteModeNone() {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape(null).withQuoteMode(QuoteMode.NONE);\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertEquals(\"No quotes mode set but no escape character is set\", thrown.getMessage());\n    }\n\n    @Test\n    void testValidateHeaderWithDuplicates() {\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"a\", \"b\", \"a\");\n        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        org.junit.jupiter.api.Assertions.assertTrue(thrown.getMessage().contains(\"The header contains a duplicate entry\"));\n    }\n\n    @Test\n    void testValidateHeaderNoDuplicates() {\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"a\", \"b\", \"c\");\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n\n    @Test\n    void testValidateValidDefault() {\n        // DEFAULT with no changes should not throw\n        assertDoesNotThrow(() -> invokeValidate(CSVFormat.DEFAULT));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555423,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 889,
+    "prompt_tokens": 2253,
+    "total_tokens": 3142,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.78
+  }
+}

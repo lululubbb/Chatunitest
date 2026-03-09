@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm990BtIePS6tpdv7k1AScCSHSbT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport com.google.gson.internal.LinkedTreeMap;\n\nclass JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  void testAdd_withNonNullValue_addsEntry() throws Exception {\n    JsonPrimitive value = new JsonPrimitive(\"testValue\");\n    jsonObject.add(\"key1\", value);\n\n    // Access private field 'members' via reflection to verify insertion\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n\n    assertEquals(1, members.size());\n    assertSame(value, members.get(\"key1\"));\n  }\n\n  @Test\n  void testAdd_withNullValue_addsJsonNullInstance() throws Exception {\n    jsonObject.add(\"keyNull\", null);\n\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n\n    assertEquals(1, members.size());\n    assertSame(JsonNull.INSTANCE, members.get(\"keyNull\"));\n  }\n\n  @Test\n  void testAdd_overwritesExistingValue() throws Exception {\n    JsonPrimitive firstValue = new JsonPrimitive(\"first\");\n    JsonPrimitive secondValue = new JsonPrimitive(\"second\");\n\n    jsonObject.add(\"keyOverwrite\", firstValue);\n    jsonObject.add(\"keyOverwrite\", secondValue);\n\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n\n    assertEquals(1, members.size());\n    assertSame(secondValue, members.get(\"keyOverwrite\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885807,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 453,
+    "prompt_tokens": 399,
+    "total_tokens": 852,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.92
+  }
+}

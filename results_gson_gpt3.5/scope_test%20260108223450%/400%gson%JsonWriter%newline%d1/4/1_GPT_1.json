@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmOWQLvXgFd4HMPX6tg1QUBepXzm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport com.google.gson.stream.JsonWriter;\n\nclass JsonWriter_NewlineTest {\n\n  private Writer out;\n  private JsonWriter jsonWriter;\n  private Method newlineMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    out = mock(Writer.class);\n    jsonWriter = new JsonWriter(out);\n    newlineMethod = JsonWriter.class.getDeclaredMethod(\"newline\");\n    newlineMethod.setAccessible(true);\n  }\n\n  @Test\n  void newline_indentNull_noWrite() throws IOException, InvocationTargetException, IllegalAccessException {\n    // indent is null by default, so newline should do nothing\n    newlineMethod.invoke(jsonWriter);\n    verifyNoInteractions(out);\n  }\n\n  @Test\n  void newline_indentSet_writesNewlineAndIndent() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException, IllegalArgumentException {\n    // Set indent to some string\n    String indent = \"  \";\n    jsonWriter.setIndent(indent);\n\n    // Use reflection to set stackSize to 1 (minimum)\n    var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, 1);\n\n    // Invoke newline, expect a single newline written and no indent (since i=1, size=1, loop does not run)\n    newlineMethod.invoke(jsonWriter);\n\n    InOrder inOrder = inOrder(out);\n    inOrder.verify(out).write('\\n');\n    verify(out, never()).write(indent);\n\n    // Now set stackSize to 4, expect newline + indent written 3 times\n    stackSizeField.setInt(jsonWriter, 4);\n\n    // Reset mocks before second call\n    reset(out);\n\n    newlineMethod.invoke(jsonWriter);\n\n    inOrder = inOrder(out);\n    inOrder.verify(out).write('\\n');\n    inOrder.verify(out, times(3)).write(indent);\n    verifyNoMoreInteractions(out);\n  }\n\n  @Test\n  void newline_indentEmptyString_writesNewlineNoIndent() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n    jsonWriter.setIndent(\"\");\n    var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, 5);\n\n    newlineMethod.invoke(jsonWriter);\n\n    InOrder inOrder = inOrder(out);\n    inOrder.verify(out).write('\\n');\n    // indent is empty string, so write(\"\") called 4 times but effectively no output\n    inOrder.verify(out, times(4)).write(\"\");\n    verifyNoMoreInteractions(out);\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886760,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 609,
+    "prompt_tokens": 762,
+    "total_tokens": 1371,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.26
+  }
+}

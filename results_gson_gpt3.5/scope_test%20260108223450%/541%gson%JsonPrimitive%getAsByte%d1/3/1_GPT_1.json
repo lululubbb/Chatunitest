@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlUqHJfKLh21s1oTkJl4umShCU2W",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  void setUp() {\n    // no-op, instances created per test\n  }\n\n  @Test\n  void getAsByte_whenNumber_returnsByteValue() {\n    Number number = mock(Number.class);\n    when(number.byteValue()).thenReturn((byte) 42);\n\n    JsonPrimitive primitive = spy(new JsonPrimitive(0));\n    doReturn(true).when(primitive).isNumber();\n    doReturn(number).when(primitive).getAsNumber();\n\n    byte result = primitive.getAsByte();\n\n    assertEquals(42, result);\n    verify(primitive).isNumber();\n    verify(primitive).getAsNumber();\n    verify(number).byteValue();\n  }\n\n  @Test\n  void getAsByte_whenNotNumber_parsesByteFromString() {\n    JsonPrimitive primitive = spy(new JsonPrimitive(\"123\"));\n    doReturn(false).when(primitive).isNumber();\n    doReturn(\"123\").when(primitive).getAsString();\n\n    byte result = primitive.getAsByte();\n\n    assertEquals(123, result);\n    verify(primitive).isNumber();\n    verify(primitive).getAsString();\n  }\n\n  @Test\n  void getAsByte_whenNotNumber_invalidByte_throwsNumberFormatException() {\n    JsonPrimitive primitive = spy(new JsonPrimitive(\"notANumber\"));\n    doReturn(false).when(primitive).isNumber();\n    doReturn(\"notANumber\").when(primitive).getAsString();\n\n    assertThrows(NumberFormatException.class, primitive::getAsByte);\n\n    verify(primitive).isNumber();\n    verify(primitive).getAsString();\n  }\n\n  @Test\n  void testPrivateIsIntegralUsingReflection() throws Exception {\n    JsonPrimitive integralPrimitive = new JsonPrimitive(10);\n    JsonPrimitive decimalPrimitive = new JsonPrimitive(10.5);\n\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    boolean integralResult = (boolean) isIntegralMethod.invoke(null, integralPrimitive);\n    boolean decimalResult = (boolean) isIntegralMethod.invoke(null, decimalPrimitive);\n\n    assertTrue(integralResult);\n    assertFalse(decimalResult);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883308,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 509,
+    "prompt_tokens": 426,
+    "total_tokens": 935,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.88
+  }
+}

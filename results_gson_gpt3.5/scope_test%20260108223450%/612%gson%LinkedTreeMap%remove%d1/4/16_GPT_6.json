@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0FR2733gElhukZMIMiS4kdKcwU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMapRemoveTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void remove_existingKey_returnsValueAndRemovesNode() {\n    map.put(\"key1\", \"value1\");\n    assertEquals(\"value1\", map.remove(\"key1\"));\n    assertNull(map.get(\"key1\"));\n    assertEquals(0, map.size());\n  }\n\n  @Test\n  void remove_nonExistingKey_returnsNull() {\n    assertNull(map.remove(\"nonexistent\"));\n  }\n\n  @Test\n  void remove_nullKey_whenAllowed_removesEntry() {\n    LinkedTreeMap<String, String> mapAllowNull = new LinkedTreeMap<>(null, true);\n    mapAllowNull.put(null, \"nullValue\");\n    assertEquals(\"nullValue\", mapAllowNull.remove(null));\n    assertNull(mapAllowNull.get(null));\n  }\n\n  @Test\n  void remove_nullKey_whenNotAllowed_returnsNull() {\n    assertNull(map.remove(null));\n  }\n\n  @Test\n  void remove_internalByKey_privateMethod_behavior() throws Exception {\n    map.put(\"key1\", \"value1\");\n    Method removeInternalByKey = LinkedTreeMap.class.getDeclaredMethod(\"removeInternalByKey\", Object.class);\n    removeInternalByKey.setAccessible(true);\n    Object node = removeInternalByKey.invoke(map, \"key1\");\n    assertNotNull(node);\n    Object nodeNull = removeInternalByKey.invoke(map, \"key1\");\n    assertNull(nodeNull);\n  }\n\n  @Test\n  void removeInternal_removesNodeAndRebalances() throws Exception {\n    map.put(\"k1\", \"v1\");\n    map.put(\"k2\", \"v2\");\n    map.put(\"k3\", \"v3\");\n\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findMethod.setAccessible(true);\n    Object node = findMethod.invoke(map, \"k2\");\n    assertNotNull(node);\n\n    Method removeInternal = LinkedTreeMap.class.getDeclaredMethod(\"removeInternal\", node.getClass(), boolean.class);\n    removeInternal.setAccessible(true);\n    removeInternal.invoke(map, node, true);\n\n    assertNull(map.get(\"k2\"));\n    assertEquals(2, map.size());\n  }\n\n  @Test\n  void remove_rebalanceAndRotateMethods_executeWithoutException() throws Exception {\n    map.put(\"k1\", \"v1\");\n    map.put(\"k2\", \"v2\");\n    map.put(\"k3\", \"v3\");\n\n    Method findMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findMethod.setAccessible(true);\n    Object node = findMethod.invoke(map, \"k1\");\n    assertNotNull(node);\n\n    Method rebalance = LinkedTreeMap.class.getDeclaredMethod(\"rebalance\", node.getClass(), boolean.class);\n    rebalance.setAccessible(true);\n    rebalance.invoke(map, node, false);\n\n    Method rotateLeft = LinkedTreeMap.class.getDeclaredMethod(\"rotateLeft\", node.getClass());\n    rotateLeft.setAccessible(true);\n    rotateLeft.invoke(map, node);\n\n    Method rotateRight = LinkedTreeMap.class.getDeclaredMethod(\"rotateRight\", node.getClass());\n    rotateRight.setAccessible(true);\n    rotateRight.invoke(map, node);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889099,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 740,
+    "prompt_tokens": 2766,
+    "total_tokens": 3506,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.07
+  }
+}

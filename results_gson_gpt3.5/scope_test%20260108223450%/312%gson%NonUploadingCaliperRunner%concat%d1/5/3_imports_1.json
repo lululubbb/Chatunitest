@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.runner.CaliperMain;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass NonUploadingCaliperRunnerTest {\n\n  @Test\n  void testConcat_noOthers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method concat = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concat.setAccessible(true);\n\n    String first = \"first\";\n    String[] others = new String[0];\n    String[] result = (String[]) concat.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(1, result.length);\n    assertEquals(\"first\", result[0]);\n  }\n\n  @Test\n  void testConcat_withOthers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method concat = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concat.setAccessible(true);\n\n    String first = \"start\";\n    String[] others = new String[] {\"one\", \"two\", \"three\"};\n    String[] result = (String[]) concat.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(4, result.length);\n    assertEquals(\"start\", result[0]);\n    assertArrayEquals(new String[] {\"one\", \"two\", \"three\"}, java.util.Arrays.copyOfRange(result, 1, result.length));\n  }\n\n  @Test\n  void testConcat_withOneOther() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method concat = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concat.setAccessible(true);\n\n    String first = \"alpha\";\n    String[] others = new String[] {\"beta\"};\n    String[] result = (String[]) concat.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(2, result.length);\n    assertEquals(\"alpha\", result[0]);\n    assertEquals(\"beta\", result[1]);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 272,
+  "completion_tokens": 440,
+  "total_tokens": 712,
+  "llm_elapsed_time_seconds": 12.16,
+  "repair_elapsed_time_seconds": 25.44,
+  "round_total_time_seconds": 25.44
+}

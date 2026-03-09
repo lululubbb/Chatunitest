@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class JsonElementTest {\n\n  private static class JsonElementImpl extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return null;\n    }\n  }\n\n  @Test\n  public void testGetAsDouble_throwsUnsupportedOperationException() throws Exception {\n    JsonElement element = new JsonElementImpl();\n\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, element::getAsDouble);\n    assertEquals(\"JsonElementImpl\", thrown.getMessage());\n  }\n\n  @Test\n  public void testGetAsDouble_reflectionInvoke() throws Exception {\n    JsonElement element = new JsonElementImpl();\n\n    Method method = JsonElement.class.getDeclaredMethod(\"getAsDouble\");\n    method.setAccessible(true);\n\n    try {\n      method.invoke(element);\n    } catch (Exception e) {\n      Throwable cause = e.getCause();\n      assertEquals(UnsupportedOperationException.class, cause.getClass());\n      assertEquals(\"JsonElementImpl\", cause.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 374,
+  "completion_tokens": 247,
+  "total_tokens": 621,
+  "llm_elapsed_time_seconds": 5.77
+}

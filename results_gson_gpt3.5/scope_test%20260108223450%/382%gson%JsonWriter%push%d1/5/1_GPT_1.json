@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlj8hoKMaCRQ2V73ZP6zxuve92Pu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void testPushAddsNewTopToStack() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Use reflection to access private push method\n    Method pushMethod = JsonWriter.class.getDeclaredMethod(\"push\", int.class);\n    pushMethod.setAccessible(true);\n\n    // Initially stackSize is 0, stack length is 32\n    // Push a value and verify stackSize increments and value is set\n    pushMethod.invoke(jsonWriter, 5);\n\n    // Access stack and stackSize fields via reflection\n    int[] stack = (int[]) JsonWriter.class.getDeclaredField(\"stack\").get(jsonWriter);\n    int stackSize = JsonWriter.class.getDeclaredField(\"stackSize\").getInt(jsonWriter);\n\n    assertEquals(1, stackSize);\n    assertEquals(5, stack[0]);\n\n    // Push more values to fill to stack length, then push one more to trigger resize\n    // Fill stack to length 32\n    for (int i = 1; i < 32; i++) {\n      pushMethod.invoke(jsonWriter, i);\n    }\n    stackSize = JsonWriter.class.getDeclaredField(\"stackSize\").getInt(jsonWriter);\n    assertEquals(32, stackSize);\n\n    // Now push one more to trigger resize\n    pushMethod.invoke(jsonWriter, 99);\n\n    // After resize, stack length should be doubled (64)\n    stack = (int[]) JsonWriter.class.getDeclaredField(\"stack\").get(jsonWriter);\n    stackSize = JsonWriter.class.getDeclaredField(\"stackSize\").getInt(jsonWriter);\n    assertEquals(33, stackSize);\n    assertEquals(99, stack[32]);\n    assertEquals(64, stack.length);\n\n    // Verify that previously pushed values remain intact after resize\n    for (int i = 0; i < 32; i++) {\n      if (i == 0) {\n        assertEquals(5, stack[i]);\n      } else {\n        assertEquals(i, stack[i]);\n      }\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884194,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 545,
+    "prompt_tokens": 749,
+    "total_tokens": 1294,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.68
+  }
+}

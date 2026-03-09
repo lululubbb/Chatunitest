@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmDyBvLoHULKVZ96opM14MIyA0S8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonTypesResolveTest {\n\n    private Class<?> contextRawType;\n    private Type context;\n\n    @BeforeEach\n    public void setup() {\n        contextRawType = SampleClass.class;\n        context = SampleClass.class;\n    }\n\n    @Test\n    public void testResolve_withClassType_returnsSameClass() throws Exception {\n        Type toResolve = String.class;\n\n        Type result = $Gson$Types.resolve(context, contextRawType, toResolve);\n        assertSame(String.class, result);\n    }\n\n    @Test\n    public void testResolve_withTypeVariable_resolvesCorrectly() throws Exception {\n        // Access private resolve method with 4 params via reflection to test recursion and map use\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        TypeVariable<Class<GenericClass>>[] typeParams = GenericClass.class.getTypeParameters();\n        TypeVariable<?> typeVariable = typeParams[0];\n\n        Map<TypeVariable<?>, Type> visited = new HashMap<>();\n        Type resolved = (Type) resolveMethod.invoke(null, GenericClass.class, GenericClass.class, typeVariable, visited);\n        // It should resolve to Object since no mapping provided\n        assertEquals(Object.class, resolved);\n    }\n\n    @Test\n    public void testResolve_withParameterizedType_resolvesArguments() throws Exception {\n        ParameterizedType parameterizedType = (ParameterizedType) SampleClass.class.getDeclaredField(\"listField\").getGenericType();\n\n        Type resolved = $Gson$Types.resolve(context, contextRawType, parameterizedType);\n        assertTrue(resolved instanceof ParameterizedType);\n        ParameterizedType pt = (ParameterizedType) resolved;\n        assertEquals(parameterizedType.getRawType(), pt.getRawType());\n        assertArrayEquals(parameterizedType.getActualTypeArguments(), pt.getActualTypeArguments());\n    }\n\n    @Test\n    public void testResolve_withGenericArrayType_resolvesComponent() throws Exception {\n        // Create GenericArrayType mock\n        GenericArrayType genericArrayType = mock(GenericArrayType.class);\n        when(genericArrayType.getGenericComponentType()).thenReturn(String.class);\n\n        Type resolved = $Gson$Types.resolve(context, contextRawType, genericArrayType);\n        assertTrue(resolved instanceof GenericArrayType || resolved instanceof Class);\n        if (resolved instanceof GenericArrayType) {\n            GenericArrayType gat = (GenericArrayType) resolved;\n            assertEquals(String.class, gat.getGenericComponentType());\n        } else if (resolved instanceof Class) {\n            assertEquals(String[].class, resolved);\n        }\n    }\n\n    @Test\n    public void testResolve_withWildcardType_subtypeOf() throws Exception {\n        // Create WildcardType mock with upper bound Object\n        WildcardType wildcardType = mock(WildcardType.class);\n        when(wildcardType.getUpperBounds()).thenReturn(new Type[] {Object.class});\n        when(wildcardType.getLowerBounds()).thenReturn(new Type[] {});\n\n        Type resolved = $Gson$Types.resolve(context, contextRawType, wildcardType);\n        assertTrue(resolved instanceof WildcardType);\n    }\n\n    @Test\n    public void testResolve_withWildcardType_supertypeOf() throws Exception {\n        // Create WildcardType mock with lower bound String\n        WildcardType wildcardType = mock(WildcardType.class);\n        when(wildcardType.getUpperBounds()).thenReturn(new Type[] {Object.class});\n        when(wildcardType.getLowerBounds()).thenReturn(new Type[] {String.class});\n\n        Type resolved = $Gson$Types.resolve(context, contextRawType, wildcardType);\n        assertTrue(resolved instanceof WildcardType);\n    }\n\n    @Test\n    public void testResolve_withTypeVariableInVisitedMap_returnsMappedType() throws Exception {\n        Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n        resolveMethod.setAccessible(true);\n\n        TypeVariable<Class<GenericClass>>[] typeParams = GenericClass.class.getTypeParameters();\n        TypeVariable<?> typeVariable = typeParams[0];\n\n        Map<TypeVariable<?>, Type> visited = new HashMap<>();\n        visited.put(typeVariable, String.class);\n\n        Type resolved = (Type) resolveMethod.invoke(null, GenericClass.class, GenericClass.class, typeVariable, visited);\n        assertEquals(String.class, resolved);\n    }\n\n    @Test\n    public void testResolve_withNullToResolve_returnsNull() throws Exception {\n        Type result = $Gson$Types.resolve(context, contextRawType, null);\n        assertNull(result);\n    }\n\n    // Sample classes for testing generics\n    static class SampleClass {\n        java.util.List<String> listField;\n    }\n\n    static class GenericClass<T> {\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886106,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1053,
+    "prompt_tokens": 2754,
+    "total_tokens": 3807,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.06
+  }
+}

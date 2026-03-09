@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmYKDq9JIypIoDkDcrftivSAZWFZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  private static Class<?> recordClassMock;\n  private static RecordHelper recordHelperMock;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    recordClassMock = String.class; // Using String.class as dummy input\n\n    // Use reflection to set the private static final RECORD_HELPER field to a mock\n    recordHelperMock = mock(RecordHelper.class);\n\n    var field = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    field.setAccessible(true);\n\n    // Remove final modifier\n    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    field.set(null, recordHelperMock);\n  }\n\n  @Test\n  void testGetRecordComponentNames_returnsNamesFromRecordHelper() {\n    String[] expected = new String[] {\"component1\", \"component2\"};\n    when(recordHelperMock.getRecordComponentNames(recordClassMock)).thenReturn(expected);\n\n    String[] actual = ReflectionHelper.getRecordComponentNames(recordClassMock);\n\n    assertArrayEquals(expected, actual);\n    verify(recordHelperMock).getRecordComponentNames(recordClassMock);\n  }\n\n  @Test\n  void testGetRecordComponentNames_nullClass_throwsNPE() {\n    when(recordHelperMock.getRecordComponentNames(null)).thenThrow(NullPointerException.class);\n\n    assertThrows(NullPointerException.class, () -> ReflectionHelper.getRecordComponentNames(null));\n    verify(recordHelperMock).getRecordComponentNames(null);\n  }\n}\n```\n",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887368,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 404,
+    "prompt_tokens": 392,
+    "total_tokens": 796,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.75
+  }
+}

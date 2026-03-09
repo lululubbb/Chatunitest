@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmu1YoEN5cPyEEXCvjgTkhDW4Jk4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    // Provide a dummy Reader since JsonReader requires it but locationString() does not use it\n    Reader dummyReader = new Reader() {\n      @Override\n      public int read(char[] cbuf, int off, int len) {\n        return -1; // EOF\n      }\n      @Override\n      public void close() {\n      }\n    };\n    jsonReader = new JsonReader(dummyReader);\n  }\n\n  @Test\n  public void testLocationString() throws Exception {\n    // Use reflection to set private fields lineNumber, pos, lineStart\n    setField(jsonReader, \"lineNumber\", 4); // lineNumber = 4 means line = 5\n    setField(jsonReader, \"pos\", 10);\n    setField(jsonReader, \"lineStart\", 5);\n\n    // Use reflection to invoke private getPath() method which is called by locationString()\n    // We override getPath() to return a controlled value by subclassing JsonReader\n    JsonReader jsonReaderWithPath = new JsonReader(jsonReader.in) {\n      @Override\n      public String getPath() {\n        return \"$.testPath\";\n      }\n    };\n    setField(jsonReaderWithPath, \"lineNumber\", 4);\n    setField(jsonReaderWithPath, \"pos\", 10);\n    setField(jsonReaderWithPath, \"lineStart\", 5);\n\n    Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String result = (String) locationStringMethod.invoke(jsonReaderWithPath);\n\n    // line = lineNumber + 1 = 5\n    // column = pos - lineStart + 1 = 10 - 5 + 1 = 6\n    // path = $.testPath\n    assertEquals(\" at line 5 column 6 path $.testPath\", result);\n  }\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888713,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 510,
+    "prompt_tokens": 1035,
+    "total_tokens": 1545,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.37
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90k6gzJu1laSx5r6xxkvcFvSmO0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues_callsPrintAndPrintln() throws IOException {\n        Object value1 = \"value1\";\n        Object value2 = 123;\n        Object value3 = null;\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord(value1, value2, value3);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).print(value1);\n        inOrder.verify(spyPrinter).print(value2);\n        inOrder.verify(spyPrinter).print(value3);\n        inOrder.verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNoValues_callsOnlyPrintln() throws IOException {\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord();\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_invokesPrivatePrintMethodWithReflection() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class);\n        printMethod.setAccessible(true);\n\n        // Call printRecord with one value and verify print(Object) is invoked via spy\n        CSVPrinter spyPrinter = spy(printer);\n        Object value = \"testValue\";\n\n        spyPrinter.printRecord(value);\n\n        verify(spyPrinter).print(value);\n\n        // Directly invoke private print(Object) method with reflection on the real printer instance\n        printMethod.invoke(printer, value);\n        // No exception means success\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973698,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 479,
+    "prompt_tokens": 980,
+    "total_tokens": 1459,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.12
+  }
+}

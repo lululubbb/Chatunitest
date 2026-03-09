@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnDwNhqIOdp70ynaEcXf2TfBaoGU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.protobuf.DescriptorProtos.EnumValueOptions;\nimport com.google.protobuf.Descriptors.EnumValueDescriptor;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\n\nclass ProtoTypeAdapterTest {\n\n  private ProtoTypeAdapter protoTypeAdapterName;\n  private ProtoTypeAdapter protoTypeAdapterNumber;\n\n  private EnumValueDescriptor enumValueDescriptorMock;\n  private EnumValueOptions enumValueOptionsMock;\n\n  enum EnumSerialization {\n    NAME, NUMBER\n  }\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create ProtoTypeAdapter instance with enumSerialization = EnumSerialization.NAME\n    protoTypeAdapterName = createProtoTypeAdapterWithEnumSerialization(EnumSerialization.NAME);\n    // Create ProtoTypeAdapter instance with enumSerialization = EnumSerialization.NUMBER\n    protoTypeAdapterNumber = createProtoTypeAdapterWithEnumSerialization(EnumSerialization.NUMBER);\n\n    // Mock EnumValueDescriptor and EnumValueOptions\n    enumValueDescriptorMock = mock(EnumValueDescriptor.class);\n    enumValueOptionsMock = mock(EnumValueOptions.class);\n\n    when(enumValueDescriptorMock.getOptions()).thenReturn(enumValueOptionsMock);\n  }\n\n  private ProtoTypeAdapter createProtoTypeAdapterWithEnumSerialization(EnumSerialization enumSerialization) throws Exception {\n    Class<?> protoTypeAdapterClass = ProtoTypeAdapter.class;\n    Class<?> enumSerializationClass = null;\n    for (Class<?> innerClass : protoTypeAdapterClass.getDeclaredClasses()) {\n      if (\"EnumSerialization\".equals(innerClass.getSimpleName())) {\n        enumSerializationClass = innerClass;\n        break;\n      }\n    }\n    if (enumSerializationClass == null) {\n      throw new IllegalStateException(\"EnumSerialization class not found in ProtoTypeAdapter\");\n    }\n\n    Object enumSerializationValue = null;\n    for (Object constant : enumSerializationClass.getEnumConstants()) {\n      if (constant.toString().equals(enumSerialization.name())) {\n        enumSerializationValue = constant;\n        break;\n      }\n    }\n    if (enumSerializationValue == null) {\n      throw new IllegalStateException(\"EnumSerialization enum constant not found: \" + enumSerialization.name());\n    }\n\n    Constructor<?> constructor = protoTypeAdapterClass.getDeclaredConstructor(\n        enumSerializationClass,\n        com.google.common.base.CaseFormat.class,\n        com.google.common.base.CaseFormat.class,\n        java.util.Set.class,\n        java.util.Set.class);\n    constructor.setAccessible(true);\n    return (ProtoTypeAdapter) constructor.newInstance(\n        enumSerializationValue,\n        null,\n        null,\n        Collections.emptySet(),\n        Collections.emptySet());\n  }\n\n  @Test\n  void testGetEnumValue_whenEnumSerializationIsName_returnsCustomSerializedEnumValue() throws Exception {\n    // Arrange\n    when(enumValueDescriptorMock.getName()).thenReturn(\"ENUM_NAME\");\n\n    // Create a dynamic proxy subclass to override getCustSerializedEnumValue via reflection\n    // Since the constructor is private, create instance via reflection and then override method via proxy is complicated.\n    // Instead, use reflection to invoke getEnumValue on an anonymous subclass created via reflection that overrides getCustSerializedEnumValue.\n\n    Class<?> protoTypeAdapterClass = ProtoTypeAdapter.class;\n    Class<?> enumSerializationClass = null;\n    for (Class<?> innerClass : protoTypeAdapterClass.getDeclaredClasses()) {\n      if (\"EnumSerialization\".equals(innerClass.getSimpleName())) {\n        enumSerializationClass = innerClass;\n        break;\n      }\n    }\n    if (enumSerializationClass == null) {\n      throw new IllegalStateException(\"EnumSerialization class not found in ProtoTypeAdapter\");\n    }\n\n    Object enumSerializationValue = null;\n    for (Object constant : enumSerializationClass.getEnumConstants()) {\n      if (constant.toString().equals(\"NAME\")) {\n        enumSerializationValue = constant;\n        break;\n      }\n    }\n    if (enumSerializationValue == null) {\n      throw new IllegalStateException(\"EnumSerialization enum constant not found: NAME\");\n    }\n\n    // Create a proxy subclass dynamically to override getCustSerializedEnumValue\n    // Use java.lang.reflect.Proxy is not possible for classes, so use bytecode generation is out of scope.\n    // Instead, use reflection to create an anonymous subclass via reflection and override method via MethodHandles (Java 9+), or use a helper class in the test package.\n\n    // Since the constructor is private, but accessible, create an anonymous subclass via reflection:\n\n    // Create subclass in runtime via anonymous class in test:\n    ProtoTypeAdapter protoTypeAdapterForTest = new ProtoTypeAdapter(enumSerializationValue,\n        null,\n        null,\n        Collections.emptySet(),\n        Collections.emptySet()) {\n      @Override\n      protected String getCustSerializedEnumValue(EnumValueOptions options, String defaultValue) {\n        return \"customValue\";\n      }\n    };\n\n    // Use reflection to get getEnumValue method\n    Method getEnumValueMethod = ProtoTypeAdapter.class.getDeclaredMethod(\"getEnumValue\", EnumValueDescriptor.class);\n    getEnumValueMethod.setAccessible(true);\n\n    // Act\n    Object result = getEnumValueMethod.invoke(protoTypeAdapterForTest, enumValueDescriptorMock);\n\n    // Assert\n    assertEquals(\"customValue\", result);\n  }\n\n  @Test\n  void testGetEnumValue_whenEnumSerializationIsNotName_returnsEnumNumber() throws Exception {\n    // Arrange\n    when(enumValueDescriptorMock.getNumber()).thenReturn(42);\n\n    // Act\n    Method getEnumValueMethod = ProtoTypeAdapter.class.getDeclaredMethod(\"getEnumValue\", EnumValueDescriptor.class);\n    getEnumValueMethod.setAccessible(true);\n    Object result = getEnumValueMethod.invoke(protoTypeAdapterNumber, enumValueDescriptorMock);\n\n    // Assert\n    assertEquals(42, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889948,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1203,
+    "prompt_tokens": 2252,
+    "total_tokens": 3455,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.21
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvljT1TGcttqCmxjlEyqUZH8NyvUt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  void flush_shouldDoNothing() throws IOException {\n    // flush() is overridden to do nothing, so just call it and verify no exception\n    jsonTreeWriter.flush();\n  }\n\n  @Test\n  void flush_shouldNotChangeState() throws Exception {\n    // Use reflection to get initial state before flush\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement productBefore = (JsonElement) productField.get(jsonTreeWriter);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<?> stackBefore = (List<?>) stackField.get(jsonTreeWriter);\n\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    Object pendingNameBefore = pendingNameField.get(jsonTreeWriter);\n\n    // Call flush\n    jsonTreeWriter.flush();\n\n    // Verify state unchanged\n    JsonElement productAfter = (JsonElement) productField.get(jsonTreeWriter);\n    List<?> stackAfter = (List<?>) stackField.get(jsonTreeWriter);\n    Object pendingNameAfter = pendingNameField.get(jsonTreeWriter);\n\n    assertSame(productBefore, productAfter);\n    assertSame(stackBefore, stackAfter);\n    assertEquals(pendingNameBefore, pendingNameAfter);\n  }\n\n  @Test\n  void flush_whenStackModified_shouldRemainUnchanged() throws Exception {\n    // Use reflection to add element to stack (simulate internal state change)\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n    stack.add(new JsonPrimitive(\"test\"));\n\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement productBefore = (JsonElement) productField.get(jsonTreeWriter);\n\n    Field pendingNameField = JsonTreeWriter.class.getDeclaredField(\"pendingName\");\n    pendingNameField.setAccessible(true);\n    Object pendingNameBefore = pendingNameField.get(jsonTreeWriter);\n\n    // Call flush\n    jsonTreeWriter.flush();\n\n    // Verify state unchanged except stack modified as we did\n    JsonElement productAfter = (JsonElement) productField.get(jsonTreeWriter);\n    Object pendingNameAfter = pendingNameField.get(jsonTreeWriter);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stackAfter = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertSame(productBefore, productAfter);\n    assertEquals(pendingNameBefore, pendingNameAfter);\n    assertEquals(1, stackAfter.size());\n    assertEquals(new JsonPrimitive(\"test\"), stackAfter.get(0));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884215,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 707,
+    "prompt_tokens": 502,
+    "total_tokens": 1209,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.74
+  }
+}

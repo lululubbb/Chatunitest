@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnTzMaN5K9KtUhKCd5vwodLhrQaj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\n\nclass GsonNewJsonWriterTest {\n\n  private Gson gson;\n  private String jsonNonExecutablePrefix;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n\n    // Access private static final String JSON_NON_EXECUTABLE_PREFIX via reflection\n    try {\n      Field prefixField = Gson.class.getDeclaredField(\"JSON_NON_EXECUTABLE_PREFIX\");\n      prefixField.setAccessible(true);\n      jsonNonExecutablePrefix = (String) prefixField.get(null);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n\n    // Set default fields to false or true according to defaults, then override in tests\n    setField(gson, \"generateNonExecutableJson\", false);\n    setField(gson, \"prettyPrinting\", false);\n    setField(gson, \"htmlSafe\", true);\n    setField(gson, \"lenient\", false);\n    setField(gson, \"serializeNulls\", false);\n  }\n\n  private void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = Gson.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n\n      // Remove final modifier if present\n      Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n      modifiersField.setAccessible(true);\n      modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  @Test\n  void newJsonWriter_DefaultSettings_WritesNoPrefixAndSetsProperties() throws IOException {\n    StringWriter stringWriter = spy(new StringWriter());\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    // No prefix written\n    verify(stringWriter, never()).write(jsonNonExecutablePrefix);\n\n    assertNotNull(jsonWriter);\n    // Indent should not be set (default \"\")\n    assertEquals(\"\", getIndent(jsonWriter));\n    assertTrue(jsonWriter.isHtmlSafe());\n    assertFalse(jsonWriter.isLenient());\n    assertFalse(jsonWriter.getSerializeNulls());\n  }\n\n  @Test\n  void newJsonWriter_GenerateNonExecutableJson_WritesPrefix() throws IOException {\n    setField(gson, \"generateNonExecutableJson\", true);\n    StringWriter stringWriter = spy(new StringWriter());\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    // Verify prefix written\n    verify(stringWriter).write(jsonNonExecutablePrefix);\n\n    assertNotNull(jsonWriter);\n  }\n\n  @Test\n  void newJsonWriter_PrettyPrinting_SetsIndent() throws IOException {\n    setField(gson, \"prettyPrinting\", true);\n    StringWriter stringWriter = new StringWriter();\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    assertEquals(\"  \", getIndent(jsonWriter));\n  }\n\n  @Test\n  void newJsonWriter_HtmlSafeFalse_SetsHtmlSafeFalse() throws IOException {\n    setField(gson, \"htmlSafe\", false);\n    StringWriter stringWriter = new StringWriter();\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    assertFalse(jsonWriter.isHtmlSafe());\n  }\n\n  @Test\n  void newJsonWriter_LenientTrue_SetsLenientTrue() throws IOException {\n    setField(gson, \"lenient\", true);\n    StringWriter stringWriter = new StringWriter();\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    assertTrue(jsonWriter.isLenient());\n  }\n\n  @Test\n  void newJsonWriter_SerializeNullsTrue_SetsSerializeNullsTrue() throws IOException {\n    setField(gson, \"serializeNulls\", true);\n    StringWriter stringWriter = new StringWriter();\n\n    JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);\n\n    assertTrue(jsonWriter.getSerializeNulls());\n  }\n\n  private String getIndent(JsonWriter jsonWriter) {\n    try {\n      Field indentField = JsonWriter.class.getDeclaredField(\"indent\");\n      indentField.setAccessible(true);\n      return (String) indentField.get(jsonWriter);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890943,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 925,
+    "prompt_tokens": 2768,
+    "total_tokens": 3693,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.56
+  }
+}

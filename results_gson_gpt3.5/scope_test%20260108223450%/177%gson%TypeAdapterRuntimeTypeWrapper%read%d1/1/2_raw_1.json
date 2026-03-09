@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  Gson context;\n  TypeAdapter<Object> delegate;\n  TypeAdapterRuntimeTypeWrapper<Object> wrapper;\n  JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    context = mock(Gson.class);\n    delegate = mock(TypeAdapter.class);\n    jsonReader = mock(JsonReader.class);\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(context, delegate, Object.class);\n  }\n\n  @Test\n  void read_delegatesToDelegateRead() throws IOException {\n    Object expected = new Object();\n    when(delegate.read(jsonReader)).thenReturn(expected);\n\n    Object actual = wrapper.read(jsonReader);\n\n    verify(delegate).read(jsonReader);\n    assertSame(expected, actual);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 327,
+  "completion_tokens": 233,
+  "total_tokens": 560,
+  "llm_elapsed_time_seconds": 4.6
+}

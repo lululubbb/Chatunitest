@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.common.base.CaseFormat;\nimport org.junit.jupiter.api.Test;\n\nclass ProtoTypeAdapterTest {\n\n  @Test\n  void newBuilder_shouldReturnBuilderWithExpectedDefaults() {\n    ProtoTypeAdapter.Builder builder = ProtoTypeAdapter.newBuilder();\n    assertNotNull(builder);\n\n    // Using reflection to verify private fields enumSerialization, protoFormat, jsonFormat\n    try {\n      var enumSerializationField = ProtoTypeAdapter.Builder.class.getDeclaredField(\"enumSerialization\");\n      enumSerializationField.setAccessible(true);\n      var enumSerializationValue = enumSerializationField.get(builder);\n\n      // Directly reference the EnumSerialization class from ProtoTypeAdapter\n      Class<?> enumSerializationClass = ProtoTypeAdapter.EnumSerialization.class;\n      Object enumName = Enum.valueOf((Class<Enum>) enumSerializationClass, \"NAME\");\n      assertEquals(enumName, enumSerializationValue);\n\n      var protoFormatField = ProtoTypeAdapter.Builder.class.getDeclaredField(\"protoFormat\");\n      protoFormatField.setAccessible(true);\n      var protoFormatValue = protoFormatField.get(builder);\n      assertEquals(CaseFormat.LOWER_UNDERSCORE, protoFormatValue);\n\n      var jsonFormatField = ProtoTypeAdapter.Builder.class.getDeclaredField(\"jsonFormat\");\n      jsonFormatField.setAccessible(true);\n      var jsonFormatValue = jsonFormatField.get(builder);\n      assertEquals(CaseFormat.LOWER_CAMEL, jsonFormatValue);\n\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1396,
+  "completion_tokens": 332,
+  "total_tokens": 1728,
+  "llm_elapsed_time_seconds": 4.47
+}

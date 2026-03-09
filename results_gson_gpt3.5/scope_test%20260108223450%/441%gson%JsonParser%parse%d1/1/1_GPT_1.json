@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlYNccJiYjGCcq8Mmhfcyp03nIlU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\npublic class JsonParserTest {\n\n    private JsonParser parser;\n\n    @BeforeEach\n    public void setUp() {\n        parser = new JsonParser();\n    }\n\n    @Test\n    public void testParse_withValidJsonReader_invokesParseReader() throws Exception {\n        JsonReader jsonReaderMock = mock(JsonReader.class);\n        JsonElement expectedElement = mock(JsonElement.class);\n\n        // Spy on JsonParser to mock static method parseReader(JsonReader)\n        // Since parseReader is static, we cannot mock it directly with Mockito 3 without inline mock maker.\n        // Instead, we will create a subclass to override parseReader or use reflection to invoke the method.\n        // Here, we will test parse(JsonReader) calls parseReader(JsonReader) correctly by reflection.\n\n        // Use reflection to get parseReader(JsonReader) static method\n        Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parseReader\", JsonReader.class);\n        parseReaderMethod.setAccessible(true);\n\n        // Call parse(JsonReader) method\n        JsonElement result = parser.parse(jsonReaderMock);\n\n        // The result should be equal to the result of parseReader(jsonReaderMock)\n        JsonElement expected = (JsonElement) parseReaderMethod.invoke(null, jsonReaderMock);\n\n        assertEquals(expected, result);\n    }\n\n    @Test\n    public void testParse_withStringJson_validJson() throws Exception {\n        String json = \"{\\\"key\\\":\\\"value\\\"}\";\n\n        // Use reflection to get private parse(String) method\n        Method parseStringMethod = JsonParser.class.getDeclaredMethod(\"parse\", String.class);\n        parseStringMethod.setAccessible(true);\n\n        JsonElement element = (JsonElement) parseStringMethod.invoke(parser, json);\n\n        assertNotNull(element);\n    }\n\n    @Test\n    public void testParse_withReader_validJson() throws Exception {\n        Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n\n        // Use reflection to get private parse(Reader) method\n        Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parse\", Reader.class);\n        parseReaderMethod.setAccessible(true);\n\n        JsonElement element = (JsonElement) parseReaderMethod.invoke(parser, reader);\n\n        assertNotNull(element);\n    }\n\n    @Test\n    public void testParse_withMalformedJson_throwsJsonSyntaxException() throws Exception {\n        String malformedJson = \"{key:\\\"value\\\"\"; // Missing closing }\n\n        // Use reflection to get private parse(String) method\n        Method parseStringMethod = JsonParser.class.getDeclaredMethod(\"parse\", String.class);\n        parseStringMethod.setAccessible(true);\n\n        try {\n            parseStringMethod.invoke(parser, malformedJson);\n            fail(\"Expected JsonSyntaxException\");\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            assertTrue(cause instanceof JsonSyntaxException);\n        }\n    }\n\n    @Test\n    public void testParse_withNullJsonReader_throwsNullPointerException() {\n        assertThrows(NullPointerException.class, () -> parser.parse((JsonReader) null));\n    }\n\n    @Test\n    public void testParse_withNullString_throwsNullPointerException() throws Exception {\n        Method parseStringMethod = JsonParser.class.getDeclaredMethod(\"parse\", String.class);\n        parseStringMethod.setAccessible(true);\n\n        assertThrows(NullPointerException.class, () -> parseStringMethod.invoke(parser, new Object[]{null}));\n    }\n\n    @Test\n    public void testParse_withNullReader_throwsNullPointerException() throws Exception {\n        Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parse\", Reader.class);\n        parseReaderMethod.setAccessible(true);\n\n        assertThrows(NullPointerException.class, () -> parseReaderMethod.invoke(parser, new Object[]{null}));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883527,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 850,
+    "prompt_tokens": 295,
+    "total_tokens": 1145,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.11
+  }
+}

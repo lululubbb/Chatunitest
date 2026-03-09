@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvluIFMifxwci84d8kjwRlTUeQtZB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass JsonArrayTest {\n\n  private JsonElement singleElementMock;\n\n  @BeforeEach\n  void setUp() {\n    singleElementMock = mock(JsonElement.class);\n  }\n\n  @Test\n  void testGetAsInt_returnsIntFromSingleElement() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(singleElementMock);\n\n    // Use reflection to replace the private getAsSingleElement method's behavior\n    // Since JsonArray is final, we cannot subclass it.\n    // Instead, we spy on the JsonArray and mock the private method via reflection.\n\n    JsonArray spy = spy(jsonArray);\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    // Use Mockito to stub the private method by using doReturn on the spy and reflection\n    doReturn(singleElementMock).when(spy).get(0); // fallback in case getAsSingleElement uses get(0)\n    // Unfortunately, Mockito cannot mock private methods directly.\n    // So we use reflection to invoke getAsInt on the singleElementMock directly.\n\n    when(singleElementMock.getAsInt()).thenReturn(42);\n\n    // Because getAsSingleElement is private and cannot be mocked directly,\n    // we rely on the actual method which returns the first element.\n    int result = spy.getAsInt();\n\n    assertEquals(42, result);\n    verify(singleElementMock).getAsInt();\n  }\n\n  @Test\n  void testGetAsInt_throwsIfSingleElementThrows() {\n    JsonArray jsonArray = new JsonArray();\n    jsonArray.add(singleElementMock);\n\n    JsonArray spy = spy(jsonArray);\n\n    when(singleElementMock.getAsInt()).thenThrow(new NumberFormatException(\"bad number\"));\n\n    assertThrows(NumberFormatException.class, spy::getAsInt);\n    verify(singleElementMock).getAsInt();\n  }\n\n  @Test\n  void testGetAsSingleElement_privateMethod_returnsCorrectElement() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n    JsonElement element = mock(JsonElement.class);\n    jsonArray.add(element);\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    JsonElement returned = (JsonElement) method.invoke(jsonArray);\n\n    assertSame(element, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884886,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 548,
+    "prompt_tokens": 1051,
+    "total_tokens": 1599,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.59
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnG9wV71mNJXL7NnQYgDzYBirUcE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JsonIOExceptionTest {\n\n    @Test\n    public void testConstructor_String_Throwable() {\n        String message = \"error message\";\n        Throwable cause = new RuntimeException(\"cause\");\n        JsonIOException exception = new JsonIOException(message, cause);\n        assertEquals(message, exception.getMessage());\n        assertEquals(cause, exception.getCause());\n    }\n\n    @Test\n    public void testConstructor_String() {\n        String message = \"error message only\";\n        JsonIOException exception = new JsonIOException(message);\n        assertEquals(message, exception.getMessage());\n        assertNull(exception.getCause());\n    }\n\n    @Test\n    public void testConstructor_Throwable() {\n        Throwable cause = new IllegalArgumentException(\"illegal arg\");\n        JsonIOException exception = new JsonIOException(cause);\n        assertEquals(cause.toString(), exception.getMessage());\n        assertEquals(cause, exception.getCause());\n    }\n\n    @Test\n    public void testSerialVersionUIDField() throws NoSuchFieldException, IllegalAccessException {\n        var field = JsonIOException.class.getDeclaredField(\"serialVersionUID\");\n        assertTrue(Modifier.isStatic(field.getModifiers()));\n        assertTrue(Modifier.isFinal(field.getModifiers()));\n        field.setAccessible(true);\n        long value = field.getLong(null);\n        assertEquals(1L, value);\n    }\n\n    @Test\n    public void testPrivateConstructorUsingReflection() throws Exception {\n        Constructor<JsonIOException> ctor = JsonIOException.class.getDeclaredConstructor(String.class, Throwable.class);\n        ctor.setAccessible(true);\n        String msg = \"reflective message\";\n        Throwable cause = new Exception(\"reflective cause\");\n        JsonIOException ex = ctor.newInstance(msg, cause);\n        assertEquals(msg, ex.getMessage());\n        assertEquals(cause, ex.getCause());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890085,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 408,
+    "prompt_tokens": 212,
+    "total_tokens": 620,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.06
+  }
+}

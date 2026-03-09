@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnLibBI40TsO1ntwGR1GPoYl0Izp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.ArgumentMatchers.eq;\nimport static org.mockito.Mockito.mockStatic;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.AfterAll;\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nclass NonUploadingCaliperRunnerTest {\n\n  private static MockedStatic<CaliperMain> caliperMainMock;\n\n  @BeforeAll\n  static void setUp() {\n    caliperMainMock = mockStatic(CaliperMain.class);\n  }\n\n  @AfterAll\n  static void tearDown() {\n    caliperMainMock.close();\n  }\n\n  @Test\n  void run_invokesCaliperMainWithConcatenatedArgs() {\n    Class<?> testClass = String.class;\n    String[] inputArgs = new String[] { \"arg1\", \"arg2\" };\n\n    NonUploadingCaliperRunner.run(testClass, inputArgs);\n\n    caliperMainMock.verify(() -> CaliperMain.main(eq(testClass), eq(new String[] {\n        \"-Cresults.upload.options.url=\", \"arg1\", \"arg2\"\n    })));\n  }\n\n  @Test\n  void concat_returnsConcatenatedArray() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"prefix\";\n    String[] others = new String[] { \"a\", \"b\" };\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    // Expected array length = 1 + others.length\n    assert result.length == 3;\n    assert result[0].equals(\"prefix\");\n    assert result[1].equals(\"a\");\n    assert result[2].equals(\"b\");\n\n    // Test with empty others\n    String[] emptyOthers = new String[0];\n    String[] resultEmpty = (String[]) concatMethod.invoke(null, first, emptyOthers);\n    assert resultEmpty.length == 1;\n    assert resultEmpty[0].equals(\"prefix\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890430,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 462,
+    "prompt_tokens": 250,
+    "total_tokens": 712,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.21
+  }
+}

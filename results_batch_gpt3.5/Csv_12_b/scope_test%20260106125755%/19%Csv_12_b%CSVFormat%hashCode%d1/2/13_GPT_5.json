@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutYBCiyr6rUufS89pPNbvISEYtv4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    private CSVFormat createCSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n                                      Character commentMarker, Character escapeCharacter,\n                                      boolean ignoreSurroundingSpaces, boolean ignoreEmptyLines,\n                                      String recordSeparator, String nullString, String[] header,\n                                      boolean skipHeaderRecord, boolean allowMissingColumnNames) throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(delimiter, quoteChar, quoteMode, commentMarker, escapeCharacter,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header,\n                skipHeaderRecord, allowMissingColumnNames);\n    }\n\n    @Test\n    void testHashCode_allFieldsSet() throws Exception {\n        String[] header = new String[] { \"a\", \"b\" };\n        CSVFormat format = createCSVFormat(\n                ',',\n                '\"',\n                QuoteMode.ALL,\n                '#',\n                '\\\\',\n                true,\n                true,\n                \"\\r\\n\",\n                \"NULL\",\n                header,\n                true,\n                false);\n\n        int expected = 1;\n        int prime = 31;\n        expected = prime * expected + (int) ',';\n        expected = prime * expected + QuoteMode.ALL.hashCode();\n        expected = prime * expected + Character.valueOf('\"').hashCode();\n        expected = prime * expected + Character.valueOf('#').hashCode();\n        expected = prime * expected + Character.valueOf('\\\\').hashCode();\n        expected = prime * expected + \"NULL\".hashCode();\n        expected = prime * expected + 1231; // ignoreSurroundingSpaces true\n        expected = prime * expected + 1231; // ignoreEmptyLines true\n        expected = prime * expected + 1231; // skipHeaderRecord true\n        expected = prime * expected + \"\\r\\n\".hashCode();\n        expected = prime * expected + Arrays.hashCode(header);\n\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_nullFieldsAndBooleans() throws Exception {\n        String[] header = null;\n        CSVFormat format = createCSVFormat(\n                ';',\n                null,\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                header,\n                false,\n                false);\n\n        int expected = 1;\n        int prime = 31;\n        expected = prime * expected + (int) ';';\n        expected = prime * expected + 0; // quoteMode null\n        expected = prime * expected + 0; // quoteCharacter null\n        expected = prime * expected + 0; // commentMarker null\n        expected = prime * expected + 0; // escapeCharacter null\n        expected = prime * expected + 0; // nullString null\n        expected = prime * expected + 1237; // ignoreSurroundingSpaces false\n        expected = prime * expected + 1237; // ignoreEmptyLines false\n        expected = prime * expected + 1237; // skipHeaderRecord false\n        expected = prime * expected + 0; // recordSeparator null\n        expected = prime * expected + 0; // Arrays.hashCode(null) is 0\n\n        assertEquals(expected, format.hashCode());\n    }\n\n    @Test\n    void testHashCode_differentObjectsSameValues() throws Exception {\n        String[] header = new String[] { \"x\", \"y\", \"z\" };\n        CSVFormat format1 = createCSVFormat(\n                '\\t',\n                '\\'',\n                QuoteMode.MINIMAL,\n                '!',\n                '?',\n                true,\n                false,\n                \"\\n\",\n                \"NULL\",\n                header,\n                false,\n                true);\n        CSVFormat format2 = createCSVFormat(\n                '\\t',\n                '\\'',\n                QuoteMode.MINIMAL,\n                '!',\n                '?',\n                true,\n                false,\n                \"\\n\",\n                \"NULL\",\n                header,\n                false,\n                true);\n\n        // hashCode should be same for equal objects\n        assertEquals(format1.hashCode(), format2.hashCode());\n    }\n\n    @Test\n    void testHashCode_reflectionInvocation() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        Method hashCodeMethod = CSVFormat.class.getDeclaredMethod(\"hashCode\");\n        hashCodeMethod.setAccessible(true);\n\n        int result = (int) hashCodeMethod.invoke(format);\n\n        assertEquals(format.hashCode(), result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675939,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1012,
+    "prompt_tokens": 2278,
+    "total_tokens": 3290,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.57
+  }
+}

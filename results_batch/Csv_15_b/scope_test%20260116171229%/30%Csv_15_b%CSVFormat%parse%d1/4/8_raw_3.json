@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatParseTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testParseWithValidReader() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Reader reader = mock(Reader.class);\n        CSVParser parser = csvFormat.parse(reader);\n        assertNotNull(parser);\n\n        // Use reflection to get the private fields 'in' and 'format' from CSVParser\n        Field inField = CSVParser.class.getDeclaredField(\"in\");\n        inField.setAccessible(true);\n        Object actualReader = inField.get(parser);\n        assertSame(reader, actualReader);\n\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(parser);\n        assertSame(csvFormat, actualFormat);\n    }\n\n    @Test\n    void testParseThrowsIOException() {\n        Reader reader = mock(Reader.class);\n        try {\n            csvFormat.parse(reader);\n        } catch (IOException e) {\n            fail(\"IOException should not be thrown by parse with mocked reader\");\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260116171229%/30%Csv_15_b%CSVFormat%parse%d1/4/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2180,
+  "completion_tokens": 297,
+  "total_tokens": 2477,
+  "llm_elapsed_time_seconds": 4.94
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrDDZFxu0DGP3t6PXw9lHKOhL50",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\n\nimport java.lang.reflect.Field;\nimport java.util.*;\nimport java.util.concurrent.ConcurrentHashMap;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonGetAdapterTest {\n\n  private Gson gson;\n  private TypeToken<String> stringTypeToken;\n  private TypeToken<Integer> integerTypeToken;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create Gson instance with minimal required factories list\n    gson = new Gson();\n\n    // Inject empty factories list for control\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, new ArrayList<TypeAdapterFactory>());\n\n    // Clear caches and thread local for clean state\n    Field cacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n    cacheField.setAccessible(true);\n    ((Map<?, ?>) cacheField.get(gson)).clear();\n\n    Field threadLocalField = Gson.class.getDeclaredField(\"threadLocalAdapterResults\");\n    threadLocalField.setAccessible(true);\n    ThreadLocal<?> threadLocal = (ThreadLocal<?>) threadLocalField.get(gson);\n    threadLocal.remove();\n\n    stringTypeToken = TypeToken.get(String.class);\n    integerTypeToken = TypeToken.get(Integer.class);\n  }\n\n  @Test\n  void getAdapter_nullType_throws() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> gson.getAdapter(null));\n    assertEquals(\"type must not be null\", thrown.getMessage());\n  }\n\n  @Test\n  void getAdapter_returnsCachedAdapter() throws Exception {\n    TypeAdapter<String> mockedAdapter = mock(TypeAdapter.class);\n\n    // Put adapter into cache\n    Field cacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n    cacheField.setAccessible(true);\n    Map<TypeToken<?>, TypeAdapter<?>> cache = (Map<TypeToken<?>, TypeAdapter<?>>) cacheField.get(gson);\n    cache.put(stringTypeToken, mockedAdapter);\n\n    // Should return cached adapter without calling factories\n    TypeAdapter<String> adapter = gson.getAdapter(stringTypeToken);\n    assertSame(mockedAdapter, adapter);\n  }\n\n  @Test\n  void getAdapter_reusesOngoingCall() throws Exception {\n    TypeAdapterFactory factory = mock(TypeAdapterFactory.class);\n    TypeAdapter<String> adapter = mock(TypeAdapter.class);\n\n    when(factory.create(eq(gson), eq(stringTypeToken))).thenReturn(adapter);\n\n    // Inject factory list with one factory\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, Collections.singletonList(factory));\n\n    // Prepare thread local map with ongoing call\n    Field threadLocalField = Gson.class.getDeclaredField(\"threadLocalAdapterResults\");\n    threadLocalField.setAccessible(true);\n    ThreadLocal<Map<TypeToken<?>, TypeAdapter<?>>> threadLocal =\n        (ThreadLocal<Map<TypeToken<?>, TypeAdapter<?>>>) threadLocalField.get(gson);\n\n    Map<TypeToken<?>, TypeAdapter<?>> ongoingCalls = new HashMap<>();\n    // Use a dummy FutureTypeAdapter to simulate ongoing call\n    TypeAdapter<String> futureAdapter = mock(TypeAdapter.class);\n    ongoingCalls.put(stringTypeToken, futureAdapter);\n    threadLocal.set(ongoingCalls);\n\n    // Should return ongoing call adapter immediately\n    TypeAdapter<String> result = gson.getAdapter(stringTypeToken);\n    assertSame(futureAdapter, result);\n  }\n\n  @Test\n  void getAdapter_findsAdapterInFactories_andCaches() throws Exception {\n    TypeAdapterFactory factory1 = mock(TypeAdapterFactory.class);\n    TypeAdapterFactory factory2 = mock(TypeAdapterFactory.class);\n    TypeAdapter<String> adapter = mock(TypeAdapter.class);\n\n    when(factory1.create(eq(gson), eq(stringTypeToken))).thenReturn(null);\n    when(factory2.create(eq(gson), eq(stringTypeToken))).thenReturn(adapter);\n\n    // Inject factories list with two factories\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, Arrays.asList(factory1, factory2));\n\n    // Call getAdapter first time: should find adapter from factory2\n    TypeAdapter<String> result = gson.getAdapter(stringTypeToken);\n    assertSame(adapter, result);\n\n    // After call, cache should contain adapter\n    Field cacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n    cacheField.setAccessible(true);\n    Map<TypeToken<?>, TypeAdapter<?>> cache = (Map<TypeToken<?>, TypeAdapter<?>>) cacheField.get(gson);\n    assertTrue(cache.containsKey(stringTypeToken));\n    assertSame(adapter, cache.get(stringTypeToken));\n  }\n\n  @Test\n  void getAdapter_noAdapterFound_throws() throws Exception {\n    TypeAdapterFactory factory1 = mock(TypeAdapterFactory.class);\n    TypeAdapterFactory factory2 = mock(TypeAdapterFactory.class);\n\n    when(factory1.create(eq(gson), eq(integerTypeToken))).thenReturn(null);\n    when(factory2.create(eq(gson), eq(integerTypeToken))).thenReturn(null);\n\n    // Inject factories list with two factories returning null\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, Arrays.asList(factory1, factory2));\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> gson.getAdapter(integerTypeToken));\n    assertTrue(thrown.getMessage().contains(\"cannot handle\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884695,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1175,
+    "prompt_tokens": 2001,
+    "total_tokens": 3176,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.42
+  }
+}

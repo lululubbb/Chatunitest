@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmOfgiRNavGLMqGj51Z2VvfqlUuv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.io.File;\nimport java.net.URL;\nimport java.lang.reflect.Method;\n\npublic class ParseBenchmarkTest {\n\n  @Test\n  void testGetResourceFile_validResource() throws Exception {\n    // Use a known resource path that exists in the test classpath\n    String resourcePath = \"/com/google/gson/metrics/ParseBenchmark.class\";\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    File file = (File) method.invoke(null, resourcePath);\n\n    assertNotNull(file);\n    assertTrue(file.isFile());\n    assertTrue(file.exists());\n  }\n\n  @Test\n  void testGetResourceFile_resourceDoesNotExist() throws Exception {\n    String resourcePath = \"/nonexistent/resource.file\";\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      method.invoke(null, resourcePath);\n    });\n\n    // Because invoke wraps exceptions in InvocationTargetException, unwrap it:\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalArgumentException);\n    assertEquals(\"Resource \" + resourcePath + \" does not exist\", cause.getMessage());\n  }\n\n  @Test\n  void testGetResourceFile_resourceIsNotAFile() throws Exception {\n    // Create a resource that is a directory or simulate it by using a known directory resource\n    // Usually, resources are files; to simulate, create a URL that points to a directory.\n    // We can try to use \"/\" which points to root of classpath (usually a directory)\n    String resourcePath = \"/\";\n    Method method = ParseBenchmark.class.getDeclaredMethod(\"getResourceFile\", String.class);\n    method.setAccessible(true);\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      method.invoke(null, resourcePath);\n    });\n\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalArgumentException);\n    assertEquals(\"Resource \" + resourcePath + \" is not a file\", cause.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886769,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 478,
+    "prompt_tokens": 519,
+    "total_tokens": 997,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.97
+  }
+}

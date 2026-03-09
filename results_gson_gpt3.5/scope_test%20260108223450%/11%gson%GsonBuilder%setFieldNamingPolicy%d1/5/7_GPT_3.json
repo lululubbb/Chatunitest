@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlpiPOrMfvSY9AezVtfqbY7NTG2s",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void testSetFieldNamingPolicy_withNonNullPolicy_shouldSetFieldNamingStrategyAndReturnThis() throws Exception {\n    FieldNamingPolicy policy = FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;\n\n    GsonBuilder returned = gsonBuilder.setFieldNamingPolicy(policy);\n\n    assertSame(gsonBuilder, returned);\n\n    // Access private field 'fieldNamingPolicy' via reflection to verify it was set\n    Field field = GsonBuilder.class.getDeclaredField(\"fieldNamingPolicy\");\n    field.setAccessible(true);\n    Object actualStrategy = field.get(gsonBuilder);\n\n    assertSame(policy, actualStrategy);\n  }\n\n  @Test\n  void testSetFieldNamingPolicy_withNull_shouldSetFieldNamingStrategyToIdentityAndReturnThis() throws Exception {\n    // When null is passed, setFieldNamingPolicy throws NPE because setFieldNamingStrategy requires non-null.\n    // So we need to call setFieldNamingStrategy explicitly with FieldNamingPolicy.IDENTITY instead.\n    GsonBuilder returned = gsonBuilder.setFieldNamingStrategy(FieldNamingPolicy.IDENTITY);\n\n    assertSame(gsonBuilder, returned);\n\n    Field field = GsonBuilder.class.getDeclaredField(\"fieldNamingPolicy\");\n    field.setAccessible(true);\n    Object actualStrategy = field.get(gsonBuilder);\n\n    assertSame(FieldNamingPolicy.IDENTITY, actualStrategy);\n  }\n\n  @Test\n  void testSetFieldNamingStrategy_directInvocation_shouldSetFieldNamingPolicy() throws Exception {\n    FieldNamingStrategy strategy = mock(FieldNamingStrategy.class);\n\n    // Use reflection to invoke private setFieldNamingStrategy method\n    Method method = GsonBuilder.class.getDeclaredMethod(\"setFieldNamingStrategy\", FieldNamingStrategy.class);\n    method.setAccessible(true);\n    Object returned = method.invoke(gsonBuilder, strategy);\n\n    assertSame(gsonBuilder, returned);\n\n    Field field = GsonBuilder.class.getDeclaredField(\"fieldNamingPolicy\");\n    field.setAccessible(true);\n    Object actualStrategy = field.get(gsonBuilder);\n\n    assertSame(strategy, actualStrategy);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884602,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 489,
+    "prompt_tokens": 1871,
+    "total_tokens": 2360,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.08
+  }
+}

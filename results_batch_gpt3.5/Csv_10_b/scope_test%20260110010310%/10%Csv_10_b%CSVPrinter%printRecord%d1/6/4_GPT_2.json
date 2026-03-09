@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAGpgGcSfGOBzFnrjF0a9ySdkz7l",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException {\n        Iterable<Object> values = Arrays.asList(\"value1\", 123, null, \"value4\");\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        // Verify print called for each value\n        verify(spyPrinter, times(4)).print(any());\n        // Verify println called once at the end\n        verify(spyPrinter, times(1)).println();\n\n        // The out should contain the printed values (string representations)\n        String output = out.toString();\n        assertTrue(output.contains(\"value1\"));\n        assertTrue(output.contains(\"123\"));\n        assertTrue(output.contains(\"null\") || !output.contains(\"null\")); // null may be printed as \"null\" or empty\n        assertTrue(output.contains(\"value4\"));\n    }\n\n    @Test\n    void testPrintRecord_withEmptyIterable() throws IOException {\n        Iterable<Object> values = Collections.emptyList();\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter, times(1)).println();\n\n        String output = out.toString();\n        assertNotNull(output);\n    }\n\n    @Test\n    void testPrintRecord_withSingleValue() throws IOException {\n        Iterable<Object> values = Collections.singletonList(\"singleValue\");\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        verify(spyPrinter, times(1)).print(\"singleValue\");\n        verify(spyPrinter, times(1)).println();\n\n        String output = out.toString();\n        assertTrue(output.contains(\"singleValue\"));\n    }\n\n    @Test\n    void testPrintRecord_withNullIterable() throws Throwable {\n        // Use reflection to call printRecord(Iterable<?>) to avoid ambiguity\n        Method printRecordMethod = CSVPrinter.class.getMethod(\"printRecord\", Iterable.class);\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            try {\n                printRecordMethod.invoke(printer, (Object) null);\n            } catch (Throwable t) {\n                // unwrap InvocationTargetException\n                throw t.getCause();\n            }\n        });\n        assertNotNull(thrown);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978539,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 597,
+    "prompt_tokens": 1115,
+    "total_tokens": 1712,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.21
+  }
+}

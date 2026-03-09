@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnDhMUtgtZIrIVUumORjdg0IN8gC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_writesJsonSuccessfully() throws Exception {\n    StringWriter writer = new StringWriter();\n    Object src = \"test string\";\n    Type type = String.class;\n\n    // Spy on gson to verify toJson(Object, Type, JsonWriter) call\n    Gson spyGson = Mockito.spy(gson);\n\n    // Call the focal method\n    spyGson.toJson(src, type, writer);\n\n    // Capture the JsonWriter argument passed to toJson(Object, Type, JsonWriter)\n    ArgumentCaptor<JsonWriter> captor = ArgumentCaptor.forClass(JsonWriter.class);\n    verify(spyGson).toJson(eq(src), eq(type), captor.capture());\n\n    // Verify that the JsonWriter wraps a Writer that ultimately writes to the StringWriter\n    JsonWriter capturedJsonWriter = captor.getValue();\n    assertNotNull(capturedJsonWriter);\n\n    // The writer should contain the JSON string of \"test string\"\n    String jsonOutput = writer.toString();\n    assertTrue(jsonOutput.contains(\"test string\"));\n  }\n\n  @Test\n  void toJson_throwsJsonIOExceptionOnIOException() throws Exception {\n    Object src = \"test\";\n    Type type = String.class;\n\n    Appendable failingAppendable = new Appendable() {\n      @Override\n      public Appendable append(CharSequence csq) throws IOException {\n        throw new IOException(\"fail\");\n      }\n      @Override\n      public Appendable append(CharSequence csq, int start, int end) throws IOException {\n        throw new IOException(\"fail\");\n      }\n      @Override\n      public Appendable append(char c) throws IOException {\n        throw new IOException(\"fail\");\n      }\n    };\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> gson.toJson(src, type, failingAppendable));\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"fail\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  void toJson_invokesNewJsonWriterViaReflection() throws Exception {\n    StringWriter writer = new StringWriter();\n    Object src = \"reflection test\";\n    Type type = String.class;\n\n    // Use reflection to invoke private newJsonWriter(Writer)\n    Method newJsonWriterMethod = Gson.class.getDeclaredMethod(\"newJsonWriter\", java.io.Writer.class);\n    newJsonWriterMethod.setAccessible(true);\n    JsonWriter jsonWriter = (JsonWriter) newJsonWriterMethod.invoke(gson, writer);\n\n    assertNotNull(jsonWriter);\n\n    // Use reflection to invoke private toJson(Object, Type, JsonWriter)\n    Method toJsonMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, Type.class, JsonWriter.class);\n    toJsonMethod.setAccessible(true);\n    toJsonMethod.invoke(gson, src, type, jsonWriter);\n\n    String jsonOutput = writer.toString();\n    assertTrue(jsonOutput.contains(\"reflection test\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889933,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 721,
+    "prompt_tokens": 2765,
+    "total_tokens": 3486,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.0
+  }
+}

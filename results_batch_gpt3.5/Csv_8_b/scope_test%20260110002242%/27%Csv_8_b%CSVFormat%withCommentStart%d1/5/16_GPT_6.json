@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9e4IExS1wJTdRkk1VtiJk3zw0Or",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithCommentStart_ValidCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        char commentChar = '#';\n\n        CSVFormat newFormat = format.withCommentStart(commentChar);\n\n        assertNotNull(newFormat);\n        assertEquals(Character.valueOf(commentChar), newFormat.getCommentStart());\n        // Original format unchanged\n        assertNull(format.getCommentStart());\n    }\n\n    @Test\n    public void testWithCommentStart_NullCharacter() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Character commentChar = null;\n\n        CSVFormat newFormat = format.withCommentStart(commentChar);\n\n        assertNotNull(newFormat);\n        assertNull(newFormat.getCommentStart());\n        // Original format unchanged\n        assertNull(format.getCommentStart());\n    }\n\n    @Test\n    public void testWithCommentStart_LineBreakCharacter_Throws() {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to access private static method isLineBreak(Character)\n        try {\n            Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n            isLineBreakMethod.setAccessible(true);\n\n            // Test with line break characters: '\\n' and '\\r'\n            Character lf = '\\n';\n            Character cr = '\\r';\n\n            assertTrue((Boolean) isLineBreakMethod.invoke(null, lf));\n            assertTrue((Boolean) isLineBreakMethod.invoke(null, cr));\n\n            // Check that withCommentStart throws IllegalArgumentException for line breaks\n            IllegalArgumentException thrownLf = assertThrows(IllegalArgumentException.class, () -> {\n                format.withCommentStart(lf);\n            });\n            assertEquals(\"The comment start character cannot be a line break\", thrownLf.getMessage());\n\n            IllegalArgumentException thrownCr = assertThrows(IllegalArgumentException.class, () -> {\n                format.withCommentStart(cr);\n            });\n            assertEquals(\"The comment start character cannot be a line break\", thrownCr.getMessage());\n\n        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n            fail(\"Reflection failed: \" + e.getMessage());\n        }\n    }\n\n    @Test\n    public void testIsLineBreak_PrivateStaticCharMethod() throws Exception {\n        Method isLineBreakCharMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakCharMethod.setAccessible(true);\n\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreakCharMethod.invoke(null, '\\r'));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, 'a'));\n        assertFalse((Boolean) isLineBreakCharMethod.invoke(null, '#'));\n    }\n\n    @Test\n    public void testIsLineBreak_PrivateStaticCharacterMethod() throws Exception {\n        Method isLineBreakCharObjMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakCharObjMethod.setAccessible(true);\n\n        assertTrue((Boolean) isLineBreakCharObjMethod.invoke(null, Character.valueOf('\\n')));\n        assertTrue((Boolean) isLineBreakCharObjMethod.invoke(null, Character.valueOf('\\r')));\n        assertFalse((Boolean) isLineBreakCharObjMethod.invoke(null, Character.valueOf('a')));\n        assertFalse((Boolean) isLineBreakCharObjMethod.invoke(null, Character.valueOf('#')));\n        assertFalse((Boolean) isLineBreakCharObjMethod.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976136,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 761,
+    "prompt_tokens": 1805,
+    "total_tokens": 2566,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.1
+  }
+}

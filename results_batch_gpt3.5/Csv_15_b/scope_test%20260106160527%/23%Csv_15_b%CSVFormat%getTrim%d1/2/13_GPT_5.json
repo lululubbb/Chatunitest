@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxLfDVvOlHfHOXzhNzFA1HdOnhM6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetTrimDefaultFalse() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // DEFAULT has trim = false\n        assertFalse(format.getTrim());\n    }\n\n    @Test\n    void testGetTrimTrueViaWithTrim() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withTrim(true);\n        assertTrue(format.getTrim());\n    }\n\n    @Test\n    void testGetTrimFalseViaWithTrim() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withTrim(false);\n        assertFalse(format.getTrim());\n    }\n\n    @Test\n    void testGetTrimPrivateFieldManipulation() throws Exception {\n        // Use reflection to create a new instance with trim = true\n        Constructor<CSVFormat> ctor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n        ctor.setAccessible(true);\n\n        CSVFormat format = ctor.newInstance(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                CSVFormat.DEFAULT.getQuoteMode(),\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                null,\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                true,  // trim = true\n                CSVFormat.DEFAULT.getTrailingDelimiter(),\n                CSVFormat.DEFAULT.getAutoFlush()\n        );\n\n        assertTrue(format.getTrim());\n\n        // Now set trim = false via reflection on this new instance\n        Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n        trimField.setAccessible(true);\n        trimField.setBoolean(format, false);\n\n        assertFalse(format.getTrim());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767690539,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 482,
+    "prompt_tokens": 2327,
+    "total_tokens": 2809,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.96
+  }
+}

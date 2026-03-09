@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvctDrlK9QbIsAoLtaCP3I6jH0LBx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader) {\n            // Override read() to delegate to mockReader.read()\n            @Override\n            public int read() throws IOException {\n                return mockReader.read();\n            }\n\n            @Override\n            public void mark(int readAheadLimit) throws IOException {\n                mockReader.mark(readAheadLimit);\n            }\n\n            @Override\n            public void reset() throws IOException {\n                mockReader.reset();\n            }\n        };\n    }\n\n    @Test\n    void testLookAheadReturnsNextChar() throws IOException {\n        when(mockReader.read()).thenReturn((int) 'A');\n        doNothing().when(mockReader).mark(1);\n        doNothing().when(mockReader).reset();\n\n        int result = extendedBufferedReader.lookAhead();\n\n        assertEquals('A', result);\n        verify(mockReader).mark(1);\n        verify(mockReader).read();\n        verify(mockReader).reset();\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws IOException {\n        when(mockReader.read()).thenReturn(ExtendedBufferedReader.END_OF_STREAM);\n        doNothing().when(mockReader).mark(1);\n        doNothing().when(mockReader).reset();\n\n        int result = extendedBufferedReader.lookAhead();\n\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        verify(mockReader).mark(1);\n        verify(mockReader).read();\n        verify(mockReader).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOException() throws IOException {\n        doThrow(new IOException(\"mark failed\")).when(mockReader).mark(1);\n\n        IOException thrown = assertThrows(IOException.class, () -> extendedBufferedReader.lookAhead());\n        assertEquals(\"mark failed\", thrown.getMessage());\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionOnRead() throws IOException {\n        doNothing().when(mockReader).mark(1);\n        when(mockReader.read()).thenThrow(new IOException(\"read failed\"));\n\n        IOException thrown = assertThrows(IOException.class, () -> extendedBufferedReader.lookAhead());\n        assertEquals(\"read failed\", thrown.getMessage());\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionOnReset() throws IOException {\n        doNothing().when(mockReader).mark(1);\n        when(mockReader.read()).thenReturn((int) 'B');\n        doThrow(new IOException(\"reset failed\")).when(mockReader).reset();\n\n        IOException thrown = assertThrows(IOException.class, () -> extendedBufferedReader.lookAhead());\n        assertEquals(\"reset failed\", thrown.getMessage());\n    }\n\n    @Test\n    void testLookAheadViaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        when(mockReader.read()).thenReturn((int) 'Z');\n        doNothing().when(mockReader).mark(1);\n        doNothing().when(mockReader).reset();\n\n        Method lookAheadMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"lookAhead\");\n        lookAheadMethod.setAccessible(true);\n        int result = (int) lookAheadMethod.invoke(extendedBufferedReader);\n\n        assertEquals('Z', result);\n        verify(mockReader).mark(1);\n        verify(mockReader).read();\n        verify(mockReader).reset();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850223,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 757,
+    "prompt_tokens": 1049,
+    "total_tokens": 1806,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.42
+  }
+}

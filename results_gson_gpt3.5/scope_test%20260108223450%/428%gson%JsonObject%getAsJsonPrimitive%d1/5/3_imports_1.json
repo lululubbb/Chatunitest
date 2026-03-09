@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.util.Map;\nimport java.util.Set;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.JsonElement;\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_existingMember() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"testValue\");\n\n    // Use reflection to access private 'members' field and add an entry\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    java.util.Map<String, JsonElement> members = (java.util.Map<String, JsonElement>) membersField.get(jsonObject);\n    members.put(\"key1\", primitive);\n\n    JsonPrimitive result = jsonObject.getAsJsonPrimitive(\"key1\");\n    assertNotNull(result);\n    assertEquals(primitive, result);\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_nonExistingMember() {\n    JsonPrimitive result = jsonObject.getAsJsonPrimitive(\"nonexistent\");\n    assertNull(result);\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_nullKey() {\n    JsonPrimitive result = jsonObject.getAsJsonPrimitive(null);\n    assertNull(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 398,
+  "completion_tokens": 306,
+  "total_tokens": 704,
+  "llm_elapsed_time_seconds": 4.23,
+  "repair_elapsed_time_seconds": 11.06,
+  "round_total_time_seconds": 11.06
+}

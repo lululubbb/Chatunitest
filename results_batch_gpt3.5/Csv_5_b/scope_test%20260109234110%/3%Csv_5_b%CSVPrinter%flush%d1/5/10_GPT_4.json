@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8vEXtEQEfzKhBslbAJz9pUIeYBw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterFlushTest {\n\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void flush_withFlushableOut_flushCalled() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Flushable flushableOut = mock(Flushable.class);\n        // Create CSVPrinter with a dummy Appendable, then replace 'out' with flushableOut via reflection\n        CSVPrinter printer = new CSVPrinter(mock(Appendable.class), format);\n\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        // The field 'out' is final, remove final modifier via reflection\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(outField, outField.getModifiers() & ~Modifier.FINAL);\n\n        outField.set(printer, flushableOut);\n\n        printer.flush();\n\n        verify(flushableOut, times(1)).flush();\n    }\n\n    @Test\n    void flush_withNonFlushableOut_noException() throws IOException {\n        Appendable nonFlushableOut = mock(Appendable.class);\n        CSVPrinter printer = new CSVPrinter(nonFlushableOut, format);\n\n        // Should not throw any exception\n        assertDoesNotThrow(printer::flush);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973356,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 369,
+    "prompt_tokens": 866,
+    "total_tokens": 1235,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.05
+  }
+}

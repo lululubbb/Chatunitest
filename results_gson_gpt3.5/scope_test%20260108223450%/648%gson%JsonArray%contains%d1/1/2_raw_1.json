@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n    private JsonArray jsonArray;\n    private JsonElement element1;\n    private JsonElement element2;\n\n    @BeforeEach\n    public void setUp() {\n        jsonArray = new JsonArray();\n        element1 = mock(JsonElement.class);\n        element2 = mock(JsonElement.class);\n    }\n\n    @Test\n    public void testContains_ElementPresent() throws Exception {\n        setElementsField(jsonArray, new ArrayList<JsonElement>() {{\n            add(element1);\n            add(element2);\n        }});\n        assertTrue(jsonArray.contains(element1));\n    }\n\n    @Test\n    public void testContains_ElementNotPresent() throws Exception {\n        setElementsField(jsonArray, new ArrayList<JsonElement>() {{\n            add(element1);\n        }});\n        assertFalse(jsonArray.contains(element2));\n    }\n\n    @Test\n    public void testContains_EmptyElements() throws Exception {\n        setElementsField(jsonArray, new ArrayList<>());\n        assertFalse(jsonArray.contains(element1));\n    }\n\n    private void setElementsField(JsonArray jsonArray, ArrayList<JsonElement> elements) throws Exception {\n        Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n        elementsField.setAccessible(true);\n        elementsField.set(jsonArray, elements);\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 479,
+  "completion_tokens": 312,
+  "total_tokens": 791,
+  "llm_elapsed_time_seconds": 7.73
+}

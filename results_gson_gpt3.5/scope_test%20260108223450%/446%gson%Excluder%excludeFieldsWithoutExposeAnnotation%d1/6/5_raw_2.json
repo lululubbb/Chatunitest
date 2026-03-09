@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExcluderTest {\n\n  @Test\n  void testExcludeFieldsWithoutExposeAnnotation_returnsCloneWithRequireExposeTrue() throws Exception {\n    Excluder original = spy(new Excluder());\n    Excluder clone = new Excluder();\n    doReturn(clone).when(original).clone();\n\n    Excluder result = original.excludeFieldsWithoutExposeAnnotation();\n\n    assertNotNull(result);\n    assertSame(clone, result);\n    // Use reflection to check private boolean requireExpose\n    Field field = Excluder.class.getDeclaredField(\"requireExpose\");\n    field.setAccessible(true);\n    boolean requireExpose = (boolean) field.get(result);\n    assertTrue(requireExpose);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 856,
+  "completion_tokens": 185,
+  "total_tokens": 1041,
+  "llm_elapsed_time_seconds": 3.88
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmjDDwijTU4Dks5oyfUnXuk9glyI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  public void setUp() {\n    // no-op, instances created in tests\n  }\n\n  @Test\n  public void testGetAsShort_whenNumber_returnsShortValue() {\n    Number number = mock(Number.class);\n    when(number.shortValue()).thenReturn((short)123);\n\n    JsonPrimitive primitive = new JsonPrimitive(number);\n\n    short result = primitive.getAsShort();\n\n    assertEquals((short)123, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenNotNumber_parsesString() {\n    JsonPrimitive primitive = new JsonPrimitive(\"456\");\n\n    short result = primitive.getAsShort();\n\n    assertEquals((short)456, result);\n  }\n\n  @Test\n  public void testGetAsShort_whenNotNumber_invalidString_throwsNumberFormatException() {\n    JsonPrimitive primitive = new JsonPrimitive(\"notANumber\");\n\n    assertThrows(NumberFormatException.class, primitive::getAsShort);\n  }\n\n  @Test\n  public void testGetAsShort_usingReflection_onPrivateValueField() throws Exception {\n    JsonPrimitive primitive = new JsonPrimitive(\"789\");\n\n    // Access private field 'value' via reflection and change it to a Number\n    var valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(primitive, (short)321);\n\n    // Because getAsShort uses isNumber(), which depends on value, we mock isNumber() via spy\n    JsonPrimitive spyPrimitive = Mockito.spy(primitive);\n    doReturn(true).when(spyPrimitive).isNumber();\n    doReturn((short)321).when(spyPrimitive).getAsNumber().thenReturn((short)321);\n\n    // Actually, getAsNumber() returns Number, so we mock getAsNumber to return a Number with shortValue 321\n    Number number = mock(Number.class);\n    when(number.shortValue()).thenReturn((short)321);\n    doReturn(number).when(spyPrimitive).getAsNumber();\n\n    short result = spyPrimitive.getAsShort();\n\n    assertEquals((short)321, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888043,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 505,
+    "prompt_tokens": 426,
+    "total_tokens": 931,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.92
+  }
+}

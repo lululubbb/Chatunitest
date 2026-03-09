@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnQk3MK29GtQQe1hQcEWfUNwuxG8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.EOFException;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\npublic class StreamsTest {\n\n    JsonReader mockReader;\n\n    @BeforeEach\n    public void setUp() {\n        mockReader = mock(JsonReader.class);\n    }\n\n    @Test\n    public void testParse_ReturnsJsonElement_WhenReaderNotEmpty() throws Exception {\n        // Arrange\n        doReturn(JsonToken.BEGIN_OBJECT).when(mockReader).peek();\n        JsonElement expectedElement = mock(JsonElement.class);\n\n        Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n        jsonElementField.setAccessible(true);\n        Object originalJsonElementAdapter = jsonElementField.get(null);\n\n        try {\n            Object adapterMock = Mockito.mock(originalJsonElementAdapter.getClass());\n            jsonElementField.set(null, adapterMock);\n\n            @SuppressWarnings(\"unchecked\")\n            com.google.gson.TypeAdapter<JsonElement> typedAdapterMock = (com.google.gson.TypeAdapter<JsonElement>) adapterMock;\n\n            when(typedAdapterMock.read(mockReader)).thenReturn(expectedElement);\n\n            // Act\n            JsonElement result = Streams.parse(mockReader);\n\n            // Assert\n            assertSame(expectedElement, result);\n        } finally {\n            jsonElementField.set(null, originalJsonElementAdapter);\n        }\n    }\n\n    @Test\n    public void testParse_ReturnsJsonNull_WhenEmptyDocument() throws Exception {\n        // Arrange\n        doThrow(new EOFException()).when(mockReader).peek();\n\n        // Act\n        JsonElement result = Streams.parse(mockReader);\n\n        // Assert\n        assertSame(JsonNull.INSTANCE, result);\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_OnPrematureEOF() throws Exception {\n        // Arrange\n        JsonReader spyReader = spy(mockReader);\n        doReturn(JsonToken.BEGIN_OBJECT).doThrow(new EOFException()).when(spyReader).peek();\n\n        Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n        jsonElementField.setAccessible(true);\n        Object originalJsonElementAdapter = jsonElementField.get(null);\n\n        try {\n            Object adapterMock = Mockito.mock(originalJsonElementAdapter.getClass());\n            jsonElementField.set(null, adapterMock);\n\n            @SuppressWarnings(\"unchecked\")\n            com.google.gson.TypeAdapter<JsonElement> typedAdapterMock = (com.google.gson.TypeAdapter<JsonElement>) adapterMock;\n\n            when(typedAdapterMock.read(spyReader)).thenThrow(new EOFException());\n\n            // Act & Assert\n            assertThrows(JsonSyntaxException.class, () -> Streams.parse(spyReader));\n        } finally {\n            jsonElementField.set(null, originalJsonElementAdapter);\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_OnMalformedJsonException() throws Exception {\n        // Arrange\n        doReturn(JsonToken.BEGIN_OBJECT).when(mockReader).peek();\n\n        Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n        jsonElementField.setAccessible(true);\n        Object originalJsonElementAdapter = jsonElementField.get(null);\n\n        try {\n            Object adapterMock = Mockito.mock(originalJsonElementAdapter.getClass());\n            jsonElementField.set(null, adapterMock);\n\n            @SuppressWarnings(\"unchecked\")\n            com.google.gson.TypeAdapter<JsonElement> typedAdapterMock = (com.google.gson.TypeAdapter<JsonElement>) adapterMock;\n\n            when(typedAdapterMock.read(mockReader)).thenThrow(new MalformedJsonException(\"malformed\"));\n\n            // Act & Assert\n            assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n        } finally {\n            jsonElementField.set(null, originalJsonElementAdapter);\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonIOException_OnIOException() throws Exception {\n        // Arrange\n        doReturn(JsonToken.BEGIN_OBJECT).when(mockReader).peek();\n\n        Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n        jsonElementField.setAccessible(true);\n        Object originalJsonElementAdapter = jsonElementField.get(null);\n\n        try {\n            Object adapterMock = Mockito.mock(originalJsonElementAdapter.getClass());\n            jsonElementField.set(null, adapterMock);\n\n            @SuppressWarnings(\"unchecked\")\n            com.google.gson.TypeAdapter<JsonElement> typedAdapterMock = (com.google.gson.TypeAdapter<JsonElement>) adapterMock;\n\n            when(typedAdapterMock.read(mockReader)).thenThrow(new IOException(\"io\"));\n\n            // Act & Assert\n            assertThrows(JsonIOException.class, () -> Streams.parse(mockReader));\n        } finally {\n            jsonElementField.set(null, originalJsonElementAdapter);\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_OnNumberFormatException() throws Exception {\n        // Arrange\n        doReturn(JsonToken.BEGIN_OBJECT).when(mockReader).peek();\n\n        Field jsonElementField = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n        jsonElementField.setAccessible(true);\n        Object originalJsonElementAdapter = jsonElementField.get(null);\n\n        try {\n            Object adapterMock = Mockito.mock(originalJsonElementAdapter.getClass());\n            jsonElementField.set(null, adapterMock);\n\n            @SuppressWarnings(\"unchecked\")\n            com.google.gson.TypeAdapter<JsonElement> typedAdapterMock = (com.google.gson.TypeAdapter<JsonElement>) adapterMock;\n\n            when(typedAdapterMock.read(mockReader)).thenThrow(new NumberFormatException(\"number format\"));\n\n            // Act & Assert\n            assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n        } finally {\n            jsonElementField.set(null, originalJsonElementAdapter);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890742,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1244,
+    "prompt_tokens": 2147,
+    "total_tokens": 3391,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.93
+  }
+}

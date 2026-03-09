@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlSIRrRN9XUdRwkkc1OMTxefBGKe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.List;\nimport com.google.gson.Gson;\n\nclass CollectionsDeserializationBenchmarkTest {\n\n  private CollectionsDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void init() {\n    benchmark = new CollectionsDeserializationBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Use reflection to invoke private method setUp()\n    Method setUpMethod = CollectionsDeserializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    setUpMethod.setAccessible(true);\n    setUpMethod.invoke(benchmark);\n\n    // Verify gson field is initialized and not null\n    Field gsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    Gson gsonValue = (Gson) gsonField.get(benchmark);\n    assertNotNull(gsonValue, \"gson field should be initialized\");\n\n    // Verify json field is initialized and contains expected JSON string\n    Field jsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    String jsonValue = (String) jsonField.get(benchmark);\n    assertNotNull(jsonValue, \"json field should be initialized\");\n    assertFalse(jsonValue.isEmpty(), \"json field should not be empty\");\n\n    // Access private static final field LIST_TYPE using setAccessible(true)\n    Field listTypeField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"LIST_TYPE\");\n    listTypeField.setAccessible(true);\n    Type listType = (Type) listTypeField.get(null);\n\n    List<?> deserializedList = gsonValue.fromJson(jsonValue, listType);\n    assertNotNull(deserializedList, \"Deserialized list should not be null\");\n    assertEquals(100, deserializedList.size(), \"Deserialized list should contain 100 elements\");\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883150,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 415,
+    "prompt_tokens": 1160,
+    "total_tokens": 1575,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.73
+  }
+}

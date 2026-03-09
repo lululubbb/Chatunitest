@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90YRfVRFqQloiUjJlJxVTZxvTkW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull() throws IOException {\n        when(format.getNullString()).thenReturn(null);\n        printer.print(null);\n        // nullString == null => print called with Constants.EMPTY\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNotNull() throws IOException {\n        when(format.getNullString()).thenReturn(\"NULL\");\n        printer.print(null);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException {\n        String value = \"testValue\";\n        printer.print(value);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_invokesPrivatePrint() throws Throwable {\n        String testString = \"abc\";\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // invoke private print with non-null value\n        printMethod.invoke(printer, testString, testString, 0, testString.length());\n\n        // Since print is private and complex, verify append called at least once\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintAndEscape() throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        String value = \"escapeTest\";\n        method.invoke(printer, value, 0, value.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintAndQuote() throws Throwable {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n        String value = \"quoteTest\";\n        method.invoke(printer, value, value, 0, value.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nullValueAndNullStringEmpty() throws IOException {\n        when(format.getNullString()).thenReturn(null);\n        // print(null) should use Constants.EMPTY internally\n        printer.print(null);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973686,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 639,
+    "prompt_tokens": 491,
+    "total_tokens": 1130,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.45
+  }
+}

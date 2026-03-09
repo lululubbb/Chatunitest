@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxhmD712QzPUmeOsYWph13scvSOK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser csvParser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Use a non-null Reader to avoid NullPointerException in constructor\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n    }\n\n    @Test\n    public void testGetHeaderMap_WhenHeaderMapIsNull() throws Exception {\n        // Set headerMap field to null\n        setHeaderMap(null);\n\n        Map<String, Integer> result = csvParser.getHeaderMap();\n\n        assertNull(result, \"Expected getHeaderMap to return null when headerMap is null\");\n    }\n\n    @Test\n    public void testGetHeaderMap_WhenHeaderMapIsNotNull() throws Exception {\n        // Prepare a LinkedHashMap with sample data\n        LinkedHashMap<String, Integer> originalMap = new LinkedHashMap<>();\n        originalMap.put(\"header1\", 0);\n        originalMap.put(\"header2\", 1);\n\n        setHeaderMap(originalMap);\n\n        Map<String, Integer> result = csvParser.getHeaderMap();\n\n        assertNotNull(result, \"Expected getHeaderMap to return a non-null map when headerMap is set\");\n        assertEquals(originalMap, result, \"Expected returned map to be equal to the original headerMap\");\n        assertNotSame(originalMap, result, \"Expected returned map to be a new LinkedHashMap instance\");\n\n        // Modify returned map and verify original map is unaffected\n        result.put(\"header3\", 2);\n        assertFalse(originalMap.containsKey(\"header3\"), \"Original headerMap should not be affected by changes to returned map\");\n    }\n\n    // Helper method to set private final field headerMap via reflection\n    private void setHeaderMap(Map<String, Integer> map) throws Exception {\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        headerMapField.set(csvParser, map);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767691910,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 457,
+    "prompt_tokens": 1195,
+    "total_tokens": 1652,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.82
+  }
+}

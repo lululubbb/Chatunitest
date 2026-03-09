@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmUsGH3Ys3BqsDFXdULtbkiqCq6G",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private Writer mockWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(Writer.class);\n    jsonWriter = new JsonWriter(mockWriter);\n  }\n\n  @Test\n  void close_shouldCloseWriterAndResetStackSize_whenStackIsEmpty() throws Exception {\n    // stackSize = 0, no exception expected\n    setStackSize(0);\n    jsonWriter.close();\n    verify(mockWriter).close();\n    assertEquals(0, getStackSize());\n  }\n\n  @Test\n  void close_shouldCloseWriterAndResetStackSize_whenStackSizeIsOneAndTopIsNonemptyDocument() throws Exception {\n    setStackSize(1);\n    setStackTop(JsonScope.NONEMPTY_DOCUMENT);\n    jsonWriter.close();\n    verify(mockWriter).close();\n    assertEquals(0, getStackSize());\n  }\n\n  @Test\n  void close_shouldThrowIOException_whenStackSizeIsGreaterThanOne() throws Exception {\n    setStackSize(2);\n    IOException thrown = assertThrows(IOException.class, () -> jsonWriter.close());\n    assertEquals(\"Incomplete document\", thrown.getMessage());\n    verify(mockWriter).close();\n  }\n\n  @Test\n  void close_shouldThrowIOException_whenStackSizeIsOneAndTopIsNotNonemptyDocument() throws Exception {\n    setStackSize(1);\n    setStackTop(JsonScope.EMPTY_DOCUMENT);\n    IOException thrown = assertThrows(IOException.class, () -> jsonWriter.close());\n    assertEquals(\"Incomplete document\", thrown.getMessage());\n    verify(mockWriter).close();\n  }\n\n  // Helpers to access private fields via reflection\n  private void setStackSize(int size) throws Exception {\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonWriter, size);\n  }\n\n  private int getStackSize() throws Exception {\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    return stackSizeField.getInt(jsonWriter);\n  }\n\n  private void setStackTop(int value) throws Exception {\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    int[] stack = (int[]) stackField.get(jsonWriter);\n    stack[0] = value;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887154,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 550,
+    "prompt_tokens": 768,
+    "total_tokens": 1318,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.53
+  }
+}

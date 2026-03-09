@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1XftHnnGbJH7m6HTIDqNjpR9tL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n    private UnsafeAllocator allocator;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Use reflection to invoke private static create() method to get INSTANCE\n        Method createMethod = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n        createMethod.setAccessible(true);\n        allocator = (UnsafeAllocator) createMethod.invoke(null);\n        assertNotNull(allocator);\n    }\n\n    @Test\n    void testNewInstance_PrimitiveWrapper() throws Exception {\n        // Instantiate a class with no-arg constructor (e.g. StringBuilder)\n        StringBuilder instance = allocator.newInstance(StringBuilder.class);\n        assertNotNull(instance);\n        assertEquals(StringBuilder.class, instance.getClass());\n    }\n\n    @Test\n    void testNewInstance_CustomClass() throws Exception {\n        // Custom class without no-arg constructor\n        class NoNoArgConstructor {\n            private final int x;\n            NoNoArgConstructor(int x) { this.x = x; }\n        }\n        NoNoArgConstructor obj = allocator.newInstance(NoNoArgConstructor.class);\n        assertNotNull(obj);\n        assertEquals(NoNoArgConstructor.class, obj.getClass());\n    }\n\n    @Test\n    void testNewInstance_Interface() {\n        // Trying to instantiate interface should fail assertInstantiable\n        Throwable ex = assertThrows(Throwable.class, () -> allocator.newInstance(Runnable.class));\n        assertNotNull(ex.getMessage());\n        assertTrue(ex.getMessage().toLowerCase().contains(\"cannot be instantiated\"));\n    }\n\n    @Test\n    void testNewInstance_AbstractClass() {\n        // Trying to instantiate abstract class should fail assertInstantiable\n        abstract class AbstractClass {}\n        Throwable ex = assertThrows(Throwable.class, () -> allocator.newInstance(AbstractClass.class));\n        assertNotNull(ex.getMessage());\n        assertTrue(ex.getMessage().toLowerCase().contains(\"cannot be instantiated\"));\n    }\n\n    @Test\n    void testAssertInstantiable_PrivateMethod() throws Exception {\n        Method assertInstantiableMethod = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n        assertInstantiableMethod.setAccessible(true);\n\n        // Should not throw for concrete class\n        assertDoesNotThrow(() -> {\n            try {\n                assertInstantiableMethod.invoke(null, String.class);\n            } catch (InvocationTargetException e) {\n                // unwrap and rethrow cause if present\n                throw e.getCause();\n            }\n        });\n\n        // Should throw for interface\n        Throwable cause = assertThrows(Throwable.class, () -> {\n            try {\n                assertInstantiableMethod.invoke(null, Runnable.class);\n            } catch (InvocationTargetException e) {\n                throw e.getCause();\n            }\n        });\n        assertNotNull(cause.getMessage());\n        assertTrue(cause.getMessage().toLowerCase().contains(\"cannot be instantiated\"));\n    }\n\n    @Test\n    void testCreate_PrivateMethod() throws Exception {\n        Method createMethod = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n        createMethod.setAccessible(true);\n        UnsafeAllocator createdInstance = (UnsafeAllocator) createMethod.invoke(null);\n        assertNotNull(createdInstance);\n        // Should be same class as INSTANCE\n        assertEquals(UnsafeAllocator.INSTANCE.getClass(), createdInstance.getClass());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885335,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 726,
+    "prompt_tokens": 1813,
+    "total_tokens": 2539,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.24
+  }
+}

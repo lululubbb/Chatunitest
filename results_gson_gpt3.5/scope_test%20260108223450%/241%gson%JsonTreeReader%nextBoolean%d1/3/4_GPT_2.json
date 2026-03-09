@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnHHTT1649hFlsrcyN5snLEP7037",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonTreeReaderTest {\n\n  private JsonTreeReader reader;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    // Create a JsonPrimitive with a boolean true value\n    JsonPrimitive jsonBoolean = new JsonPrimitive(true);\n\n    // Instantiate JsonTreeReader with a dummy JsonElement (null here, will inject stack manually)\n    reader = new JsonTreeReader(null);\n\n    // Use reflection to set private fields: stack, stackSize, pathIndices\n    // stack[0] = jsonBoolean\n    Object[] stack = new Object[32];\n    stack[0] = jsonBoolean;\n\n    var stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    stackField.set(reader, stack);\n\n    var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(reader, 1);\n\n    var pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = new int[32];\n    pathIndices[0] = 0; // explicitly initialize to 0\n    pathIndicesField.set(reader, pathIndices);\n  }\n\n  @Test\n  void nextBoolean_returnsBooleanAndIncrementsPathIndex() throws Exception {\n    // Before calling nextBoolean, pathIndices[stackSize - 1] should be 0\n    var pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(reader);\n\n    var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(reader);\n\n    assertEquals(0, pathIndices[stackSize - 1]);\n\n    // Call nextBoolean and check returned value\n    boolean result = reader.nextBoolean();\n    assertTrue(result);\n\n    // After call, pathIndices[stackSize - 1] should be incremented by 1\n    assertEquals(1, pathIndices[stackSize - 1]);\n\n    // stackSize should be decremented by 1 because popStack() removes the element\n    int newStackSize = stackSizeField.getInt(reader);\n    assertEquals(stackSize - 1, newStackSize);\n  }\n\n  @Test\n  void nextBoolean_throwsIfTokenNotBoolean() throws Exception {\n    // Prepare a JsonPrimitive with non-boolean value (e.g. string)\n    JsonPrimitive jsonString = new JsonPrimitive(\"notABoolean\");\n\n    // Inject stack with jsonString at top\n    Object[] stack = new Object[32];\n    stack[0] = jsonString;\n\n    var stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    stackField.set(reader, stack);\n\n    var stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(reader, 1);\n\n    // Use reflection to invoke private expect(JsonToken) method to simulate the check inside nextBoolean\n    Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n    expectMethod.setAccessible(true);\n\n    // Expect to throw IOException (MalformedJsonException is subclass of IOException) because token is not BOOLEAN\n    Exception exception = assertThrows(Exception.class, () -> {\n      expectMethod.invoke(reader, JsonToken.BOOLEAN);\n    });\n    assertTrue(exception.getCause() instanceof java.io.IOException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890155,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 801,
+    "prompt_tokens": 2011,
+    "total_tokens": 2812,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.53
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9mpNG9zP9LZj4m4qldr35ZB1Deb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.fail;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private void invokeValidate(CSVFormat format) {\n        try {\n            Method validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n            validateMethod.setAccessible(true);\n            validateMethod.invoke(format);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            if (cause instanceof IllegalStateException) {\n                throw (IllegalStateException) cause;\n            }\n            fail(\"Unexpected exception: \" + e);\n        }\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsDelimiter_throws() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar(',')\n                .withQuotePolicy(Quote.MINIMAL);\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_escapeEqualsDelimiter_throws() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar('\"')\n                .withQuotePolicy(Quote.MINIMAL)\n                .withEscape(',');\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_commentStartEqualsDelimiter_throws() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar('\"')\n                .withQuotePolicy(Quote.MINIMAL)\n                .withCommentStart(',');\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_quoteCharEqualsCommentStart_throws() {\n        Character c = Character.valueOf('#');\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar(c)\n                .withQuotePolicy(Quote.MINIMAL)\n                .withCommentStart(c);\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_escapeEqualsCommentStart_throws() {\n        Character c = Character.valueOf('#');\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar('\"')\n                .withQuotePolicy(Quote.MINIMAL)\n                .withCommentStart(c)\n                .withEscape(c);\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_escapeNullAndQuotePolicyNone_throws() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar((Character) null)\n                .withQuotePolicy(Quote.NONE)\n                .withEscape((Character) null);\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_headerWithDuplicates_throws() {\n        String[] header = new String[] { \"a\", \"b\", \"a\" };\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar('\"')\n                .withQuotePolicy(Quote.MINIMAL)\n                .withHeader(header);\n        assertThrows(IllegalStateException.class, () -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidate_validConfiguration_noException() {\n        String[] header = new String[] { \"a\", \"b\", \"c\" };\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',')\n                .withQuoteChar('\"')\n                .withQuotePolicy(Quote.MINIMAL)\n                .withCommentStart('#')\n                .withEscape('\\\\')\n                .withHeader(header);\n        try {\n            invokeValidate(format);\n        } catch (IllegalStateException e) {\n            fail(\"No exception expected but got: \" + e.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976679,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 779,
+    "prompt_tokens": 2076,
+    "total_tokens": 2855,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.8
+  }
+}

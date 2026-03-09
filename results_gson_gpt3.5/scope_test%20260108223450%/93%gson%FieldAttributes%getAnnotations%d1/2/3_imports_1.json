@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Field;\nimport java.util.Collection;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n  @Retention(RetentionPolicy.RUNTIME)\n  private @interface TestAnnotation1 {\n  }\n\n  @Retention(RetentionPolicy.RUNTIME)\n  private @interface TestAnnotation2 {\n  }\n\n  private FieldAttributes fieldAttributes;\n  private Field field;\n\n  @Test\n  void getAnnotations_returnsAllAnnotations() throws NoSuchFieldException {\n    Field field = SampleClass.class.getDeclaredField(\"fieldWithAnnotations\");\n    FieldAttributes fa = new FieldAttributes(field);\n\n    Collection<Annotation> annotations = fa.getAnnotations();\n\n    assertNotNull(annotations);\n    assertEquals(2, annotations.size());\n    assertTrue(annotations.stream().anyMatch(a -> a.annotationType() == TestAnnotation1.class));\n    assertTrue(annotations.stream().anyMatch(a -> a.annotationType() == TestAnnotation2.class));\n  }\n\n  @Test\n  void getAnnotations_emptyWhenNoAnnotations() throws NoSuchFieldException {\n    Field field = SampleClass.class.getDeclaredField(\"fieldWithoutAnnotations\");\n    FieldAttributes fa = new FieldAttributes(field);\n\n    Collection<Annotation> annotations = fa.getAnnotations();\n\n    assertNotNull(annotations);\n    assertTrue(annotations.isEmpty());\n  }\n\n  // Sample class with annotated and non-annotated fields for testing\n  private static class SampleClass {\n    @TestAnnotation1\n    @TestAnnotation2\n    private int fieldWithAnnotations;\n\n    private int fieldWithoutAnnotations;\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 277,
+  "completion_tokens": 364,
+  "total_tokens": 641,
+  "llm_elapsed_time_seconds": 6.19,
+  "repair_elapsed_time_seconds": 23.26,
+  "round_total_time_seconds": 23.26
+}

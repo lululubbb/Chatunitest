@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvljq5B45pMRv8pZlNxV1lyCmSSPp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.mock;\n\nimport com.google.gson.stream.JsonReader;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CollectionsDeserializationBenchmarkTest {\n\n  private CollectionsDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    benchmark = new CollectionsDeserializationBenchmark();\n    // Set the private field 'json' via reflection\n    Field jsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    // Provide a JSON string representing an array of BagOfPrimitives objects\n    // Example with two objects, one with all fields, one with empty stringValue\n    String json = \"[\" +\n        \"{\" +\n        \"\\\"longValue\\\":1234567890123,\" +\n        \"\\\"intValue\\\":42,\" +\n        \"\\\"booleanValue\\\":true,\" +\n        \"\\\"stringValue\\\":\\\"testString\\\"\" +\n        \"},\" +\n        \"{\" +\n        \"\\\"longValue\\\":0,\" +\n        \"\\\"intValue\\\":0,\" +\n        \"\\\"booleanValue\\\":false,\" +\n        \"\\\"stringValue\\\":\\\"\\\"\" +\n        \"}\" +\n        \"]\";\n    jsonField.set(benchmark, json);\n  }\n\n  @Test\n  public void testTimeCollectionsStreaming_validJson_runsWithoutException() throws Exception {\n    // Invoke private method timeCollectionsStreaming with reps=1\n    Method method = CollectionsDeserializationBenchmark.class.getDeclaredMethod(\"timeCollectionsStreaming\", int.class);\n    method.setAccessible(true);\n    method.invoke(benchmark, 1);\n  }\n\n  @Test\n  public void testTimeCollectionsStreaming_multipleReps_runsWithoutException() throws Exception {\n    Method method = CollectionsDeserializationBenchmark.class.getDeclaredMethod(\"timeCollectionsStreaming\", int.class);\n    method.setAccessible(true);\n    method.invoke(benchmark, 3);\n  }\n\n  @Test\n  public void testTimeCollectionsStreaming_unexpectedName_throwsIOException() throws Exception {\n    // Set json with an unexpected field name\n    Field jsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    String invalidJson = \"[\" +\n        \"{\" +\n        \"\\\"longValue\\\":123,\" +\n        \"\\\"intValue\\\":1,\" +\n        \"\\\"booleanValue\\\":true,\" +\n        \"\\\"stringValue\\\":\\\"valid\\\",\" +\n        \"\\\"unexpectedField\\\":999\" +\n        \"}\" +\n        \"]\";\n    jsonField.set(benchmark, invalidJson);\n\n    Method method = CollectionsDeserializationBenchmark.class.getDeclaredMethod(\"timeCollectionsStreaming\", int.class);\n    method.setAccessible(true);\n\n    // Expect IOException due to unexpected field name\n    assertThrows(IOException.class, () -> method.invoke(benchmark, 1));\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884238,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 589,
+    "prompt_tokens": 573,
+    "total_tokens": 1162,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.02
+  }
+}

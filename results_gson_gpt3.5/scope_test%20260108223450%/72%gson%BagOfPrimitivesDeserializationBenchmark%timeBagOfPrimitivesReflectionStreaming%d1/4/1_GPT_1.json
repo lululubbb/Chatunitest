@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmgaDanikJkBbi03Ceuuj6K5e7Ef",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n\n    // Use reflection to set the private 'json' field to a valid JSON string\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"longValue\\\":1234567890123,\\\"intValue\\\":42,\\\"booleanValue\\\":true,\\\"stringValue\\\":\\\"testString\\\"}\");\n  }\n\n  @Test\n  void timeBagOfPrimitivesReflectionStreaming_zeroReps_shouldNotThrow() throws Exception {\n    benchmark.timeBagOfPrimitivesReflectionStreaming(0);\n  }\n\n  @Test\n  void timeBagOfPrimitivesReflectionStreaming_oneRep_shouldDeserializeCorrectly() throws Exception {\n    benchmark.timeBagOfPrimitivesReflectionStreaming(1);\n  }\n\n  @Test\n  void timeBagOfPrimitivesReflectionStreaming_multipleReps_shouldDeserializeCorrectly() throws Exception {\n    benchmark.timeBagOfPrimitivesReflectionStreaming(5);\n  }\n\n  @Test\n  void timeBagOfPrimitivesReflectionStreaming_unexpectedFieldType_shouldThrowRuntimeException() throws Exception {\n    // Create a subclass of BagOfPrimitives with an unsupported field type\n    class BagOfPrimitivesWithUnsupportedField extends BagOfPrimitives {\n      @SuppressWarnings(\"unused\")\n      private double unsupportedField = 3.14;\n    }\n\n    // Replace the json field with JSON containing the unsupportedField name\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"unsupportedField\\\":3.14}\");\n\n    // Use reflection to temporarily replace BagOfPrimitives.class.getDeclaredFields() with fields of the subclass\n    // Since we cannot replace static method calls easily, we simulate this by reflection on BagOfPrimitives class\n    // Instead, we will create a new method in the test that mimics the focal method but uses the subclass.\n    // Since the prompt restricts us to only testing the provided method, we cannot do that.\n    // So, we invoke the method and expect RuntimeException when it encounters unsupportedField.\n\n    RuntimeException ex = assertThrows(RuntimeException.class, () -> {\n      benchmark.timeBagOfPrimitivesReflectionStreaming(1);\n    });\n    assertTrue(ex.getMessage().contains(\"Unexpected\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887880,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 578,
+    "prompt_tokens": 517,
+    "total_tokens": 1095,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.03
+  }
+}

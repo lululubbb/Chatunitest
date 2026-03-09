@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuw7SrLmhf5VMB6tqK6Rs6enAnm6I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationHandler;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Proxy;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withSingleValue() throws IOException {\n        String result = csvFormat.format(\"value1\");\n        assertEquals(\"value1\", result);\n    }\n\n    @Test\n    void testFormat_withMultipleValues() throws IOException {\n        String result = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        assertEquals(\"value1,value2,value3\", result);\n    }\n\n    @Test\n    void testFormat_withNullValue() throws IOException {\n        String result = csvFormat.format(\"value1\", null, \"value3\");\n        assertEquals(\"value1,,value3\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateExceptionOnIOException() throws Exception {\n        // Create a dynamic proxy for CSVPrinter that throws IOException on printRecord\n        CSVPrinter proxyCsvPrinter = (CSVPrinter) Proxy.newProxyInstance(\n                CSVPrinter.class.getClassLoader(),\n                new Class<?>[]{CSVPrinter.class, AutoCloseable.class},\n                new InvocationHandler() {\n                    @Override\n                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n                        if (\"printRecord\".equals(method.getName())) {\n                            throw new IOException(\"IO error\");\n                        } else if (\"close\".equals(method.getName())) {\n                            // no-op for close\n                            return null;\n                        }\n                        // For all other methods, delegate to default if possible or do nothing\n                        if (method.getReturnType().isPrimitive()) {\n                            if (method.getReturnType() == boolean.class) {\n                                return false;\n                            } else if (method.getReturnType() == void.class) {\n                                return null;\n                            } else if (method.getReturnType() == int.class) {\n                                return 0;\n                            } else if (method.getReturnType() == long.class) {\n                                return 0L;\n                            } else if (method.getReturnType() == short.class) {\n                                return (short) 0;\n                            } else if (method.getReturnType() == byte.class) {\n                                return (byte) 0;\n                            } else if (method.getReturnType() == char.class) {\n                                return '\\0';\n                            } else if (method.getReturnType() == float.class) {\n                                return 0f;\n                            } else if (method.getReturnType() == double.class) {\n                                return 0d;\n                            }\n                        }\n                        return null;\n                    }\n                });\n\n        // Use reflection to create a subclass of CSVFormat that overrides print(...) method to return proxyCsvPrinter\n        CSVFormat spyFormat = new CSVFormat(\n                csvFormat.getDelimiter(),\n                csvFormat.getQuoteCharacter(),\n                csvFormat.getQuoteMode(),\n                csvFormat.getCommentMarker(),\n                csvFormat.getEscapeCharacter(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                new Object[]{},\n                new String[]{},\n                csvFormat.getSkipHeaderRecord(),\n                csvFormat.getAllowMissingColumnNames(),\n                csvFormat.getIgnoreHeaderCase(),\n                csvFormat.getTrim(),\n                csvFormat.getTrailingDelimiter()\n        ) {\n            @Override\n            public CSVPrinter print(final Appendable out) throws IOException {\n                return proxyCsvPrinter;\n            }\n        };\n\n        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n            spyFormat.format(\"value1\");\n        });\n        assertTrue(exception.getCause() instanceof IOException);\n        assertEquals(\"IO error\", exception.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767685814,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 892,
+    "prompt_tokens": 2183,
+    "total_tokens": 3075,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.75
+  }
+}

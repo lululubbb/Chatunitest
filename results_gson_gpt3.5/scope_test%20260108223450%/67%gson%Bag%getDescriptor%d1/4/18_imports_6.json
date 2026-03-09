@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.protobuf.generated;\n\nimport static org.junit.jupiter.api.Assertions.assertSame;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.protobuf.Descriptors.FileDescriptor;\nimport com.google.protobuf.DescriptorProtos.FileDescriptorProto;\n\npublic class BagTest {\n\n  private FileDescriptor mockDescriptor;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    mockDescriptor = FileDescriptor.buildFrom(\n        FileDescriptorProto.newBuilder()\n            .setName(\"test.proto\")\n            .build(),\n        new FileDescriptor[] {});\n\n    // Use reflection to set the private static field 'descriptor' in Bag class\n    Class<?> bagClass = Bag.class;  // Use direct class reference instead of Class.forName\n\n    Field descriptorField = bagClass.getDeclaredField(\"descriptor\");\n    descriptorField.setAccessible(true);\n\n    // Remove final modifier from the 'descriptor' field if present\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(descriptorField, descriptorField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    descriptorField.set(null, mockDescriptor);\n  }\n\n  @Test\n  public void testGetDescriptor_returnsDescriptor() throws Exception {\n    FileDescriptor returnedDescriptor = Bag.getDescriptor();\n    assertSame(mockDescriptor, returnedDescriptor, \"getDescriptor should return the static descriptor field\");\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/67%gson%Bag%getDescriptor%d1/4/temp/Bag_67_4Test.java:27: 错误: 找不到符号\n    Class<?> bagClass = Bag.class;  // Use direct class reference instead of Class.forName\n                        ^\n  符号:   类 Bag\n  位置: 类 Bag_67_4Test\n/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/67%gson%Bag%getDescriptor%d1/4/temp/Bag_67_4Test.java:43: 错误: 找不到符号\n    FileDescriptor returnedDescriptor = Bag.getDescriptor();\n                                        ^\n  符号:   变量 Bag\n  位置: 类 Bag_67_4Test\n2 个错误\n",
+  "prompt_tokens": 1306,
+  "completion_tokens": 301,
+  "total_tokens": 1607,
+  "llm_elapsed_time_seconds": 4.31,
+  "repair_elapsed_time_seconds": 10.05,
+  "round_total_time_seconds": 10.05
+}

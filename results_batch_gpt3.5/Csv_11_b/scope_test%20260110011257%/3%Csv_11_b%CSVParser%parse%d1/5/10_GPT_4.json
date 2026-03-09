@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAOrasyIVx9DIyUA5VikVYL6gTrN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.lang.reflect.Method;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n        charset = Charset.forName(\"UTF-8\");\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParse_withValidParameters_returnsCSVParser() throws Exception {\n        // Use reflection to call Assertions.notNull to avoid mocking static methods\n        Method notNullMethod = null;\n        for (Method m : Class.forName(\"org.apache.commons.csv.Assertions\").getDeclaredMethods()) {\n            if (m.getName().equals(\"notNull\") && m.getParameterCount() == 2) {\n                notNullMethod = m;\n                break;\n            }\n        }\n        assertNotNull(notNullMethod);\n\n        CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n\n        assertNotNull(parser);\n        assertFalse(parser.isClosed());\n        verify(mockUrl, times(1)).openStream();\n    }\n\n    @Test\n    void testParse_withNullUrl_throwsException() {\n        // To resolve ambiguity, cast null explicitly to URL\n        assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((URL) null, charset, format);\n        });\n    }\n\n    @Test\n    void testParse_withNullCharset_throwsException() {\n        assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, null, format);\n        });\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsException() {\n        assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, null);\n        });\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979037,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 458,
+    "prompt_tokens": 1046,
+    "total_tokens": 1504,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.17
+  }
+}

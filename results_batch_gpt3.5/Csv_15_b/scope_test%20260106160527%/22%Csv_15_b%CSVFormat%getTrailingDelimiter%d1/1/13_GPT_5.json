@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxD3qSCdGUk2OdJa1NV3uUQFWO5V",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.apache.commons.csv.CSVFormat;\n\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    private CSVFormat setTrailingDelimiter(CSVFormat format, boolean value) {\n        try {\n            Field trailingDelimiterField = CSVFormat.class.getDeclaredField(\"trailingDelimiter\");\n            trailingDelimiterField.setAccessible(true);\n\n            // CSVFormat is immutable, so create a new instance with the same fields except trailingDelimiter\n            // Use reflection to get constructor and create new instance\n            Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n            Field quoteCharacterField = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n            Field quoteModeField = CSVFormat.class.getDeclaredField(\"quoteMode\");\n            Field commentMarkerField = CSVFormat.class.getDeclaredField(\"commentMarker\");\n            Field escapeCharacterField = CSVFormat.class.getDeclaredField(\"escapeCharacter\");\n            Field ignoreSurroundingSpacesField = CSVFormat.class.getDeclaredField(\"ignoreSurroundingSpaces\");\n            Field ignoreEmptyLinesField = CSVFormat.class.getDeclaredField(\"ignoreEmptyLines\");\n            Field recordSeparatorField = CSVFormat.class.getDeclaredField(\"recordSeparator\");\n            Field nullStringField = CSVFormat.class.getDeclaredField(\"nullString\");\n            Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n            Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n            Field skipHeaderRecordField = CSVFormat.class.getDeclaredField(\"skipHeaderRecord\");\n            Field allowMissingColumnNamesField = CSVFormat.class.getDeclaredField(\"allowMissingColumnNames\");\n            Field ignoreHeaderCaseField = CSVFormat.class.getDeclaredField(\"ignoreHeaderCase\");\n            Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n            Field autoFlushField = CSVFormat.class.getDeclaredField(\"autoFlush\");\n\n            delimiterField.setAccessible(true);\n            quoteCharacterField.setAccessible(true);\n            quoteModeField.setAccessible(true);\n            commentMarkerField.setAccessible(true);\n            escapeCharacterField.setAccessible(true);\n            ignoreSurroundingSpacesField.setAccessible(true);\n            ignoreEmptyLinesField.setAccessible(true);\n            recordSeparatorField.setAccessible(true);\n            nullStringField.setAccessible(true);\n            headerCommentsField.setAccessible(true);\n            headerField.setAccessible(true);\n            skipHeaderRecordField.setAccessible(true);\n            allowMissingColumnNamesField.setAccessible(true);\n            ignoreHeaderCaseField.setAccessible(true);\n            trimField.setAccessible(true);\n            autoFlushField.setAccessible(true);\n\n            char delimiter = delimiterField.getChar(format);\n            Character quoteChar = (Character) quoteCharacterField.get(format);\n            QuoteMode quoteMode = (QuoteMode) quoteModeField.get(format);\n            Character commentMarker = (Character) commentMarkerField.get(format);\n            Character escapeCharacter = (Character) escapeCharacterField.get(format);\n            boolean ignoreSurroundingSpaces = ignoreSurroundingSpacesField.getBoolean(format);\n            boolean ignoreEmptyLines = ignoreEmptyLinesField.getBoolean(format);\n            String recordSeparator = (String) recordSeparatorField.get(format);\n            String nullString = (String) nullStringField.get(format);\n            Object[] headerComments = (Object[]) headerCommentsField.get(format);\n            String[] header = (String[]) headerField.get(format);\n            boolean skipHeaderRecord = skipHeaderRecordField.getBoolean(format);\n            boolean allowMissingColumnNames = allowMissingColumnNamesField.getBoolean(format);\n            boolean ignoreHeaderCase = ignoreHeaderCaseField.getBoolean(format);\n            boolean trim = trimField.getBoolean(format);\n            boolean autoFlush = autoFlushField.getBoolean(format);\n\n            // get constructor with all fields\n            var constructor = CSVFormat.class.getDeclaredConstructor(\n                    char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                    boolean.class, boolean.class, String.class, String.class,\n                    Object[].class, String[].class, boolean.class, boolean.class,\n                    boolean.class, boolean.class, boolean.class);\n\n            constructor.setAccessible(true);\n\n            return constructor.newInstance(\n                    delimiter,\n                    quoteChar,\n                    quoteMode,\n                    commentMarker,\n                    escapeCharacter,\n                    ignoreSurroundingSpaces,\n                    ignoreEmptyLines,\n                    recordSeparator,\n                    nullString,\n                    headerComments,\n                    header,\n                    skipHeaderRecord,\n                    allowMissingColumnNames,\n                    ignoreHeaderCase,\n                    trim,\n                    value,\n                    autoFlush\n            );\n\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    void testGetTrailingDelimiter_defaultInstance() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertFalse(format.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_withTrailingDelimiterTrue() {\n        CSVFormat format = setTrailingDelimiter(CSVFormat.DEFAULT, true);\n        assertTrue(format.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_withTrailingDelimiterFalse() {\n        CSVFormat format = setTrailingDelimiter(CSVFormat.DEFAULT, false);\n        assertFalse(format.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_onVariousPresets() {\n        assertFalse(CSVFormat.EXCEL.getTrailingDelimiter());\n        assertFalse(CSVFormat.INFORMIX_UNLOAD.getTrailingDelimiter());\n        assertFalse(CSVFormat.INFORMIX_UNLOAD_CSV.getTrailingDelimiter());\n        assertFalse(CSVFormat.MYSQL.getTrailingDelimiter());\n        assertFalse(CSVFormat.POSTGRESQL_CSV.getTrailingDelimiter());\n        assertFalse(CSVFormat.POSTGRESQL_TEXT.getTrailingDelimiter());\n        assertFalse(CSVFormat.RFC4180.getTrailingDelimiter());\n        assertFalse(CSVFormat.TDF.getTrailingDelimiter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767690005,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1168,
+    "prompt_tokens": 2130,
+    "total_tokens": 3298,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.47
+  }
+}

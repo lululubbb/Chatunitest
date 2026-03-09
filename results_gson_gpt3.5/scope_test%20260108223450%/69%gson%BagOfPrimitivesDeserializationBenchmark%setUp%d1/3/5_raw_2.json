@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\nclass BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @BeforeEach\n  void init() {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Use reflection to invoke package-private method setUp()\n    Method setUpMethod = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"setUp\");\n    setUpMethod.setAccessible(true);\n    setUpMethod.invoke(benchmark);\n\n    // Verify gson field is initialized\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    Object gsonValue = gsonField.get(benchmark);\n    assertNotNull(gsonValue);\n    assertEquals(com.google.gson.Gson.class, gsonValue.getClass());\n\n    // Verify json field is initialized with expected JSON string\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    Object jsonValue = jsonField.get(benchmark);\n    assertNotNull(jsonValue);\n    String expectedJson = \"{\\\"longValue\\\":10,\\\"intValue\\\":1,\\\"booleanValue\\\":false,\\\"stringValue\\\":\\\"foo\\\"}\";\n    assertEquals(expectedJson, jsonValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 980,
+  "completion_tokens": 316,
+  "total_tokens": 1296,
+  "llm_elapsed_time_seconds": 4.69
+}

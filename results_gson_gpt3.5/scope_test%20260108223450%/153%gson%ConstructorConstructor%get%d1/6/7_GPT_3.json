@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmmwZhYaSh3YZJ15KL8OzyOLW7tY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Type;\nimport java.util.*;\n\nclass ConstructorConstructorTest {\n\n  private Map<Type, InstanceCreator<?>> instanceCreators;\n  private List<ReflectionAccessFilter> reflectionFilters;\n  private ConstructorConstructor constructorConstructor;\n\n  @BeforeEach\n  void setUp() {\n    instanceCreators = mock(Map.class);\n    reflectionFilters = mock(List.class);\n    constructorConstructor = new ConstructorConstructor(instanceCreators, true, reflectionFilters);\n  }\n\n  @Test\n  void get_withInstanceCreatorForType_returnsObjectConstructorUsingTypeCreator() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    @SuppressWarnings(\"unchecked\")\n    InstanceCreator<String> typeCreator = mock(InstanceCreator.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(typeCreator);\n\n    ObjectConstructor<String> objectConstructor = constructorConstructor.get(typeToken);\n    String instance = \"testInstance\";\n    when(typeCreator.createInstance(typeToken.getType())).thenReturn(instance);\n\n    assertEquals(instance, objectConstructor.construct());\n    verify(typeCreator).createInstance(typeToken.getType());\n  }\n\n  @Test\n  void get_withInstanceCreatorForRawType_returnsObjectConstructorUsingRawTypeCreator() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    @SuppressWarnings(\"unchecked\")\n    InstanceCreator<String> rawTypeCreator = mock(InstanceCreator.class);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(rawTypeCreator);\n\n    ObjectConstructor<String> objectConstructor = constructorConstructor.get(typeToken);\n    String instance = \"rawTypeInstance\";\n    when(rawTypeCreator.createInstance(typeToken.getType())).thenReturn(instance);\n\n    assertEquals(instance, objectConstructor.construct());\n    verify(rawTypeCreator).createInstance(typeToken.getType());\n  }\n\n  @Test\n  void get_withSpecialCollectionConstructor_returnsSpecialConstructor() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<Set<String>> typeToken = (TypeToken<Set<String>>) (TypeToken<?>) TypeToken.getParameterized(Set.class, String.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(null);\n\n    // Use reflection to invoke private static newSpecialCollectionConstructor\n    ObjectConstructor<?> specialConstructor;\n    try (MockedStatic<ConstructorConstructor> mockedStatic = Mockito.mockStatic(ConstructorConstructor.class, invocation -> {\n      if (\"newSpecialCollectionConstructor\".equals(invocation.getMethod().getName())) {\n        return new ObjectConstructor<Set<String>>() {\n          @Override\n          public Set<String> construct() {\n            return new LinkedHashSet<>();\n          }\n        };\n      }\n      return invocation.callRealMethod();\n    })) {\n      specialConstructor = constructorConstructor.get(typeToken);\n    }\n    assertNotNull(specialConstructor);\n    Object instance = specialConstructor.construct();\n    assertTrue(instance instanceof Set);\n  }\n\n  @Test\n  void get_withDefaultConstructor_returnsDefaultConstructor() {\n    TypeToken<SimpleClass> typeToken = TypeToken.get(SimpleClass.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(null);\n\n    when(reflectionFilters.isEmpty()).thenReturn(true);\n\n    ObjectConstructor<SimpleClass> objectConstructor = constructorConstructor.get(typeToken);\n    SimpleClass instance = objectConstructor.construct();\n    assertNotNull(instance);\n    assertEquals(\"default\", instance.getName());\n  }\n\n  @Test\n  void get_withDefaultImplementationConstructor_returnsDefaultImplementation() {\n    @SuppressWarnings(\"unchecked\")\n    TypeToken<Map<String, String>> typeToken = (TypeToken<Map<String, String>>) (TypeToken<?>) TypeToken.getParameterized(Map.class, String.class, String.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(null);\n\n    ObjectConstructor<?> objectConstructor = constructorConstructor.get(typeToken);\n    Object instance = objectConstructor.construct();\n    assertTrue(instance instanceof LinkedHashMap);\n  }\n\n  @Test\n  void get_withNonInstantiableClass_throwsJsonIOException() {\n    TypeToken<AbstractList> typeToken = TypeToken.get(AbstractList.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(null);\n\n    ObjectConstructor<AbstractList> objectConstructor = constructorConstructor.get(typeToken);\n    JsonIOException thrown = assertThrows(JsonIOException.class, objectConstructor::construct);\n    assertTrue(thrown.getMessage().contains(\"Unable to create instance\"));\n  }\n\n  @Test\n  void get_withFilterBlockAll_throwsJsonIOException() {\n    TypeToken<SimpleClass> typeToken = TypeToken.get(SimpleClass.class);\n    when(instanceCreators.get(typeToken.getType())).thenReturn(null);\n    when(instanceCreators.get(typeToken.getRawType())).thenReturn(null);\n\n    // Mock ReflectionAccessFilterHelper.getFilterResult to return BLOCK_ALL\n    try (MockedStatic<ReflectionAccessFilterHelper> mockedStatic = Mockito.mockStatic(ReflectionAccessFilterHelper.class)) {\n      mockedStatic.when(() -> ReflectionAccessFilterHelper.getFilterResult(any(), eq(typeToken.getRawType())))\n          .thenReturn(FilterResult.BLOCK_ALL);\n\n      ObjectConstructor<SimpleClass> objectConstructor = constructorConstructor.get(typeToken);\n      JsonIOException thrown = assertThrows(JsonIOException.class, objectConstructor::construct);\n      assertTrue(thrown.getMessage().contains(\"Unable to create instance of\"));\n      assertTrue(thrown.getMessage().contains(\"ReflectionAccessFilter\"));\n    }\n  }\n\n  // Helper class with default constructor\n  static class SimpleClass {\n    private final String name;\n\n    SimpleClass() {\n      this.name = \"default\";\n    }\n\n    String getName() {\n      return name;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888274,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1289,
+    "prompt_tokens": 2678,
+    "total_tokens": 3967,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.43
+  }
+}

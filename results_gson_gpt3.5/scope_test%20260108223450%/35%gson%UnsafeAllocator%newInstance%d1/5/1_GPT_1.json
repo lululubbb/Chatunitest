@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlzbeiu64PlK4q9Eh5RiuvNnWwWl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class UnsafeAllocatorTest {\n\n    private UnsafeAllocator unsafeAllocator;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Access the static INSTANCE field\n        unsafeAllocator = UnsafeAllocator.INSTANCE;\n        assertNotNull(unsafeAllocator);\n    }\n\n    @Test\n    public void testNewInstance_String() throws Exception {\n        String instance = unsafeAllocator.newInstance(String.class);\n        assertNotNull(instance);\n        assertEquals(\"\", instance);\n    }\n\n    @Test\n    public void testNewInstance_Object() throws Exception {\n        Object instance = unsafeAllocator.newInstance(Object.class);\n        assertNotNull(instance);\n    }\n\n    @Test\n    public void testNewInstance_CustomClass() throws Exception {\n        class CustomClass {\n            int x = 5;\n        }\n        CustomClass instance = unsafeAllocator.newInstance(CustomClass.class);\n        assertNotNull(instance);\n        assertEquals(5, instance.x);\n    }\n\n    @Test\n    public void testNewInstance_AbstractClass() {\n        abstract class AbstractClass {}\n        Exception exception = assertThrows(Exception.class, () -> {\n            unsafeAllocator.newInstance(AbstractClass.class);\n        });\n        assertNotNull(exception.getMessage());\n    }\n\n    @Test\n    public void testAssertInstantiable_PrivateMethod() throws Exception {\n        Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n        assertInstantiable.setAccessible(true);\n\n        // Should not throw\n        assertInstantiable.invoke(null, Object.class);\n\n        // Should throw for interface\n        Exception ex = assertThrows(Exception.class, () -> {\n            assertInstantiable.invoke(null, Runnable.class);\n        });\n        assertTrue(ex.getCause() instanceof UnsupportedOperationException);\n\n        // Should throw for abstract class\n        abstract class AbstractClass {}\n        ex = assertThrows(Exception.class, () -> {\n            assertInstantiable.invoke(null, AbstractClass.class);\n        });\n        assertTrue(ex.getCause() instanceof UnsupportedOperationException);\n    }\n\n    @Test\n    public void testCreate_PrivateMethod() throws Exception {\n        Method create = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n        create.setAccessible(true);\n        UnsafeAllocator allocator = (UnsafeAllocator) create.invoke(null);\n        assertNotNull(allocator);\n        Object obj = allocator.newInstance(Object.class);\n        assertNotNull(obj);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885215,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 522,
+    "prompt_tokens": 233,
+    "total_tokens": 755,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.5
+  }
+}

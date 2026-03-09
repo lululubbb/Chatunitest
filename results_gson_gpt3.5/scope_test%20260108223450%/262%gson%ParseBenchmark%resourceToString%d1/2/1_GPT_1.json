@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4zVS7Vr8riVuwQkBhVeGwaRdYv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.File;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.io.Reader;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.net.URL;\nimport java.util.zip.ZipEntry;\nimport java.util.zip.ZipFile;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\npublic class ParseBenchmarkTest {\n\n  private ZipFile mockZipFile;\n  private ZipEntry mockZipEntry;\n\n  @BeforeEach\n  public void setup() throws Exception {\n    mockZipFile = mock(ZipFile.class);\n    mockZipEntry = mock(ZipEntry.class);\n  }\n\n  @Test\n  public void testResourceToString_readsContentsSuccessfully() throws Exception {\n    // Arrange\n    String fileName = \"testFile.txt\";\n    String fileContent = \"Hello, this is the file content.\";\n\n    // Mock getResourceFile to return a dummy File (not used directly since ZipFile is mocked)\n    File dummyFile = mock(File.class);\n\n    // Mock static method getResourceFile\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class)) {\n      mockedStatic.when(() -> ParseBenchmark.getResourceFile(\"/ParseBenchmarkData.zip\")).thenReturn(dummyFile);\n      // Mock ZipFile constructor to return our mockZipFile when instantiated with dummyFile\n      try (MockedStatic<ZipFile> zipFileStatic = Mockito.mockStatic(ZipFile.class)) {\n        // Not possible to mock constructor of ZipFile with Mockito, so we will spy on ParseBenchmark and mock ZipFile inside resourceToString\n        // Instead, we will use partial mocking of ParseBenchmark and replace ZipFile with a spy inside resourceToString using reflection\n\n        // We will use a helper class to override ZipFile - but since this is complicated,\n        // alternatively, we can use a custom classloader or redesign the code for testability.\n        // But here, since ZipFile is instantiated inside the method, we can use PowerMock or other tools,\n        // but question restricts to Mockito 3 only.\n\n        // So we will use reflection to invoke the method and mock ZipFile by spying the method resourceToString itself.\n\n        // Instead, we will do the following:\n        // 1. Create a subclass of ParseBenchmark with overridden resourceToString method that uses our mocks.\n        // 2. But resourceToString is private static, so cannot override easily.\n        // 3. So we will use reflection to invoke resourceToString and mock ZipFile constructor using Mockito inline mock maker.\n\n        // Since mocking ZipFile constructor is not possible here, we will do a workaround by creating a temporary zip file on disk.\n\n        // Create temporary zip file with the entry and content\n        java.nio.file.Path tempZipPath = java.nio.file.Files.createTempFile(\"ParseBenchmarkData\", \".zip\");\n        try (java.util.zip.ZipOutputStream zos = new java.util.zip.ZipOutputStream(java.nio.file.Files.newOutputStream(tempZipPath))) {\n          zos.putNextEntry(new java.util.zip.ZipEntry(fileName));\n          zos.write(fileContent.getBytes());\n          zos.closeEntry();\n        }\n\n        // Mock getResourceFile to return the temp zip file\n        mockedStatic.when(() -> ParseBenchmark.getResourceFile(\"/ParseBenchmarkData.zip\")).thenReturn(tempZipPath.toFile());\n\n        // Act\n        Method method = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n        method.setAccessible(true);\n        String result = (String) method.invoke(null, fileName);\n\n        // Assert\n        assertEquals(fileContent, result);\n\n        // Cleanup temp file\n        java.nio.file.Files.deleteIfExists(tempZipPath);\n      }\n    }\n  }\n\n  @Test\n  public void testResourceToString_throwsExceptionWhenFileNotFound() throws Exception {\n    String fileName = \"nonexistent.txt\";\n\n    // Create temporary empty zip file without the entry\n    java.nio.file.Path tempZipPath = java.nio.file.Files.createTempFile(\"ParseBenchmarkData\", \".zip\");\n    try (java.util.zip.ZipOutputStream zos = new java.util.zip.ZipOutputStream(java.nio.file.Files.newOutputStream(tempZipPath))) {\n      // no entries\n    }\n\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class)) {\n      mockedStatic.when(() -> ParseBenchmark.getResourceFile(\"/ParseBenchmarkData.zip\")).thenReturn(tempZipPath.toFile());\n\n      Method method = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n      method.setAccessible(true);\n\n      Exception exception = assertThrows(Exception.class, () -> {\n        method.invoke(null, fileName);\n      });\n      // The cause should be NullPointerException because getEntry(fileName) returns null and then getInputStream(null) is called\n      Throwable cause = exception.getCause();\n      // NullPointerException expected\n      assertEquals(NullPointerException.class, cause.getClass());\n    } finally {\n      java.nio.file.Files.deleteIfExists(tempZipPath);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885549,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1091,
+    "prompt_tokens": 560,
+    "total_tokens": 1651,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 27.3
+  }
+}

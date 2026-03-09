@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm2qTbZ23yIkq91HvAUpEKXE38Tw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\nimport java.io.InvalidObjectException;\n\nclass LazilyParsedNumberTest {\n\n  @Test\n  void testEquals_SameObject() {\n    LazilyParsedNumber num = new LazilyParsedNumber(\"123\");\n    assertTrue(num.equals(num));\n  }\n\n  @Test\n  void testEquals_NullObject() {\n    LazilyParsedNumber num = new LazilyParsedNumber(\"123\");\n    assertFalse(num.equals(null));\n  }\n\n  @Test\n  void testEquals_DifferentClassObject() {\n    LazilyParsedNumber num = new LazilyParsedNumber(\"123\");\n    String other = \"123\";\n    assertFalse(num.equals(other));\n  }\n\n  @Test\n  void testEquals_DifferentValueObjects() {\n    LazilyParsedNumber num1 = new LazilyParsedNumber(\"123\");\n    LazilyParsedNumber num2 = new LazilyParsedNumber(\"456\");\n    assertFalse(num1.equals(num2));\n  }\n\n  @Test\n  void testEquals_SameValueObjects() {\n    LazilyParsedNumber num1 = new LazilyParsedNumber(\"123\");\n    LazilyParsedNumber num2 = new LazilyParsedNumber(\"123\");\n    assertTrue(num1.equals(num2));\n  }\n\n  @Test\n  void testEquals_ValueFieldSameReference() throws Exception {\n    // Use reflection to create two LazilyParsedNumber instances with the same value reference\n    LazilyParsedNumber num1 = new LazilyParsedNumber(\"123\");\n    LazilyParsedNumber num2 = new LazilyParsedNumber(\"456\");\n    Field valueField = LazilyParsedNumber.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(num2, valueField.get(num1)); // set num2.value to same reference as num1.value\n\n    assertTrue(num1.equals(num2));\n  }\n\n  @Test\n  void testWriteReplace_PrivateMethod() throws Exception {\n    LazilyParsedNumber num = new LazilyParsedNumber(\"123\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(num);\n    assertNotNull(result);\n    assertTrue(result instanceof java.math.BigDecimal);\n    assertEquals(num.toString(), result.toString());\n  }\n\n  @Test\n  void testReadObject_PrivateMethod() throws Exception {\n    LazilyParsedNumber num = new LazilyParsedNumber(\"123\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", java.io.ObjectInputStream.class);\n    readObject.setAccessible(true);\n\n    java.io.ObjectInputStream mockIn = Mockito.mock(java.io.ObjectInputStream.class);\n    Exception exception = assertThrows(InvalidObjectException.class, () -> {\n      readObject.invoke(num, mockIn);\n    });\n    assertEquals(\"Deserialization is unsupported\", exception.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885416,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 632,
+    "prompt_tokens": 1579,
+    "total_tokens": 2211,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.16
+  }
+}

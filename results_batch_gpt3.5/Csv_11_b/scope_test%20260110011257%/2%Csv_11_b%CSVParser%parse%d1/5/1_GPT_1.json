@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAKg7enmBaLGNzGvyduFOTB8oja0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testParse_withValidStringAndFormat_returnsCSVParser() throws IOException {\n        String input = \"a,b,c\\n1,2,3\";\n        try (MockedStatic<Assertions> mockedAssertions = Mockito.mockStatic(Assertions.class)) {\n            // We do not expect Assertions.notNull to throw, so just mock it to do nothing\n            mockedAssertions.when(() -> Assertions.notNull(any(), any())).thenAnswer(invocation -> null);\n\n            CSVParser parser = CSVParser.parse(input, mockFormat);\n\n            assertNotNull(parser);\n            // Verify that the parser was created with the correct format\n            assertSame(mockFormat, parser.getHeaderMap() == null ? null : parser.format);\n        }\n    }\n\n    @Test\n    void testParse_withNullString_throwsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            try (MockedStatic<Assertions> mockedAssertions = Mockito.mockStatic(Assertions.class)) {\n                mockedAssertions.when(() -> Assertions.notNull(null, \"string\")).thenThrow(new NullPointerException(\"string\"));\n                CSVParser.parse(null, mockFormat);\n            }\n        });\n        assertEquals(\"string\", thrown.getMessage());\n    }\n\n    @Test\n    void testParse_withNullFormat_throwsNullPointerException() {\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            try (MockedStatic<Assertions> mockedAssertions = Mockito.mockStatic(Assertions.class)) {\n                mockedAssertions.when(() -> Assertions.notNull(any(), eq(\"format\"))).thenThrow(new NullPointerException(\"format\"));\n                CSVParser.parse(\"some string\", null);\n            }\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978778,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 458,
+    "prompt_tokens": 508,
+    "total_tokens": 966,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.34
+  }
+}

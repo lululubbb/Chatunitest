@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWSnXB2uMQnAnwWONyXauL7RUvt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n  @Test\n  void newFactory_createsFactoryThatCreatesAdapterForNumber() throws Exception {\n    // Use reflection to access private static method newFactory\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n\n    Object factoryObj = newFactoryMethod.invoke(null, mockStrategy);\n    assertNotNull(factoryObj);\n    assertTrue(factoryObj instanceof TypeAdapterFactory);\n\n    TypeAdapterFactory factory = (TypeAdapterFactory) factoryObj;\n\n    Gson mockGson = mock(Gson.class);\n    TypeToken<Number> numberTypeToken = TypeToken.get(Number.class);\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    // Should return a TypeAdapter for Number.class\n    TypeAdapter<?> adapterForNumber = factory.create(mockGson, numberTypeToken);\n    assertNotNull(adapterForNumber);\n    assertTrue(adapterForNumber instanceof NumberTypeAdapter);\n\n    // Should return null for other types\n    TypeAdapter<?> adapterForString = factory.create(mockGson, stringTypeToken);\n    assertNull(adapterForString);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883408,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 329,
+    "prompt_tokens": 429,
+    "total_tokens": 758,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.1
+  }
+}

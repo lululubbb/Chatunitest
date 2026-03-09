@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmq4QTzBN9OEziRBmRGU3Ka7re2X",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  private Method writeDeferredNameMethod;\n  private Method beforeNameMethod;\n  private Method stringMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n\n    // Access private methods via reflection\n    writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredNameMethod.setAccessible(true);\n\n    beforeNameMethod = JsonWriter.class.getDeclaredMethod(\"beforeName\");\n    beforeNameMethod.setAccessible(true);\n\n    stringMethod = JsonWriter.class.getDeclaredMethod(\"string\", String.class);\n    stringMethod.setAccessible(true);\n  }\n\n  @Test\n  void writeDeferredName_deferredNameNull_noAction() throws Throwable {\n    // deferredName is null by default, so invoking should do nothing and not throw\n    writeDeferredNameMethod.invoke(jsonWriter);\n    // No exception means success, output should be empty\n    assertEquals(\"\", stringWriter.toString());\n  }\n\n  @Test\n  void writeDeferredName_deferredNameSet_executesBeforeNameAndString() throws Throwable {\n    // Spy on jsonWriter to verify calls to beforeName() and string(String)\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n    // Set deferredName field to a non-null value via reflection\n    var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(spyWriter, \"testName\");\n\n    // Invoke writeDeferredName on spy\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    writeDeferredName.invoke(spyWriter);\n\n    // Verify beforeName() called once\n    verify(spyWriter, times(1)).beforeName();\n\n    // Verify string(String) called once with \"testName\"\n    verify(spyWriter, times(1)).string(\"testName\");\n\n    // Verify deferredName is set to null after invocation\n    assertNull(deferredNameField.get(spyWriter));\n  }\n\n  @Test\n  void writeDeferredName_beforeNameThrowsIOException_propagates() throws Throwable {\n    // Spy on jsonWriter and mock beforeName() to throw IOException\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n    // Set deferredName field to a non-null value\n    var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(spyWriter, \"testName\");\n\n    doThrow(new IOException(\"beforeName failure\")).when(spyWriter).beforeName();\n\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      writeDeferredName.invoke(spyWriter);\n    });\n    // The cause should be IOException with the message\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"beforeName failure\", thrown.getCause().getMessage());\n\n    // deferredName should remain unchanged because exception occurs before null assignment\n    assertEquals(\"testName\", deferredNameField.get(spyWriter));\n  }\n\n  @Test\n  void writeDeferredName_stringThrowsIOException_propagates() throws Throwable {\n    // Spy on jsonWriter and mock string(String) to throw IOException\n    JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n    // Set deferredName field to a non-null value\n    var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(spyWriter, \"testName\");\n\n    doThrow(new IOException(\"string failure\")).when(spyWriter).string(\"testName\");\n\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      writeDeferredName.invoke(spyWriter);\n    });\n    // The cause should be IOException with the message\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"string failure\", thrown.getCause().getMessage());\n\n    // deferredName should remain unchanged because exception occurs before null assignment\n    assertEquals(\"testName\", deferredNameField.get(spyWriter));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888468,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 989,
+    "prompt_tokens": 745,
+    "total_tokens": 1734,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.78
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8GFjujXrghI5xJeRhoq0FIlIdNM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a real instance with a dummy Reader and CSVFormat to avoid NPEs\n        parser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n        // Spy on the real parser to stub nextRecord method\n        parser = Mockito.spy(parser);\n    }\n\n    @Test\n    public void testGetRecords_multipleRecords() throws Exception {\n        CSVRecord rec1 = mock(CSVRecord.class);\n        CSVRecord rec2 = mock(CSVRecord.class);\n        CSVRecord rec3 = mock(CSVRecord.class);\n\n        when(parser.nextRecord())\n                .thenReturn(rec1)\n                .thenReturn(rec2)\n                .thenReturn(rec3)\n                .thenReturn(null);\n\n        List<CSVRecord> records = parser.getRecords();\n\n        assertNotNull(records);\n        assertEquals(3, records.size());\n        assertSame(rec1, records.get(0));\n        assertSame(rec2, records.get(1));\n        assertSame(rec3, records.get(2));\n        verify(parser, times(4)).nextRecord();\n    }\n\n    @Test\n    public void testGetRecords_noRecords() throws Exception {\n        when(parser.nextRecord()).thenReturn(null);\n\n        List<CSVRecord> records = parser.getRecords();\n\n        assertNotNull(records);\n        assertTrue(records.isEmpty());\n        verify(parser, times(1)).nextRecord();\n    }\n\n    @Test\n    public void testNextRecord_privateMethodInvocation() throws Exception {\n        // Using reflection to invoke private nextRecord method\n        Method nextRecordMethod = CSVParser.class.getDeclaredMethod(\"nextRecord\");\n        nextRecordMethod.setAccessible(true);\n\n        // Use a real parser instance with dummy Reader and CSVFormat\n        CSVParser realParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n\n        try {\n            Object result = nextRecordMethod.invoke(realParser);\n            // result can be null or CSVRecord\n            assertTrue(result == null || result instanceof CSVRecord);\n        } catch (Exception e) {\n            fail(\"Invocation of private nextRecord threw exception: \" + e.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970815,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 519,
+    "prompt_tokens": 1095,
+    "total_tokens": 1614,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.33
+  }
+}

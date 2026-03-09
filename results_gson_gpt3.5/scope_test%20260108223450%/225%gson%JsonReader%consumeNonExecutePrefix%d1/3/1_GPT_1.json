@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlVWe0nlrqhdkQGWKYJAOV6hutc4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonReader;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  /**\n   * Helper method to invoke private consumeNonExecutePrefix() via reflection.\n   */\n  private void invokeConsumeNonExecutePrefix() throws Throwable {\n    Method method = JsonReader.class.getDeclaredMethod(\"consumeNonExecutePrefix\");\n    method.setAccessible(true);\n    try {\n      method.invoke(jsonReader);\n    } catch (InvocationTargetException e) {\n      // unwrap IOException if thrown\n      if (e.getCause() instanceof IOException) {\n        throw e.getCause();\n      }\n      throw e;\n    }\n  }\n\n  /**\n   * Test case: buffer contains the security token at current position.\n   * Expected: pos is advanced by 5.\n   */\n  @Test\n  void consumeNonExecutePrefix_securityToken_consumesToken() throws Throwable {\n    // Arrange: position and limit set so buffer has at least 5 chars after pos\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 10);\n    char[] buffer = new char[1024];\n    buffer[0] = ')';\n    buffer[1] = ']';\n    buffer[2] = '}';\n    buffer[3] = '\\'';\n    buffer[4] = '\\n';\n    setField(jsonReader, \"buffer\", buffer);\n\n    // Mock nextNonWhitespace(true) to do nothing but decrement pos by 1 after call\n    // We cannot mock private method, so simulate by setting pos after call\n    // So call will decrement pos by 1, so pos after nextNonWhitespace = -1, then pos-- => -2\n    // Instead, we simulate nextNonWhitespace(true) call by setting pos to 1 before invoke\n    setField(jsonReader, \"pos\", 1);\n\n    // Mock fillBuffer(5) to true to avoid early return\n    // We cannot mock private fillBuffer, so set limit and pos accordingly to avoid fillBuffer call\n    // pos + 5 = 6 <= limit = 10, so fillBuffer not called\n\n    // Act\n    invokeConsumeNonExecutePrefix();\n\n    // Assert pos advanced by 5 from initial pos-1 (pos was 1 before method, method decrements pos by 1 to 0)\n    // then if security token found pos +=5 => pos = 5\n    int pos = (int) getField(jsonReader, \"pos\");\n    assertEquals(5, pos);\n  }\n\n  /**\n   * Test case: buffer does not contain the security token at current position.\n   * Expected: pos is decremented by 1 but not advanced by 5.\n   */\n  @Test\n  void consumeNonExecutePrefix_noSecurityToken_noConsume() throws Throwable {\n    // Arrange\n    setField(jsonReader, \"pos\", 1);\n    setField(jsonReader, \"limit\", 10);\n    char[] buffer = new char[1024];\n    buffer[1] = 'x'; // does not match ')'\n    buffer[2] = ']';\n    buffer[3] = '}';\n    buffer[4] = '\\'';\n    buffer[5] = '\\n';\n    setField(jsonReader, \"buffer\", buffer);\n\n    // Act\n    invokeConsumeNonExecutePrefix();\n\n    // Assert pos decremented by 1 from initial pos (1 -> 0), no advance by 5\n    int pos = (int) getField(jsonReader, \"pos\");\n    assertEquals(0, pos);\n  }\n\n  /**\n   * Test case: pos + 5 > limit and fillBuffer(5) returns false.\n   * Expected: method returns early and pos is decremented by 1 only.\n   */\n  @Test\n  void consumeNonExecutePrefix_posPlus5GreaterThanLimitFillBufferFalse_returnsEarly() throws Throwable {\n    // Arrange\n    setField(jsonReader, \"pos\", 6);\n    setField(jsonReader, \"limit\", 10);\n    // pos + 5 = 11 > limit(10), so fillBuffer(5) called\n    // We cannot mock private fillBuffer, so simulate by setting limit < pos+5 and pos+5 > limit\n    // and override fillBuffer to return false using subclass\n\n    JsonReader jsonReaderSpy = new JsonReader(mockReader) {\n      @Override\n      protected boolean fillBuffer(int minimum) {\n        return false;\n      }\n    };\n    setField(jsonReaderSpy, \"pos\", 6);\n    setField(jsonReaderSpy, \"limit\", 10);\n\n    // Set buffer with arbitrary chars\n    char[] buffer = new char[1024];\n    setField(jsonReaderSpy, \"buffer\", buffer);\n\n    // Act\n    Method method = JsonReader.class.getDeclaredMethod(\"consumeNonExecutePrefix\");\n    method.setAccessible(true);\n    try {\n      method.invoke(jsonReaderSpy);\n    } catch (InvocationTargetException e) {\n      if (e.getCause() instanceof IOException) {\n        throw e.getCause();\n      }\n      throw e;\n    }\n\n    // Assert pos decremented by 1 only\n    int pos = (int) getField(jsonReaderSpy, \"pos\");\n    assertEquals(5, pos);\n  }\n\n  /**\n   * Test case: nextNonWhitespace(true) throws IOException.\n   * Expected: exception is propagated.\n   */\n  @Test\n  void consumeNonExecutePrefix_nextNonWhitespaceThrows_throwsIOException() throws Throwable {\n    // Arrange\n    JsonReader jsonReaderSpy = new JsonReader(mockReader) {\n      @Override\n      protected int nextNonWhitespace(boolean throwOnEof) throws IOException {\n        throw new IOException(\"forced\");\n      }\n    };\n\n    // Act & Assert\n    Method method = JsonReader.class.getDeclaredMethod(\"consumeNonExecutePrefix\");\n    method.setAccessible(true);\n    IOException thrown = assertThrows(IOException.class, () -> {\n      try {\n        method.invoke(jsonReaderSpy);\n      } catch (InvocationTargetException e) {\n        if (e.getCause() instanceof IOException) {\n          throw e.getCause();\n        }\n        throw e;\n      }\n    });\n    assertEquals(\"forced\", thrown.getMessage());\n  }\n\n  // Utility methods for reflection field access\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883350,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1515,
+    "prompt_tokens": 1121,
+    "total_tokens": 2636,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.02
+  }
+}

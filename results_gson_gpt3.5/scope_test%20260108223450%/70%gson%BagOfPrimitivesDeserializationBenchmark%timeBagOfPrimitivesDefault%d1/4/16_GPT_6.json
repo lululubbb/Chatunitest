@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmx8i1gOutyno3ZfdQ0GhRFFm4Wd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.ArgumentMatchers.eq;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n\n  @Mock\n  private Gson mockGson;\n\n  private Class<?> bagOfPrimitivesClass;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    MockitoAnnotations.openMocks(this);\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n\n    // Inject mock Gson into benchmark using reflection\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(benchmark, mockGson);\n\n    // Inject json string into benchmark using reflection\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"a\\\":1, \\\"b\\\":true, \\\"c\\\":\\\"string\\\"}\");\n\n    // Load BagOfPrimitives class as a top-level class from the same package\n    bagOfPrimitivesClass = Class.forName(\"com.google.gson.metrics.BagOfPrimitives\");\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesDefault_invokesFromJsonCorrectNumberOfTimes() throws Exception {\n    int reps = 5;\n\n    // Stub mockGson.fromJson to return a new BagOfPrimitives instance\n    when(mockGson.<Object>fromJson(anyString(), eq(bagOfPrimitivesClass)))\n        .thenReturn(bagOfPrimitivesClass.getDeclaredConstructor().newInstance());\n\n    // Use reflection to invoke the public method\n    Method timeMethod = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredMethod(\"timeBagOfPrimitivesDefault\", int.class);\n    timeMethod.setAccessible(true);\n    timeMethod.invoke(benchmark, reps);\n\n    // Verify fromJson called reps times with correct arguments\n    verify(mockGson, times(reps)).fromJson(\"{\\\"a\\\":1, \\\"b\\\":true, \\\"c\\\":\\\"string\\\"}\", bagOfPrimitivesClass);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888906,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 485,
+    "prompt_tokens": 1257,
+    "total_tokens": 1742,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.82
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\nimport com.google.gson.Gson;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonParseException;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport com.google.gson.typeadapters.RuntimeTypeAdapterFactory;\n\nclass RuntimeTypeAdapterFactoryTest {\n\n  @Test\n  void testOf_withBaseType_createsInstanceWithDefaults() {\n    Class<Number> baseType = Number.class;\n    RuntimeTypeAdapterFactory<Number> factory = RuntimeTypeAdapterFactory.of(baseType);\n\n    assertNotNull(factory);\n    // Using reflection to verify private fields\n    try {\n      var baseTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"baseType\");\n      baseTypeField.setAccessible(true);\n      Object baseTypeValue = baseTypeField.get(factory);\n      assertEquals(baseType, baseTypeValue);\n\n      var typeFieldNameField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"typeFieldName\");\n      typeFieldNameField.setAccessible(true);\n      Object typeFieldNameValue = typeFieldNameField.get(factory);\n      assertEquals(\"type\", typeFieldNameValue);\n\n      var maintainTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"maintainType\");\n      maintainTypeField.setAccessible(true);\n      boolean maintainTypeValue = maintainTypeField.getBoolean(factory);\n      assertFalse(maintainTypeValue);\n\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failure: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 492,
+  "completion_tokens": 287,
+  "total_tokens": 779,
+  "llm_elapsed_time_seconds": 5.07,
+  "repair_elapsed_time_seconds": 10.36,
+  "round_total_time_seconds": 10.36
+}

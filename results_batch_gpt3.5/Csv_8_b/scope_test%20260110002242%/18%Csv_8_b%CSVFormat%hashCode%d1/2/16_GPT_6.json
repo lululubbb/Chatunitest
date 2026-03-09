@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9qFr4H70rrshVYd3TtZg4YPVdEI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.Arrays;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatHashCodeTest {\n\n    private CSVFormat csvFormatDefault;\n    private CSVFormat csvFormatCustom;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Using the public DEFAULT instance for baseline\n        csvFormatDefault = CSVFormat.DEFAULT;\n\n        // Create a custom CSVFormat instance with all fields set to non-default values\n        csvFormatCustom = createCustomCSVFormat();\n    }\n\n    private CSVFormat createCustomCSVFormat() throws Exception {\n        // Use reflection to instantiate CSVFormat with custom values since constructor is private\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(char.class, Character.class, Quote.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        Character quoteChar = '\\\"';\n        Quote quotePolicy = Quote.ALL;\n        Character commentStart = '#';\n        Character escape = '\\\\';\n        boolean ignoreSurroundingSpaces = true;\n        boolean ignoreEmptyLines = false;\n        String recordSeparator = \"\\n\";\n        String nullString = \"NULL\";\n        String[] header = new String[] {\"A\", \"B\", \"C\"};\n        boolean skipHeaderRecord = true;\n\n        return constructor.newInstance(';', quoteChar, quotePolicy, commentStart, escape,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header, skipHeaderRecord);\n    }\n\n    @Test\n    void testHashCode_DefaultInstance() {\n        int hash1 = csvFormatDefault.hashCode();\n        int hash2 = csvFormatDefault.hashCode();\n        assertEquals(hash1, hash2, \"hashCode should be consistent across calls\");\n    }\n\n    @Test\n    void testHashCode_CustomInstance() {\n        int hash = csvFormatCustom.hashCode();\n        assertNotEquals(0, hash, \"hashCode should not be zero for custom instance\");\n    }\n\n    @Test\n    void testHashCode_DifferentInstancesDifferentHash() throws Exception {\n        CSVFormat other = createCustomCSVFormat();\n\n        // Change one field to differentiate\n        setField(other, \"delimiter\", ':');\n\n        int hash1 = csvFormatCustom.hashCode();\n        int hash2 = other.hashCode();\n\n        assertNotEquals(hash1, hash2, \"Different delimiter should produce different hashCode\");\n    }\n\n    @Test\n    void testHashCode_NullFieldsHandled() throws Exception {\n        CSVFormat instance = createCustomCSVFormat();\n\n        setField(instance, \"quotePolicy\", null);\n        setField(instance, \"quoteChar\", null);\n        setField(instance, \"commentStart\", null);\n        setField(instance, \"escape\", null);\n        setField(instance, \"nullString\", null);\n        setField(instance, \"recordSeparator\", null);\n        setField(instance, \"header\", null);\n\n        int hash = instance.hashCode();\n        assertNotEquals(0, hash, \"hashCode should handle null fields correctly\");\n    }\n\n    @Test\n    void testHashCode_BooleanFieldsTrueFalse() throws Exception {\n        CSVFormat instanceTrue = createCustomCSVFormat();\n        CSVFormat instanceFalse = createCustomCSVFormat();\n\n        setField(instanceTrue, \"ignoreSurroundingSpaces\", true);\n        setField(instanceTrue, \"ignoreEmptyLines\", true);\n        setField(instanceTrue, \"skipHeaderRecord\", true);\n\n        setField(instanceFalse, \"ignoreSurroundingSpaces\", false);\n        setField(instanceFalse, \"ignoreEmptyLines\", false);\n        setField(instanceFalse, \"skipHeaderRecord\", false);\n\n        int hashTrue = instanceTrue.hashCode();\n        int hashFalse = instanceFalse.hashCode();\n\n        assertNotEquals(hashTrue, hashFalse, \"hashCode should differ for different boolean flag combinations\");\n    }\n\n    @Test\n    void testHashCode_HeaderArrayAffectsHash() throws Exception {\n        CSVFormat instance1 = createCustomCSVFormat();\n        CSVFormat instance2 = createCustomCSVFormat();\n\n        setField(instance1, \"header\", new String[] {\"X\", \"Y\"});\n        setField(instance2, \"header\", new String[] {\"X\", \"Y\"});\n        assertEquals(instance1.hashCode(), instance2.hashCode(), \"Equal header arrays should produce same hashCode\");\n\n        setField(instance2, \"header\", new String[] {\"X\", \"Z\"});\n        assertNotEquals(instance1.hashCode(), instance2.hashCode(), \"Different header arrays should produce different hashCode\");\n    }\n\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976891,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1085,
+    "prompt_tokens": 2297,
+    "total_tokens": 3382,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.35
+  }
+}

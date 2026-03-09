@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlnIKMVGoHE3SsjeGHF0ETwk914b",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\n\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass TreeTypeAdapterTest {\n\n  @Test\n  void newFactory_returnsSingleTypeFactoryWithExpectedProperties() throws Exception {\n    TypeToken<String> exactType = TypeToken.get(String.class);\n    // Pass a JsonSerializer or JsonDeserializer mock instead of TypeAdapter to satisfy Preconditions\n    Object typeAdapter = mock(com.google.gson.JsonSerializer.class);\n\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactory(exactType, typeAdapter);\n\n    assertNotNull(factory);\n    assertEquals(\"com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory\", factory.getClass().getName());\n\n    // Use reflection to verify private fields of SingleTypeFactory\n    Class<?> cls = factory.getClass();\n\n    Field typeAdapterField = cls.getDeclaredField(\"adapter\");\n    typeAdapterField.setAccessible(true);\n    assertSame(typeAdapter, typeAdapterField.get(factory));\n\n    Field exactTypeField = cls.getDeclaredField(\"exactType\");\n    exactTypeField.setAccessible(true);\n    assertEquals(exactType, exactTypeField.get(factory));\n\n    Field matchRawTypeField = cls.getDeclaredField(\"matchRawType\");\n    matchRawTypeField.setAccessible(true);\n    assertFalse(matchRawTypeField.getBoolean(factory));\n\n    Field hierarchyTypeField = cls.getDeclaredField(\"hierarchyType\");\n    hierarchyTypeField.setAccessible(true);\n    assertNull(hierarchyTypeField.get(factory));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884452,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 335,
+    "prompt_tokens": 1228,
+    "total_tokens": 1563,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.95
+  }
+}

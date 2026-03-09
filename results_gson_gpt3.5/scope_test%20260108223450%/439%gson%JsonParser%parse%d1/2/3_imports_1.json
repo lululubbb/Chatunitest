@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.Streams;\nimport java.io.Reader;\nimport java.io.StringReader;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\n\nclass JsonParserTest {\n\n  private JsonParser jsonParser;\n\n  @BeforeEach\n  void setUp() {\n    jsonParser = new JsonParser();\n  }\n\n  @Test\n  void parse_withValidJsonString_shouldReturnJsonElement() {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      JsonElement expectedElement = mock(JsonElement.class);\n      mockedStatic.when(() -> JsonParser.parseString(json)).thenReturn(expectedElement);\n\n      JsonElement actualElement = jsonParser.parse(json);\n\n      assertSame(expectedElement, actualElement);\n      mockedStatic.verify(() -> JsonParser.parseString(json));\n    }\n  }\n\n  @Test\n  void parse_withInvalidJsonString_shouldThrowJsonSyntaxException() {\n    String invalidJson = \"{key:\\\"value\\\"\"; // missing closing }\n\n    try (MockedStatic<JsonParser> mockedStatic = Mockito.mockStatic(JsonParser.class)) {\n      mockedStatic.when(() -> JsonParser.parseString(invalidJson)).thenThrow(new JsonSyntaxException(\"Malformed JSON\"));\n\n      assertThrows(JsonSyntaxException.class, () -> jsonParser.parse(invalidJson));\n      mockedStatic.verify(() -> JsonParser.parseString(invalidJson));\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 292,
+  "completion_tokens": 339,
+  "total_tokens": 631,
+  "llm_elapsed_time_seconds": 5.69,
+  "repair_elapsed_time_seconds": 17.0,
+  "round_total_time_seconds": 17.0
+}

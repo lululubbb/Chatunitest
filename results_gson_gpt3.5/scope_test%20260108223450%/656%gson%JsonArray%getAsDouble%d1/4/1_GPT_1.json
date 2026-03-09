@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnNmu1jL5pvoQqCYK9cvLiUpQgk9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement mockElement;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n    mockElement = mock(JsonElement.class);\n  }\n\n  @Test\n  public void testGetAsDouble_withSingleElement_returnsElementDouble() {\n    // Arrange\n    when(mockElement.getAsDouble()).thenReturn(42.42);\n    jsonArray.add(mockElement);\n\n    // Act\n    double result = jsonArray.getAsDouble();\n\n    // Assert\n    assertEquals(42.42, result);\n    verify(mockElement).getAsDouble();\n  }\n\n  @Test\n  public void testGetAsDouble_withEmptyArray_throwsException() throws Exception {\n    // Arrange\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act & Assert\n    Exception exception = assertThrows(IllegalStateException.class, () -> {\n      // invoke private method getAsSingleElement on empty array to confirm exception\n      getAsSingleElement.invoke(jsonArray);\n    });\n\n    // The getAsDouble calls getAsSingleElement which will throw on empty array\n    assertThrows(IllegalStateException.class, () -> jsonArray.getAsDouble());\n  }\n\n  @Test\n  public void testPrivateGetAsSingleElement_returnsOnlyElement() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {\n    // Arrange\n    jsonArray.add(mockElement);\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act\n    JsonElement result = (JsonElement) getAsSingleElement.invoke(jsonArray);\n\n    // Assert\n    assertSame(mockElement, result);\n  }\n\n  @Test\n  public void testPrivateGetAsSingleElement_withMultipleElements_throwsException() throws Exception {\n    // Arrange\n    jsonArray.add(mockElement);\n    jsonArray.add(mockElement);\n    Method getAsSingleElement = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElement.setAccessible(true);\n\n    // Act & Assert\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      getAsSingleElement.invoke(jsonArray);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890558,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 550,
+    "prompt_tokens": 488,
+    "total_tokens": 1038,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.87
+  }
+}

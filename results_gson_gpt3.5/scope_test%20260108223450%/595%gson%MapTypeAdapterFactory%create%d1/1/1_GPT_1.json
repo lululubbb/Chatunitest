@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMY8bXvLHt4SxC2N85z1uYDF5UR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport java.lang.reflect.Type;\nimport java.util.Map;\nimport java.util.HashMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass MapTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor constructorConstructor;\n\n  @Mock\n  private Gson gson;\n\n  @Mock\n  private ObjectConstructor<?> objectConstructor;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n  }\n\n  @Test\n  void create_shouldReturnNullIfRawTypeIsNotMap() {\n    MapTypeAdapterFactory factory = new MapTypeAdapterFactory(constructorConstructor, false);\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_shouldReturnAdapterForMapType() {\n    MapTypeAdapterFactory factory = new MapTypeAdapterFactory(constructorConstructor, false);\n\n    TypeToken<Map<String, Integer>> mapTypeToken = new TypeToken<Map<String, Integer>>() {};\n\n    Type keyType = mapTypeToken.getType();\n    Class<?> rawType = mapTypeToken.getRawType();\n\n    // Mock $Gson$Types.getMapKeyAndValueTypes to return String and Integer types\n    // Since $Gson$Types is package-private and static, we cannot mock it easily.\n    // We rely on actual behavior here.\n\n    // Mock getKeyAdapter to return a dummy TypeAdapter\n    TypeAdapter<?> keyAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(TypeToken.get(String.class))).thenReturn(keyAdapter);\n    when(gson.getAdapter(TypeToken.get(Integer.class))).thenReturn(mock(TypeAdapter.class));\n    when(constructorConstructor.get(mapTypeToken)).thenReturn((ObjectConstructor) objectConstructor);\n\n    TypeAdapter<Map<String, Integer>> adapter = factory.create(gson, mapTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n\n  @Test\n  void create_shouldUseComplexMapKeySerializationFlag() {\n    MapTypeAdapterFactory factory = new MapTypeAdapterFactory(constructorConstructor, true);\n\n    TypeToken<Map<String, Integer>> mapTypeToken = new TypeToken<Map<String, Integer>>() {};\n\n    TypeAdapter<?> keyAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(TypeToken.get(String.class))).thenReturn(keyAdapter);\n    when(gson.getAdapter(TypeToken.get(Integer.class))).thenReturn(mock(TypeAdapter.class));\n    when(constructorConstructor.get(mapTypeToken)).thenReturn((ObjectConstructor) objectConstructor);\n\n    TypeAdapter<Map<String, Integer>> adapter = factory.create(gson, mapTypeToken);\n\n    assertNotNull(adapter);\n    assertEquals(\"com.google.gson.internal.bind.MapTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890482,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 671,
+    "prompt_tokens": 1303,
+    "total_tokens": 1974,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.11
+  }
+}

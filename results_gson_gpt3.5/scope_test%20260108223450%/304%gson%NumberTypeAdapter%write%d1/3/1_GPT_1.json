@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmctTD6mut3oxqgY0kV0Wv0dt8tN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.NumberTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\n\npublic class NumberTypeAdapterTest {\n\n    private NumberTypeAdapter numberTypeAdapter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    public void setUp() {\n        // As the constructor is private and takes a ToNumberStrategy, we use reflection to instantiate\n        try {\n            java.lang.reflect.Constructor<NumberTypeAdapter> constructor =\n                    NumberTypeAdapter.class.getDeclaredConstructor(com.google.gson.ToNumberStrategy.class);\n            constructor.setAccessible(true);\n            numberTypeAdapter = constructor.newInstance((com.google.gson.ToNumberStrategy) null);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n        jsonWriter = mock(JsonWriter.class);\n    }\n\n    @Test\n    public void testWrite_withNonNullValue_callsJsonWriterValue() throws IOException {\n        Number value = 123;\n\n        numberTypeAdapter.write(jsonWriter, value);\n\n        verify(jsonWriter).value(value);\n        verifyNoMoreInteractions(jsonWriter);\n    }\n\n    @Test\n    public void testWrite_withNullValue_callsJsonWriterValueWithNull() throws IOException {\n        Number value = null;\n\n        numberTypeAdapter.write(jsonWriter, value);\n\n        verify(jsonWriter).value((Number) null);\n        verifyNoMoreInteractions(jsonWriter);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887651,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 310,
+    "prompt_tokens": 570,
+    "total_tokens": 880,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.1
+  }
+}

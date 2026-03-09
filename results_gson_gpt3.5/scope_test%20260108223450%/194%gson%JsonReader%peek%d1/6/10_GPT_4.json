@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmFgjt8yPiNDnZwcnUMoeKFg4F4V",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  private void setPeeked(int value) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    peekedField.setInt(jsonReader, value);\n  }\n\n  private int invokeDoPeek() throws Exception {\n    Method doPeekMethod = JsonReader.class.getDeclaredMethod(\"doPeek\");\n    doPeekMethod.setAccessible(true);\n    return (int) doPeekMethod.invoke(jsonReader);\n  }\n\n  private void setPeekedOn(Object target, int value) throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    peekedField.setInt(target, value);\n  }\n\n  @Test\n  public void testPeek_whenPeekedIsNone_callsDoPeekAndReturnsCorrectToken() throws Exception {\n    // Spy on jsonReader to mock doPeek method\n    JsonReader spyReader = spy(jsonReader);\n\n    // For each peeked value, mock doPeek to return it and verify peek() returns correct JsonToken\n    int[] peekedValues = {\n        1, 2, 3, 4, // BEGIN/END OBJECT/ARRAY\n        12, 13, 14, // NAME tokens\n        5, 6,       // BOOLEAN tokens\n        7,          // NULL token\n        8, 9, 10, 11, // STRING tokens\n        15, 16,     // NUMBER tokens\n        17          // END_DOCUMENT token\n    };\n\n    JsonToken[] expectedTokens = {\n        JsonToken.BEGIN_OBJECT,\n        JsonToken.END_OBJECT,\n        JsonToken.BEGIN_ARRAY,\n        JsonToken.END_ARRAY,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.BOOLEAN,\n        JsonToken.BOOLEAN,\n        JsonToken.NULL,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.NUMBER,\n        JsonToken.NUMBER,\n        JsonToken.END_DOCUMENT\n    };\n\n    for (int i = 0; i < peekedValues.length; i++) {\n      // Reset peeked to PEEKED_NONE before each call\n      setPeekedOn(spyReader, 0);\n      doReturn(peekedValues[i]).when(spyReader).doPeek();\n\n      JsonToken token = spyReader.peek();\n      assertEquals(expectedTokens[i], token, \"peek() should return correct JsonToken for peeked value \" + peekedValues[i]);\n\n      // Verify that after peek, peeked field is set to the value returned by doPeek\n      Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n      peekedField.setAccessible(true);\n      int peekedValue = peekedField.getInt(spyReader);\n      assertEquals(peekedValues[i], peekedValue);\n\n      clearInvocations(spyReader);\n    }\n  }\n\n  @Test\n  public void testPeek_whenPeekedIsNotNone_returnsCorrespondingToken() throws Exception {\n    int[] peekedValues = {\n        1, 2, 3, 4, // BEGIN/END OBJECT/ARRAY\n        12, 13, 14, // NAME tokens\n        5, 6,       // BOOLEAN tokens\n        7,          // NULL token\n        8, 9, 10, 11, // STRING tokens\n        15, 16,     // NUMBER tokens\n        17          // END_DOCUMENT token\n    };\n\n    JsonToken[] expectedTokens = {\n        JsonToken.BEGIN_OBJECT,\n        JsonToken.END_OBJECT,\n        JsonToken.BEGIN_ARRAY,\n        JsonToken.END_ARRAY,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.NAME,\n        JsonToken.BOOLEAN,\n        JsonToken.BOOLEAN,\n        JsonToken.NULL,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.STRING,\n        JsonToken.NUMBER,\n        JsonToken.NUMBER,\n        JsonToken.END_DOCUMENT\n    };\n\n    for (int i = 0; i < peekedValues.length; i++) {\n      setPeeked(peekedValues[i]);\n      JsonToken token = jsonReader.peek();\n      assertEquals(expectedTokens[i], token, \"peek() should return correct JsonToken for peeked value \" + peekedValues[i]);\n    }\n  }\n\n  @Test\n  public void testPeek_whenPeekedIsInvalid_throwsAssertionError() throws Exception {\n    setPeeked(999);\n    AssertionError error = assertThrows(AssertionError.class, () -> jsonReader.peek());\n    assertNotNull(error);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886212,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1080,
+    "prompt_tokens": 2462,
+    "total_tokens": 3542,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.89
+  }
+}

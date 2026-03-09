@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxnBB7ck3eO02hoDUDdJU8QcCLob",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVFormat format;\n\n    @BeforeEach\n    void setup() {\n        format = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testParse_WithValidReaderAndFormat() throws IOException {\n        String csvData = \"a,b,c\\n1,2,3\\n4,5,6\";\n        Reader reader = new StringReader(csvData);\n\n        CSVParser parser = CSVParser.parse(reader, format);\n\n        assertNotNull(parser);\n        assertFalse(parser.isClosed());\n        assertEquals(format, getField(parser, \"format\"));\n        assertNotNull(getField(parser, \"headerMap\"));\n        assertNotNull(getField(parser, \"lexer\"));\n        assertEquals(0L, parser.getRecordNumber());\n        assertEquals(0L, getField(parser, \"characterOffset\"));\n    }\n\n    @Test\n    void testParse_WithNullReader_ThrowsNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVParser.parse((Reader) null, format));\n    }\n\n    @Test\n    void testParse_WithNullFormat_ThrowsNullPointerException() {\n        Reader reader = new StringReader(\"a,b,c\");\n        assertThrows(NullPointerException.class, () -> CSVParser.parse(reader, null));\n    }\n\n    @Test\n    void testParse_PrivateConstructorInvocation() throws Exception {\n        String csvData = \"x,y\\n7,8\";\n        Reader reader = new StringReader(csvData);\n\n        // Use reflection to invoke private constructor directly\n        var constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n        constructor.setAccessible(true);\n        CSVParser parser = (CSVParser) constructor.newInstance(reader, format, 10L, 5L);\n\n        assertNotNull(parser);\n        assertEquals(10L, getField(parser, \"characterOffset\"));\n        assertEquals(5L, parser.getRecordNumber());\n        assertEquals(format, getField(parser, \"format\"));\n    }\n\n    // Helper method to access private fields via reflection\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getField(Object instance, String fieldName) {\n        try {\n            var field = instance.getClass().getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return (T) field.get(instance);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692245,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 569,
+    "prompt_tokens": 604,
+    "total_tokens": 1173,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.28
+  }
+}

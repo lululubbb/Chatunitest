@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlfVQEw9SVvZnXbXBtY48kje6MRK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void testReplaceTopReplacesTopOfStack() throws Exception {\n    // Use reflection to set private fields stack and stackSize\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackField.setAccessible(true);\n    stackSizeField.setAccessible(true);\n\n    // Initialize stack with size 3 and stackSize = 3\n    int[] stackArray = new int[] {1, 2, 3};\n    stackField.set(jsonWriter, stackArray);\n    stackSizeField.setInt(jsonWriter, 3);\n\n    // Get the private method replaceTop(int)\n    Method replaceTopMethod = JsonWriter.class.getDeclaredMethod(\"replaceTop\", int.class);\n    replaceTopMethod.setAccessible(true);\n\n    // Call replaceTop with new top value 42\n    replaceTopMethod.invoke(jsonWriter, 42);\n\n    // Verify the last element of stack is replaced with 42\n    int[] modifiedStack = (int[]) stackField.get(jsonWriter);\n    assertEquals(42, modifiedStack[modifiedStack.length - 1]);\n    // Verify other elements remain unchanged\n    assertEquals(1, modifiedStack[0]);\n    assertEquals(2, modifiedStack[1]);\n  }\n\n  @Test\n  void testReplaceTopWithStackSizeOne() throws Exception {\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackField.setAccessible(true);\n    stackSizeField.setAccessible(true);\n\n    int[] stackArray = new int[] {5};\n    stackField.set(jsonWriter, stackArray);\n    stackSizeField.setInt(jsonWriter, 1);\n\n    Method replaceTopMethod = JsonWriter.class.getDeclaredMethod(\"replaceTop\", int.class);\n    replaceTopMethod.setAccessible(true);\n\n    replaceTopMethod.invoke(jsonWriter, 99);\n\n    int[] modifiedStack = (int[]) stackField.get(jsonWriter);\n    assertEquals(99, modifiedStack[0]);\n  }\n\n  @Test\n  void testReplaceTopDoesNotChangeStackSize() throws Exception {\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackField.setAccessible(true);\n    stackSizeField.setAccessible(true);\n\n    int[] stackArray = new int[] {7, 8, 9, 10};\n    stackField.set(jsonWriter, stackArray);\n    stackSizeField.setInt(jsonWriter, 4);\n\n    Method replaceTopMethod = JsonWriter.class.getDeclaredMethod(\"replaceTop\", int.class);\n    replaceTopMethod.setAccessible(true);\n\n    replaceTopMethod.invoke(jsonWriter, 55);\n\n    int[] modifiedStack = (int[]) stackField.get(jsonWriter);\n    int stackSize = stackSizeField.getInt(jsonWriter);\n\n    assertEquals(4, stackSize);\n    assertEquals(55, modifiedStack[3]);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883969,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 738,
+    "prompt_tokens": 728,
+    "total_tokens": 1466,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.37
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\n\nclass JsonParserTest {\n\n  @Test\n  void parseString_validJson_returnsJsonElement() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonElement result = JsonParser.parseString(json);\n    assertNotNull(result);\n  }\n\n  @Test\n  void parseString_emptyJson_returnsJsonElement() throws Exception {\n    String json = \"\";\n    JsonElement result = JsonParser.parseString(json);\n    assertNotNull(result);\n  }\n\n  @Test\n  void parseString_nullJson_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> JsonParser.parseString(null));\n  }\n\n  @Test\n  void parseString_malformedJson_throwsJsonSyntaxException() {\n    String json = \"{key:value\"; // malformed JSON\n    assertThrows(JsonSyntaxException.class, () -> JsonParser.parseString(json));\n  }\n\n  @Test\n  void parseString_callsParseReaderWithStringReader() throws Exception {\n    String json = \"{\\\"a\\\":1}\";\n    // Spy on JsonParser class to verify parseReader is called with StringReader\n    // Since parseReader is static, we cannot mock it easily without a framework like PowerMockito.\n    // Instead, we test behavior indirectly by verifying no exceptions and valid output.\n    JsonElement element = JsonParser.parseString(json);\n    assertNotNull(element);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 294,
+  "completion_tokens": 357,
+  "total_tokens": 651,
+  "llm_elapsed_time_seconds": 7.43
+}

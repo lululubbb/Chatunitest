@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnPE9qPXmx5bcBKa009u7A7mNvI1",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\nimport java.util.Locale;\n\nclass DefaultDateTypeAdapterWriteTest {\n\n    private DefaultDateTypeAdapter<Date> adapter;\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    // A minimal DateType implementation for testing\n    interface DateType<T extends Date> {\n        T fromMillis(long millis);\n    }\n\n    private static class TestDateType implements DateType<Date> {\n        @Override\n        public Date fromMillis(long millis) {\n            return new Date(millis);\n        }\n    }\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a real DateFormat instance to be used inside the adapter\n        DateFormat df = new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\", Locale.US);\n\n        // Create the adapter instance via reflection because constructors are private\n        // We use the constructor with DateType and String pattern\n        var constructor = DefaultDateTypeAdapter.class.getDeclaredConstructor(DefaultDateTypeAdapter.DateType.class, String.class);\n        constructor.setAccessible(true);\n        adapter = constructor.newInstance(new TestDateType(), \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\");\n\n        // Inject the dateFormats list with a single DateFormat instance for thread safety\n        Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n        dateFormats.clear();\n        dateFormats.add(df);\n\n        // Prepare JsonWriter wrapping a StringWriter to capture output\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n        jsonWriter = spy(jsonWriter);\n    }\n\n    @Test\n    void write_nullValue_callsNullValueOnJsonWriter() throws IOException {\n        adapter.write(jsonWriter, null);\n\n        verify(jsonWriter).nullValue();\n        assertEquals(\"\", stringWriter.toString());\n    }\n\n    @Test\n    void write_nonNullValue_formatsDateAndWritesString() throws IOException {\n        Date date = new Date(0L); // Epoch\n\n        adapter.write(jsonWriter, date);\n\n        // Capture the string written to JsonWriter\n        String output = stringWriter.toString();\n\n        // The output should be the formatted date string\n        DateFormat df = new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\", Locale.US);\n        String expected = df.format(date);\n\n        // JsonWriter.value(String) writes the string surrounded by quotes\n        assertEquals(\"\\\"\" + expected + \"\\\"\", output);\n\n        // Verify JsonWriter.value was called with the formatted string\n        verify(jsonWriter).value(expected);\n    }\n\n    @Test\n    void write_threadSafety_synchronizesOnDateFormats() throws Exception {\n        Date date = new Date(0L);\n\n        // Spy on the dateFormats list inside adapter to verify usage\n        Field dateFormatsField = DefaultDateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        List<DateFormat> dateFormats = (List<DateFormat>) dateFormatsField.get(adapter);\n\n        List<DateFormat> spyDateFormats = spy(new ArrayList<>(dateFormats));\n        dateFormatsField.set(adapter, spyDateFormats);\n\n        // Call the method\n        adapter.write(jsonWriter, date);\n\n        // Verify that get(0) was called on the dateFormats list\n        verify(spyDateFormats).get(0);\n\n        // We cannot directly verify synchronization but this ensures use of dateFormats list\n        String output = stringWriter.toString();\n        assertNotNull(output);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890648,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 836,
+    "prompt_tokens": 2745,
+    "total_tokens": 3581,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.03
+  }
+}

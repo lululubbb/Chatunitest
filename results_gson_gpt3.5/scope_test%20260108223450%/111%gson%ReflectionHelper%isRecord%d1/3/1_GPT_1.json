@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlaOk7odv741yCTGtjylutE4ZgSm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass ReflectionHelperTest {\n\n  private static Class<?> recordClass;\n  private static Class<?> nonRecordClass;\n\n  @BeforeAll\n  static void setup() {\n    // Create a record class dynamically if possible (Java 16+), otherwise use a known record class.\n    // For testing, use a known record or simulate with a mock.\n    recordClass = RecordSample.class;\n    nonRecordClass = NonRecordSample.class;\n  }\n\n  @Test\n  void testIsRecord_withRecordClass_returnsTrue() {\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class, Mockito.CALLS_REAL_METHODS)) {\n      // The static field RECORD_HELPER is private, so we use reflection to mock its behavior.\n      var recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n      recordHelperField.setAccessible(true);\n      RecordHelper mockRecordHelper = mock(RecordHelper.class);\n      when(mockRecordHelper.isRecord(recordClass)).thenReturn(true);\n      recordHelperField.set(null, mockRecordHelper);\n\n      boolean result = ReflectionHelper.isRecord(recordClass);\n      assertTrue(result);\n      verify(mockRecordHelper).isRecord(recordClass);\n    } catch (Exception e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  void testIsRecord_withNonRecordClass_returnsFalse() {\n    try (MockedStatic<ReflectionHelper> mockedStatic = Mockito.mockStatic(ReflectionHelper.class, Mockito.CALLS_REAL_METHODS)) {\n      var recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n      recordHelperField.setAccessible(true);\n      RecordHelper mockRecordHelper = mock(RecordHelper.class);\n      when(mockRecordHelper.isRecord(nonRecordClass)).thenReturn(false);\n      recordHelperField.set(null, mockRecordHelper);\n\n      boolean result = ReflectionHelper.isRecord(nonRecordClass);\n      assertFalse(result);\n      verify(mockRecordHelper).isRecord(nonRecordClass);\n    } catch (Exception e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n\n  // Dummy record class for testing (Java 16+)\n  public record RecordSample(String name, int id) {}\n\n  // Dummy non-record class\n  public static class NonRecordSample {\n    private String name;\n    private int id;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883652,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 562,
+    "prompt_tokens": 388,
+    "total_tokens": 950,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.19
+  }
+}

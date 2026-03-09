@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm586bWRGcMQEkGvDKAEo0Rgy27y",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void toArray_shouldReturnDelegateToArrayResult() {\n    delegate.add(\"one\");\n    delegate.add(\"two\");\n\n    Object[] array = list.toArray();\n\n    assertArrayEquals(delegate.toArray(), array);\n    verify(delegate).toArray();\n  }\n\n  @Test\n  void toArray_emptyDelegate_returnsEmptyArray() {\n    Object[] array = list.toArray();\n    assertEquals(0, array.length);\n  }\n\n  @Test\n  void toArray_reflectiveInvocation_returnsSameResult() throws Exception {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\");\n    toArrayMethod.setAccessible(true);\n    Object[] result = (Object[]) toArrayMethod.invoke(list);\n\n    assertArrayEquals(delegate.toArray(), result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885558,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 286,
+    "prompt_tokens": 373,
+    "total_tokens": 659,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.25
+  }
+}

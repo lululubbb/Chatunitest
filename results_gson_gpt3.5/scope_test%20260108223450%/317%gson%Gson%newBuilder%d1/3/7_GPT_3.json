@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmSwhwvhnmkjPyMQnByco5t3axL0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonTest {\n\n  @Test\n  public void testNewBuilder_ReturnsNewGsonBuilderWithThisInstance() {\n    Gson gson = new Gson();\n    GsonBuilder builder = gson.newBuilder();\n    assertNotNull(builder, \"GsonBuilder should not be null\");\n    // Using reflection to verify the Gson instance inside GsonBuilder\n    try {\n      Field gsonField = null;\n      Class<?> clazz = builder.getClass();\n      // Search for the field named \"gson\" or \"gsonInstance\" in the class hierarchy\n      while (clazz != null) {\n        try {\n          // Try the actual field name in GsonBuilder that holds the Gson instance\n          // The field name is \"gson\" in GsonBuilder, but if not found, try \"gsonInstance\"\n          try {\n            gsonField = clazz.getDeclaredField(\"gson\");\n          } catch (NoSuchFieldException e) {\n            gsonField = clazz.getDeclaredField(\"gsonInstance\");\n          }\n          break;\n        } catch (NoSuchFieldException ignored) {\n          clazz = clazz.getSuperclass();\n        }\n      }\n      assertNotNull(gsonField, \"Field 'gson' not found in GsonBuilder class hierarchy\");\n      gsonField.setAccessible(true);\n      Object innerGson = gsonField.get(builder);\n      assertSame(gson, innerGson, \"GsonBuilder should be created with the original Gson instance\");\n    } catch (IllegalAccessException e) {\n      fail(\"Reflection failed to access Gson field in GsonBuilder: \" + e.getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887034,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 357,
+    "prompt_tokens": 2217,
+    "total_tokens": 2574,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.12
+  }
+}

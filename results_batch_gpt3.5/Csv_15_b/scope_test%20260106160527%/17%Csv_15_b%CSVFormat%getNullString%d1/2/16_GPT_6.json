@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cux5tbQ8usbaqnXPNJZLx3XGd4RVT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetNullString_DefaultInstance() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // CSVFormat is immutable, so create a new instance with reflection to set nullString to null forcibly\n        Field nullStringField = CSVFormat.class.getDeclaredField(\"nullString\");\n        nullStringField.setAccessible(true);\n\n        // Create a new CSVFormat instance copying all fields from DEFAULT except nullString set to null\n        Field[] fields = CSVFormat.class.getDeclaredFields();\n        Object[] constructorArgs = new Object[17];\n        // The constructor parameters order from the source:\n        // (char delimiter, Character quoteChar, QuoteMode quoteMode,\n        // Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        // boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        // Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        // boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n        // boolean trailingDelimiter, boolean autoFlush)\n\n        // Get all needed fields\n        Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        Field quoteCharacterField = CSVFormat.class.getDeclaredField(\"quoteCharacter\");\n        Field quoteModeField = CSVFormat.class.getDeclaredField(\"quoteMode\");\n        Field commentMarkerField = CSVFormat.class.getDeclaredField(\"commentMarker\");\n        Field escapeCharacterField = CSVFormat.class.getDeclaredField(\"escapeCharacter\");\n        Field ignoreSurroundingSpacesField = CSVFormat.class.getDeclaredField(\"ignoreSurroundingSpaces\");\n        Field ignoreEmptyLinesField = CSVFormat.class.getDeclaredField(\"ignoreEmptyLines\");\n        Field recordSeparatorField = CSVFormat.class.getDeclaredField(\"recordSeparator\");\n        Field headerCommentsField = CSVFormat.class.getDeclaredField(\"headerComments\");\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        Field skipHeaderRecordField = CSVFormat.class.getDeclaredField(\"skipHeaderRecord\");\n        Field allowMissingColumnNamesField = CSVFormat.class.getDeclaredField(\"allowMissingColumnNames\");\n        Field ignoreHeaderCaseField = CSVFormat.class.getDeclaredField(\"ignoreHeaderCase\");\n        Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n        Field trailingDelimiterField = CSVFormat.class.getDeclaredField(\"trailingDelimiter\");\n        Field autoFlushField = CSVFormat.class.getDeclaredField(\"autoFlush\");\n\n        delimiterField.setAccessible(true);\n        quoteCharacterField.setAccessible(true);\n        quoteModeField.setAccessible(true);\n        commentMarkerField.setAccessible(true);\n        escapeCharacterField.setAccessible(true);\n        ignoreSurroundingSpacesField.setAccessible(true);\n        ignoreEmptyLinesField.setAccessible(true);\n        recordSeparatorField.setAccessible(true);\n        headerCommentsField.setAccessible(true);\n        headerField.setAccessible(true);\n        skipHeaderRecordField.setAccessible(true);\n        allowMissingColumnNamesField.setAccessible(true);\n        ignoreHeaderCaseField.setAccessible(true);\n        trimField.setAccessible(true);\n        trailingDelimiterField.setAccessible(true);\n        autoFlushField.setAccessible(true);\n\n        constructorArgs[0] = delimiterField.get(format);\n        constructorArgs[1] = quoteCharacterField.get(format);\n        constructorArgs[2] = quoteModeField.get(format);\n        constructorArgs[3] = commentMarkerField.get(format);\n        constructorArgs[4] = escapeCharacterField.get(format);\n        constructorArgs[5] = ignoreSurroundingSpacesField.get(format);\n        constructorArgs[6] = ignoreEmptyLinesField.get(format);\n        constructorArgs[7] = recordSeparatorField.get(format);\n        constructorArgs[8] = null; // forcibly set nullString to null\n        constructorArgs[9] = headerCommentsField.get(format);\n        constructorArgs[10] = headerField.get(format);\n        constructorArgs[11] = skipHeaderRecordField.get(format);\n        constructorArgs[12] = allowMissingColumnNamesField.get(format);\n        constructorArgs[13] = ignoreHeaderCaseField.get(format);\n        constructorArgs[14] = trimField.get(format);\n        constructorArgs[15] = trailingDelimiterField.get(format);\n        constructorArgs[16] = autoFlushField.get(format);\n\n        // Get the constructor\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class,\n                boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class,\n                boolean.class, boolean.class, boolean.class,\n                boolean.class, boolean.class);\n\n        constructor.setAccessible(true);\n        CSVFormat newFormat = constructor.newInstance(constructorArgs);\n\n        assertNull(newFormat.getNullString());\n    }\n\n    @Test\n    void testGetNullString_WithNullStringSet() {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\");\n        assertEquals(\"NULL\", format.getNullString());\n    }\n\n    @Test\n    void testGetNullString_WithEmptyString() {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"\");\n        assertEquals(\"\", format.getNullString());\n    }\n\n    @Test\n    void testGetNullString_WithWhitespaceString() {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"   \");\n        assertEquals(\"   \", format.getNullString());\n    }\n\n    @Test\n    void testGetNullString_FromPredefinedFormats() {\n        assertNull(CSVFormat.DEFAULT.getNullString());\n        assertEquals(\"\\\\N\", CSVFormat.MYSQL.getNullString());\n        assertEquals(\"\", CSVFormat.POSTGRESQL_CSV.getNullString());\n        assertEquals(\"\\\\N\", CSVFormat.POSTGRESQL_TEXT.getNullString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689561,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1203,
+    "prompt_tokens": 2414,
+    "total_tokens": 3617,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.03
+  }
+}

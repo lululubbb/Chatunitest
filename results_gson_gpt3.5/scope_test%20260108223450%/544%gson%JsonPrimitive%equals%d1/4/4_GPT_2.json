@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmqJGoxZMYWdrp9mdz17QP5Lphh9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nclass JsonPrimitiveEqualsTest {\n\n  @Test\n  void testEquals_sameInstance() {\n    JsonPrimitive jp = new JsonPrimitive(\"test\");\n    assertTrue(jp.equals(jp));\n  }\n\n  @Test\n  void testEquals_nullObject() {\n    JsonPrimitive jp = new JsonPrimitive(\"test\");\n    assertFalse(jp.equals(null));\n  }\n\n  @Test\n  void testEquals_differentClass() {\n    JsonPrimitive jp = new JsonPrimitive(\"test\");\n    Object other = \"test\";\n    assertFalse(jp.equals(other));\n  }\n\n  @Test\n  void testEquals_bothValueNull() throws Exception {\n    JsonPrimitive jp1 = (JsonPrimitive) createJsonPrimitiveWithValue(null);\n    JsonPrimitive jp2 = (JsonPrimitive) createJsonPrimitiveWithValue(null);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_oneValueNull() throws Exception {\n    JsonPrimitive jp1 = (JsonPrimitive) createJsonPrimitiveWithValue(null);\n    JsonPrimitive jp2 = new JsonPrimitive(\"not null\");\n    assertFalse(jp1.equals(jp2));\n    assertFalse(jp2.equals(jp1));\n  }\n\n  @Test\n  void testEquals_integralNumbers_equal() {\n    JsonPrimitive jp1 = new JsonPrimitive(123);\n    JsonPrimitive jp2 = new JsonPrimitive(123L);\n    assertTrue(jp1.equals(jp2));\n    assertTrue(jp2.equals(jp1));\n  }\n\n  @Test\n  void testEquals_integralNumbers_notEqual() {\n    JsonPrimitive jp1 = new JsonPrimitive(123);\n    JsonPrimitive jp2 = new JsonPrimitive(124L);\n    assertFalse(jp1.equals(jp2));\n    assertFalse(jp2.equals(jp1));\n  }\n\n  @Test\n  void testEquals_numbers_doubleNaN() {\n    JsonPrimitive jp1 = new JsonPrimitive(Double.NaN);\n    JsonPrimitive jp2 = new JsonPrimitive(Double.NaN);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_numbers_doubleEqual() {\n    JsonPrimitive jp1 = new JsonPrimitive(1.23);\n    JsonPrimitive jp2 = new JsonPrimitive(1.23);\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_numbers_doubleNotEqual() {\n    JsonPrimitive jp1 = new JsonPrimitive(1.23);\n    JsonPrimitive jp2 = new JsonPrimitive(4.56);\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_numbers_nonDoubleEqual() {\n    JsonPrimitive jp1 = new JsonPrimitive(new LazilyParsedNumber(\"123.0\"));\n    JsonPrimitive jp2 = new JsonPrimitive(new LazilyParsedNumber(\"123.0\"));\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_otherValueEquals() {\n    JsonPrimitive jp1 = new JsonPrimitive(\"testString\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"testString\");\n    assertTrue(jp1.equals(jp2));\n  }\n\n  @Test\n  void testEquals_otherValueNotEquals() {\n    JsonPrimitive jp1 = new JsonPrimitive(\"testString1\");\n    JsonPrimitive jp2 = new JsonPrimitive(\"testString2\");\n    assertFalse(jp1.equals(jp2));\n  }\n\n  @Test\n  void testIsIntegralPrivateMethod() throws Exception {\n    Method isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    JsonPrimitive integralInt = new JsonPrimitive(10);\n    JsonPrimitive integralLong = new JsonPrimitive(10L);\n    JsonPrimitive integralBigInt = new JsonPrimitive(BigInteger.TEN);\n\n    JsonPrimitive nonIntegralDouble = new JsonPrimitive(10.1);\n    JsonPrimitive nonIntegralString = new JsonPrimitive(\"10\");\n\n    assertTrue((Boolean) isIntegralMethod.invoke(null, integralInt));\n    assertTrue((Boolean) isIntegralMethod.invoke(null, integralLong));\n    assertTrue((Boolean) isIntegralMethod.invoke(null, integralBigInt));\n    assertFalse((Boolean) isIntegralMethod.invoke(null, nonIntegralDouble));\n    assertFalse((Boolean) isIntegralMethod.invoke(null, nonIntegralString));\n  }\n\n  private Object createJsonPrimitiveWithValue(Object value) throws Exception {\n    // Use reflection to create JsonPrimitive instance with private final value field set to value\n    // We use the public constructors for common types, but for null value we must use reflection\n    if (value == null) {\n      // Use any constructor, then set value field to null forcibly\n      JsonPrimitive jp = new JsonPrimitive(\"dummy\");\n      var field = JsonPrimitive.class.getDeclaredField(\"value\");\n      field.setAccessible(true);\n      field.set(jp, null);\n      return jp;\n    }\n    // For other values, just use public constructors\n    if (value instanceof Boolean) {\n      return new JsonPrimitive((Boolean) value);\n    } else if (value instanceof Number) {\n      return new JsonPrimitive((Number) value);\n    } else if (value instanceof Character) {\n      return new JsonPrimitive((Character) value);\n    } else if (value instanceof String) {\n      return new JsonPrimitive((String) value);\n    }\n    throw new IllegalArgumentException(\"Unsupported value type: \" + value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888483,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1168,
+    "prompt_tokens": 2771,
+    "total_tokens": 3939,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.06
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnKE7So9f64mZSX7oyg2ywffjx2G",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExcluderTest {\n\n  @Test\n  void clone_shouldReturnDistinctButEqualInstance() {\n    Excluder original = new Excluder();\n    Excluder cloned = original.clone();\n\n    assertNotNull(cloned);\n    assertNotSame(original, cloned);\n\n    // Check that fields are equal\n    assertEquals(original.version, cloned.version);\n    assertEquals(original.modifiers, cloned.modifiers);\n    assertEquals(original.serializeInnerClasses, cloned.serializeInnerClasses);\n    assertEquals(original.requireExpose, cloned.requireExpose);\n    assertEquals(original.serializationStrategies, cloned.serializationStrategies);\n    assertEquals(original.deserializationStrategies, cloned.deserializationStrategies);\n  }\n\n  @Test\n  void clone_onCloneNotSupportedException_shouldThrowAssertionError() throws Exception {\n    Excluder excluderSpy = Mockito.spy(new Excluder());\n\n    // Use reflection to mock super.clone() throwing CloneNotSupportedException\n    // Since clone() calls super.clone(), we need to create a subclass that overrides clone to throw\n    class ExcluderSubclass extends Excluder {\n      @Override\n      protected Excluder clone() {\n        try {\n          throw new CloneNotSupportedException(\"forced\");\n        } catch (CloneNotSupportedException e) {\n          throw new AssertionError(e);\n        }\n      }\n    }\n\n    ExcluderSubclass badExcluder = new ExcluderSubclass();\n\n    AssertionError error = assertThrows(AssertionError.class, badExcluder::clone);\n    assertTrue(error.getCause() instanceof CloneNotSupportedException);\n    assertEquals(\"forced\", error.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890338,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 361,
+    "prompt_tokens": 611,
+    "total_tokens": 972,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.67
+  }
+}

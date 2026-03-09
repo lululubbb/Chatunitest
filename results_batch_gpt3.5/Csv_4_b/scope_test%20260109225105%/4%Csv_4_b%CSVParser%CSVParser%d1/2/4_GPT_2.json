@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw88aZLx5RV3ZqvmmLoclS2pF78iY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.apache.commons.csv.Assertions;\nimport org.apache.commons.csv.Lexer;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.stubbing.Answer;\nimport org.mockito.invocation.InvocationOnMock;\n\nclass CSVParserTest {\n\n    private CSVFormat formatMock;\n    private Reader reader;\n\n    @BeforeEach\n    void setUp() {\n        formatMock = mock(CSVFormat.class);\n        reader = new StringReader(\"header1,header2\\nvalue1,value2\\n\");\n    }\n\n    @Test\n    void testConstructor_NullReader_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, formatMock);\n        });\n        assertEquals(\"reader\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_NullFormat_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(reader, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void testConstructor_ValidArguments_InitializesFields() throws Exception {\n        // Mock Assertions.notNull to throw NPE with message for null\n        Answer<Void> notNullAnswer = invocation -> {\n            Object arg = invocation.getArgument(0);\n            String name = invocation.getArgument(1);\n            if (arg == null) {\n                throw new NullPointerException(name);\n            }\n            return null;\n        };\n\n        try {\n            // Use reflection to replace Assertions.notNull with our mock via Mockito spy\n            // Because Assertions.notNull is static, we cannot mock it with Mockito 3 without mockito-inline\n            // So we use a workaround: temporarily replace Assertions class with a spy using a custom classloader is complex\n            // Instead, just test without mocking Assertions.notNull, since it just throws NPE on null (already tested)\n            // So here, just spy formatMock.validate() and test constructor normally\n\n            doNothing().when(formatMock).validate();\n\n            CSVParser parser = new CSVParser(reader, formatMock);\n\n            // Verify format.validate() called\n            verify(formatMock, times(1)).validate();\n\n            // Validate that format field is set correctly via reflection\n            Field formatField = CSVParser.class.getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            Object formatValue = formatField.get(parser);\n            assertSame(formatMock, formatValue);\n\n            // Validate lexer field is not null\n            Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n            lexerField.setAccessible(true);\n            Object lexerValue = lexerField.get(parser);\n            assertNotNull(lexerValue);\n\n            // Validate headerMap is initialized and not null\n            Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n            headerMapField.setAccessible(true);\n            Map<?, ?> headerMap = (Map<?, ?>) headerMapField.get(parser);\n            assertNotNull(headerMap);\n        } catch (Exception e) {\n            throw e;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970340,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1554,
+    "total_tokens": 2254,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.32
+  }
+}

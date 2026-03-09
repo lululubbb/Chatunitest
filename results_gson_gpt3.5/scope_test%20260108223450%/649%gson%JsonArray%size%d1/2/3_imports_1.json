@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Iterator;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void testSize_EmptyElements() throws Exception {\n    // Use reflection to set elements to empty ArrayList\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, new ArrayList<JsonElement>());\n\n    assertEquals(0, jsonArray.size());\n  }\n\n  @Test\n  public void testSize_WithElements() throws Exception {\n    // Prepare ArrayList with mocked JsonElements\n    ArrayList<JsonElement> elementsList = new ArrayList<>();\n    elementsList.add(new JsonPrimitive(\"one\"));\n    elementsList.add(new JsonPrimitive(\"two\"));\n    elementsList.add(new JsonPrimitive(\"three\"));\n\n    // Use reflection to set elements field\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, elementsList);\n\n    assertEquals(3, jsonArray.size());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 478,
+  "completion_tokens": 278,
+  "total_tokens": 756,
+  "llm_elapsed_time_seconds": 5.93,
+  "repair_elapsed_time_seconds": 10.21,
+  "round_total_time_seconds": 10.21
+}

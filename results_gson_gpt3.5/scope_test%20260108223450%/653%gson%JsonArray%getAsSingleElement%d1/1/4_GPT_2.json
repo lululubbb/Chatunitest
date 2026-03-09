@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnAwcpW2Z7ZuvHU72rOAtjPqeY70",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void testGetAsSingleElement_sizeOne_returnsElement() throws Exception {\n    // Use reflection to get private field 'elements'\n    var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n\n    JsonElement mockElement = mock(JsonElement.class);\n    elements.add(mockElement);\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    JsonElement result = (JsonElement) method.invoke(jsonArray);\n\n    assertSame(mockElement, result);\n  }\n\n  @Test\n  public void testGetAsSingleElement_sizeZero_throwsIllegalStateException() throws Exception {\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(jsonArray);\n    });\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalStateException);\n    assertEquals(\"Array must have size 1, but has size 0\", cause.getMessage());\n  }\n\n  @Test\n  public void testGetAsSingleElement_sizeMoreThanOne_throwsIllegalStateException() throws Exception {\n    var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n\n    elements.add(mock(JsonElement.class));\n    elements.add(mock(JsonElement.class));\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(jsonArray);\n    });\n    Throwable cause = thrown.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IllegalStateException);\n    assertEquals(\"Array must have size 1, but has size 2\", cause.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889762,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 539,
+    "prompt_tokens": 1889,
+    "total_tokens": 2428,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.5
+  }
+}

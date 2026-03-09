@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private Lexer lexerMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        lexerMock = mock(Lexer.class);\n        // Provide non-null dummy Reader and CSVFormat to constructor to avoid NPE\n        csvParser = new CSVParser(mock(Reader.class), mock(CSVFormat.class));\n        // Inject mock lexer into csvParser using reflection\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @Test\n    void testClose_LexerNotNull() throws IOException {\n        csvParser.close();\n        verify(lexerMock, times(1)).close();\n    }\n\n    @Test\n    void testClose_LexerNull() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Set lexer to null to test branch when lexer is null\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, null);\n\n        // Should not throw exception\n        csvParser.close();\n        // No interaction with lexerMock expected\n        verify(lexerMock, never()).close();\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_11_b/scope_test%20260110011257%/6%Csv_11_b%CSVParser%close%d1/4/runtemp/Csv_11_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 974,
+  "completion_tokens": 315,
+  "total_tokens": 1289,
+  "llm_elapsed_time_seconds": 8.19
+}

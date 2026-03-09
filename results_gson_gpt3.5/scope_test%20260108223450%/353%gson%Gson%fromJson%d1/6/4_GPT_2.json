@@ -1,0 +1,46 @@
+{
+  "id": "chatcmpl-CvlhxLS5gyrXk4psYMbucChcK42X4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_withJsonElementAndType_shouldDelegateToFromJsonWithTypeToken() throws Exception {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Type type = String.class;\n    @SuppressWarnings(\"rawtypes\")\n    TypeToken expectedTypeToken = TypeToken.get(type);\n\n    // Spy on gson to verify delegation\n    Gson spyGson = spy(gson);\n\n    // Mock the fromJson(JsonElement, TypeToken) to return a specific value\n    String expectedResult = \"testResult\";\n    doReturn(expectedResult).when(spyGson).fromJson(jsonElement, expectedTypeToken);\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    String actualResult = (String) fromJsonMethod.invoke(spyGson, jsonElement, type);\n\n    // Assert\n    assertEquals(expectedResult, actualResult);\n    verify(spyGson).fromJson(jsonElement, expectedTypeToken);\n  }\n\n  @Test\n  void fromJson_withJsonElementAndType_nullJsonElement_shouldPassNullToDelegate() throws Exception {\n    // Arrange\n    JsonElement jsonElement = null;\n    Type type = Integer.class;\n    @SuppressWarnings(\"rawtypes\")\n    TypeToken expectedTypeToken = TypeToken.get(type);\n\n    Gson spyGson = spy(gson);\n    Integer expectedResult = 42;\n    doReturn(expectedResult).when(spyGson).fromJson(jsonElement, expectedTypeToken);\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    Integer actualResult = (Integer) fromJsonMethod.invoke(spyGson, jsonElement, type);\n\n    // Assert\n    assertEquals(expectedResult, actualResult);\n    verify(spyGson).fromJson(jsonElement, expectedTypeToken);\n  }\n\n  @Test\n  void fromJson_withJsonElementAndType_nullType_shouldThrowNullPointerException() throws Exception {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    Type nullType = null;\n\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Act & Assert\n    assertThrows(NullPointerException.class, () -> {\n      fromJsonMethod.invoke(gson, jsonElement, nullType);\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      },
+      "content_filter_result": {
+        "error": {
+          "code": "content_filter_error",
+          "message": "The contents are not filtered"
+        }
+      }
+    }
+  ],
+  "created": 1767884121,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 618,
+    "prompt_tokens": 2494,
+    "total_tokens": 3112,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.54
+  }
+}

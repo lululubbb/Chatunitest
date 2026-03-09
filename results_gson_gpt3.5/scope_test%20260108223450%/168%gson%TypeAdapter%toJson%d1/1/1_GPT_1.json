@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5b5vzCEbJnQkg1mpOEGj30zTN2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass TypeAdapterToJsonTest {\n\n    private TypeAdapter<String> typeAdapter;\n    private JsonWriter jsonWriterMock;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    void setUp() {\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                // Simulate writing JSON string value\n                out.value(value);\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null;\n            }\n        };\n        stringWriter = new StringWriter();\n    }\n\n    @Test\n    void toJson_writesValueToJsonWriter() throws IOException {\n        String testValue = \"test\";\n\n        typeAdapter.toJson(stringWriter, testValue);\n\n        String jsonOutput = stringWriter.toString();\n        // The output should be a JSON string representing the testValue, e.g. \"test\"\n        // Since JsonWriter.value(String) writes a JSON string, it should include quotes\n        assert jsonOutput.equals(\"\\\"\" + testValue + \"\\\"\");\n    }\n\n    @Test\n    void toJson_callsWriteWithJsonWriter() throws Exception {\n        // Spy on JsonWriter to verify interactions\n        StringWriter sw = new StringWriter();\n        JsonWriter spyJsonWriter = spy(new JsonWriter(sw));\n\n        TypeAdapter<String> adapterSpy = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                // delegate to spyJsonWriter\n                spyJsonWriter.value(value);\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null;\n            }\n        };\n\n        adapterSpy.toJson(sw, \"hello\");\n\n        // Verify that spyJsonWriter.value was called with \"hello\"\n        verify(spyJsonWriter).value(\"hello\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885587,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 438,
+    "prompt_tokens": 348,
+    "total_tokens": 786,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.87
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutpC7aPhEd5GyEbYDO6d5RMrx1JO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsQuoteCharacterSet_whenQuoteCharacterIsSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // DEFAULT has DOUBLE_QUOTE_CHAR as quoteCharacter, so isQuoteCharacterSet() should be true\n        assertTrue(format.isQuoteCharacterSet());\n\n        // Use reflection to forcibly set quoteCharacter to a non-null Character\n        CSVFormat customFormat = createCSVFormatWithQuoteCharacter('\\'');\n        assertTrue(customFormat.isQuoteCharacterSet());\n    }\n\n    @Test\n    void testIsQuoteCharacterSet_whenQuoteCharacterIsNull() throws Exception {\n        // Use reflection to create CSVFormat with quoteCharacter null\n        CSVFormat format = createCSVFormatWithQuoteCharacter(null);\n        assertFalse(format.isQuoteCharacterSet());\n    }\n\n    private CSVFormat createCSVFormatWithQuoteCharacter(Character quoteChar) throws Exception {\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class, boolean.class,\n                String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        QuoteMode defaultQuoteMode = QuoteMode.DEFAULT;\n\n        return constructor.newInstance(\n                ',', quoteChar, defaultQuoteMode,\n                null, null,\n                false, false,\n                \"\\r\\n\", null, null,\n                false, false);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676994,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 358,
+    "prompt_tokens": 1626,
+    "total_tokens": 1984,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.82
+  }
+}

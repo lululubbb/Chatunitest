@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZVuVRctaXyf3Tmheplnbt0i1O9I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        // Use the default CSVFormat for tests\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrintReturnsCSVPrinter() throws IOException {\n        Appendable appendable = new StringBuilder();\n        CSVPrinter printer = csvFormat.print(appendable);\n        assertNotNull(printer, \"CSVPrinter should not be null\");\n        assertEquals(appendable, printer.getOut(), \"Appendable passed should be used in CSVPrinter\");\n        // The CSVPrinter should have a reference to the CSVFormat used\n        assertEquals(csvFormat, printer.getFormat(), \"CSVFormat used should be the one passed\");\n    }\n\n    @Test\n    void testPrintThrowsIOException() {\n        Appendable appendable = mock(Appendable.class);\n        try {\n            // CSVPrinter constructor does not throw IOException itself,\n            // so we simulate IOException by mocking Appendable to throw on append\n            doThrow(new IOException(\"Mock IO Exception\")).when(appendable).append(any(CharSequence.class));\n            CSVPrinter printer = csvFormat.print(appendable);\n            assertNotNull(printer);\n            // Attempt to print something to trigger IOException\n            assertThrows(IOException.class, () -> printer.print(\"test\"));\n        } catch (IOException e) {\n            fail(\"Unexpected IOException from CSVFormat.print()\");\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552230,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 338,
+    "prompt_tokens": 1137,
+    "total_tokens": 1475,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.58
+  }
+}

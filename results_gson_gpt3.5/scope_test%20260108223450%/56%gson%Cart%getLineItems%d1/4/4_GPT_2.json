@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNVr6IGoDC4v1zGFbTuiOMqzw0C",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.examples.android.model;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.lang.reflect.Constructor;\n\nclass CartTest {\n\n  @Test\n  void testGetLineItems_returnsLineItemsList() throws Exception {\n    List<LineItem> items = new ArrayList<>();\n    items.add(new LineItem(\"item1\", 2));\n    items.add(new LineItem(\"item2\", 5));\n\n    // Use reflection to instantiate Cart since Cart class is not imported\n    Class<?> cartClass = Class.forName(\"com.google.gson.examples.android.model.Cart\");\n    Constructor<?> constructor = cartClass.getConstructor(List.class, String.class, String.class);\n    Object cart = constructor.newInstance(items, \"buyerName\", \"1234-5678-9012-3456\");\n\n    // Invoke getLineItems method via reflection\n    @SuppressWarnings(\"unchecked\")\n    List<Object> result = (List<Object>) cartClass.getMethod(\"getLineItems\").invoke(cart);\n\n    assertNotNull(result);\n    assertEquals(2, result.size());\n\n    // Access LineItem fields via reflection\n    Class<?> lineItemClass = LineItem.class;\n\n    Object item0 = result.get(0);\n    Object item1 = result.get(1);\n\n    assertEquals(\"item1\", lineItemClass.getMethod(\"getName\").invoke(item0));\n    assertEquals(2, lineItemClass.getMethod(\"getQuantity\").invoke(item0));\n    assertEquals(\"item2\", lineItemClass.getMethod(\"getName\").invoke(item1));\n    assertEquals(5, lineItemClass.getMethod(\"getQuantity\").invoke(item1));\n  }\n\n  // Minimal LineItem class for testing\n  static class LineItem {\n    private final String name;\n    private final int quantity;\n\n    LineItem(String name, int quantity) {\n      this.name = name;\n      this.quantity = quantity;\n    }\n\n    String getName() {\n      return name;\n    }\n\n    int getQuantity() {\n      return quantity;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886697,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 434,
+    "prompt_tokens": 764,
+    "total_tokens": 1198,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.77
+  }
+}

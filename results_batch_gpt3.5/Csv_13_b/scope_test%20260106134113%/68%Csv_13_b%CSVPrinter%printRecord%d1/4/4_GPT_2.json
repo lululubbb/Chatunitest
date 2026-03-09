@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuCWoeZ3wP4zheelih8EyFwVvKrj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = new StringBuilder();\n        format = CSVFormat.DEFAULT;\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException {\n        printer.printRecord(\"value1\", 123, null, \"value4\");\n        String result = out.toString();\n        // The output should contain all values printed and a newline at the end.\n        // We don't know exact format details, but at least check that values appear\n        // and output ends with a newline.\n        assert result.contains(\"value1\");\n        assert result.contains(\"123\");\n        assert result.contains(\"null\");\n        assert result.contains(\"value4\");\n        assert result.endsWith(System.lineSeparator()) || result.endsWith(\"\\n\") || result.endsWith(\"\\r\\n\");\n    }\n\n    @Test\n    void testPrintRecord_withEmptyValues() throws IOException {\n        printer.printRecord();\n        String result = out.toString();\n        // Should just print a newline\n        assert result.equals(System.lineSeparator()) || result.equals(\"\\n\") || result.equals(\"\\r\\n\");\n    }\n\n    @Test\n    void testPrintRecord_invokesPrintForEachValue() throws Exception {\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        Object[] values = {\"a\", \"b\", \"c\"};\n        spyPrinter.printRecord(values);\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrivatePrintMethodViaReflection() throws Exception {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        StringBuilder testOut = new StringBuilder();\n        CSVPrinter localPrinter = new CSVPrinter(testOut, format);\n\n        // Call private print method with a substring of a CharSequence\n        String val = \"HelloWorld\";\n        printMethod.invoke(localPrinter, val, val, 0, 5);\n\n        String output = testOut.toString();\n        // Output should contain \"Hello\" at least\n        assert output.contains(\"Hello\");\n    }\n\n    @Test\n    void testPrivatePrintAndEscapeMethodViaReflection() throws Exception {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        StringBuilder testOut = new StringBuilder();\n        CSVPrinter localPrinter = new CSVPrinter(testOut, format);\n\n        String val = \"EscapeTest\";\n        method.invoke(localPrinter, val, 0, val.length());\n\n        String output = testOut.toString();\n        assert output.contains(\"EscapeTest\");\n    }\n\n    @Test\n    void testPrivatePrintAndQuoteMethodViaReflection() throws Exception {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        StringBuilder testOut = new StringBuilder();\n        CSVPrinter localPrinter = new CSVPrinter(testOut, format);\n\n        String val = \"QuoteTest\";\n        method.invoke(localPrinter, val, val, 0, val.length());\n\n        String output = testOut.toString();\n        assert output.contains(\"QuoteTest\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678440,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 784,
+    "prompt_tokens": 1380,
+    "total_tokens": 2164,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.72
+  }
+}

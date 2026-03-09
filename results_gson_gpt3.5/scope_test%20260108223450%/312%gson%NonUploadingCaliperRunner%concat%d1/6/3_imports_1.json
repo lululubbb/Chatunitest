@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\nimport com.google.caliper.runner.CaliperMain;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass NonUploadingCaliperRunnerTest {\n\n  @Test\n  void testConcat_noOthers() throws Exception {\n    Method concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"first\";\n    String[] others = new String[0];\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(1, result.length);\n    assertEquals(first, result[0]);\n  }\n\n  @Test\n  void testConcat_withOthers() throws Exception {\n    Method concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"first\";\n    String[] others = new String[] {\"second\", \"third\"};\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(3, result.length);\n    assertEquals(first, result[0]);\n    assertEquals(\"second\", result[1]);\n    assertEquals(\"third\", result[2]);\n  }\n\n  @Test\n  void testConcat_withOneOther() throws Exception {\n    Method concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"onlyFirst\";\n    String[] others = new String[] {\"onlyOther\"};\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    assertNotNull(result);\n    assertEquals(2, result.length);\n    assertEquals(first, result[0]);\n    assertEquals(\"onlyOther\", result[1]);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 272,
+  "completion_tokens": 395,
+  "total_tokens": 667,
+  "llm_elapsed_time_seconds": 18.85,
+  "repair_elapsed_time_seconds": 29.81,
+  "round_total_time_seconds": 29.81
+}

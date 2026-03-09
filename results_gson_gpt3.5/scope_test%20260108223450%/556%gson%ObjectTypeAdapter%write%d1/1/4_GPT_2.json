@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn4cawiciP4Wlmh4hA2jPt0rWbdn",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ObjectTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Constructor;\n\npublic class ObjectTypeAdapterTest {\n\n    private Gson gsonMock;\n    private ToNumberStrategy toNumberStrategyMock;\n    private ObjectTypeAdapter objectTypeAdapter;\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        gsonMock = mock(Gson.class);\n        toNumberStrategyMock = mock(ToNumberStrategy.class);\n        // Using reflection to access private constructor\n        Constructor<ObjectTypeAdapter> constructor = ObjectTypeAdapter.class.getDeclaredConstructor(Gson.class, ToNumberStrategy.class);\n        constructor.setAccessible(true);\n        objectTypeAdapter = constructor.newInstance(gsonMock, toNumberStrategyMock);\n\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testWrite_NullValue_CallsNullValue() throws IOException {\n        objectTypeAdapter.write(jsonWriter, null);\n        assertEquals(\"null\", stringWriter.toString());\n    }\n\n    @Test\n    public void testWrite_TypeAdapterIsObjectTypeAdapter_WritesEmptyObject() throws IOException {\n        Object value = new Object();\n\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<Object> typeAdapterMock = mock(TypeAdapter.class);\n        // Cast to raw TypeAdapter to avoid generic mismatch\n        when(gsonMock.<Object>getAdapter(value.getClass())).thenReturn((TypeAdapter) objectTypeAdapter);\n\n        objectTypeAdapter.write(jsonWriter, value);\n\n        String jsonOutput = stringWriter.toString();\n        assertEquals(\"{}\", jsonOutput);\n    }\n\n    @Test\n    public void testWrite_TypeAdapterIsDifferent_DelegatesWrite() throws IOException {\n        Object value = new Object();\n\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<Object> typeAdapterMock = mock(TypeAdapter.class);\n        // Cast to raw TypeAdapter to avoid generic mismatch\n        when(gsonMock.<Object>getAdapter(value.getClass())).thenReturn((TypeAdapter) typeAdapterMock);\n\n        objectTypeAdapter.write(jsonWriter, value);\n\n        verify(typeAdapterMock).write(jsonWriter, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889370,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 525,
+    "prompt_tokens": 1358,
+    "total_tokens": 1883,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.55
+  }
+}

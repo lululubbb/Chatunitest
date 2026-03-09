@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Iterator;\nimport java.util.List;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mock;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private ArrayList<JsonElement> mockElements;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    jsonArray = new JsonArray();\n\n    // Create a real ArrayList<JsonElement> mockElements\n    mockElements = new ArrayList<>();\n\n    // Use reflection to set the private final field 'elements' to the mockElements\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    elementsField.set(jsonArray, mockElements);\n  }\n\n  @Test\n  public void testHashCode_returnsElementsHashCode() {\n    int expectedHashCode = 123456789;\n\n    // Replace the elements list with a custom ArrayList that returns expectedHashCode for hashCode\n    ArrayList<JsonElement> customElements = new ArrayList<JsonElement>() {\n      @Override\n      public int hashCode() {\n        return expectedHashCode;\n      }\n    };\n\n    try {\n      Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      elementsField.set(jsonArray, customElements);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n\n    int actualHashCode = jsonArray.hashCode();\n\n    assertEquals(expectedHashCode, actualHashCode);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1167,
+  "completion_tokens": 345,
+  "total_tokens": 1512,
+  "llm_elapsed_time_seconds": 5.66,
+  "repair_elapsed_time_seconds": 15.63,
+  "round_total_time_seconds": 15.63
+}

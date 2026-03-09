@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrFe9BECjseoqM1vhAJZ1QLctH7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.AdditionalAnswers;\nimport org.mockito.ArgumentMatchers;\n\nimport java.lang.reflect.Field;\nimport java.util.*;\nimport java.util.concurrent.ConcurrentHashMap;\n\npublic class Gson_GetAdapterTest {\n\n  private Gson gson;\n  private TypeToken<String> stringTypeToken;\n  private TypeAdapterFactory mockFactory1;\n  private TypeAdapterFactory mockFactory2;\n  private TypeAdapter<String> mockAdapter;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    gson = new Gson();\n\n    // Set up factories list with mocks\n    mockFactory1 = mock(TypeAdapterFactory.class);\n    mockFactory2 = mock(TypeAdapterFactory.class);\n\n    // Mock adapter to be returned by factory\n    mockAdapter = mock(TypeAdapter.class);\n\n    // Inject mocked factories list into gson instance via reflection\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(mockFactory1);\n    factories.add(mockFactory2);\n    factoriesField.set(gson, factories);\n\n    // Clear caches and threadLocal to ensure clean state\n    Field typeTokenCacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n    typeTokenCacheField.setAccessible(true);\n    ((Map<?, ?>) typeTokenCacheField.get(gson)).clear();\n\n    Field threadLocalField = Gson.class.getDeclaredField(\"threadLocalAdapterResults\");\n    threadLocalField.setAccessible(true);\n    ThreadLocal<?> threadLocal = (ThreadLocal<?>) threadLocalField.get(gson);\n    threadLocal.remove();\n\n    stringTypeToken = TypeToken.get(String.class);\n  }\n\n  @Test\n  public void getAdapter_whenTypeIsNull_throwsNullPointerException() {\n    NullPointerException npe = assertThrows(NullPointerException.class, () -> gson.getAdapter(null));\n    assertEquals(\"type must not be null\", npe.getMessage());\n  }\n\n  @Test\n  public void getAdapter_returnsCachedAdapterIfPresent() throws Exception {\n    Field typeTokenCacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n    typeTokenCacheField.setAccessible(true);\n    Map<TypeToken<?>, TypeAdapter<?>> cache = (Map<TypeToken<?>, TypeAdapter<?>>) typeTokenCacheField.get(gson);\n    cache.put(stringTypeToken, mockAdapter);\n\n    TypeAdapter<String> adapter = gson.getAdapter(stringTypeToken);\n\n    assertSame(mockAdapter, adapter);\n    // Verify no factory create calls\n    verifyNoInteractions(mockFactory1, mockFactory2);\n  }\n\n  @Test\n  public void getAdapter_returnsOngoingCallAdapterIfPresentInThreadLocal() throws Exception {\n    // Prepare a FutureTypeAdapter to simulate ongoing call\n    // We cannot instantiate FutureTypeAdapter directly (package private),\n    // so simulate by putting mockAdapter in thread local map before call\n\n    Field threadLocalField = Gson.class.getDeclaredField(\"threadLocalAdapterResults\");\n    threadLocalField.setAccessible(true);\n    ThreadLocal<Map<TypeToken<?>, TypeAdapter<?>>> threadLocal =\n        (ThreadLocal<Map<TypeToken<?>, TypeAdapter<?>>>) threadLocalField.get(gson);\n\n    Map<TypeToken<?>, TypeAdapter<?>> ongoingCalls = new HashMap<>();\n    ongoingCalls.put(stringTypeToken, mockAdapter);\n    threadLocal.set(ongoingCalls);\n\n    TypeAdapter<String> adapter = gson.getAdapter(stringTypeToken);\n\n    assertSame(mockAdapter, adapter);\n    // Verify no factory create calls\n    verifyNoInteractions(mockFactory1, mockFactory2);\n  }\n\n  @Test\n  public void getAdapter_returnsAdapterFromFactoryAndCachesAdapters() {\n    // Factory1 returns null, Factory2 returns mockAdapter\n    when(mockFactory1.create(eq(gson), eq(stringTypeToken))).thenReturn(null);\n    when(mockFactory2.create(eq(gson), eq(stringTypeToken))).thenReturn(mockAdapter);\n\n    TypeAdapter<String> adapter = gson.getAdapter(stringTypeToken);\n\n    assertSame(mockAdapter, adapter);\n\n    // Verify factories called in order\n    verify(mockFactory1).create(eq(gson), eq(stringTypeToken));\n    verify(mockFactory2).create(eq(gson), eq(stringTypeToken));\n\n    // The adapter should be cached in typeTokenCache\n    Map<TypeToken<?>, TypeAdapter<?>> cache = getTypeTokenCache(gson);\n    assertTrue(cache.containsKey(stringTypeToken));\n    assertSame(mockAdapter, cache.get(stringTypeToken));\n  }\n\n  @Test\n  public void getAdapter_whenNoFactoryCreatesAdapter_throwsIllegalArgumentException() {\n    when(mockFactory1.create(eq(gson), eq(stringTypeToken))).thenReturn(null);\n    when(mockFactory2.create(eq(gson), eq(stringTypeToken))).thenReturn(null);\n\n    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> gson.getAdapter(stringTypeToken));\n    assertTrue(ex.getMessage().contains(\"cannot handle\"));\n    assertTrue(ex.getMessage().contains(stringTypeToken.toString()));\n\n    // Verify factories called\n    verify(mockFactory1).create(eq(gson), eq(stringTypeToken));\n    verify(mockFactory2).create(eq(gson), eq(stringTypeToken));\n  }\n\n  @Test\n  public void getAdapter_cachesAllAdaptersFromThreadLocalOnInitialRequest() {\n    // Factory1 returns a new adapter, Factory2 not called\n    TypeAdapter<String> adapter1 = mock(TypeAdapter.class);\n    when(mockFactory1.create(eq(gson), eq(stringTypeToken))).thenReturn(adapter1);\n\n    TypeToken<Integer> intTypeToken = TypeToken.get(Integer.class);\n    TypeAdapter<Integer> adapter2 = mock(TypeAdapter.class);\n    when(mockFactory2.create(eq(gson), eq(intTypeToken))).thenReturn(adapter2);\n\n    // We simulate a call to getAdapter for intTypeToken inside a getAdapter call for stringTypeToken\n    // To do this, we mock factory1 to call gson.getAdapter(intTypeToken) during create.\n\n    when(mockFactory1.create(eq(gson), eq(stringTypeToken))).thenAnswer(invocation -> {\n      // Nested call to getAdapter for intTypeToken\n      TypeAdapter<Integer> nestedAdapter = gson.getAdapter(intTypeToken);\n      assertSame(adapter2, nestedAdapter);\n      return adapter1;\n    });\n\n    // Call getAdapter for stringTypeToken, which triggers nested call for intTypeToken\n    TypeAdapter<String> result = gson.getAdapter(stringTypeToken);\n\n    assertSame(adapter1, result);\n\n    Map<TypeToken<?>, TypeAdapter<?>> cache = getTypeTokenCache(gson);\n    // Both adapters should be cached\n    assertEquals(adapter1, cache.get(stringTypeToken));\n    assertEquals(adapter2, cache.get(intTypeToken));\n  }\n\n  private Map<TypeToken<?>, TypeAdapter<?>> getTypeTokenCache(Gson gson) {\n    try {\n      Field typeTokenCacheField = Gson.class.getDeclaredField(\"typeTokenCache\");\n      typeTokenCacheField.setAccessible(true);\n      return (Map<TypeToken<?>, TypeAdapter<?>>) typeTokenCacheField.get(gson);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884697,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1523,
+    "prompt_tokens": 2001,
+    "total_tokens": 3524,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.24
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.GsonBuildConfig;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<String> constructor = String.class.getDeclaredConstructor(String.class);\n    // Should be accessible without exception\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws Exception {\n    Constructor<String> constructor = spy(String.class.getDeclaredConstructor(String.class));\n    doThrow(new SecurityException(\"access denied\")).when(constructor).setAccessible(true);\n\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n\n    assertNotNull(result);\n    assertTrue(result.contains(\"Failed making constructor\"));\n    assertTrue(result.contains(\"access denied\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 465,
+  "completion_tokens": 207,
+  "total_tokens": 672,
+  "llm_elapsed_time_seconds": 6.15,
+  "repair_elapsed_time_seconds": 32.25,
+  "round_total_time_seconds": 32.25
+}

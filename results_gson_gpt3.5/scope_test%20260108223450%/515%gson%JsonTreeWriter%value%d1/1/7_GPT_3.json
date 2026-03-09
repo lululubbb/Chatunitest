@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlXpTSrR4VULkxGj2zPjwsznkuQc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nclass JsonTreeWriter_value_Test {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  void value_boolean_shouldPutJsonPrimitiveWithBoolean() throws Exception {\n    var returned = jsonTreeWriter.value(true);\n\n    assertSame(jsonTreeWriter, returned);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertEquals(1, stack.size());\n    JsonElement element = stack.get(0);\n    assertTrue(element instanceof JsonPrimitive);\n    JsonPrimitive primitive = (JsonPrimitive) element;\n    assertTrue(primitive.isBoolean());\n    assertTrue(primitive.getAsBoolean());\n  }\n\n  @Test\n  void value_boolean_false_shouldPutJsonPrimitiveWithFalse() throws Exception {\n    jsonTreeWriter.value(false);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertEquals(1, stack.size());\n    JsonElement element = stack.get(0);\n    assertTrue(element instanceof JsonPrimitive);\n    JsonPrimitive primitive = (JsonPrimitive) element;\n    assertTrue(primitive.isBoolean());\n    assertFalse(primitive.getAsBoolean());\n  }\n\n  @Test\n  void put_privateMethod_shouldAddElementToStack() throws Exception {\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n    putMethod.setAccessible(true);\n\n    JsonPrimitive primitive = new JsonPrimitive(true);\n    putMethod.invoke(jsonTreeWriter, primitive);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertEquals(1, stack.size());\n    assertSame(primitive, stack.get(0));\n  }\n\n  @Test\n  void value_boolean_afterPut_shouldStackContainCorrectElement() throws IOException, Exception {\n    jsonTreeWriter.value(true);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertEquals(1, stack.size());\n\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n    JsonElement peeked = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n\n    assertSame(stack.get(stack.size() - 1), peeked);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883493,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 631,
+    "prompt_tokens": 2722,
+    "total_tokens": 3353,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.23
+  }
+}

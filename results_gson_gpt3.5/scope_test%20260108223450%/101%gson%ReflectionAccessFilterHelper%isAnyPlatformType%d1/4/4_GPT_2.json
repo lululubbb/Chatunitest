@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlrzuO9OcMjNmcGXdsBefdHejLX4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsAnyPlatformType_androidType() {\n    // android.app.Activity class does not exist in non-Android JVMs, so simulate with a dummy class name\n    Class<?> androidClass = createClassWithName(\"android.app.Activity\");\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(androidClass);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsAnyPlatformType_javaType() {\n    // Java type className starts with \"java.\"\n    Class<?> javaClass = String.class; // java.lang.String\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(javaClass);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsAnyPlatformType_kotlin() {\n    Class<?> kotlinClass = createClassWithName(\"kotlin.Dummy\");\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(kotlinClass);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsAnyPlatformType_kotlinx() {\n    Class<?> kotlinxClass = createClassWithName(\"kotlinx.Dummy\");\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(kotlinxClass);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsAnyPlatformType_scala() {\n    Class<?> scalaClass = createClassWithName(\"scala.Dummy\");\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(scalaClass);\n    assertTrue(result);\n  }\n\n  @Test\n  void testIsAnyPlatformType_false() {\n    Class<?> otherClass = OtherDummy.class;\n    boolean result = ReflectionAccessFilterHelper.isAnyPlatformType(otherClass);\n    assertFalse(result);\n  }\n\n  // Dummy classes to simulate package names for kotlin, kotlinx, scala\n  static class OtherDummy {}\n\n  /**\n   * Helper method to create a Class<?> instance with a custom name prefix for testing.\n   * Since we cannot create classes dynamically with arbitrary package names easily,\n   * we create a proxy Class that overrides getName() via a custom Class subclass using reflection.\n   */\n  private static Class<?> createClassWithName(String desiredName) {\n    return new ClassWithNameProxy(desiredName);\n  }\n\n  /**\n   * A proxy Class implementation that delegates to Object.class but returns a custom name.\n   * This is a hack for testing purposes only.\n   */\n  private static final class ClassWithNameProxy extends Class<Object> {\n    private final String name;\n\n    ClassWithNameProxy(String name) {\n      super();\n      this.name = name;\n    }\n\n    @Override\n    public String getName() {\n      return name;\n    }\n\n    // Override equals and hashCode to behave like Object.class\n    @Override\n    public boolean equals(Object obj) {\n      return this == obj;\n    }\n\n    @Override\n    public int hashCode() {\n      return System.identityHashCode(this);\n    }\n  }\n}\n```\n",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884743,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 632,
+    "prompt_tokens": 2074,
+    "total_tokens": 2706,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.21
+  }
+}

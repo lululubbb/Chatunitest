@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8ylUkoZVK5yWgiN37TUP8PdTppQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_nullOut_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(null, format));\n        assertTrue(ex.getMessage().contains(\"out\"));\n    }\n\n    @Test\n    void testConstructor_nullFormat_throwsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> new CSVPrinter(out, null));\n        assertTrue(ex.getMessage().contains(\"format\"));\n    }\n\n    @Test\n    void testConstructor_callsFormatValidate() {\n        doNothing().when(format).validate();\n        CSVPrinter printer = new CSVPrinter(out, format);\n        verify(format).validate();\n        assertNotNull(printer);\n    }\n\n    @Test\n    void testClose_callsOutAppend() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        printer.close();\n        verify(out).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testFlush_callsOutFlush() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        printer.flush();\n        verify(out).flush();\n    }\n\n    @Test\n    void testPrint_callsPrivatePrintWithCorrectArgs() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        String value = \"testValue\";\n\n        // Use reflection to get private print method\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        // Call public print method\n        printer.print(value);\n\n        // We cannot directly verify private method call, but we can verify out.append called\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrivatePrintAndEscape_andPrintAndQuote() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        String testString = \"escape\\\"quote\";\n\n        Method printAndEscape = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscape.setAccessible(true);\n\n        Method printAndQuote = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        printAndQuote.setAccessible(true);\n\n        // Test printAndEscape\n        printAndEscape.invoke(printer, testString, 0, testString.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n\n        // Test printAndQuote\n        printAndQuote.invoke(printer, testString, testString, 0, testString.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintComment_callsOutAppend() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        String comment = \"This is a comment\";\n        printer.printComment(comment);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintln_callsOutAppend() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        printer.println();\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecordIterable() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        Iterable<String> values = java.util.Arrays.asList(\"a\", \"b\", \"c\");\n        printer.printRecord(values);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecordVarargs() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        printer.printRecord(\"x\", \"y\", \"z\");\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecordsIterable() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        Iterable<Iterable<String>> records = java.util.Arrays.asList(\n                java.util.Arrays.asList(\"1\", \"2\"),\n                java.util.Arrays.asList(\"3\", \"4\")\n        );\n        printer.printRecords(records);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecordsArray() throws IOException {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        Object[] records = new Object[] {\n                new Object[] {\"5\", \"6\"},\n                new Object[] {\"7\", \"8\"}\n        };\n        printer.printRecords(records);\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecordsResultSet() throws Exception {\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        ResultSet rs = mock(ResultSet.class);\n        when(rs.next()).thenReturn(true, true, false);\n        when(rs.getObject(1)).thenReturn(\"val1\", \"val3\");\n        when(rs.getObject(2)).thenReturn(\"val2\", \"val4\");\n        when(rs.getMetaData()).thenReturn(mock(java.sql.ResultSetMetaData.class));\n        when(rs.getMetaData().getColumnCount()).thenReturn(2);\n\n        printer.printRecords(rs);\n\n        verify(rs, times(3)).next();\n        verify(rs, atLeastOnce()).getObject(anyInt());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testGetOut_returnsAppendable() {\n        CSVPrinter printer = new CSVPrinter(out, format);\n        assertSame(out, printer.getOut());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973575,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1267,
+    "prompt_tokens": 448,
+    "total_tokens": 1715,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 26.12
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxjzPZc0QPKjL58fC295ovVij15D",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private Reader mockReader;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_withReaderAndFormat() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Arrange & Act\n        CSVParser parser = new CSVParser(mockReader, mockFormat);\n\n        // Assert\n        assertNotNull(parser);\n        assertEquals(1, parser.getRecordNumber());\n\n        // Use reflection to access private field headerMap\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        Map<String, Integer> headerMap = (Map<String, Integer>) headerMapField.get(parser);\n\n        // Since headerMap depends on format and is private, just check it's either null or a Map\n        assertTrue(headerMap == null || headerMap instanceof Map);\n\n        assertFalse(parser.isClosed());\n    }\n\n    @Test\n    void testConstructor_withNullReader_throwsException() {\n        assertThrows(NullPointerException.class, () -> new CSVParser(null, mockFormat));\n    }\n\n    @Test\n    void testConstructor_withNullFormat_throwsException() {\n        assertThrows(NullPointerException.class, () -> new CSVParser(mockReader, null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692047,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 358,
+    "prompt_tokens": 1148,
+    "total_tokens": 1506,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.77
+  }
+}

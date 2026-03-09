@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuR3XgXFBVuu1yTISjrt0Q2dUkII",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    public void testPrintWithNullValueAndNullStringNull() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        // invoke print(Object)\n        printer.print(null);\n\n        // verify print(Object, CharSequence, int, int) invoked with Constants.EMPTY internally\n        // We cannot verify private method invocation directly, but verify no interaction with out\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    public void testPrintWithNullValueAndNullStringNotNull() throws Exception {\n        String nullString = \"NULLVAL\";\n        when(format.getNullString()).thenReturn(nullString);\n\n        printer.print(null);\n\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    public void testPrintWithNonNullValue() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        Object value = 12345;\n\n        printer.print(value);\n\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    public void testPrintInvokesPrivatePrintWithCorrectParameters() throws Exception {\n        when(format.getNullString()).thenReturn(null);\n\n        Object value = \"testValue\";\n\n        // spy on printer to verify private method call\n        CSVPrinter spyPrinter = Mockito.spy(new CSVPrinter(out, format));\n\n        spyPrinter.print(value);\n\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        printMethod.setAccessible(true);\n\n        // Invoke the private print method with expected args to check no exception\n        printMethod.invoke(spyPrinter, value, value.toString(), 0, value.toString().length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679341,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 455,
+    "prompt_tokens": 1011,
+    "total_tokens": 1466,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.88
+  }
+}

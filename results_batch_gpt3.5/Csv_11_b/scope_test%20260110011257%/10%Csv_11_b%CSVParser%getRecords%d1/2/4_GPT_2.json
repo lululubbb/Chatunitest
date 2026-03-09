@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwARE83EpTsXunRnoJDiq432sJz56",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    public void setUp() throws IOException {\n        // Mock the dependencies required to create a CSVParser instance\n        // Since CSVParser constructor requires Reader and CSVFormat, we mock CSVFormat and use a StringReader\n        parser = new CSVParser(new java.io.StringReader(\"\"), mock(CSVFormat.class));\n    }\n\n    @Test\n    public void testGetRecords_NoRecords() throws IOException {\n        // The default getRecords() should return an empty list if no records exist\n        List<CSVRecord> records = parser.getRecords();\n        assertNotNull(records);\n        assertTrue(records.isEmpty());\n    }\n\n    @Test\n    public void testGetRecords_WithRecords() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        // To test getRecords(T records) method indirectly, we use reflection to invoke private nextRecord method\n        // We'll mock nextRecord to return some records and then null to simulate end of input\n\n        // Spy the parser to stub nextRecord\n        CSVParser spyParser = spy(parser);\n\n        // Prepare CSVRecord mocks\n        CSVRecord record1 = mock(CSVRecord.class);\n        CSVRecord record2 = mock(CSVRecord.class);\n\n        // Stub nextRecord to return record1, record2, then null\n        when(spyParser.nextRecord())\n            .thenReturn(record1)\n            .thenReturn(record2)\n            .thenReturn(null);\n\n        // Use reflection to invoke the generic getRecords(T records) method\n        Method getRecordsMethod = CSVParser.class.getDeclaredMethod(\"getRecords\", List.class);\n        getRecordsMethod.setAccessible(true);\n\n        List<CSVRecord> inputList = new ArrayList<>();\n        @SuppressWarnings(\"unchecked\")\n        List<CSVRecord> result = (List<CSVRecord>) getRecordsMethod.invoke(spyParser, inputList);\n\n        assertNotNull(result);\n        assertEquals(2, result.size());\n        assertSame(record1, result.get(0));\n        assertSame(record2, result.get(1));\n        // The input list should be the same instance as the returned list\n        assertSame(inputList, result);\n    }\n\n    @Test\n    public void testGetRecords_ThrowsIOException() throws IOException {\n        CSVParser spyParser = spy(parser);\n\n        try {\n            when(spyParser.nextRecord()).thenThrow(new IOException(\"IO error\"));\n            spyParser.getRecords();\n            fail(\"Expected IOException\");\n        } catch (IOException e) {\n            assertEquals(\"IO error\", e.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979184,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 606,
+    "prompt_tokens": 1261,
+    "total_tokens": 1867,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.68
+  }
+}

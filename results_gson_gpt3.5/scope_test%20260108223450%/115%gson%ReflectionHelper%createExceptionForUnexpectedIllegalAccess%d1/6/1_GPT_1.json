@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmvP7kPTr0H1M6jiPtC7fV7FntQM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.Test;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  public void testCreateExceptionForUnexpectedIllegalAccess() throws Exception {\n    IllegalAccessException cause = new IllegalAccessException(\"access denied\");\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      // Use reflection to invoke the static method since it's public static,\n      // can call directly as well.\n      ReflectionHelper.createExceptionForUnexpectedIllegalAccess(cause);\n    });\n\n    String expectedMessageStart = \"Unexpected IllegalAccessException occurred (Gson \";\n    String expectedMessageContains = \"Certain ReflectionAccessFilter features require Java >= 9 to work correctly.\";\n    String expectedMessageEnd = \"If you are not using ReflectionAccessFilter, report this to the Gson maintainers.\";\n\n    String actualMessage = thrown.getMessage();\n\n    // Check that message starts with expected prefix including version\n    assertEquals(true, actualMessage.startsWith(expectedMessageStart));\n    // Check that message contains required substring\n    assertEquals(true, actualMessage.contains(expectedMessageContains));\n    // Check that message ends with expected suffix\n    assertEquals(true, actualMessage.endsWith(expectedMessageEnd));\n\n    // Check cause is the original IllegalAccessException\n    assertEquals(cause, thrown.getCause());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888799,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 296,
+    "prompt_tokens": 447,
+    "total_tokens": 743,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.4
+  }
+}

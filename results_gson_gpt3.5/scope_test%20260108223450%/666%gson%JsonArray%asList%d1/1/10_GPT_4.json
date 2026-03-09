@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlmI7MgPENKAb44PSvhtX8xKwJcz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private ArrayList<JsonElement> mockElements;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    jsonArray = new JsonArray();\n\n    // Use reflection to set the private final elements field with a mock ArrayList\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n\n    mockElements = spy(new ArrayList<>());\n    elementsField.set(jsonArray, mockElements);\n  }\n\n  @Test\n  void asList_returnsNonNullElementWrapperListWrappingElements() {\n    // Arrange: add some elements to the mockElements list\n    JsonElement elem1 = mock(JsonElement.class);\n    JsonElement elem2 = mock(JsonElement.class);\n    mockElements.add(elem1);\n    mockElements.add(elem2);\n\n    // Act\n    List<JsonElement> result = jsonArray.asList();\n\n    // Assert\n    assertNotNull(result);\n    assertTrue(result instanceof NonNullElementWrapperList);\n    assertEquals(mockElements, extractWrappedList(result));\n    assertEquals(2, result.size());\n    assertEquals(elem1, result.get(0));\n    assertEquals(elem2, result.get(1));\n  }\n\n  // Helper method to extract the wrapped list from NonNullElementWrapperList via reflection\n  @SuppressWarnings(\"unchecked\")\n  private List<JsonElement> extractWrappedList(List<JsonElement> wrapperList) {\n    try {\n      Class<?> clazz = wrapperList.getClass();\n      while (clazz != null) {\n        try {\n          Field listField = clazz.getDeclaredField(\"list\");\n          listField.setAccessible(true);\n          return (List<JsonElement>) listField.get(wrapperList);\n        } catch (NoSuchFieldException e) {\n          clazz = clazz.getSuperclass();\n        }\n      }\n      fail(\"Failed to find 'list' field in NonNullElementWrapperList or its superclasses\");\n      return null;\n    } catch (IllegalAccessException e) {\n      fail(\"Failed to access 'list' field in NonNullElementWrapperList or its superclasses\");\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884390,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 502,
+    "prompt_tokens": 1306,
+    "total_tokens": 1808,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.08
+  }
+}

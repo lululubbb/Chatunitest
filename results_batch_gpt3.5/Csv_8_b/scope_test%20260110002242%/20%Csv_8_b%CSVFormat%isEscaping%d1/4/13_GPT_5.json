@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9ZyzOyn9UMLLc5u86jDna9fXJxR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testIsEscaping_whenEscapeIsNull() throws Exception {\n        // Using DEFAULT which has escape == null\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertFalse(format.isEscaping());\n    }\n\n    @Test\n    public void testIsEscaping_whenEscapeIsNotNull() throws Exception {\n        // Create a CSVFormat with escape character set using withEscape(char)\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\');\n        assertTrue(format.isEscaping());\n    }\n\n    @Test\n    public void testIsEscaping_whenEscapeIsCharacterObjectNotPrimitive() throws Exception {\n        // Create CSVFormat with escape set to Character object using reflection to call private constructor\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Quote.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat format = constructor.newInstance(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteChar(),\n                CSVFormat.DEFAULT.getQuotePolicy(),\n                CSVFormat.DEFAULT.getCommentStart(),\n                Character.valueOf('!'), // escape as Character object\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord()\n        );\n\n        assertTrue(format.isEscaping());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975882,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 360,
+    "prompt_tokens": 1333,
+    "total_tokens": 1693,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.31
+  }
+}

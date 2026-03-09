@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmkPJAO7qS9wvRO3T3MXusTYCqd2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void checkLenient_lenientTrue_doesNotThrow() throws Throwable {\n    // Set lenient to true using public setter\n    jsonReader.setLenient(true);\n\n    // Use reflection to invoke private method checkLenient\n    Method checkLenientMethod = JsonReader.class.getDeclaredMethod(\"checkLenient\");\n    checkLenientMethod.setAccessible(true);\n\n    // Should not throw any exception\n    assertDoesNotThrow(() -> checkLenientMethod.invoke(jsonReader));\n  }\n\n  @Test\n  void checkLenient_lenientFalse_throwsIOException() throws Throwable {\n    // Ensure lenient is false (default)\n    jsonReader.setLenient(false);\n\n    Method checkLenientMethod = JsonReader.class.getDeclaredMethod(\"checkLenient\");\n    checkLenientMethod.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class,\n        () -> checkLenientMethod.invoke(jsonReader));\n\n    // The cause should be an IOException with expected message start\n    Throwable cause = thrown.getCause();\n    assertTrue(cause instanceof IOException);\n    assertTrue(cause.getMessage().startsWith(\"Use JsonReader.setLenient(true) to accept malformed JSON\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888117,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 362,
+    "prompt_tokens": 1752,
+    "total_tokens": 2114,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.24
+  }
+}

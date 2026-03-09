@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnK1Tpx3r43WW5LwUJOh7xryTwl7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.util.concurrent.atomic.AtomicLong;\n\nclass Gson_atomicLongAdapter_Test {\n\n  private Method atomicLongAdapterMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    atomicLongAdapterMethod = Gson.class.getDeclaredMethod(\"atomicLongAdapter\", TypeAdapter.class);\n    atomicLongAdapterMethod.setAccessible(true);\n  }\n\n  @Test\n  void atomicLongAdapter_writeAndRead() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, longAdapter);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n    JsonReader jsonReader = mock(JsonReader.class);\n\n    AtomicLong atomicLongValue = new AtomicLong(123456789L);\n\n    atomicLongAdapter.write(jsonWriter, atomicLongValue);\n    verify(longAdapter).write(jsonWriter, atomicLongValue.get());\n\n    Number numberValue = 987654321L;\n    when(longAdapter.read(jsonReader)).thenReturn(numberValue);\n\n    AtomicLong result = atomicLongAdapter.read(jsonReader);\n    assertNotNull(result);\n    assertEquals(numberValue.longValue(), result.get());\n  }\n\n  @Test\n  void atomicLongAdapter_write_nullSafe() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, longAdapter);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n\n    atomicLongAdapter.write(jsonWriter, null);\n\n    verify(longAdapter, never()).write(any(), anyLong());\n  }\n\n  @Test\n  void atomicLongAdapter_read_nullSafe() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, longAdapter);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n\n    when(longAdapter.read(jsonReader)).thenReturn(null);\n\n    AtomicLong result = atomicLongAdapter.read(jsonReader);\n    assertNull(result);\n  }\n\n  @Test\n  void atomicLongAdapter_write_throwsIOException() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n    doThrow(new IOException(\"write error\")).when(longAdapter).write(any(JsonWriter.class), anyLong());\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, longAdapter);\n\n    JsonWriter jsonWriter = mock(JsonWriter.class);\n    AtomicLong atomicLongValue = new AtomicLong(1L);\n\n    IOException thrown = assertThrows(IOException.class, () -> atomicLongAdapter.write(jsonWriter, atomicLongValue));\n    assertEquals(\"write error\", thrown.getMessage());\n  }\n\n  @Test\n  void atomicLongAdapter_read_throwsIOException() throws Throwable {\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Number> longAdapter = mock(TypeAdapter.class);\n    when(longAdapter.read(any(JsonReader.class))).thenThrow(new IOException(\"read error\"));\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<AtomicLong> atomicLongAdapter =\n        (TypeAdapter<AtomicLong>) atomicLongAdapterMethod.invoke(null, longAdapter);\n\n    JsonReader jsonReader = mock(JsonReader.class);\n\n    IOException thrown = assertThrows(IOException.class, () -> atomicLongAdapter.read(jsonReader));\n    assertEquals(\"read error\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890325,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 856,
+    "prompt_tokens": 2741,
+    "total_tokens": 3597,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.17
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\n\nclass JsonElementTest {\n\n  private static class JsonElementSubclass extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return null;\n    }\n  }\n\n  @Test\n  void testIsJsonArray_whenInstanceIsJsonArray_returnsTrue() throws Exception {\n    // JsonArray is final, so create instance via reflection\n    Constructor<JsonArray> constructor = JsonArray.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    JsonElement element = constructor.newInstance();\n    assertTrue(element.isJsonArray());\n  }\n\n  @Test\n  void testIsJsonArray_whenInstanceIsNotJsonArray_returnsFalse() {\n    JsonElement element = new JsonElementSubclass();\n    assertFalse(element.isJsonArray());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 758,
+  "completion_tokens": 182,
+  "total_tokens": 940,
+  "llm_elapsed_time_seconds": 4.82
+}

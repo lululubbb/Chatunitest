@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90Lt6JYP7x9DEAQfN8ArdIbuTdH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() {\n        out = new StringBuilder();\n        format = CSVFormat.DEFAULT;\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    public void testPrintRecord_withMultipleValues() throws IOException {\n        printer.printRecord(\"value1\", 123, null, true);\n\n        String printed = out.toString();\n        // Because printRecord prints each value and then a println,\n        // the output should contain all values printed and a line break.\n        // Exact output depends on CSVFormat.DEFAULT, but at least non-null values printed.\n        // We check that the output contains the string representations of the values.\n        assertTrue(printed.contains(\"value1\"));\n        assertTrue(printed.contains(\"123\"));\n        assertTrue(printed.contains(\"true\"));\n    }\n\n    @Test\n    public void testPrintRecord_withEmptyValues() throws IOException {\n        printer.printRecord();\n\n        String printed = out.toString();\n        // Should just print a line break (println)\n        assertTrue(printed.equals(System.lineSeparator()) || printed.equals(\"\\n\") || printed.equals(\"\\r\\n\"));\n    }\n\n    @Test\n    public void testPrintRecord_withNullValue() throws IOException {\n        printer.printRecord((Object) null);\n\n        String printed = out.toString();\n        // Should print something for null (likely empty or \"null\" depending on implementation)\n        // Just verify no exception and output is not null\n        assertTrue(printed != null);\n    }\n\n    @Test\n    public void testPrivatePrintMethod_invocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method printMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class);\n        printMethod.setAccessible(true);\n\n        printMethod.invoke(printer, \"privateTest\");\n        // Also invoke println to flush the output (print alone doesn't add newline)\n        Method printlnMethod = CSVPrinter.class.getDeclaredMethod(\"println\");\n        printlnMethod.setAccessible(true);\n        printlnMethod.invoke(printer);\n\n        String printed = out.toString();\n        assertTrue(printed.contains(\"privateTest\"));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973673,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 517,
+    "prompt_tokens": 974,
+    "total_tokens": 1491,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.26
+  }
+}

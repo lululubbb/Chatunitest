@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYwf7QGEgBuNaCxh3yjx2MElCUxk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private CSVPrinter printer;\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_emptyResultSet() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(3);\n        when(rs.next()).thenReturn(false);\n\n        printer.printRecords(rs);\n\n        verify(rs).getMetaData();\n        verify(meta).getColumnCount();\n        verify(rs).next();\n        verifyNoMoreInteractions(rs);\n    }\n\n    @Test\n    void testPrintRecords_singleRow() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(2);\n        when(rs.next()).thenReturn(true, false);\n        when(rs.getObject(1)).thenReturn(\"value1\");\n        when(rs.getObject(2)).thenReturn(42);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(rs);\n\n        InOrder inOrder = inOrder(rs, meta, spyPrinter);\n        inOrder.verify(rs).getMetaData();\n        inOrder.verify(meta).getColumnCount();\n        inOrder.verify(rs).next();\n        inOrder.verify(spyPrinter).print(\"value1\");\n        inOrder.verify(spyPrinter).print(42);\n        inOrder.verify(spyPrinter).println();\n        inOrder.verify(rs).next();\n\n        verifyNoMoreInteractions(rs);\n    }\n\n    @Test\n    void testPrintRecords_multipleRows() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n        when(rs.next()).thenReturn(true, true, false);\n        when(rs.getObject(1)).thenReturn(\"r1\", \"r2\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(rs);\n\n        InOrder inOrder = inOrder(rs, meta, spyPrinter);\n        inOrder.verify(rs).getMetaData();\n        inOrder.verify(meta).getColumnCount();\n\n        inOrder.verify(rs).next();\n        inOrder.verify(spyPrinter).print(\"r1\");\n        inOrder.verify(spyPrinter).println();\n\n        inOrder.verify(rs).next();\n        inOrder.verify(spyPrinter).print(\"r2\");\n        inOrder.verify(spyPrinter).println();\n\n        inOrder.verify(rs).next();\n\n        verifyNoMoreInteractions(rs);\n    }\n\n    @Test\n    void testPrintRecords_throwsSQLException() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        when(rs.getMetaData()).thenThrow(new SQLException(\"meta failed\"));\n\n        try {\n            printer.printRecords(rs);\n        } catch (SQLException e) {\n            // expected\n        }\n    }\n\n    @Test\n    void testPrintRecords_throwsIOException() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n        when(rs.next()).thenReturn(true);\n        when(rs.getObject(1)).thenReturn(\"value\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        doThrow(new IOException(\"io error\")).when(spyPrinter).print(\"value\");\n\n        try {\n            spyPrinter.printRecords(rs);\n        } catch (IOException e) {\n            // expected\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550045,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 897,
+    "prompt_tokens": 1433,
+    "total_tokens": 2330,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.61
+  }
+}

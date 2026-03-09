@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwABE9p6E1Ifl4GsRdr0zu1TYvzJO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull() throws IOException {\n        when(format.getNullString()).thenReturn(null);\n        // call print with null value\n        printer.print(null);\n\n        // verify that print(Object, CharSequence, int, int) is called with empty string\n        // We cannot spy on private method, but we can verify interactions with out Appendable indirectly\n        // Here we assume print calls printAndEscape or printAndQuote which calls out.append\n        // So we verify that out.append was called at least once with empty string or something\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNotNull() throws IOException {\n        when(format.getNullString()).thenReturn(\"NULL\");\n        printer.print(null);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException {\n        String value = \"value\";\n        printer.print(value);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_invokesPrivatePrint() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        // Use reflection to invoke private print(Object, CharSequence, int, int)\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        String testValue = \"test\";\n        privatePrint.invoke(printer, testValue, testValue, 0, testValue.length());\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_privatePrintAndEscapeAndQuoteCoverage() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {\n        // We want to cover private methods printAndEscape and printAndQuote via reflection\n\n        Method printAndEscape = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        printAndEscape.setAccessible(true);\n\n        Method printAndQuote = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        printAndQuote.setAccessible(true);\n\n        String escapeValue = \"escape\\nvalue\\r\\n\";\n        printAndEscape.invoke(printer, escapeValue, 0, escapeValue.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n\n        String quoteValue = \"quote,value\";\n        printAndQuote.invoke(printer, quoteValue, quoteValue, 0, quoteValue.length());\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978192,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 696,
+    "prompt_tokens": 491,
+    "total_tokens": 1187,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.38
+  }
+}

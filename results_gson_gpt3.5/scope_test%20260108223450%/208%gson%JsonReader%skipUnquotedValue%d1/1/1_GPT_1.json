@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1iwLnFJtMEjbcnNSyc7sqzobmo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  public void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  public void testSkipUnquotedValue_withImmediateStopChar() throws Exception {\n    // Arrange: buffer with a stop char at pos\n    char[] buffer = getField(jsonReader, \"buffer\");\n    buffer[0] = '{'; // stop char\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 1);\n\n    // Act: invoke private skipUnquotedValue\n    invokeSkipUnquotedValue(jsonReader);\n\n    // Assert: pos should stay 0 because i=0 and pos+=i returns immediately\n    assertEquals(0, getField(jsonReader, \"pos\"));\n  }\n\n  @Test\n  public void testSkipUnquotedValue_withStopCharAfterSeveralChars() throws Exception {\n    // Arrange: buffer with chars until stop char at index 3\n    char[] buffer = getField(jsonReader, \"buffer\");\n    buffer[0] = 'a';\n    buffer[1] = 'b';\n    buffer[2] = 'c';\n    buffer[3] = ','; // stop char\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 5);\n\n    // Act\n    invokeSkipUnquotedValue(jsonReader);\n\n    // Assert pos advanced by 3 (index of stop char)\n    assertEquals(3, getField(jsonReader, \"pos\"));\n  }\n\n  @Test\n  public void testSkipUnquotedValue_withNoStopCharAndFillBufferTrue() throws Exception {\n    // Arrange: buffer with no stop chars in current limit, fillBuffer returns true once then false\n    char[] buffer = getField(jsonReader, \"buffer\");\n    for (int i = 0; i < 5; i++) {\n      buffer[i] = 'a';\n    }\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 5);\n\n    // Spy on jsonReader to mock fillBuffer\n    JsonReader spyReader = spy(jsonReader);\n\n    // fillBuffer returns true once, then false\n    doReturn(true).doReturn(false).when(spyReader).fillBuffer(1);\n\n    // Act\n    invokeSkipUnquotedValue(spyReader);\n\n    // Assert pos advanced by 10 (5 + 5)\n    // Because loop runs twice, each time pos += i (which is 5)\n    assertEquals(10, getField(spyReader, \"pos\"));\n  }\n\n  @Test\n  public void testSkipUnquotedValue_withLenientCheckLenientCalled() throws Exception {\n    // Arrange: buffer with stop char requiring checkLenient call ('/')\n    char[] buffer = getField(jsonReader, \"buffer\");\n    buffer[0] = '/'; // triggers checkLenient\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 1);\n\n    // Spy to verify checkLenient called\n    JsonReader spyReader = spy(jsonReader);\n    doNothing().when(spyReader).checkLenient();\n\n    // Act\n    invokeSkipUnquotedValue(spyReader);\n\n    // Assert checkLenient called once\n    verify(spyReader, times(1)).checkLenient();\n    // pos should remain 0 (i=0)\n    assertEquals(0, getField(spyReader, \"pos\"));\n  }\n\n  @Test\n  public void testSkipUnquotedValue_withLenientCheckLenientFallthrough() throws Exception {\n    // Arrange: buffer with stop char requiring checkLenient ('='), followed by a stop char that returns\n    char[] buffer = getField(jsonReader, \"buffer\");\n    buffer[0] = '='; // triggers checkLenient and fallthrough\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 1);\n\n    // Spy to verify checkLenient called\n    JsonReader spyReader = spy(jsonReader);\n    doNothing().when(spyReader).checkLenient();\n\n    // Act\n    invokeSkipUnquotedValue(spyReader);\n\n    // Assert checkLenient called once\n    verify(spyReader, times(1)).checkLenient();\n    // pos should remain 0\n    assertEquals(0, getField(spyReader, \"pos\"));\n  }\n\n  private void invokeSkipUnquotedValue(JsonReader reader) throws Exception {\n    Method method = JsonReader.class.getDeclaredMethod(\"skipUnquotedValue\");\n    method.setAccessible(true);\n    method.invoke(reader);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getField(Object target, String fieldName) throws Exception {\n    java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(target);\n  }\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885346,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1162,
+    "prompt_tokens": 1131,
+    "total_tokens": 2293,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.46
+  }
+}

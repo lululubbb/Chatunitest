@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.common.base.CaseFormat;\n\nclass ProtoTypeAdapterTest {\n\n  @Test\n  void newBuilder_shouldReturnBuilderWithExpectedDefaults() throws Exception {\n    // Act\n    ProtoTypeAdapter.Builder builder = ProtoTypeAdapter.newBuilder();\n\n    // Assert\n    assertNotNull(builder);\n\n    // Using reflection to verify private fields inside Builder if any\n    // Since Builder class details are not given, we verify the enumSerialization and formats via reflection if accessible\n\n    // Check enumSerialization field\n    var enumSerializationField = builder.getClass().getDeclaredField(\"enumSerialization\");\n    enumSerializationField.setAccessible(true);\n    Object enumSerializationValue = enumSerializationField.get(builder);\n    assertEquals(ProtoTypeAdapter.EnumSerialization.NAME, enumSerializationValue);\n\n    // Check protoFormat field\n    var protoFormatField = builder.getClass().getDeclaredField(\"protoFormat\");\n    protoFormatField.setAccessible(true);\n    Object protoFormatValue = protoFormatField.get(builder);\n    assertEquals(CaseFormat.LOWER_UNDERSCORE, protoFormatValue);\n\n    // Check jsonFormat field\n    var jsonFormatField = builder.getClass().getDeclaredField(\"jsonFormat\");\n    jsonFormatField.setAccessible(true);\n    Object jsonFormatValue = jsonFormatField.get(builder);\n    assertEquals(CaseFormat.LOWER_CAMEL, jsonFormatValue);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 713,
+  "completion_tokens": 303,
+  "total_tokens": 1016,
+  "llm_elapsed_time_seconds": 6.9
+}

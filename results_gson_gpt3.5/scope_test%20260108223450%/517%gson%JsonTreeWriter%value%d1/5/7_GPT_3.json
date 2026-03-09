@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvljRmIJFkbtKFjKY7jdQUMJjMAh7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter writer;\n\n  @BeforeEach\n  public void setUp() {\n    writer = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testValue_withNormalFloat_returnsThis() throws IOException {\n    JsonWriter result = writer.value(1.5f);\n    assertSame(writer, result);\n  }\n\n  @Test\n  public void testValue_withNaN_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.NaN);\n    });\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n\n  @Test\n  public void testValue_withPositiveInfinity_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.POSITIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_withNegativeInfinity_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      writer.value(Float.NEGATIVE_INFINITY);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void testValue_callsPutWithJsonPrimitive() throws Exception {\n    // Create a spy on the existing writer and intercept the private put method via reflection\n    JsonTreeWriter spyWriter = spy(writer);\n\n    // Use reflection to get the private put method\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n    putMethod.setAccessible(true);\n\n    // We will create a spy that intercepts calls to put by wrapping the method call\n    // But Mockito cannot spy private methods directly, so we use doAnswer on spyWriter.value(float)\n    // Instead, we verify that after calling value(2.5f), the internal state contains the expected JsonPrimitive\n\n    spyWriter.value(2.5f);\n\n    // Access the private 'product' field which holds the JsonElement\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(spyWriter);\n\n    assertNotNull(product);\n    assertTrue(product instanceof JsonPrimitive);\n    assertEquals(2.5f, ((JsonPrimitive) product).getAsFloat());\n  }\n\n  @Test\n  public void testValue_lenientAllowsNaN() throws Exception {\n    // Create a proxy JsonTreeWriter that returns true for isLenient() by reflection\n    // Since JsonTreeWriter is final, we cannot subclass or override methods\n    // Instead, use reflection to set the isLenient field or simulate lenient mode\n\n    // Unfortunately, JsonTreeWriter does not have an isLenient field, but inherits isLenient() from JsonWriter\n\n    // Use reflection to create a proxy JsonWriter with lenient set to true\n    // JsonWriter has a protected boolean 'lenient' field\n\n    // Create a new JsonTreeWriter instance\n    JsonTreeWriter lenientWriter = new JsonTreeWriter();\n\n    // Set the protected 'lenient' field in JsonWriter superclass to true\n    Field lenientField = JsonWriter.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    lenientField.set(lenientWriter, true);\n\n    JsonWriter result = lenientWriter.value(Float.NaN);\n    assertSame(lenientWriter, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884213,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 826,
+    "prompt_tokens": 1375,
+    "total_tokens": 2201,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.39
+  }
+}

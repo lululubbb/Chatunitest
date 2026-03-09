@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnSAdhUhbZQJhDOvTqZkJSxm7sHo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\n\nclass JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n    private JsonObject jsonObject;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        jsonObject = new JsonObject();\n        jsonObject.addProperty(\"key1\", \"value1\");\n        jsonObject.addProperty(\"key2\", \"value2\");\n\n        jsonTreeReader = new JsonTreeReader(jsonObject);\n\n        // Use reflection to set stack and stackSize to simulate peekStack returning jsonObject\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stackArray = (Object[]) stackField.get(jsonTreeReader);\n        stackArray[0] = jsonObject;\n        stackField.set(jsonTreeReader, stackArray);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 1);\n    }\n\n    @Test\n    void beginObject_success() throws Exception {\n        // Instead of spying and mocking private expect(), call beginObject directly\n\n        // Invoke beginObject via reflection\n        Method beginObjectMethod = JsonTreeReader.class.getDeclaredMethod(\"beginObject\");\n        beginObjectMethod.setAccessible(true);\n        beginObjectMethod.invoke(jsonTreeReader);\n\n        // Verify stack has new top as iterator of jsonObject.entrySet()\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stackArray = (Object[]) stackField.get(jsonTreeReader);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = stackSizeField.getInt(jsonTreeReader);\n\n        assertEquals(2, stackSize);\n\n        Object top = stackArray[stackSize - 1];\n        assertTrue(top instanceof Iterator);\n\n        @SuppressWarnings(\"unchecked\")\n        Iterator<Map.Entry<String, JsonElement>> iterator = (Iterator<Map.Entry<String, JsonElement>>) top;\n        assertTrue(iterator.hasNext());\n        Map.Entry<String, JsonElement> entry = iterator.next();\n        assertEquals(\"key1\", entry.getKey());\n        assertEquals(\"value1\", entry.getValue().getAsString());\n    }\n\n    @Test\n    void beginObject_expectThrowsIOException() throws Exception {\n        // We cannot mock private expect() directly because it is private.\n        // Instead, create a subclass to override expect() and throw IOException.\n\n        JsonTreeReader jsonTreeReaderWithThrow = new JsonTreeReader(jsonObject) {\n            @Override\n            protected void expect(JsonToken expected) throws IOException {\n                if (expected == JsonToken.BEGIN_OBJECT) {\n                    throw new IOException(\"Expected exception\");\n                }\n                super.expect(expected);\n            }\n        };\n\n        // Set stack and stackSize via reflection to simulate peekStack returning jsonObject\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stackArray = (Object[]) stackField.get(jsonTreeReaderWithThrow);\n        stackArray[0] = jsonObject;\n        stackField.set(jsonTreeReaderWithThrow, stackArray);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReaderWithThrow, 1);\n\n        Method beginObjectMethod = JsonTreeReader.class.getDeclaredMethod(\"beginObject\");\n        beginObjectMethod.setAccessible(true);\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            try {\n                beginObjectMethod.invoke(jsonTreeReaderWithThrow);\n            } catch (Exception e) {\n                Throwable cause = e.getCause();\n                if (cause instanceof IOException) {\n                    throw (IOException) cause;\n                }\n                throw e;\n            }\n        });\n        assertTrue(thrown.getMessage().contains(\"Expected exception\"));\n    }\n\n    @Test\n    void beginObject_stackTopNotJsonObjectClassCastException() throws Exception {\n        // Set stack top to an object not JsonObject to cause ClassCastException\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stackArray = (Object[]) stackField.get(jsonTreeReader);\n        stackArray[0] = \"not a JsonObject\";\n        stackField.set(jsonTreeReader, stackArray);\n\n        Method beginObjectMethod = JsonTreeReader.class.getDeclaredMethod(\"beginObject\");\n        beginObjectMethod.setAccessible(true);\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            try {\n                beginObjectMethod.invoke(jsonTreeReader);\n            } catch (Exception e) {\n                Throwable cause = e.getCause();\n                if (cause instanceof ClassCastException) {\n                    throw new IOException(cause);\n                }\n                throw e;\n            }\n        });\n        // The cause of IOException is ClassCastException\n        assertTrue(thrown.getCause() instanceof ClassCastException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890830,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1109,
+    "prompt_tokens": 1921,
+    "total_tokens": 3030,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.06
+  }
+}

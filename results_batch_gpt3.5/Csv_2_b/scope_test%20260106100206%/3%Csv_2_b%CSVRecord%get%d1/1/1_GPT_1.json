@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuqkV3l9220soobZycZu6IP3S1bMl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVRecord;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private Map<String, Integer> mapping;\n    private String[] values;\n\n    @BeforeEach\n    public void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"header1\", 0);\n        mapping.put(\"header2\", 1);\n        values = new String[] { \"value1\", \"value2\" };\n    }\n\n    @Test\n    public void testGet_WithValidName_ReturnsValue() {\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        String result = record.get(\"header1\");\n        assertEquals(\"value1\", result);\n\n        result = record.get(\"header2\");\n        assertEquals(\"value2\", result);\n    }\n\n    @Test\n    public void testGet_WithNameNotInMapping_ReturnsNull() {\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        String result = record.get(\"header3\");\n        assertNull(result);\n    }\n\n    @Test\n    public void testGet_WithNullMapping_ThrowsIllegalStateException() {\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n            record.get(\"header1\");\n        });\n        assertEquals(\"No header mapping was specified, the record values can't be accessed by name\", exception.getMessage());\n    }\n\n    @Test\n    public void testGet_PrivateMethodInvocation_WithReflection() throws Exception {\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        Method getMethod = CSVRecord.class.getDeclaredMethod(\"get\", String.class);\n        getMethod.setAccessible(true);\n\n        Object result = getMethod.invoke(record, \"header1\");\n        assertEquals(\"value1\", result);\n\n        result = getMethod.invoke(record, \"header3\");\n        assertNull(result);\n\n        CSVRecord recordNullMapping = new CSVRecord(values, null, null, 1L);\n        try {\n            getMethod.invoke(recordNullMapping, \"header1\");\n            fail(\"Expected an exception to be thrown\");\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            assertTrue(cause instanceof IllegalStateException);\n            assertEquals(\"No header mapping was specified, the record values can't be accessed by name\", cause.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767665171,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 557,
+    "prompt_tokens": 393,
+    "total_tokens": 950,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.86
+  }
+}

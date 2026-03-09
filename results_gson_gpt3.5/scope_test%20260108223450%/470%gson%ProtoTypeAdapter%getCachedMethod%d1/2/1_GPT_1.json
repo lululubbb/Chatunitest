@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmI8l9Nwy4IOo7XTdDaBurhgl8JR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.protobuf;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.common.collect.MapMaker;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.util.concurrent.ConcurrentMap;\n\nclass ProtoTypeAdapterTest {\n\n  private static class DummyClass {\n    public String dummyMethod(String arg) {\n      return arg;\n    }\n  }\n\n  @BeforeEach\n  void clearCache() throws Exception {\n    // Clear the internal cache mapOfMapOfMethods before each test to avoid side effects\n    var field = ProtoTypeAdapter.class.getDeclaredField(\"mapOfMapOfMethods\");\n    field.setAccessible(true);\n    ConcurrentMap<String, ConcurrentMap<Class<?>, Method>> map =\n        (ConcurrentMap<String, ConcurrentMap<Class<?>, Method>>) field.get(null);\n    map.clear();\n  }\n\n  @Test\n  void getCachedMethod_CachesAndReturnsMethod() throws Exception {\n    Method method1 = invokeGetCachedMethod(DummyClass.class, \"dummyMethod\", String.class);\n    assertNotNull(method1);\n    assertEquals(\"dummyMethod\", method1.getName());\n\n    // Call again to check caching returns same method instance\n    Method method2 = invokeGetCachedMethod(DummyClass.class, \"dummyMethod\", String.class);\n    assertSame(method1, method2);\n  }\n\n  @Test\n  void getCachedMethod_DifferentMethodNames_HaveSeparateCaches() throws Exception {\n    Method methodA = invokeGetCachedMethod(DummyClass.class, \"dummyMethod\", String.class);\n    assertNotNull(methodA);\n\n    // Use a method name that does not exist to cause NoSuchMethodException\n    assertThrows(NoSuchMethodException.class, () ->\n        invokeGetCachedMethod(DummyClass.class, \"nonExistentMethod\"));\n\n    // The cache for dummyMethod should still hold the method\n    Method methodB = invokeGetCachedMethod(DummyClass.class, \"dummyMethod\", String.class);\n    assertSame(methodA, methodB);\n  }\n\n  @Test\n  void getCachedMethod_ConcurrentMapIsSharedAcrossCalls() throws Exception {\n    Method method1 = invokeGetCachedMethod(DummyClass.class, \"dummyMethod\", String.class);\n\n    // Access the internal mapOfMapOfMethods to verify caching\n    var field = ProtoTypeAdapter.class.getDeclaredField(\"mapOfMapOfMethods\");\n    field.setAccessible(true);\n    ConcurrentMap<String, ConcurrentMap<Class<?>, Method>> mapOfMap =\n        (ConcurrentMap<String, ConcurrentMap<Class<?>, Method>>) field.get(null);\n\n    assertTrue(mapOfMap.containsKey(\"dummyMethod\"));\n    ConcurrentMap<Class<?>, Method> innerMap = mapOfMap.get(\"dummyMethod\");\n    assertNotNull(innerMap);\n    assertEquals(method1, innerMap.get(DummyClass.class));\n  }\n\n  private Method invokeGetCachedMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) throws Exception {\n    Method getCachedMethod = ProtoTypeAdapter.class.getDeclaredMethod(\"getCachedMethod\", Class.class, String.class, Class[].class);\n    getCachedMethod.setAccessible(true);\n    return (Method) getCachedMethod.invoke(null, clazz, methodName, paramTypes);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886364,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 672,
+    "prompt_tokens": 847,
+    "total_tokens": 1519,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.69
+  }
+}

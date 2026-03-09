@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Kq8vU0U9nd1fheQsFKhyqHrzFT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    @Test\n    public void testIsConsistent_mappingNull_returnsTrue() throws Exception {\n        // Create CSVRecord instance with mapping = null\n        String[] values = new String[] { \"a\", \"b\", \"c\" };\n        Map<String, Integer> mapping = null;\n        String comment = \"comment\";\n        long recordNumber = 1L;\n\n        CSVRecord record = createCSVRecord(values, mapping, comment, recordNumber);\n\n        // isConsistent is public, call directly\n        boolean result = record.isConsistent();\n\n        assertTrue(result, \"Expected isConsistent to return true when mapping is null\");\n    }\n\n    @Test\n    public void testIsConsistent_mappingSizeEqualsValuesLength_returnsTrue() throws Exception {\n        // mapping size == values.length\n        String[] values = new String[] { \"a\", \"b\", \"c\" };\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"A\", 0);\n        mapping.put(\"B\", 1);\n        mapping.put(\"C\", 2);\n        String comment = \"comment\";\n        long recordNumber = 1L;\n\n        CSVRecord record = createCSVRecord(values, mapping, comment, recordNumber);\n\n        boolean result = record.isConsistent();\n\n        assertTrue(result, \"Expected isConsistent to return true when mapping size equals values length\");\n    }\n\n    @Test\n    public void testIsConsistent_mappingSizeNotEqualsValuesLength_returnsFalse() throws Exception {\n        // mapping size != values.length\n        String[] values = new String[] { \"a\", \"b\", \"c\", \"d\" };\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"A\", 0);\n        mapping.put(\"B\", 1);\n        mapping.put(\"C\", 2);\n        String comment = \"comment\";\n        long recordNumber = 1L;\n\n        CSVRecord record = createCSVRecord(values, mapping, comment, recordNumber);\n\n        boolean result = record.isConsistent();\n\n        assertFalse(result, \"Expected isConsistent to return false when mapping size does not equal values length\");\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    private CSVRecord createCSVRecord(String[] values, Map<String, Integer> mapping, String comment, long recordNumber) throws Exception {\n        // CSVRecord constructor is package-private, so instantiate via reflection\n        Class<?> clazz = Class.forName(\"org.apache.commons.csv.CSVRecord\");\n        Constructor<?> constructor = clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        return (CSVRecord) constructor.newInstance(values, mapping, comment, recordNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974944,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 607,
+    "prompt_tokens": 1063,
+    "total_tokens": 1670,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.93
+  }
+}

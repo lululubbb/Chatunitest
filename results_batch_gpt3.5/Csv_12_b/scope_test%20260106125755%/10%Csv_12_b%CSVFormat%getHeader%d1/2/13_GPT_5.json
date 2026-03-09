@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cutm4cF5yiQOD1njMl1HbKWXrcxvW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        CSVFormat format = createCSVFormatWithHeader(null);\n        String[] header = format.getHeader();\n        assertNull(header, \"Header should be null when internal header is null\");\n    }\n\n    @Test\n    void testGetHeaderReturnsClone() throws Exception {\n        String[] internalHeader = new String[] {\"A\", \"B\", \"C\"};\n        CSVFormat format = createCSVFormatWithHeader(internalHeader);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNotNull(returnedHeader, \"Returned header should not be null\");\n        assertArrayEquals(internalHeader, returnedHeader, \"Returned header should equal internal header\");\n        assertNotSame(internalHeader, returnedHeader, \"Returned header should be a clone, not the same instance\");\n\n        // Modify returnedHeader and check internalHeader is not affected\n        returnedHeader[0] = \"X\";\n        String[] headerAfterModification = format.getHeader();\n        assertEquals(\"A\", headerAfterModification[0], \"Internal header should remain unchanged after modifying returned clone\");\n    }\n\n    private CSVFormat createCSVFormatWithHeader(String[] header) throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n\n        constructor.setAccessible(true);\n\n        Object[] params = new Object[] {\n            format.getDelimiter(),\n            format.getQuoteCharacter(),\n            format.getQuoteMode(),\n            format.getCommentMarker(),\n            format.getEscapeCharacter(),\n            format.getIgnoreSurroundingSpaces(),\n            format.getIgnoreEmptyLines(),\n            format.getRecordSeparator(),\n            format.getNullString(),\n            header,\n            format.getSkipHeaderRecord(),\n            format.getAllowMissingColumnNames()\n        };\n\n        return constructor.newInstance(params);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676800,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 452,
+    "prompt_tokens": 1493,
+    "total_tokens": 1945,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.95
+  }
+}

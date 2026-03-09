@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testIsString_withStringValue() throws Exception {\n    JsonPrimitive jsonPrimitive = createJsonPrimitiveWithValue(\"test string\");\n    assertTrue(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Integer() throws Exception {\n    JsonPrimitive jsonPrimitive = createJsonPrimitiveWithValue(123);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Boolean() throws Exception {\n    JsonPrimitive jsonPrimitive = createJsonPrimitiveWithValue(true);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Double() throws Exception {\n    JsonPrimitive jsonPrimitive = createJsonPrimitiveWithValue(123.45);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNullValue() throws Exception {\n    JsonPrimitive jsonPrimitive = createJsonPrimitiveWithValue(null);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  private JsonPrimitive createJsonPrimitiveWithValue(Object value) throws Exception {\n    // Use a dummy constructor call (e.g. with Boolean) and then set the private final field via reflection\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(true);\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(jsonPrimitive, value);\n    return jsonPrimitive;\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 408,
+  "completion_tokens": 344,
+  "total_tokens": 752,
+  "llm_elapsed_time_seconds": 6.55,
+  "repair_elapsed_time_seconds": 22.89,
+  "round_total_time_seconds": 22.89
+}

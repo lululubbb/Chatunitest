@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJnw5UiZvVZXJ7oDJSaRZ0fLUTN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.Collections;\n\nclass ConstructorConstructor_NewUnsafeAllocatorTest {\n\n  private ConstructorConstructor constructorConstructor;\n\n  @BeforeEach\n  void setUp() {\n    // Default: useJdkUnsafe = true, empty instanceCreators and reflectionFilters\n    constructorConstructor = new ConstructorConstructor(\n        Collections.emptyMap(),\n        true,\n        Collections.emptyList()\n    );\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_constructReturnsNewInstance() throws Exception {\n    // Arrange\n    Class<?> testClass = TestClass.class;\n\n    // Use reflection to get private method newUnsafeAllocator\n    ObjectConstructor<?> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, testClass);\n\n    // Act\n    Object instance = objectConstructor.construct();\n\n    // Assert\n    assertNotNull(instance);\n    assertTrue(instance instanceof TestClass);\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeTrue_UnsafeAllocatorThrows_constructThrowsRuntimeException() throws Exception {\n    // Arrange\n    Class<?> testClass = TestClass.class;\n\n    // Spy UnsafeAllocator.INSTANCE to throw Exception\n    Object unsafeAllocatorInstance = getUnsafeAllocatorInstance();\n    Object unsafeAllocatorSpy = mock(unsafeAllocatorInstance.getClass());\n    // Use reflection to override newInstance method behavior\n    java.lang.reflect.Method newInstanceMethod = unsafeAllocatorInstance.getClass().getMethod(\"newInstance\", Class.class);\n    when(newInstanceMethod.invoke(unsafeAllocatorSpy, testClass)).thenThrow(new InstantiationException(\"fail\"));\n\n    // Replace UnsafeAllocator.INSTANCE field via reflection\n    Field instanceField = unsafeAllocatorInstance.getClass().getDeclaredField(\"INSTANCE\");\n    if (instanceField == null) {\n      // If INSTANCE field is in UnsafeAllocator class\n      instanceField = Class.forName(\"com.google.gson.internal.UnsafeAllocator\").getDeclaredField(\"INSTANCE\");\n    }\n    instanceField.setAccessible(true);\n    Object originalInstance = instanceField.get(null);\n    instanceField.set(null, unsafeAllocatorSpy);\n\n    try {\n      ObjectConstructor<?> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, testClass);\n\n      RuntimeException thrown = assertThrows(RuntimeException.class, objectConstructor::construct);\n      assertTrue(thrown.getMessage().contains(\"Unable to create instance of\"));\n      assertTrue(thrown.getCause() instanceof Exception);\n    } finally {\n      // Restore original UnsafeAllocator.INSTANCE\n      instanceField.set(null, originalInstance);\n    }\n  }\n\n  @Test\n  void newUnsafeAllocator_useJdkUnsafeFalse_constructThrowsJsonIOException() throws Exception {\n    // Arrange\n    constructorConstructor = new ConstructorConstructor(\n        Collections.emptyMap(),\n        false,\n        Collections.emptyList()\n    );\n\n    Class<?> testClass = TestClass.class;\n\n    ObjectConstructor<?> objectConstructor = invokeNewUnsafeAllocator(constructorConstructor, testClass);\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, objectConstructor::construct);\n    String expectedMessage = \"Unable to create instance of \" + testClass + \"; usage of JDK Unsafe is disabled.\";\n    assertTrue(thrown.getMessage().contains(expectedMessage));\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private <T> ObjectConstructor<T> invokeNewUnsafeAllocator(ConstructorConstructor cc, Class<? super T> rawType) throws Exception {\n    java.lang.reflect.Method method = ConstructorConstructor.class.getDeclaredMethod(\"newUnsafeAllocator\", Class.class);\n    method.setAccessible(true);\n    return (ObjectConstructor<T>) method.invoke(cc, rawType);\n  }\n\n  private Object getUnsafeAllocatorInstance() throws Exception {\n    Class<?> unsafeAllocatorClass = Class.forName(\"com.google.gson.internal.UnsafeAllocator\");\n    Field instanceField = unsafeAllocatorClass.getDeclaredField(\"INSTANCE\");\n    instanceField.setAccessible(true);\n    return instanceField.get(null);\n  }\n\n  // Simple test class with no-args constructor\n  static class TestClass {\n    int value = 42;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886467,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 842,
+    "prompt_tokens": 1655,
+    "total_tokens": 2497,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.08
+  }
+}

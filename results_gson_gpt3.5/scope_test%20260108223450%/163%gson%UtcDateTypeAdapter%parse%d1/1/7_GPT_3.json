@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlkYoL2sLbIYbRklqJtbYHV8xOnZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.ParseException;\nimport java.text.ParsePosition;\nimport java.util.Date;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n  private static Method parseMethod;\n\n  @BeforeAll\n  public static void setUp() throws NoSuchMethodException {\n    parseMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"parse\", String.class, ParsePosition.class);\n    parseMethod.setAccessible(true);\n  }\n\n  private Date invokeParse(String date, ParsePosition pos) throws Throwable {\n    try {\n      return (Date) parseMethod.invoke(null, date, pos);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n  }\n\n  @Test\n  public void testParse_ValidDateWithZ() throws Throwable {\n    String dateString = \"2023-04-15T12:34:56Z\";\n    ParsePosition pos = new ParsePosition(0);\n    Date date = invokeParse(dateString, pos);\n    assertNotNull(date);\n    assertEquals(dateString.length(), pos.getIndex());\n  }\n\n  @Test\n  public void testParse_ValidDateWithPositiveOffset() throws Throwable {\n    String dateString = \"2023-04-15T12:34:56+02:00\";\n    ParsePosition pos = new ParsePosition(0);\n    Date date = invokeParse(dateString, pos);\n    assertNotNull(date);\n    assertEquals(dateString.length(), pos.getIndex());\n  }\n\n  @Test\n  public void testParse_ValidDateWithNegativeOffsetAndMillis() throws Throwable {\n    String dateString = \"2023-04-15T12:34:56.789-05:00\";\n    ParsePosition pos = new ParsePosition(0);\n    Date date = invokeParse(dateString, pos);\n    assertNotNull(date);\n    assertEquals(dateString.length(), pos.getIndex());\n  }\n\n  @Test\n  public void testParse_ValidDateWithoutTime() throws Throwable {\n    String dateString = \"2023-04-15Z\";\n    ParsePosition pos = new ParsePosition(0);\n    Date date = invokeParse(dateString, pos);\n    assertNotNull(date);\n    assertEquals(dateString.length(), pos.getIndex());\n  }\n\n  @Test\n  public void testParse_ValidDateWithoutSeconds() throws Throwable {\n    String dateString = \"2023-04-15T12:34Z\";\n    ParsePosition pos = new ParsePosition(0);\n    Date date = invokeParse(dateString, pos);\n    assertNotNull(date);\n    assertEquals(dateString.length(), pos.getIndex());\n  }\n\n  @Test\n  public void testParse_InvalidTimeZoneIndicator_ThrowsParseException() {\n    String dateString = \"2023-04-15T12:34:56X\";\n    ParsePosition pos = new ParsePosition(0);\n    ParseException ex = assertThrows(ParseException.class, () -> invokeParse(dateString, pos));\n    assertTrue(ex.getMessage().contains(\"Invalid time zone indicator\"));\n  }\n\n  @Test\n  public void testParse_NoTimeZoneIndicator_ThrowsIllegalArgumentException() {\n    String dateString = \"2023-04-15T12:34:56\";\n    ParsePosition pos = new ParsePosition(0);\n    ParseException ex = assertThrows(ParseException.class, () -> invokeParse(dateString, pos));\n    assertTrue(ex.getMessage().contains(\"Failed to parse date\"));\n  }\n\n  @Test\n  public void testParse_InvalidNumberFormat_ThrowsParseException() {\n    String dateString = \"2023-0x-15T12:34:56Z\";\n    ParsePosition pos = new ParsePosition(0);\n    ParseException ex = assertThrows(ParseException.class, () -> invokeParse(dateString, pos));\n    assertTrue(ex.getMessage().contains(\"Failed to parse date\"));\n  }\n\n  @Test\n  public void testParse_InvalidDate_ThrowsParseException() {\n    String dateString = \"2023-13-32T12:34:56Z\"; // invalid month and day\n    ParsePosition pos = new ParsePosition(0);\n    ParseException ex = assertThrows(ParseException.class, () -> invokeParse(dateString, pos));\n    assertTrue(ex.getMessage().contains(\"Failed to parse date\"));\n  }\n\n  @Test\n  public void testParse_TimeZoneMismatch_ThrowsParseException() {\n    // We simulate a timezone mismatch by passing a timezone string that TimeZone.getTimeZone returns a different ID for.\n    // The only way to do this is with an invalid timezone offset, e.g. +25:00 which is invalid.\n    String invalidTz = \"+25:00\";\n    String dateString = \"2023-04-15T12:34:56\" + invalidTz;\n    ParsePosition pos = new ParsePosition(0);\n    ParseException ex = assertThrows(ParseException.class, () -> invokeParse(dateString, pos));\n    assertTrue(ex.getMessage().contains(\"Failed to parse date\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884282,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1083,
+    "prompt_tokens": 2809,
+    "total_tokens": 3892,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.77
+  }
+}

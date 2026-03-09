@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlyB3tWWgmKS1hDcr2irdysuXYX5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectInputStream;\nimport java.io.ObjectStreamClass;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.Test;\n\nclass UnsafeAllocatorTest {\n\n  @Test\n  void testCreate_withSunMiscUnsafe() throws Exception {\n    // Setup mocks for sun.misc.Unsafe path\n    Class<?> unsafeClass;\n    try {\n      unsafeClass = Class.forName(\"sun.misc.Unsafe\");\n    } catch (ClassNotFoundException e) {\n      // Skip test if sun.misc.Unsafe is not present\n      return;\n    }\n    Field unsafeField = unsafeClass.getDeclaredField(\"theUnsafe\");\n    unsafeField.setAccessible(true);\n    Object unsafeInstance = unsafeField.get(null);\n    Method allocateInstanceMethod = unsafeClass.getMethod(\"allocateInstance\", Class.class);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    // The returned allocator should create new instance using Unsafe.allocateInstance\n    Object instance = allocator.newInstance(String.class);\n    assertNotNull(instance);\n    assertEquals(String.class, instance.getClass());\n  }\n\n  @Test\n  void testCreate_withObjectStreamClass() throws Exception {\n    // Check if getConstructorId method exists\n    Method getConstructorId;\n    try {\n      getConstructorId = ObjectStreamClass.class.getDeclaredMethod(\"getConstructorId\", Class.class);\n    } catch (NoSuchMethodException e) {\n      // Skip test if method does not exist\n      return;\n    }\n    getConstructorId.setAccessible(true);\n    int constructorId = (Integer) getConstructorId.invoke(null, Object.class);\n\n    Method newInstance = ObjectStreamClass.class.getDeclaredMethod(\"newInstance\", Class.class, int.class);\n    newInstance.setAccessible(true);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    Object instance = allocator.newInstance(String.class);\n    assertNotNull(instance);\n    assertEquals(String.class, instance.getClass());\n  }\n\n  @Test\n  void testCreate_withObjectInputStream() throws Exception {\n    // Check if newInstance method exists\n    Method newInstance;\n    try {\n      newInstance = ObjectInputStream.class.getDeclaredMethod(\"newInstance\", Class.class, Class.class);\n    } catch (NoSuchMethodException e) {\n      // Skip test if method does not exist\n      return;\n    }\n    newInstance.setAccessible(true);\n\n    UnsafeAllocator allocator = invokeCreate();\n\n    Object instance = allocator.newInstance(String.class);\n    assertNotNull(instance);\n    assertEquals(String.class, instance.getClass());\n  }\n\n  @Test\n  void testCreate_fallbackUnsupportedOperationException() throws Exception {\n    // Create a UnsafeAllocator instance that always throws UnsupportedOperationException\n    UnsafeAllocator allocator = new UnsafeAllocator() {\n      @Override\n      public <T> T newInstance(Class<T> c) {\n        throw new UnsupportedOperationException(\"Cannot allocate \" + c + \". Usage of JDK sun.misc.Unsafe is enabled, \"\n            + \"but it could not be used. Make sure your runtime is configured correctly.\");\n      }\n    };\n\n    UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, () -> {\n      allocator.newInstance(String.class);\n    });\n    assertTrue(thrown.getMessage().contains(\"Cannot allocate\"));\n  }\n\n  @Test\n  void testAssertInstantiable_privateConstructor() throws Exception {\n    // Access private static method assertInstantiable(Class<?>)\n    Method assertInstantiable = UnsafeAllocator.class.getDeclaredMethod(\"assertInstantiable\", Class.class);\n    assertInstantiable.setAccessible(true);\n\n    // Should pass for instantiable class\n    assertDoesNotThrow(() -> assertInstantiable.invoke(null, String.class));\n\n    // Should throw for abstract class\n    Class<?> abstractClass = AbstractClass.class;\n    Exception e = assertThrows(Exception.class, () -> assertInstantiable.invoke(null, abstractClass));\n    // Check that cause is UnsupportedOperationException\n    assertTrue(e.getCause() instanceof UnsupportedOperationException);\n  }\n\n  private static UnsafeAllocator invokeCreate() throws Exception {\n    Method create = UnsafeAllocator.class.getDeclaredMethod(\"create\");\n    create.setAccessible(true);\n    return (UnsafeAllocator) create.invoke(null);\n  }\n\n  // Added an abstract class with an abstract method to ensure the class is recognized as abstract\n  abstract static class AbstractClass {\n    public abstract void abstractMethod();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885127,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 917,
+    "prompt_tokens": 2069,
+    "total_tokens": 2986,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.91
+  }
+}

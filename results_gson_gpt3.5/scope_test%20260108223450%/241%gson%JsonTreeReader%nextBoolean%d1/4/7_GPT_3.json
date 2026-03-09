@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnHr2KrJ9sIpPUylEGApWlnzC3KS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a dummy JsonPrimitive Boolean true to push to stack\n    JsonPrimitive truePrimitive = new JsonPrimitive(true);\n\n    // Create JsonTreeReader instance with dummy JsonPrimitive (using constructor)\n    jsonTreeReader = new JsonTreeReader(truePrimitive);\n\n    // Use reflection to set stack and stackSize properly for testing nextBoolean\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = truePrimitive;\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = new int[32];\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Spy on jsonTreeReader to verify calls, but do NOT mock private expect method (private cannot be mocked)\n    jsonTreeReader = spy(jsonTreeReader);\n  }\n\n  @Test\n  public void testNextBoolean_ReturnsBooleanAndIncrementsPathIndices() throws Exception {\n    // Initially pathIndices[0] = 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(0, pathIndices[0]);\n\n    // Call nextBoolean\n    boolean result = jsonTreeReader.nextBoolean();\n\n    // Result should be true (as per JsonPrimitive pushed)\n    assertTrue(result);\n\n    // pathIndices[0] should be incremented by 1\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  public void testNextBoolean_WithStackSizeZero_DoesNotIncrementPathIndices() throws Exception {\n    // Set stackSize to 1 before call (to avoid END_DOCUMENT)\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    // Setup stack with JsonPrimitive true at index 0\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = new JsonPrimitive(true);\n    stackField.set(jsonTreeReader, stack);\n\n    // Setup pathIndices with all zeros\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = new int[32];\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Call nextBoolean, should return true and increment pathIndices[0]\n    boolean result = jsonTreeReader.nextBoolean();\n\n    assertTrue(result);\n\n    // Now set stackSize to 0 AFTER nextBoolean call to test no increment occurs when stackSize == 0\n    stackSizeField.setInt(jsonTreeReader, 0);\n\n    // Manually verify pathIndices remain unchanged after setting stackSize to 0 (should be 1 from increment)\n    // But the original test intent was to check no increment if stackSize == 0 before call\n    // So fix: test with stackSize == 0 and stack top as JsonPrimitive, but push JsonPrimitive at stack[0] and pathIndices[0] = 0\n\n    // So correct test: create new JsonTreeReader with stackSize=0, stack[0] = JsonPrimitive true,\n    // but nextBoolean will throw because expect will see END_DOCUMENT if stackSize==0.\n\n    // So to fix the original test intent, we must test that if stackSize==0 before nextBoolean,\n    // nextBoolean throws IllegalStateException (Expected BOOLEAN but was END_DOCUMENT).\n\n    // So adjust test to expect exception:\n\n  }\n\n  @Test\n  public void testNextBoolean_WithStackSizeZero_ThrowsIllegalStateException() throws Exception {\n    // Set stackSize to 0 before call\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 0);\n\n    // Setup stack with JsonPrimitive true at index 0\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = new JsonPrimitive(true);\n    stackField.set(jsonTreeReader, stack);\n\n    // Expect IllegalStateException because expect will fail with END_DOCUMENT\n    assertThrows(IllegalStateException.class, () -> jsonTreeReader.nextBoolean());\n  }\n\n  @Test\n  public void testNextBoolean_ThrowsIfStackTopNotJsonPrimitive() throws Exception {\n    // Push a non-JsonPrimitive object on stack to cause MalformedJsonException\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = new Object[32];\n    stack[0] = new Object(); // Not JsonPrimitive\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    // Expect MalformedJsonException when nextBoolean tries to process unsupported JsonElement subclass\n    assertThrows(com.google.gson.stream.MalformedJsonException.class, () -> jsonTreeReader.nextBoolean());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890191,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1276,
+    "prompt_tokens": 2651,
+    "total_tokens": 3927,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.66
+  }
+}

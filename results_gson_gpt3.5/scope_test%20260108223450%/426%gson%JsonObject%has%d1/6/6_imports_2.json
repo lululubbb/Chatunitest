@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Map;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testHas_memberExists() throws Exception {\n    // Use reflection to access private field 'members'\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    JsonElement mockElement = mock(JsonElement.class);\n    members.put(\"key1\", mockElement);\n\n    assertTrue(jsonObject.has(\"key1\"));\n  }\n\n  @Test\n  public void testHas_memberDoesNotExist() {\n    assertFalse(jsonObject.has(\"nonexistent\"));\n  }\n\n  @Test\n  public void testHas_nullKey() throws Exception {\n    // According to LinkedTreeMap implementation, null keys are not allowed.\n    // So we test that jsonObject.has(null) returns false without inserting null key.\n    assertFalse(jsonObject.has(null));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1060,
+  "completion_tokens": 288,
+  "total_tokens": 1348,
+  "llm_elapsed_time_seconds": 6.09,
+  "repair_elapsed_time_seconds": 22.57,
+  "round_total_time_seconds": 22.57
+}

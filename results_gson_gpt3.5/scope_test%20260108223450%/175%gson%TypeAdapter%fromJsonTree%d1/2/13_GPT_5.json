@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm6XelrMla8U5H4tb5NfuOGG3uib",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport com.google.gson.stream.JsonReader;\nimport java.io.IOException;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\nclass TypeAdapterFromJsonTreeTest {\n\n  @Test\n  void fromJsonTree_shouldReturnReadValue_whenNoException() throws IOException {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n\n    // Mock construction of JsonTreeReader to pass a mock to read()\n    try (MockedConstruction<JsonTreeReader> mocked = Mockito.mockConstruction(JsonTreeReader.class,\n        (mock, context) -> {\n          // no additional behavior needed\n        })) {\n\n      TypeAdapter<String> adapter = new TypeAdapter<String>() {\n        @Override\n        public void write(JsonWriter out, String value) {\n          // no-op\n        }\n\n        @Override\n        public String read(JsonReader in) throws IOException {\n          // Verify that the JsonReader passed is the mocked JsonTreeReader\n          assertTrue(mocked.constructed().contains(in));\n          return \"readValue\";\n        }\n      };\n\n      // Act\n      String result = adapter.fromJsonTree(jsonElement);\n\n      // Assert\n      assertEquals(\"readValue\", result);\n    }\n  }\n\n  @Test\n  void fromJsonTree_shouldThrowJsonIOException_whenReadThrowsIOException() {\n    // Arrange\n    JsonElement jsonElement = mock(JsonElement.class);\n    TypeAdapter<String> adapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) {\n        // no-op\n      }\n\n      @Override\n      public String read(JsonReader in) throws IOException {\n        throw new IOException(\"read failure\");\n      }\n    };\n\n    // Act & Assert\n    JsonIOException ex = assertThrows(JsonIOException.class, () -> adapter.fromJsonTree(jsonElement));\n    assertEquals(\"java.io.IOException: read failure\", ex.getMessage());\n    assertTrue(ex.getCause() instanceof IOException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885645,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 432,
+    "prompt_tokens": 2705,
+    "total_tokens": 3137,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 2048
+    },
+    "llm_elapsed_time_seconds": 9.27
+  }
+}

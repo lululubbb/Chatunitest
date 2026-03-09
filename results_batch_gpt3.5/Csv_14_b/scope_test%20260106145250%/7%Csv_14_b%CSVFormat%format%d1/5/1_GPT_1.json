@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuw6neloyeNsK5jNi2fZ3i8ACXUgJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedConstruction;\nimport org.mockito.Mockito;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormat_withSingleValue() throws IOException {\n        String result = csvFormat.format(\"value1\");\n        assertEquals(\"value1\", result);\n    }\n\n    @Test\n    void testFormat_withMultipleValues() throws IOException {\n        String result = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        assertEquals(\"value1,value2,value3\", result);\n    }\n\n    @Test\n    void testFormat_withNullValue() throws IOException {\n        String result = csvFormat.format(\"value1\", null, \"value3\");\n        assertEquals(\"value1,,value3\", result);\n    }\n\n    @Test\n    void testFormat_withEmptyValues() throws IOException {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormat_throwsIllegalStateExceptionOnIOException() throws IOException {\n        try (MockedConstruction<CSVPrinter> mocked = Mockito.mockConstruction(CSVPrinter.class,\n                (mock, context) -> {\n                    doThrow(new IOException(\"IO error\")).when(mock).printRecord(any());\n                    doNothing().when(mock).close();\n                })) {\n            IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n                csvFormat.format(\"value1\");\n            });\n            assertTrue(exception.getCause() instanceof IOException);\n            assertEquals(\"IO error\", exception.getCause().getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767685773,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 402,
+    "prompt_tokens": 1597,
+    "total_tokens": 1999,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.84
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9npsyDxqKMO9u86ppwJLyTTTdj9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testParseReturnsCSVParserInstance() throws Exception {\n        Reader mockReader = mock(Reader.class);\n\n        CSVParser mockParser = mock(CSVParser.class);\n\n        // Create a proxy CSVFormat that overrides parse() to return mockParser\n        CSVFormat testFormat = new CSVFormatWrapper(csvFormat, mockParser);\n\n        CSVParser parser = testFormat.parse(mockReader);\n\n        assertNotNull(parser);\n        assertSame(mockParser, parser);\n    }\n\n    @Test\n    void testParseThrowsIOException() {\n        Reader mockReader = mock(Reader.class);\n\n        CSVFormat testFormat = new CSVFormat() {\n            @Override\n            public CSVParser parse(Reader in) throws IOException {\n                throw new IOException(\"mock IO exception\");\n            }\n        };\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            testFormat.parse(mockReader);\n        });\n\n        assertEquals(\"mock IO exception\", thrown.getMessage());\n    }\n\n    /**\n     * Wrapper class to override parse() method without subclassing CSVFormat directly,\n     * because CSVFormat is final and has private constructors.\n     */\n    private static class CSVFormatWrapper extends CSVFormat {\n        private final CSVFormat delegate;\n        private final CSVParser mockParser;\n\n        CSVFormatWrapper(CSVFormat delegate, CSVParser mockParser) {\n            this.delegate = delegate;\n            this.mockParser = mockParser;\n        }\n\n        @Override\n        public CSVParser parse(Reader in) throws IOException {\n            return mockParser;\n        }\n\n        // Delegate all other methods to the original CSVFormat instance\n\n        @Override\n        public char getDelimiter() {\n            return delegate.getDelimiter();\n        }\n\n        @Override\n        public Character getQuoteChar() {\n            return delegate.getQuoteChar();\n        }\n\n        @Override\n        public Quote getQuotePolicy() {\n            return delegate.getQuotePolicy();\n        }\n\n        @Override\n        public Character getCommentStart() {\n            return delegate.getCommentStart();\n        }\n\n        @Override\n        public Character getEscape() {\n            return delegate.getEscape();\n        }\n\n        @Override\n        public boolean getIgnoreSurroundingSpaces() {\n            return delegate.getIgnoreSurroundingSpaces();\n        }\n\n        @Override\n        public boolean getIgnoreEmptyLines() {\n            return delegate.getIgnoreEmptyLines();\n        }\n\n        @Override\n        public String getRecordSeparator() {\n            return delegate.getRecordSeparator();\n        }\n\n        @Override\n        public String getNullString() {\n            return delegate.getNullString();\n        }\n\n        @Override\n        public String[] getHeader() {\n            return delegate.getHeader();\n        }\n\n        @Override\n        public boolean getSkipHeaderRecord() {\n            return delegate.getSkipHeaderRecord();\n        }\n\n        @Override\n        public boolean equals(Object obj) {\n            return delegate.equals(obj);\n        }\n\n        @Override\n        public int hashCode() {\n            return delegate.hashCode();\n        }\n\n        @Override\n        public String toString() {\n            return delegate.toString();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767976741,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 699,
+    "prompt_tokens": 1944,
+    "total_tokens": 2643,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.85
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm3TjKEBCbVRUtlMhR0f3CRgNy0I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  private LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  public void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  public void testGet_existingKey_returnsValue() {\n    map.put(\"key1\", \"value1\");\n    String result = map.get(\"key1\");\n    assertEquals(\"value1\", result);\n  }\n\n  @Test\n  public void testGet_nonExistingKey_returnsNull() {\n    map.put(\"key1\", \"value1\");\n    String result = map.get(\"key2\");\n    assertNull(result);\n  }\n\n  @Test\n  public void testGet_nullKeyWhenAllowed_returnsValue() {\n    LinkedTreeMap<String, String> mapAllowNull = new LinkedTreeMap<>(null, false);\n    // Use reflection to set allowNullValues field to true\n    try {\n      java.lang.reflect.Field allowNullValuesField = LinkedTreeMap.class.getDeclaredField(\"allowNullValues\");\n      allowNullValuesField.setAccessible(true);\n      allowNullValuesField.setBoolean(mapAllowNull, true);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n    mapAllowNull.put(null, \"nullValue\");\n    String result = mapAllowNull.get(null);\n    assertEquals(\"nullValue\", result);\n  }\n\n  @Test\n  public void testGet_nullKeyWhenNotAllowed_returnsNull() {\n    String result = map.get(null);\n    assertNull(result);\n  }\n\n  @Test\n  public void testGet_privateFindByObjectMethod_invokedViaReflection_existingKey() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    map.put(\"key1\", \"value1\");\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap.Node<String, String> node = (LinkedTreeMap.Node<String, String>) findByObject.invoke(map, \"key1\");\n    assertNotNull(node);\n    assertEquals(\"value1\", node.value);\n  }\n\n  @Test\n  public void testGet_privateFindByObjectMethod_invokedViaReflection_nonExistingKey() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap.Node<String, String> node = (LinkedTreeMap.Node<String, String>) findByObject.invoke(map, \"nonexistent\");\n    assertNull(node);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885455,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 605,
+    "prompt_tokens": 1581,
+    "total_tokens": 2186,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.69
+  }
+}

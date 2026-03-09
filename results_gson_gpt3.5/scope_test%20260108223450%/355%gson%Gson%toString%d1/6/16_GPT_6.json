@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlfeXsUSg9MHKJxsXy1hUP5r9ZNy",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport com.google.gson.FieldNamingPolicy;\nimport com.google.gson.FieldNamingStrategy;\nimport com.google.gson.Gson;\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.LongSerializationPolicy;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.Collections;\nimport java.util.List;\nimport java.util.Map;\n\npublic class GsonToStringTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Prepare dependencies for Gson constructor\n    Excluder excluder = Excluder.DEFAULT;\n    FieldNamingStrategy fieldNamingStrategy = FieldNamingPolicy.IDENTITY;\n    Map<Type, InstanceCreator<?>> instanceCreators = Collections.emptyMap();\n    boolean serializeNulls = true;\n    boolean complexMapKeySerialization = false;\n    boolean generateNonExecutableGson = false;\n    boolean htmlSafe = true;\n    boolean prettyPrinting = false;\n    boolean lenient = false;\n    boolean serializeSpecialFloatingPointValues = false;\n    boolean useJdkUnsafe = true;\n    LongSerializationPolicy longSerializationPolicy = LongSerializationPolicy.DEFAULT;\n    String datePattern = null;\n    int dateStyle = 0;\n    int timeStyle = 0;\n    List<TypeAdapterFactory> builderFactories = Collections.emptyList();\n    List<TypeAdapterFactory> builderHierarchyFactories = Collections.emptyList();\n    List<TypeAdapterFactory> factoriesToBeAdded = Collections.emptyList();\n\n    // Use reflection to get ToNumberStrategy default values from Gson class\n    Class<?> gsonClass = Gson.class;\n    Object objectToNumberStrategy = null;\n    Object numberToNumberStrategy = null;\n    Class<?> toNumberStrategyClass = null;\n    try {\n      toNumberStrategyClass = Class.forName(\"com.google.gson.ToNumberStrategy\");\n    } catch (ClassNotFoundException e) {\n      toNumberStrategyClass = null;\n    }\n    try {\n      Field defaultObjectToNumberStrategy = gsonClass.getDeclaredField(\"DEFAULT_OBJECT_TO_NUMBER_STRATEGY\");\n      defaultObjectToNumberStrategy.setAccessible(true);\n      objectToNumberStrategy = defaultObjectToNumberStrategy.get(null);\n      Field defaultNumberToNumberStrategy = gsonClass.getDeclaredField(\"DEFAULT_NUMBER_TO_NUMBER_STRATEGY\");\n      defaultNumberToNumberStrategy.setAccessible(true);\n      numberToNumberStrategy = defaultNumberToNumberStrategy.get(null);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      // fallback to null if not found\n      objectToNumberStrategy = null;\n      numberToNumberStrategy = null;\n    }\n\n    // Use reflection to load ReflectionAccessFilter class and create empty list of that type\n    Class<?> reflectionAccessFilterClass = null;\n    try {\n      reflectionAccessFilterClass = Class.forName(\"com.google.gson.ReflectionAccessFilter\");\n    } catch (ClassNotFoundException e) {\n      reflectionAccessFilterClass = null;\n    }\n    List<?> reflectionFilters;\n    if (reflectionAccessFilterClass != null) {\n      reflectionFilters = Collections.emptyList();\n    } else {\n      reflectionFilters = Collections.emptyList();\n    }\n\n    // Use reflection to invoke the constructor with all parameters\n    // If toNumberStrategyClass is null, pass Object.class as fallback\n    Class<?> toNumberStrategyParamClass = toNumberStrategyClass != null ? toNumberStrategyClass : Object.class;\n\n    gson = (Gson) gsonClass.getDeclaredConstructor(\n        Excluder.class,\n        FieldNamingStrategy.class,\n        Map.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        boolean.class,\n        LongSerializationPolicy.class,\n        String.class,\n        int.class,\n        int.class,\n        List.class,\n        List.class,\n        List.class,\n        toNumberStrategyParamClass,\n        toNumberStrategyParamClass,\n        List.class\n    ).newInstance(\n        excluder,\n        fieldNamingStrategy,\n        instanceCreators,\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableGson,\n        htmlSafe,\n        prettyPrinting,\n        lenient,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        builderFactories,\n        builderHierarchyFactories,\n        factoriesToBeAdded,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        reflectionFilters\n    );\n\n    // Set the private final fields factories and constructorConstructor via reflection\n    Field factoriesField = gsonClass.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, factoriesToBeAdded);\n\n    Field constructorConstructorField = gsonClass.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    constructorConstructorField.set(gson, new ConstructorConstructor(instanceCreators, false, reflectionFilters));\n  }\n\n  @Test\n  public void testToString() throws Exception {\n    // Access constructorConstructor field value for expected string\n    Field constructorConstructorField = Gson.class.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    Object constructorConstructorValue = constructorConstructorField.get(gson);\n\n    String expected = \"{serializeNulls:true,factories:[],instanceCreators:\" + constructorConstructorValue + \"}\";\n    String actual = gson.toString();\n    assertEquals(expected, actual);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883978,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1140,
+    "prompt_tokens": 2504,
+    "total_tokens": 3644,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 23.84
+  }
+}

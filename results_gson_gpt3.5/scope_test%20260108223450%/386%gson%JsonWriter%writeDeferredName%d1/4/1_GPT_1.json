@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmq7xwuiht18AN2z6M1cJNueXyiE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testWriteDeferredName_nullDeferredName_doesNothing() throws Exception {\n        setField(jsonWriter, \"deferredName\", null);\n\n        // Invoke private method writeDeferredName via reflection\n        Method method = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        method.setAccessible(true);\n        method.invoke(jsonWriter);\n\n        // deferredName remains null\n        assertNull(getField(jsonWriter, \"deferredName\"));\n        // No output is written\n        assertEquals(\"\", stringWriter.toString());\n    }\n\n    @Test\n    public void testWriteDeferredName_nonNullDeferredName_callsBeforeNameAndStringAndClearsDeferredName() throws Exception {\n        String deferredNameValue = \"testName\";\n        setField(jsonWriter, \"deferredName\", deferredNameValue);\n\n        // Spy on jsonWriter to verify beforeName() and string() calls\n        JsonWriter spyWriter = Mockito.spy(jsonWriter);\n\n        // Set deferredName on spy as well\n        setField(spyWriter, \"deferredName\", deferredNameValue);\n\n        Method method = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        method.setAccessible(true);\n        method.invoke(spyWriter);\n\n        // Verify beforeName() called once\n        verify(spyWriter, times(1)).beforeName();\n\n        // Verify string(String) called once with deferredNameValue\n        verify(spyWriter, times(1)).string(deferredNameValue);\n\n        // deferredName should be cleared\n        assertNull(getField(spyWriter, \"deferredName\"));\n    }\n\n    // Helper method to set private fields via reflection\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = JsonWriter.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n\n    // Helper method to get private fields via reflection\n    private Object getField(Object target, String fieldName) throws Exception {\n        Field field = JsonWriter.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return field.get(target);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888471,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 553,
+    "prompt_tokens": 745,
+    "total_tokens": 1298,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.46
+  }
+}

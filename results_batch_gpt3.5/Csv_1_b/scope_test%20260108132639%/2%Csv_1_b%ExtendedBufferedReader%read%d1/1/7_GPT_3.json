@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcshz3XsIz6yvUw39ADOWSa2ksN3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testRead_notNewLine() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        when(mockReader.read()).thenReturn((int) 'a');\n\n        int result = spyReader.read();\n\n        assertEquals('a', result);\n        assertEquals(0, getPrivateField(spyReader, \"lineCounter\"));\n        assertEquals('a', getPrivateField(spyReader, \"lastChar\"));\n    }\n\n    @Test\n    void testRead_newLine() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        when(mockReader.read()).thenReturn((int) '\\n');\n\n        int result = spyReader.read();\n\n        assertEquals('\\n', result);\n        assertEquals(1, getPrivateField(spyReader, \"lineCounter\"));\n        assertEquals('\\n', getPrivateField(spyReader, \"lastChar\"));\n    }\n\n    @Test\n    void testRead_endOfStream() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        when(mockReader.read()).thenReturn(-1);\n\n        int result = spyReader.read();\n\n        assertEquals(-1, result);\n        assertEquals(0, getPrivateField(spyReader, \"lineCounter\"));\n        assertEquals(-1, getPrivateField(spyReader, \"lastChar\"));\n    }\n\n    private int getPrivateField(ExtendedBufferedReader instance, String fieldName) {\n        try {\n            Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getInt(instance);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850191,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 464,
+    "prompt_tokens": 951,
+    "total_tokens": 1415,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.31
+  }
+}

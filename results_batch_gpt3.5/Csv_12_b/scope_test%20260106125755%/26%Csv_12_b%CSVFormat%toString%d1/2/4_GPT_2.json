@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutjGbsBDtNc3ceOZepHiHVSf8o0x",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    @Test\n    void testToString_minimalDelimiterOnly() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(';');\n        String result = format.toString();\n        assertTrue(result.contains(\"Delimiter=<;>\"));\n        // None of the optional fields should be present\n        assertFalse(result.contains(\"Escape=<\"));\n        assertFalse(result.contains(\"QuoteChar=<\"));\n        assertFalse(result.contains(\"CommentStart=<\"));\n        assertFalse(result.contains(\"NullString=<\"));\n        assertFalse(result.contains(\"RecordSeparator=<\"));\n        assertFalse(result.contains(\"EmptyLines:ignored\"));\n        assertFalse(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(result.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_allFieldsSet() throws Exception {\n        // Use reflection to create CSVFormat instance with private constructor\n        Method constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        CSVFormat format = (CSVFormat) constructor.invoke(null,\n                '|',\n                Character.valueOf('\\\"'),\n                QuoteMode.ALL,\n                Character.valueOf('#'),\n                Character.valueOf('\\\\'),\n                true,\n                true,\n                \"\\n\",\n                \"NULL\",\n                new String[]{\"H1\", \"H2\"},\n                true,\n                true\n        );\n        String result = format.toString();\n        assertTrue(result.contains(\"Delimiter=<|>\"));\n        assertTrue(result.contains(\"Escape=<\\\\>\"));\n        assertTrue(result.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(result.contains(\"CommentStart=<#>\"));\n        assertTrue(result.contains(\"NullString=<NULL>\"));\n        assertTrue(result.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(result.contains(\"EmptyLines:ignored\"));\n        assertTrue(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(result.contains(\"Header:[H1, H2]\"));\n    }\n\n    @Test\n    void testToString_someFieldsSet() throws Exception {\n        // Use reflection to create CSVFormat instance with private constructor\n        Method constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        CSVFormat format = (CSVFormat) constructor.invoke(null,\n                ',',\n                null,\n                QuoteMode.MINIMAL,\n                null,\n                Character.valueOf('\\''),\n                false,\n                false,\n                null,\n                null,\n                null,\n                false,\n                false\n        );\n        String result = format.toString();\n        assertTrue(result.contains(\"Delimiter=<,>\"));\n        assertTrue(result.contains(\"Escape=<'>'\"));\n        assertFalse(result.contains(\"QuoteChar=<\"));\n        assertFalse(result.contains(\"CommentStart=<\"));\n        assertFalse(result.contains(\"NullString=<\"));\n        assertFalse(result.contains(\"RecordSeparator=<\"));\n        assertFalse(result.contains(\"EmptyLines:ignored\"));\n        assertFalse(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n        assertFalse(result.contains(\"Header:\"));\n    }\n\n    @Test\n    void testToString_ignoreFlags() {\n        CSVFormat format = CSVFormat.DEFAULT\n                .withIgnoreEmptyLines(true)\n                .withIgnoreSurroundingSpaces(true)\n                .withSkipHeaderRecord(true);\n        String s = format.toString();\n        assertTrue(s.contains(\"EmptyLines:ignored\"));\n        assertTrue(s.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(s.contains(\"SkipHeaderRecord:true\"));\n    }\n\n    @Test\n    void testToString_headerArray() {\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"a\", \"b\", \"c\");\n        String s = format.toString();\n        assertTrue(s.contains(\"Header:[a, b, c]\"));\n    }\n\n    @Test\n    void testToString_reflectionInvoke() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Method toStringMethod = CSVFormat.class.getDeclaredMethod(\"toString\");\n        toStringMethod.setAccessible(true);\n        Object result = toStringMethod.invoke(format);\n        assertNotNull(result);\n        assertTrue(result instanceof String);\n        String s = (String) result;\n        assertTrue(s.contains(\"Delimiter=<,>\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676626,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 991,
+    "prompt_tokens": 2370,
+    "total_tokens": 3361,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.64
+  }
+}

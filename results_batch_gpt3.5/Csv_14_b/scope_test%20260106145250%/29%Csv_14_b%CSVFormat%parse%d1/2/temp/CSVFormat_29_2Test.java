@@ -1,0 +1,68 @@
+package org.apache.commons.csv;
+import org.junit.jupiter.api.Timeout;
+import static org.apache.commons.csv.Constants.BACKSLASH;
+import static org.apache.commons.csv.Constants.COMMA;
+import static org.apache.commons.csv.Constants.COMMENT;
+import static org.apache.commons.csv.Constants.CR;
+import static org.apache.commons.csv.Constants.CRLF;
+import static org.apache.commons.csv.Constants.DOUBLE_QUOTE_CHAR;
+import static org.apache.commons.csv.Constants.LF;
+import static org.apache.commons.csv.Constants.PIPE;
+import static org.apache.commons.csv.Constants.SP;
+import static org.apache.commons.csv.Constants.TAB;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class CSVFormat_29_2Test {
+
+    private CSVFormat csvFormat;
+
+    @BeforeEach
+    public void setUp() {
+        csvFormat = CSVFormat.DEFAULT;
+    }
+
+    @Test
+    @Timeout(8000)
+    public void testParse_withValidReader_returnsNonNullCSVParser() {
+        Reader reader = new StringReader("a,b,c\n1,2,3");
+
+        CSVParser parser = null;
+        try {
+            parser = csvFormat.parse(reader);
+        } catch (IOException e) {
+            fail("IOException thrown: " + e.getMessage());
+        }
+
+        assertNotNull(parser);
+        assertEquals(CSVParser.class, parser.getClass());
+    }
+
+    @Test
+    @Timeout(8000)
+    public void testParse_withNullReader_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> {
+            csvFormat.parse(null);
+        });
+    }
+}

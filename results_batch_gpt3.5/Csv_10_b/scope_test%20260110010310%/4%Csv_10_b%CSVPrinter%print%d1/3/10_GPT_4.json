@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwACY43GVLpnfnm8RrAyf1Rk2hdpY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.apache.commons.csv.Constants;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterPrintTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        when(format.getNullString()).thenReturn(null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        final Object[] capturedArgs = new Object[4];\n\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter).print(any(), any(CharSequence.class), anyInt(), anyInt());\n\n        // Because print(Object, CharSequence, int, int) is private, we cannot mock it directly.\n        // Instead, we invoke spyPrinter.print(null) which calls the private method internally.\n        spyPrinter.print(null);\n\n        assertNull(capturedArgs[0]);\n        assertEquals(Constants.EMPTY, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(Constants.EMPTY.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNonNull() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        final String nullString = \"NULLSTR\";\n        when(format.getNullString()).thenReturn(nullString);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        final Object[] capturedArgs = new Object[4];\n\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter).print(any(), any(CharSequence.class), anyInt(), anyInt());\n\n        spyPrinter.print(null);\n\n        assertNull(capturedArgs[0]);\n        assertEquals(nullString, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(nullString.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_nonNullValue() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        String value = \"value\";\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        final Object[] capturedArgs = new Object[4];\n\n        doAnswer(invocation -> {\n            capturedArgs[0] = invocation.getArgument(0);\n            capturedArgs[1] = invocation.getArgument(1);\n            capturedArgs[2] = invocation.getArgument(2);\n            capturedArgs[3] = invocation.getArgument(3);\n            return null;\n        }).when(spyPrinter).print(any(), any(CharSequence.class), anyInt(), anyInt());\n\n        spyPrinter.print(value);\n\n        assertEquals(value, capturedArgs[0]);\n        assertEquals(value, capturedArgs[1]);\n        assertEquals(0, capturedArgs[2]);\n        assertEquals(value.length(), capturedArgs[3]);\n    }\n\n    @Test\n    void testPrint_privatePrint_invocation() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        String value = \"abc\";\n        Method privatePrint = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrint.setAccessible(true);\n\n        privatePrint.invoke(printer, value, value, 0, value.length());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978274,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 920,
+    "prompt_tokens": 2755,
+    "total_tokens": 3675,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.82
+  }
+}

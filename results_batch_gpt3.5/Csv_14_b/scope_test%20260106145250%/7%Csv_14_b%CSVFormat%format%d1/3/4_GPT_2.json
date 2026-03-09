@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuw7FVi3J8n7j3uxulKcdkfevKFS8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testFormatWithMultipleValues() {\n        String result = csvFormat.format(\"a\", \"b\", \"c\");\n        // Default delimiter is comma, default quote char is double quote, record separator is CRLF\n        assertEquals(\"a,b,c\", result);\n    }\n\n    @Test\n    void testFormatWithNullValue() {\n        CSVFormat format = csvFormat.withNullString(\"NULL\");\n        String result = format.format(\"a\", null, \"c\");\n        assertEquals(\"a,NULL,c\", result);\n    }\n\n    @Test\n    void testFormatWithEmptyValues() {\n        String result = csvFormat.format();\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    void testFormatWithSingleValue() {\n        String result = csvFormat.format(\"single\");\n        assertEquals(\"single\", result);\n    }\n\n    @Test\n    void testFormatThrowsIllegalStateExceptionOnIOException() throws Exception {\n        // Create a spy of CSVPrinter that throws IOException on printRecord\n        CSVPrinter spyPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"IO error\")).when(spyPrinter).printRecord(any());\n\n        // Use reflection to replace the CSVPrinter constructor call inside CSVFormat.format\n        // by temporarily overriding the CSVFormat.print method to return our spy\n\n        // Create a subclass of CSVFormat to override print(Appendable) to return our spy\n        CSVFormat csvFormatSpy = new CSVFormat(\n                csvFormat.getDelimiter(),\n                csvFormat.getQuoteCharacter(),\n                csvFormat.getQuoteMode(),\n                csvFormat.getCommentMarker(),\n                csvFormat.getEscapeCharacter(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                csvFormat.getHeaderComments(),\n                csvFormat.getHeader(),\n                csvFormat.getSkipHeaderRecord(),\n                csvFormat.getAllowMissingColumnNames(),\n                csvFormat.getIgnoreHeaderCase(),\n                csvFormat.getTrim(),\n                csvFormat.getTrailingDelimiter()\n        ) {\n            @Override\n            public CSVPrinter print(final Appendable out) {\n                return spyPrinter;\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatSpy.format(\"a\", \"b\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767685801,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 610,
+    "prompt_tokens": 2194,
+    "total_tokens": 2804,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.32
+  }
+}

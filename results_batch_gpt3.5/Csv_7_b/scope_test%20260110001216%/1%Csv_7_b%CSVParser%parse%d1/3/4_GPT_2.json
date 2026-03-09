@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9R4F1x8D8c5BfBvKhZB8SaXDAvW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport org.mockito.MockedConstruction;\n\nclass CSVParserParseTest {\n\n    private CSVFormat formatMock;\n    private File fileMock;\n    private FileReader fileReaderMock;\n\n    @BeforeEach\n    void setup() {\n        formatMock = mock(CSVFormat.class);\n        fileMock = mock(File.class);\n        fileReaderMock = mock(FileReader.class);\n    }\n\n    @Test\n    void parse_withValidFileAndFormat_returnsCSVParser() throws IOException {\n        try (MockedConstruction<FileReader> mockedFileReader = Mockito.mockConstruction(FileReader.class,\n                (mock, context) -> {\n                    // no special stubbing needed\n                })) {\n\n            CSVParser parser = CSVParser.parse(fileMock, formatMock);\n\n            assertNotNull(parser);\n            assertEquals(formatMock, getField(parser, \"format\"));\n            assertNotNull(getField(parser, \"headerMap\"));\n            assertNotNull(getField(parser, \"lexer\"));\n            assertEquals(Long.valueOf(0L), getField(parser, \"recordNumber\"));\n            assertNotNull(getField(parser, \"record\"));\n            assertNotNull(getField(parser, \"reusableToken\"));\n\n            // Verify that FileReader was constructed with the fileMock\n            assertEquals(fileMock, getFileReaderFile(mockedFileReader.constructed().get(0)));\n        }\n    }\n\n    @Test\n    void parse_withNullFile_throwsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse((File) null, formatMock));\n        assertEquals(\"file\", ex.getMessage());\n    }\n\n    @Test\n    void parse_withNullFormat_throwsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> CSVParser.parse(fileMock, null));\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    // Helper method to access private fields via reflection\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getField(Object obj, String fieldName) {\n        try {\n            java.lang.reflect.Field field = CSVParser.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return (T) field.get(obj);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    // Helper method to get the File from FileReader via reflection \n    private File getFileReaderFile(FileReader fileReader) {\n        try {\n            java.lang.reflect.Field inField = FileReader.class.getDeclaredField(\"in\");\n            inField.setAccessible(true);\n            Object in = inField.get(fileReader);\n            if (in instanceof File) {\n                return (File) in;\n            }\n        } catch (Exception ignored) {\n        }\n        return null;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975330,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 623,
+    "prompt_tokens": 1425,
+    "total_tokens": 2048,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.96
+  }
+}

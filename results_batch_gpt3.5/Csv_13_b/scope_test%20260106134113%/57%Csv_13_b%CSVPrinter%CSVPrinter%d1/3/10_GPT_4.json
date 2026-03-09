@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuu9HvQbqIjqnno3uIAuHr9AIDfNg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = new StringBuilder();\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void testConstructor_withNullOut_throwsException() {\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            new CSVPrinter(null, format);\n        });\n        assertEquals(\"out\", exception.getMessage());\n    }\n\n    @Test\n    void testConstructor_withNullFormat_throwsException() {\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            new CSVPrinter(out, null);\n        });\n        assertEquals(\"format\", exception.getMessage());\n    }\n\n    @Test\n    void testConstructor_withHeaderCommentsAndHeader_printsCommentsAndHeader() throws IOException {\n        // Fix: mock.getHeaderComments() returns Iterable<String>, not String[]\n        when(format.getHeaderComments()).thenReturn(java.util.Arrays.asList(\"comment1\", null, \"comment2\"));\n        when(format.getHeader()).thenReturn(new String[] {\"h1\", \"h2\"});\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String result = out.toString();\n        assertTrue(result.contains(\"comment1\"));\n        assertTrue(result.contains(\"comment2\"));\n        assertTrue(result.contains(\"h1\"));\n        assertTrue(result.contains(\"h2\"));\n    }\n\n    @Test\n    void testConstructor_withHeaderCommentsNullAndSkipHeaderRecordTrue_printsOnlyComments() throws IOException {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(new String[] {\"h1\", \"h2\"});\n        when(format.getSkipHeaderRecord()).thenReturn(true);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String result = out.toString();\n        assertFalse(result.contains(\"h1\"));\n        assertFalse(result.contains(\"h2\"));\n    }\n\n    @Test\n    void testConstructor_withHeaderNull_doesNotPrintHeader() throws IOException {\n        when(format.getHeaderComments()).thenReturn(null);\n        when(format.getHeader()).thenReturn(null);\n        when(format.getSkipHeaderRecord()).thenReturn(false);\n\n        CSVPrinter printer = new CSVPrinter(out, format);\n\n        String result = out.toString();\n        assertEquals(\"\", result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678239,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 541,
+    "prompt_tokens": 1175,
+    "total_tokens": 1716,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.52
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZ2sPBa5zjMmsUsP0zu1lsDBaXa8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues() throws IOException {\n        Object[] values = {\"value1\", 123, null, \"value4\"};\n\n        // We spy to verify calls to print(Object)\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        // Verify print called for each value\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n\n        // Verify println called once\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withEmptyValues() throws IOException {\n        Object[] values = new Object[0];\n\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord(values);\n\n        // print should never be called\n        verify(spyPrinter, never()).print(any());\n\n        // println should be called once\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withNullArray() {\n        assertThrows(NullPointerException.class, () -> printer.printRecord((Object[]) null));\n    }\n\n    @Test\n    void testPrintRecord_invokesPrintPrivateMethodViaReflection() throws Throwable {\n        // Use reflection to invoke private print(Object, CharSequence, int, int)\n        Method privatePrintMethod = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        privatePrintMethod.setAccessible(true);\n\n        CharSequence val = \"hello,world\";\n        // Invoke with offset 0 and length val.length()\n        try {\n            privatePrintMethod.invoke(printer, val, val, 0, val.length());\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550430,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 485,
+    "prompt_tokens": 986,
+    "total_tokens": 1471,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.6
+  }
+}

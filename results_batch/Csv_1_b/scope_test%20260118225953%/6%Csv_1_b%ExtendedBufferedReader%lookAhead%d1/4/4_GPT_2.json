@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOb1A7oeJpLUCdGP4xNGKdEBKTuV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testLookAheadReturnsCharSuccessfully() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        doNothing().when(spyReader).mark(anyInt());\n        doReturn((int) 'A').when(spyReader).read();\n        doNothing().when(spyReader).reset();\n\n        int result = spyReader.lookAhead();\n\n        assertEquals('A', result);\n        verify(spyReader).mark(anyInt());\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        doNothing().when(spyReader).mark(anyInt());\n        doReturn(ExtendedBufferedReader.END_OF_STREAM).when(spyReader).read();\n        doNothing().when(spyReader).reset();\n\n        int result = spyReader.lookAhead();\n\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        verify(spyReader).mark(anyInt());\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionOnMark() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        doThrow(new IOException(\"mark failed\")).when(spyReader).mark(anyInt());\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"mark failed\", thrown.getMessage());\n        verify(spyReader).mark(anyInt());\n        verify(spyReader, never()).read();\n        verify(spyReader, never()).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionOnRead() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        doNothing().when(spyReader).mark(anyInt());\n        doThrow(new IOException(\"read failed\")).when(spyReader).read();\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"read failed\", thrown.getMessage());\n        verify(spyReader).mark(anyInt());\n        verify(spyReader).read();\n        verify(spyReader, never()).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionOnReset() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n\n        doNothing().when(spyReader).mark(anyInt());\n        doReturn((int) 'B').when(spyReader).read();\n        doThrow(new IOException(\"reset failed\")).when(spyReader).reset();\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"reset failed\", thrown.getMessage());\n        verify(spyReader).mark(anyInt());\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748591,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 700,
+    "prompt_tokens": 1070,
+    "total_tokens": 1770,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.47
+  }
+}

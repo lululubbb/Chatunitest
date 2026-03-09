@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlONZEiuWrBg5aEiYtSA1zOZGxOo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Streams;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass JsonElementTest {\n\n  static class JsonElementImpl extends JsonElement {\n    @Override\n    public JsonElement deepCopy() {\n      return null;\n    }\n  }\n\n  @Test\n  void testToString_success() throws IOException {\n    JsonElement element = spy(new JsonElementImpl());\n\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(element), any(JsonWriter.class)))\n          .thenAnswer(invocation -> {\n            JsonWriter writer = invocation.getArgument(1);\n            writer.value(\"mocked\");\n            return null;\n          });\n\n      String result = element.toString();\n\n      assertNotNull(result);\n      assertTrue(result.contains(\"mocked\"));\n      streamsMockedStatic.verify(() -> Streams.write(eq(element), any(JsonWriter.class)));\n    }\n  }\n\n  @Test\n  void testToString_throwsIOException_assertionError() throws IOException {\n    JsonElement element = spy(new JsonElementImpl());\n\n    try (MockedStatic<Streams> streamsMockedStatic = Mockito.mockStatic(Streams.class)) {\n      streamsMockedStatic.when(() -> Streams.write(eq(element), any(JsonWriter.class)))\n          .thenThrow(new IOException(\"mock IO exception\"));\n\n      AssertionError error = assertThrows(AssertionError.class, element::toString);\n      assertTrue(error.getCause() instanceof IOException);\n      assertEquals(\"mock IO exception\", error.getCause().getMessage());\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882907,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 375,
+    "prompt_tokens": 427,
+    "total_tokens": 802,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.56
+  }
+}

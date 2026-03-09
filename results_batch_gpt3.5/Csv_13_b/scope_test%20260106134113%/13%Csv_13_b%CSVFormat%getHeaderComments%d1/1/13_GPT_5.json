@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuujG6LmZGS9xGHLoedKF2O24eX6n",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testGetHeaderComments_NullHeaderComments() throws Exception {\n        CSVFormat format = createCSVFormatWithHeaderComments(null);\n        String[] result = format.getHeaderComments();\n        assertNull(result, \"Expected null when headerComments field is null\");\n    }\n\n    @Test\n    public void testGetHeaderComments_NonNullHeaderComments() throws Exception {\n        String[] original = new String[] { \"comment1\", \"comment2\" };\n        CSVFormat format = createCSVFormatWithHeaderComments(original);\n        String[] result = format.getHeaderComments();\n        assertNotNull(result, \"Expected non-null array\");\n        assertArrayEquals(original, result, \"Expected array contents to match\");\n        assertNotSame(original, result, \"Expected cloned array, not the same instance\");\n    }\n\n    private CSVFormat createCSVFormatWithHeaderComments(String[] headerComments) throws Exception {\n        // Create a new CSVFormat instance by copying DEFAULT and replacing headerComments via reflection\n        CSVFormat original = CSVFormat.DEFAULT;\n\n        // Prepare parameters for constructor\n        char delimiter = getFieldValue(original, \"delimiter\");\n        Character quoteCharacter = getFieldValue(original, \"quoteCharacter\");\n        QuoteMode quoteMode = getFieldValue(original, \"quoteMode\");\n        Character commentMarker = getFieldValue(original, \"commentMarker\");\n        Character escapeCharacter = getFieldValue(original, \"escapeCharacter\");\n        boolean ignoreSurroundingSpaces = getFieldValue(original, \"ignoreSurroundingSpaces\");\n        boolean ignoreEmptyLines = getFieldValue(original, \"ignoreEmptyLines\");\n        String recordSeparator = getFieldValue(original, \"recordSeparator\");\n        String nullString = getFieldValue(original, \"nullString\");\n        String[] header = getFieldValue(original, \"header\");\n        boolean skipHeaderRecord = getFieldValue(original, \"skipHeaderRecord\");\n        boolean allowMissingColumnNames = getFieldValue(original, \"allowMissingColumnNames\");\n        boolean ignoreHeaderCase = getFieldValue(original, \"ignoreHeaderCase\");\n\n        // The private constructor signature:\n        // CSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n        // Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        // boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        // Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        // boolean allowMissingColumnNames, boolean ignoreHeaderCase)\n\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class,\n                Character.class, Character.class, boolean.class, boolean.class, String.class, String.class,\n                Object[].class, String[].class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        Object[] headerCommentsObj = headerComments;\n\n        return constructor.newInstance(\n                delimiter,\n                quoteCharacter,\n                quoteMode,\n                commentMarker,\n                escapeCharacter,\n                ignoreSurroundingSpaces,\n                ignoreEmptyLines,\n                recordSeparator,\n                nullString,\n                headerCommentsObj,\n                header,\n                skipHeaderRecord,\n                allowMissingColumnNames,\n                ignoreHeaderCase);\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    private <T> T getFieldValue(Object obj, String fieldName) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return (T) field.get(obj);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680470,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 748,
+    "prompt_tokens": 1957,
+    "total_tokens": 2705,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.57
+  }
+}

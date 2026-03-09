@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm2uCZKPkKPN3vvuFkXVwf0hm3eO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\n\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.function.Executable;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass JsonParserTest {\n\n  @Test\n  void parseReader_validJson_consumesEntireDocument() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n    JsonElement element = JsonParser.parseReader(reader);\n    assertNotNull(element);\n    assertFalse(element.isJsonNull());\n  }\n\n  @Test\n  void parseReader_emptyJson_returnsJsonNull() throws Exception {\n    String json = \"null\";\n    Reader reader = new StringReader(json);\n    JsonElement element = JsonParser.parseReader(reader);\n    assertNotNull(element);\n    assertTrue(element.isJsonNull());\n  }\n\n  @Test\n  void parseReader_partialConsumption_throwsJsonSyntaxException() throws Exception {\n    // We cannot subclass final JsonParser or override static methods.\n    // So test by feeding JSON that leaves trailing data.\n\n    String json = \"{\\\"key\\\":\\\"value\\\"} trailing\";\n    Reader stringReader = new StringReader(json);\n\n    JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> {\n      JsonParser.parseReader(stringReader);\n    });\n    assertEquals(\"Did not consume the entire document.\", ex.getMessage());\n  }\n\n  @Test\n  void parseReader_malformedJson_throwsJsonSyntaxException() {\n    String json = \"{malformed json\";\n    Reader reader = new StringReader(json);\n\n    JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> {\n      JsonParser.parseReader(reader);\n    });\n    assertNotNull(ex.getCause());\n    assertTrue(ex.getCause() instanceof MalformedJsonException);\n  }\n\n  @Test\n  void parseReader_ioException_throwsJsonIOException() throws IOException {\n    Reader reader = mock(Reader.class);\n    when(reader.read(any(char[].class), anyInt(), anyInt())).thenThrow(new IOException(\"io exception\"));\n\n    JsonIOException ex = assertThrows(JsonIOException.class, () -> {\n      JsonParser.parseReader(reader);\n    });\n    assertNotNull(ex.getCause());\n    assertTrue(ex.getCause() instanceof IOException);\n  }\n\n  @Test\n  void parseReader_numberFormatException_throwsJsonSyntaxException() {\n    try {\n      JsonReader jsonReader = mock(JsonReader.class);\n      when(jsonReader.peek()).thenReturn(JsonToken.NUMBER);\n      when(jsonReader.nextString()).thenThrow(new NumberFormatException(\"number format\"));\n\n      Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parseReader\", JsonReader.class);\n      parseReaderMethod.setAccessible(true);\n\n      Executable executable = () -> {\n        try {\n          parseReaderMethod.invoke(null, jsonReader);\n        } catch (InvocationTargetException e) {\n          // unwrap and rethrow the cause to be caught by assertThrows\n          throw e.getCause();\n        }\n      };\n\n      JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, executable);\n      assertNotNull(ex.getCause());\n      assertTrue(ex.getCause() instanceof NumberFormatException);\n    } catch (NoSuchMethodException e) {\n      fail(\"parseReader(JsonReader) method not found\");\n    } catch (Throwable t) {\n      fail(\"Unexpected throwable: \" + t);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885420,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 737,
+    "prompt_tokens": 1528,
+    "total_tokens": 2265,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.71
+  }
+}

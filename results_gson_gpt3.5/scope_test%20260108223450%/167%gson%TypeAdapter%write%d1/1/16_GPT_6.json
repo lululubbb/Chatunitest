@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXM3ImAXQB13hhlTDrRrTarV3a2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nclass TypeAdapterWriteTest {\n\n    private TypeAdapter<String> typeAdapter;\n\n    @BeforeEach\n    void setUp() {\n        // Create a concrete subclass for testing since TypeAdapter is abstract\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                if (value == null) {\n                    out.nullValue();\n                    return;\n                }\n                out.value(value);\n            }\n\n            @Override\n            public String read(JsonReader in) throws IOException {\n                if (in.peek() == JsonToken.NULL) {\n                    in.nextNull();\n                    return null;\n                }\n                return in.nextString();\n            }\n        };\n    }\n\n    @Test\n    void write_nullValue_callsNullValue() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n        typeAdapter.write(jsonWriter, null);\n        jsonWriter.flush();\n\n        assertEquals(\"null\", stringWriter.toString());\n    }\n\n    @Test\n    void write_nonNullValue_writesValue() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n        String testValue = \"test string\";\n        typeAdapter.write(jsonWriter, testValue);\n        jsonWriter.flush();\n\n        assertEquals(\"\\\"test string\\\"\", stringWriter.toString());\n    }\n\n    @Test\n    void toJson_withValue_returnsJsonString() throws IOException {\n        String testValue = \"hello\";\n\n        String json = typeAdapter.toJson(testValue);\n\n        assertEquals(\"\\\"hello\\\"\", json);\n    }\n\n    @Test\n    void toJson_withNull_returnsNullJson() throws IOException {\n        String json = typeAdapter.toJson(null);\n\n        assertEquals(\"null\", json);\n    }\n\n    @Test\n    void toJson_writerOutput_containsCorrectJson() throws IOException {\n        StringWriter writer = new StringWriter();\n        typeAdapter.toJson(writer, \"abc\");\n        writer.flush();\n\n        assertEquals(\"\\\"abc\\\"\", writer.toString());\n    }\n\n    @Test\n    void nullSafe_wrapsTypeAdapter() throws IOException {\n        TypeAdapter<String> nullSafeAdapter = typeAdapter.nullSafe();\n\n        StringWriter writer = new StringWriter();\n        JsonWriter jsonWriter = new JsonWriter(writer);\n\n        // nullSafeAdapter should write \"null\" for null values\n        nullSafeAdapter.write(jsonWriter, null);\n        jsonWriter.flush();\n        assertEquals(\"null\", writer.toString());\n\n        writer.getBuffer().setLength(0);\n\n        // and delegate to original adapter for non-null values\n        nullSafeAdapter.write(jsonWriter, \"value\");\n        jsonWriter.flush();\n        assertEquals(\"\\\"value\\\"\", writer.toString());\n    }\n\n    @Test\n    void toJsonTree_withValue_returnsJsonElement() throws IOException {\n        JsonElement element = typeAdapter.toJsonTree(\"abc\");\n        assertTrue(element.isJsonPrimitive());\n        assertEquals(\"abc\", element.getAsString());\n    }\n\n    @Test\n    void toJsonTree_withNull_returnsJsonNull() throws IOException {\n        JsonElement element = typeAdapter.toJsonTree(null);\n        assertTrue(element.isJsonNull());\n    }\n\n    @Test\n    void fromJson_readerWithNull_returnsNull() throws IOException {\n        StringReader stringReader = new StringReader(\"null\");\n        String result = typeAdapter.fromJson(stringReader);\n        assertNull(result);\n    }\n\n    @Test\n    void fromJson_readerWithValue_returnsValue() throws IOException {\n        StringReader stringReader = new StringReader(\"\\\"hello\\\"\");\n        String result = typeAdapter.fromJson(stringReader);\n        assertEquals(\"hello\", result);\n    }\n\n    @Test\n    void fromJson_stringWithValue_returnsValue() throws IOException {\n        String json = \"\\\"hello\\\"\";\n        String result = typeAdapter.fromJson(json);\n        assertEquals(\"hello\", result);\n    }\n\n    @Test\n    void fromJsonTree_withJsonPrimitive_returnsValue() throws IOException {\n        JsonElement element = new JsonPrimitive(\"hello\");\n        String result = typeAdapter.fromJsonTree(element);\n        assertEquals(\"hello\", result);\n    }\n\n    @Test\n    void fromJsonTree_withJsonNull_returnsNull() throws IOException {\n        JsonElement element = JsonNull.INSTANCE;\n        String result = typeAdapter.fromJsonTree(element);\n        assertNull(result);\n    }\n\n    @Test\n    void invokeWriteViaReflection_nonNullValue() throws Exception {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n        Method writeMethod = TypeAdapter.class.getDeclaredMethod(\"write\", JsonWriter.class, Object.class);\n        writeMethod.setAccessible(true);\n        writeMethod.invoke(typeAdapter, jsonWriter, \"reflection\");\n\n        jsonWriter.flush();\n        assertEquals(\"\\\"reflection\\\"\", stringWriter.toString());\n    }\n\n    @Test\n    void invokeWriteViaReflection_nullValue() throws Exception {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter jsonWriter = new JsonWriter(stringWriter);\n\n        Method writeMethod = TypeAdapter.class.getDeclaredMethod(\"write\", JsonWriter.class, Object.class);\n        writeMethod.setAccessible(true);\n        // Pass null as a direct argument, not wrapped in Object[]\n        writeMethod.invoke(typeAdapter, jsonWriter, (Object) null);\n\n        jsonWriter.flush();\n        assertEquals(\"null\", stringWriter.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887308,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1180,
+    "prompt_tokens": 2767,
+    "total_tokens": 3947,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 1024
+    },
+    "llm_elapsed_time_seconds": 30.01
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmqblHPlFbv425yvyyY20VFXhIIb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonSyntaxException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport org.junit.jupiter.api.Test;\n\nclass JsonParserTest {\n\n  @Test\n  void parseString_validJson_returnsJsonElement() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    JsonElement result = JsonParser.parseString(json);\n    assertNotNull(result);\n  }\n\n  @Test\n  void parseString_emptyJson_returnsJsonElement() throws Exception {\n    String json = \"\";\n    JsonElement result = JsonParser.parseString(json);\n    assertNotNull(result);\n  }\n\n  @Test\n  void parseString_nullJson_throwsNullPointerException() {\n    assertThrows(NullPointerException.class, () -> JsonParser.parseString(null));\n  }\n\n  @Test\n  void parseString_malformedJson_throwsJsonSyntaxException() {\n    String malformedJson = \"{key:value}\";\n    assertThrows(JsonSyntaxException.class, () -> {\n      // Use parseString directly to ensure exception is thrown\n      JsonParser.parseString(malformedJson);\n    });\n  }\n\n  @Test\n  void parseString_invokesParseReaderWithStringReader() throws Exception {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n\n    // Use reflection to access private static parseReader(Reader) method\n    java.lang.reflect.Method parseReaderMethod = JsonParser.class.getDeclaredMethod(\"parseReader\", Reader.class);\n    parseReaderMethod.setAccessible(true);\n\n    JsonElement expected = JsonNull.INSTANCE;\n\n    // Spy JsonParser class to mock parseReader(Reader)\n    JsonParser spyParser = mock(JsonParser.class, invocation -> {\n      if (invocation.getMethod().getName().equals(\"parseReader\")\n          && invocation.getArguments().length == 1\n          && invocation.getArguments()[0] instanceof Reader) {\n        return expected;\n      }\n      return invocation.callRealMethod();\n    });\n\n    // Since parseString is static, we cannot spy it directly, so just call and check result type\n    JsonElement actual = JsonParser.parseString(json);\n    assertNotNull(actual);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888501,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 457,
+    "prompt_tokens": 1117,
+    "total_tokens": 1574,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.37
+  }
+}

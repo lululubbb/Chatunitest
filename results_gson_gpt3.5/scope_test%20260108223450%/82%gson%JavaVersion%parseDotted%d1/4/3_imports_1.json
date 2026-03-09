@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  private static int invokeParseDotted(String version) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    method.setAccessible(true);\n    return (int) method.invoke(null, version);\n  }\n\n  @Test\n  public void testParseDotted_singleNumber() throws Exception {\n    assertEquals(9, invokeParseDotted(\"9\"));\n    assertEquals(11, invokeParseDotted(\"11\"));\n    assertEquals(17, invokeParseDotted(\"17\"));\n  }\n\n  @Test\n  public void testParseDotted_withUnderscore() throws Exception {\n    assertEquals(9, invokeParseDotted(\"9_0_1\"));\n    assertEquals(11, invokeParseDotted(\"11_0_2\"));\n  }\n\n  @Test\n  public void testParseDotted_withDots() throws Exception {\n    assertEquals(8, invokeParseDotted(\"1.8.0_181\"));\n    assertEquals(7, invokeParseDotted(\"1.7.0\"));\n  }\n\n  @Test\n  public void testParseDotted_withMixedSeparators() throws Exception {\n    assertEquals(8, invokeParseDotted(\"1.8_0_181\"));\n    assertEquals(8, invokeParseDotted(\"1_8.0_181\"));\n  }\n\n  @Test\n  public void testParseDotted_invalidNumberFormat() throws Exception {\n    assertEquals(-1, invokeParseDotted(\"a.b.c\"));\n    assertEquals(-1, invokeParseDotted(\"1.a\"));\n    assertEquals(-1, invokeParseDotted(\"one.two\"));\n    assertEquals(-1, invokeParseDotted(\"\"));\n  }\n\n  @Test\n  public void testParseDotted_singleOneNoSecondPart() throws Exception {\n    // \"1\" alone should return 1 (firstVer = 1, parts.length = 1)\n    assertEquals(1, invokeParseDotted(\"1\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 321,
+  "completion_tokens": 470,
+  "total_tokens": 791,
+  "llm_elapsed_time_seconds": 7.19,
+  "repair_elapsed_time_seconds": 21.11,
+  "round_total_time_seconds": 21.11
+}

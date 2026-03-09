@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmeL3AZluWGy7vaCrbsZB8tbvr9p",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ParseBenchmarkTest {\n\n  private ParseBenchmark parseBenchmark;\n\n  @BeforeEach\n  void init() {\n    parseBenchmark = new ParseBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Mock Document enum\n    ParseBenchmark.Document documentMock = mock(ParseBenchmark.Document.class);\n    when(documentMock.name()).thenReturn(\"testdoc\");\n    setField(parseBenchmark, \"document\", documentMock);\n\n    // Mock Api with newParser()\n    ParseBenchmark.Api apiMock = mock(ParseBenchmark.Api.class);\n    ParseBenchmark.Parser parserMock = mock(ParseBenchmark.Parser.class);\n    when(apiMock.newParser()).thenReturn(parserMock);\n    setField(parseBenchmark, \"api\", apiMock);\n\n    // Mock static method resourceToString(String)\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class, Mockito.CALLS_REAL_METHODS)) {\n      mockedStatic.when(() -> ParseBenchmark.resourceToString(\"testdoc.json\")).thenReturn(\"jsoncontent\");\n\n      // Access private setUp method\n      Method setUpMethod = ParseBenchmark.class.getDeclaredMethod(\"setUp\");\n      setUpMethod.setAccessible(true);\n      setUpMethod.invoke(parseBenchmark);\n\n      // Validate text field set correctly\n      char[] expectedChars = \"jsoncontent\".toCharArray();\n      char[] actualChars = (char[]) getField(parseBenchmark, \"text\");\n      assertArrayEquals(expectedChars, actualChars);\n\n      // Validate parser field set correctly\n      Object parser = getField(parseBenchmark, \"parser\");\n      assertSame(parserMock, parser);\n    }\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      fail(\"Failed to set field \" + fieldName + \": \" + e.getMessage());\n    }\n  }\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      fail(\"Failed to get field \" + fieldName + \": \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887741,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 547,
+    "prompt_tokens": 464,
+    "total_tokens": 1011,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.77
+  }
+}

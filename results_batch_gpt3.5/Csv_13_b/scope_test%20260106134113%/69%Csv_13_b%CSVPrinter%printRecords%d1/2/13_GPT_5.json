@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuIguCmPYRUYeoKZgU0ZlY04HTaU",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = Mockito.mock(Appendable.class);\n        format = Mockito.mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjectArrays() throws IOException {\n        Object[] record1 = new Object[] { \"a\", \"b\" };\n        Object[] record2 = new Object[] { \"c\", \"d\" };\n        Iterable<Object[]> iterable = Arrays.asList(record1, record2);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter, times(1)).printRecord(record1);\n        verify(spyPrinter, times(1)).printRecord(record2);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfIterables() throws IOException {\n        Iterable<String> inner1 = Arrays.asList(\"a\", \"b\");\n        Iterable<String> inner2 = Arrays.asList(\"c\", \"d\");\n        Iterable<Iterable<String>> iterable = Arrays.asList(inner1, inner2);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter, times(1)).printRecord(inner1);\n        verify(spyPrinter, times(1)).printRecord(inner2);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects() throws IOException {\n        Iterable<String> iterable = Arrays.asList(\"a\", \"b\", \"c\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(iterable);\n\n        // Disambiguate printRecord(Object...) by casting varargs to Object[]\n        verify(spyPrinter, times(3)).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withEmptyIterable() throws IOException {\n        Iterable<Object> emptyIterable = Collections.emptyList();\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(emptyIterable);\n\n        // Disambiguate printRecord(Object...) by casting varargs to Object[]\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n    @Test\n    void testPrintRecords_withNullValueInIterable() throws IOException {\n        Iterable<Object> iterable = Arrays.asList((Object) null);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n\n        spyPrinter.printRecords(iterable);\n\n        // Disambiguate printRecord(Object...) by casting varargs to Object[]\n        verify(spyPrinter, times(1)).printRecord((Object) isNull());\n    }\n\n    @Test\n    void testPrivatePrintAndEscape_methodInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        method.invoke(printer, \"abc\", 0, 3);\n\n        verify(out, atLeastOnce()).append(anyChar());\n    }\n\n    @Test\n    void testPrivatePrintAndQuote_methodInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        method.invoke(printer, \"obj\", \"quoted\", 0, 6);\n\n        verify(out, atLeastOnce()).append(anyChar());\n    }\n\n    @Test\n    void testPrivatePrint_methodInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        Method method = CSVPrinter.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class);\n        method.setAccessible(true);\n\n        method.invoke(printer, \"obj\", \"value\", 0, 5);\n\n        verify(out, atLeastOnce()).append(anyChar());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678822,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 912,
+    "prompt_tokens": 1629,
+    "total_tokens": 2541,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.51
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm73pUXtzg1aaL8cmhArsbyt4HAi",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n  private StringWriter stringWriter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void jsonValue_null_returnsNullValueAndAppendsNull() throws IOException {\n    JsonWriter spyWriter = spy(jsonWriter);\n    doReturn(spyWriter).when(spyWriter).nullValue();\n\n    JsonWriter result = spyWriter.jsonValue(null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  void jsonValue_nonNull_writesValueProperly() throws Exception {\n    JsonWriter spyWriter = spy(jsonWriter);\n\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    doAnswer(invocation -> {\n      writeDeferredName.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).getClass().getDeclaredMethod(\"writeDeferredName\");\n    doAnswer(invocation -> {\n      beforeValue.invoke(spyWriter);\n      return null;\n    }).when(spyWriter).getClass().getDeclaredMethod(\"beforeValue\");\n\n    // Instead of trying to stub private methods directly (which is not possible),\n    // we invoke them via reflection before calling jsonValue to simulate their effect.\n    // But since jsonValue calls them internally, we just call jsonValue here.\n    // We cannot verify private method calls via Mockito, so we verify the output instead.\n\n    // To avoid exceptions from private methods, we invoke them reflectively here to ensure no exceptions\n    writeDeferredName.invoke(spyWriter);\n    beforeValue.invoke(spyWriter);\n\n    String testValue = \"{\\\"test\\\":123}\";\n    JsonWriter result = spyWriter.jsonValue(testValue);\n\n    // We cannot verify private method calls with Mockito, so skip verify(spyWriter).writeDeferredName();\n    // and verify(spyWriter).beforeValue();\n\n    assertEquals(testValue, stringWriter.toString());\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  void writeDeferredName_and_beforeValue_invoked_viaReflection() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method writeDeferredName = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n    writeDeferredName.setAccessible(true);\n    Method beforeValue = JsonWriter.class.getDeclaredMethod(\"beforeValue\");\n    beforeValue.setAccessible(true);\n\n    // We just invoke to check no exception thrown (void methods, private)\n    writeDeferredName.invoke(jsonWriter);\n    beforeValue.invoke(jsonWriter);\n  }\n\n  @Test\n  void jsonValue_appendsValueWithoutModification() throws IOException {\n    String json = \"123\";\n    jsonWriter.jsonValue(json);\n    assertEquals(json, stringWriter.toString());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885677,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 678,
+    "prompt_tokens": 1512,
+    "total_tokens": 2190,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.65
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvme0BTjn4qAB4kAKxtXTelpDqEWl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.*;\n\npublic class GsonTypesTest {\n\n    @Test\n    public void testCanonicalize_withClass_nonArray() {\n        Class<String> type = String.class;\n        Type result = $Gson$Types.canonicalize(type);\n        assertSame(type, result);\n    }\n\n    @Test\n    public void testCanonicalize_withClass_array() {\n        Class<int[]> type = int[].class;\n        Type result = $Gson$Types.canonicalize(type);\n        assertTrue(result instanceof GenericArrayType);\n        GenericArrayType gat = (GenericArrayType) result;\n        assertEquals(int.class, gat.getGenericComponentType());\n    }\n\n    @Test\n    public void testCanonicalize_withParameterizedType() throws Exception {\n        ParameterizedType pt = mock(ParameterizedType.class);\n        Type ownerType = String.class;\n        Type rawType = Map.class;\n        Type[] typeArgs = new Type[] {String.class, Integer.class};\n        when(pt.getOwnerType()).thenReturn(ownerType);\n        when(pt.getRawType()).thenReturn(rawType);\n        when(pt.getActualTypeArguments()).thenReturn(typeArgs);\n\n        Type result = $Gson$Types.canonicalize(pt);\n        assertNotNull(result);\n        assertTrue(result.getClass().getName().endsWith(\"$ParameterizedTypeImpl\"));\n        ParameterizedType newPt = (ParameterizedType) result;\n        assertEquals(ownerType, newPt.getOwnerType());\n        assertEquals(rawType, newPt.getRawType());\n        assertArrayEquals(typeArgs, newPt.getActualTypeArguments());\n    }\n\n    @Test\n    public void testCanonicalize_withGenericArrayType() throws Exception {\n        GenericArrayType gat = mock(GenericArrayType.class);\n        Type componentType = String.class;\n        when(gat.getGenericComponentType()).thenReturn(componentType);\n\n        Type result = $Gson$Types.canonicalize(gat);\n        assertNotNull(result);\n        assertTrue(result.getClass().getName().endsWith(\"$GenericArrayTypeImpl\"));\n        GenericArrayType newGat = (GenericArrayType) result;\n        assertEquals(componentType, newGat.getGenericComponentType());\n    }\n\n    @Test\n    public void testCanonicalize_withWildcardType() throws Exception {\n        WildcardType wt = mock(WildcardType.class);\n        Type[] upperBounds = new Type[] {Number.class};\n        Type[] lowerBounds = new Type[] {Integer.class};\n        when(wt.getUpperBounds()).thenReturn(upperBounds);\n        when(wt.getLowerBounds()).thenReturn(lowerBounds);\n\n        Type result = $Gson$Types.canonicalize(wt);\n        assertNotNull(result);\n        assertTrue(result.getClass().getName().endsWith(\"$WildcardTypeImpl\"));\n        WildcardType newWt = (WildcardType) result;\n        assertArrayEquals(upperBounds, newWt.getUpperBounds());\n        assertArrayEquals(lowerBounds, newWt.getLowerBounds());\n    }\n\n    @Test\n    public void testCanonicalize_withOtherType() {\n        Type anonType = new Type() {};\n        Type result = $Gson$Types.canonicalize(anonType);\n        assertSame(anonType, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887720,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 696,
+    "prompt_tokens": 798,
+    "total_tokens": 1494,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.24
+  }
+}

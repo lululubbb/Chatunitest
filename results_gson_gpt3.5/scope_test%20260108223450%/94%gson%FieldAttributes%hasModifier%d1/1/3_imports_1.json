@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass FieldAttributesTest {\n\n  private Field mockField;\n  private FieldAttributes fieldAttributes;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    mockField = mock(Field.class);\n    // Use reflection to create FieldAttributes instance with private final field set\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void hasModifier_returnsTrue_whenModifierIsPresent() {\n    when(mockField.getModifiers()).thenReturn(Modifier.PUBLIC | Modifier.STATIC);\n\n    assertTrue(fieldAttributes.hasModifier(Modifier.PUBLIC));\n    assertTrue(fieldAttributes.hasModifier(Modifier.STATIC));\n    assertTrue(fieldAttributes.hasModifier(Modifier.PUBLIC | Modifier.STATIC));\n  }\n\n  @Test\n  void hasModifier_returnsFalse_whenModifierIsNotPresent() {\n    when(mockField.getModifiers()).thenReturn(Modifier.PRIVATE);\n\n    assertFalse(fieldAttributes.hasModifier(Modifier.PUBLIC));\n    assertFalse(fieldAttributes.hasModifier(Modifier.STATIC));\n    assertFalse(fieldAttributes.hasModifier(Modifier.PUBLIC | Modifier.STATIC));\n  }\n\n  @Test\n  void hasModifier_returnsFalse_whenModifiersIsZero() {\n    when(mockField.getModifiers()).thenReturn(0);\n\n    assertFalse(fieldAttributes.hasModifier(Modifier.PUBLIC));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 282,
+  "completion_tokens": 316,
+  "total_tokens": 598,
+  "llm_elapsed_time_seconds": 5.36,
+  "repair_elapsed_time_seconds": 14.54,
+  "round_total_time_seconds": 14.54
+}

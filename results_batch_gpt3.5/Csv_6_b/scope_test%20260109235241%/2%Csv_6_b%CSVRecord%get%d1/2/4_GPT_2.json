@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw960wAv620XZJYw3GMRqxW1e45TJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVRecordTest {\n\n    private Map<String, Integer> mapping;\n    private String[] values;\n    private CSVRecord csvRecord;\n\n    enum TestEnum {\n        FIELD1, FIELD2, FIELD3\n    }\n\n    @BeforeEach\n    void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"FIELD1\", 0);\n        mapping.put(\"FIELD2\", 1);\n        mapping.put(\"FIELD3\", 2);\n        values = new String[] { \"value1\", \"value2\", \"value3\" };\n        csvRecord = new CSVRecord(values, mapping, \"comment\", 5L);\n    }\n\n    @Test\n    void testGetWithEnum_existingField() {\n        String result = csvRecord.get(TestEnum.FIELD1);\n        assertEquals(\"value1\", result);\n\n        result = csvRecord.get(TestEnum.FIELD2);\n        assertEquals(\"value2\", result);\n\n        result = csvRecord.get(TestEnum.FIELD3);\n        assertEquals(\"value3\", result);\n    }\n\n    // Moved OtherEnum outside method to fix \"enum cannot be local type\" error\n    enum OtherEnum { UNKNOWN }\n\n    @Test\n    void testGetWithEnum_nonExistingField() {\n        String result = csvRecord.get(OtherEnum.UNKNOWN);\n        assertNull(result);\n    }\n\n    @Test\n    void testGetWithEnum_nullEnumToString() throws Exception {\n        // Use Mockito spy to mock e.toString() to return null\n        TestEnum e = mock(TestEnum.class);\n        when(e.toString()).thenReturn(null);\n        String result = csvRecord.get(e);\n        // get(null) calls get(String name) with null, which returns null\n        assertNull(result);\n    }\n\n    @Test\n    void testGetPrivateMethodInvocation() throws Exception {\n        // Using reflection to invoke private static final EMPTY_STRING_ARRAY field\n        Field field = CSVRecord.class.getDeclaredField(\"EMPTY_STRING_ARRAY\");\n        field.setAccessible(true);\n        String[] emptyArray = (String[]) field.get(null);\n        assertNotNull(emptyArray);\n        assertEquals(0, emptyArray.length);\n\n        // Using reflection to invoke private method toList() to confirm accessibility\n        Method toListMethod = CSVRecord.class.getDeclaredMethod(\"toList\");\n        toListMethod.setAccessible(true);\n        Object list = toListMethod.invoke(csvRecord);\n        assertNotNull(list);\n        // toList returns List<String>\n        assertTrue(list instanceof java.util.List);\n        // The list should contain all values\n        assertEquals(values.length, ((java.util.List<?>) list).size());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767974024,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 598,
+    "prompt_tokens": 1252,
+    "total_tokens": 1850,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.79
+  }
+}

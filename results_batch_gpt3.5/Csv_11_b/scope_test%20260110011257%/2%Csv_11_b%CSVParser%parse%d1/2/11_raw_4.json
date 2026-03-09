@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    @Test\n    void parse_WithValidStringAndFormat_ReturnsCSVParser() throws IOException, NoSuchFieldException, IllegalAccessException {\n        String input = \"header1,header2\\nvalue1,value2\";\n        CSVFormat format = CSVFormat.DEFAULT; // Use a real instance instead of mock\n\n        CSVParser parser = CSVParser.parse(input, format);\n\n        assertNotNull(parser);\n        assertFalse(parser.isClosed());\n\n        // Access private field 'format' using reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(parser);\n        assertEquals(format, actualFormat);\n    }\n\n    @Test\n    void parse_WithNullString_ThrowsNullPointerException() {\n        CSVFormat format = CSVFormat.DEFAULT; // Use a real instance instead of mock\n\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(null, format);\n        });\n        assertEquals(\"string\", thrown.getMessage());\n    }\n\n    @Test\n    void parse_WithNullFormat_ThrowsNullPointerException() {\n        String input = \"a,b,c\";\n\n        NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(input, null);\n        });\n        assertEquals(\"format\", thrown.getMessage());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_11_b/scope_test%20260110011257%/2%Csv_11_b%CSVParser%parse%d1/2/runtemp/Csv_11_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 901,
+  "completion_tokens": 322,
+  "total_tokens": 1223,
+  "llm_elapsed_time_seconds": 6.0
+}

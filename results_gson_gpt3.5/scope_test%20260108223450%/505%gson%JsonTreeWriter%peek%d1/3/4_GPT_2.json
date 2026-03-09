@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWIczmy1uxLNX8RHx7L1RagqCHo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n  @Test\n  public void peek_whenStackEmpty_throwsIndexOutOfBoundsException() throws Exception {\n    JsonTreeWriter writer = new JsonTreeWriter();\n\n    // stack is initially empty, so peek should throw IndexOutOfBoundsException\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n\n    Exception exception = assertThrows(InvocationTargetException.class, () -> {\n      peekMethod.invoke(writer);\n    });\n\n    Throwable cause = exception.getCause();\n    assertNotNull(cause);\n    assertTrue(cause instanceof IndexOutOfBoundsException);\n  }\n\n  @Test\n  public void peek_whenStackHasOneElement_returnsThatElement() throws Exception {\n    JsonTreeWriter writer = new JsonTreeWriter();\n\n    // Use reflection to get the stack field and add an element\n    var stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n\n    JsonPrimitive element = new JsonPrimitive(\"element\");\n    stack.add(element);\n\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n\n    Object result = peekMethod.invoke(writer);\n    assertNotNull(result);\n    assertTrue(result instanceof JsonPrimitive);\n    assertEquals(element, result);\n  }\n\n  @Test\n  public void peek_whenStackHasMultipleElements_returnsLastElement() throws Exception {\n    JsonTreeWriter writer = new JsonTreeWriter();\n\n    var stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(writer);\n\n    JsonPrimitive first = new JsonPrimitive(\"first\");\n    JsonObject second = new JsonObject();\n    JsonArray third = new JsonArray();\n\n    stack.add(first);\n    stack.add(second);\n    stack.add(third);\n\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n\n    Object result = peekMethod.invoke(writer);\n    assertNotNull(result);\n    assertTrue(result instanceof JsonArray);\n    assertEquals(third, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883398,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 551,
+    "prompt_tokens": 1545,
+    "total_tokens": 2096,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.86
+  }
+}

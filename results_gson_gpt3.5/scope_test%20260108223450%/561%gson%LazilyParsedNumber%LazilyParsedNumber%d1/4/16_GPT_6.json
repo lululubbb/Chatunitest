@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlRXfBjSe2as2xdwkHxl28QENHiL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LazilyParsedNumberTest {\n\n  private LazilyParsedNumber number;\n  private final String value = \"123.456\";\n\n  @BeforeEach\n  public void setUp() {\n    number = new LazilyParsedNumber(value);\n  }\n\n  @Test\n  public void testIntValue() {\n    int expected = new BigDecimal(value).intValue();\n    assertEquals(expected, number.intValue());\n  }\n\n  @Test\n  public void testLongValue() {\n    long expected = new BigDecimal(value).longValue();\n    assertEquals(expected, number.longValue());\n  }\n\n  @Test\n  public void testFloatValue() {\n    float expected = new BigDecimal(value).floatValue();\n    assertEquals(expected, number.floatValue(), 0.00001f);\n  }\n\n  @Test\n  public void testDoubleValue() {\n    double expected = new BigDecimal(value).doubleValue();\n    assertEquals(expected, number.doubleValue(), 0.0000001);\n  }\n\n  @Test\n  public void testToString() {\n    assertEquals(value, number.toString());\n  }\n\n  @Test\n  public void testHashCodeEquals() {\n    LazilyParsedNumber sameValue = new LazilyParsedNumber(value);\n    LazilyParsedNumber differentValue = new LazilyParsedNumber(\"789.01\");\n\n    assertEquals(number.hashCode(), sameValue.hashCode());\n    assertTrue(number.equals(sameValue));\n    assertFalse(number.equals(differentValue));\n    assertFalse(number.equals(null));\n    assertFalse(number.equals(\"some string\"));\n  }\n\n  @Test\n  public void testWriteReplace() throws Exception {\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object replacement = writeReplace.invoke(number);\n    assertEquals(value, replacement.toString());\n  }\n\n  @Test\n  public void testReadObjectValid() throws Exception {\n    // Serialize the LazilyParsedNumber object\n    ByteArrayOutputStream baos = new ByteArrayOutputStream();\n    ObjectOutputStream oos = new ObjectOutputStream(baos);\n    oos.writeObject(number);\n    oos.close();\n\n    // Deserialize the object back\n    ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());\n    ObjectInputStream ois = new ObjectInputStream(bais);\n\n    Object obj = ois.readObject();\n    assertTrue(obj instanceof LazilyParsedNumber);\n    assertEquals(value, obj.toString());\n  }\n\n  @Test\n  public void testReadObjectInvalid() throws Exception {\n    // We will mock ObjectInputStream to return an invalid value to trigger exception\n    ObjectInputStream mockIn = mock(ObjectInputStream.class);\n    when(mockIn.readObject()).thenReturn(123); // not a String\n\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObject.setAccessible(true);\n\n    LazilyParsedNumber instance = new LazilyParsedNumber(value);\n\n    InvocationTargetException ex = assertThrows(InvocationTargetException.class, () -> {\n      readObject.invoke(instance, mockIn);\n    });\n    assertTrue(ex.getCause() instanceof InvalidObjectException);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883103,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 761,
+    "prompt_tokens": 1395,
+    "total_tokens": 2156,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.6
+  }
+}

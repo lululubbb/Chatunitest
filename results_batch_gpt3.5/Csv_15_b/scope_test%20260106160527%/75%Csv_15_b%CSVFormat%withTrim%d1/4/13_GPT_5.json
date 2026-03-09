@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cux4qJADbvJ26SXHbIh4n4YPBEcnx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithTrimTrue() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        CSVFormat modified = original.withTrim(true);\n        assertNotNull(modified);\n        assertNotSame(original, modified);\n\n        // Using reflection to check the private final field 'trim'\n        Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n        trimField.setAccessible(true);\n        boolean trimValue = trimField.getBoolean(modified);\n        assertTrue(trimValue);\n\n        // Other fields should remain the same\n        Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        delimiterField.setAccessible(true);\n        assertEquals(delimiterField.getChar(original), delimiterField.getChar(modified));\n    }\n\n    @Test\n    public void testWithTrimFalse() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT.withTrim(true);\n        CSVFormat modified = original.withTrim(false);\n        assertNotNull(modified);\n        assertNotSame(original, modified);\n\n        Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n        trimField.setAccessible(true);\n        boolean trimValue = trimField.getBoolean(modified);\n        assertFalse(trimValue);\n\n        // Other fields should remain the same\n        Field delimiterField = CSVFormat.class.getDeclaredField(\"delimiter\");\n        delimiterField.setAccessible(true);\n        assertEquals(delimiterField.getChar(original), delimiterField.getChar(modified));\n    }\n\n    @Test\n    public void testWithTrimIdempotent() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT.withTrim(false);\n        CSVFormat modified = original.withTrim(false);\n        assertNotNull(modified);\n        // The original and modified should be the same instance when no change occurs\n        assertSame(original, modified);\n\n        Field trimField = CSVFormat.class.getDeclaredField(\"trim\");\n        trimField.setAccessible(true);\n        boolean trimValue = trimField.getBoolean(modified);\n        assertFalse(trimValue);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689496,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 439,
+    "prompt_tokens": 2344,
+    "total_tokens": 2783,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.1
+  }
+}

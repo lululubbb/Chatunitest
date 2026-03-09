@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1kroiBUYUsnV4nz55ItCVcTWQD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n  @Test\n  void getFactory_returnsLazilyParsedNumberFactory_whenPolicyIsLazilyParsedNumber() {\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(ToNumberPolicy.LAZILY_PARSED_NUMBER);\n    assertNotNull(factory);\n    // The returned factory should be the same as the private static final LAZILY_PARSED_NUMBER_FACTORY\n    // We use reflection to verify this:\n    try {\n      var field = NumberTypeAdapter.class.getDeclaredField(\"LAZILY_PARSED_NUMBER_FACTORY\");\n      field.setAccessible(true);\n      Object lazilyParsedNumberFactory = field.get(null);\n      assertSame(lazilyParsedNumberFactory, factory);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection failed to access LAZILY_PARSED_NUMBER_FACTORY field\");\n    }\n  }\n\n  @Test\n  void getFactory_returnsNewFactory_whenPolicyIsNotLazilyParsedNumber() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Create a mock ToNumberStrategy different from LAZILY_PARSED_NUMBER\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n    // Ensure it's not equal to LAZILY_PARSED_NUMBER\n    assertNotEquals(ToNumberPolicy.LAZILY_PARSED_NUMBER, mockStrategy);\n\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(mockStrategy);\n    assertNotNull(factory);\n\n    // We expect the returned factory to be equal (not same) to the result of newFactory(toNumberStrategy)\n    // Use reflection to invoke private static newFactory method with mockStrategy and verify equality\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n    Object expectedFactory = newFactoryMethod.invoke(null, mockStrategy);\n\n    assertEquals(expectedFactory, factory);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885348,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 461,
+    "prompt_tokens": 1239,
+    "total_tokens": 1700,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.02
+  }
+}

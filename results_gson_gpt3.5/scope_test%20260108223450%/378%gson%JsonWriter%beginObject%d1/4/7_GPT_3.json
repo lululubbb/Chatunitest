@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmyvuNQNbu2umk6Bkf34wp8L4WrY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.stream.JsonScope;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\npublic class JsonWriterTest {\n    private StringWriter stringWriter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testBeginObject_Normal() throws IOException {\n        JsonWriter writer = jsonWriter.beginObject();\n        assertSame(jsonWriter, writer);\n        assertEquals(\"{\", stringWriter.toString());\n    }\n\n    @Test\n    public void testBeginObject_WithDeferredName() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Use reflection to set deferredName to a non-null value\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, \"name\");\n\n        // Also set stack and stackSize to valid state to avoid errors inside open and beforeName\n        Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        int[] stack = new int[32];\n        stack[0] = JsonScope.NONEMPTY_OBJECT; // set to NONEMPTY_OBJECT to allow a name to be written\n        stackField.set(jsonWriter, stack);\n\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 1);\n\n        // We need to call beginObject and check it writes the object start correctly\n        JsonWriter writer = jsonWriter.beginObject();\n        assertSame(jsonWriter, writer);\n        String output = stringWriter.toString();\n        assertTrue(output.startsWith(\"{\"));\n    }\n\n    @Test\n    public void testWriteDeferredName_PrivateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException, NoSuchFieldException {\n        // Use reflection to invoke private writeDeferredName method\n        Method writeDeferredNameMethod = JsonWriter.class.getDeclaredMethod(\"writeDeferredName\");\n        writeDeferredNameMethod.setAccessible(true);\n\n        // deferredName null case: should do nothing and not throw\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        // deferredName set case: set deferredName and stack state to avoid exceptions\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, \"testName\");\n\n        Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(jsonWriter, new int[]{JsonScope.EMPTY_OBJECT});\n\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 1);\n\n        writeDeferredNameMethod.invoke(jsonWriter);\n\n        String output = stringWriter.toString();\n        assertTrue(output.contains(\"testName\") || output.contains(\":\"));\n    }\n\n    @Test\n    public void testOpen_PrivateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method openMethod = JsonWriter.class.getDeclaredMethod(\"open\", int.class, char.class);\n        openMethod.setAccessible(true);\n\n        // Call open with EMPTY_OBJECT and '{' and verify it returns JsonWriter instance\n        Object result = openMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, '{');\n        assertSame(jsonWriter, result);\n        String output = stringWriter.toString();\n        assertTrue(output.startsWith(\"{\"));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889017,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 814,
+    "prompt_tokens": 1818,
+    "total_tokens": 2632,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.42
+  }
+}

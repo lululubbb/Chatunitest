@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnHiX9FqglBhFkgmJ9GovRluGiqr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderPeekNumberTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    // Mock Reader since JsonReader requires a Reader but peekNumber does not consume it directly here\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  private int invokePeekNumber() throws Exception {\n    Method peekNumberMethod = JsonReader.class.getDeclaredMethod(\"peekNumber\");\n    peekNumberMethod.setAccessible(true);\n    return (int) peekNumberMethod.invoke(jsonReader);\n  }\n\n  private void setBufferAndPosLimit(String content) throws Exception {\n    char[] buffer = new char[JsonReader.BUFFER_SIZE];\n    int len = Math.min(content.length(), buffer.length);\n    content.getChars(0, len, buffer, 0);\n\n    // Set private fields buffer, pos, limit\n    Field bufferField = JsonReader.class.getDeclaredField(\"buffer\");\n    bufferField.setAccessible(true);\n    bufferField.set(jsonReader, buffer);\n\n    Field posField = JsonReader.class.getDeclaredField(\"pos\");\n    posField.setAccessible(true);\n    posField.setInt(jsonReader, 0);\n\n    Field limitField = JsonReader.class.getDeclaredField(\"limit\");\n    limitField.setAccessible(true);\n    limitField.setInt(jsonReader, len);\n  }\n\n  private void setPos(int pos) throws Exception {\n    Field posField = JsonReader.class.getDeclaredField(\"pos\");\n    posField.setAccessible(true);\n    posField.setInt(jsonReader, pos);\n  }\n\n  private int getPeeked() throws Exception {\n    Field peekedField = JsonReader.class.getDeclaredField(\"peeked\");\n    peekedField.setAccessible(true);\n    return peekedField.getInt(jsonReader);\n  }\n\n  private long getPeekedLong() throws Exception {\n    Field peekedLongField = JsonReader.class.getDeclaredField(\"peekedLong\");\n    peekedLongField.setAccessible(true);\n    return peekedLongField.getLong(jsonReader);\n  }\n\n  private int getPeekedNumberLength() throws Exception {\n    Field peekedNumberLengthField = JsonReader.class.getDeclaredField(\"peekedNumberLength\");\n    peekedNumberLengthField.setAccessible(true);\n    return peekedNumberLengthField.getInt(jsonReader);\n  }\n\n  @Test\n  void testPeekNumber_simplePositiveInteger() throws Exception {\n    setBufferAndPosLimit(\"12345 \");\n    int result = invokePeekNumber();\n    assertEquals(15, result); // PEEKED_LONG\n    assertEquals(12345L, getPeekedLong());\n    assertEquals(5, (int) getPeekedNumberLength()); // length 5\n    assertEquals(15, getPeeked());\n    assertEquals(5, getPos());\n  }\n\n  @Test\n  void testPeekNumber_simpleNegativeInteger() throws Exception {\n    setBufferAndPosLimit(\"-9876 \");\n    int result = invokePeekNumber();\n    assertEquals(15, result); // PEEKED_LONG\n    assertEquals(-9876L, getPeekedLong());\n    assertEquals(5, getPeekedNumberLength()); // length 5\n    assertEquals(15, getPeeked());\n    assertEquals(5, getPos());\n  }\n\n  @Test\n  void testPeekNumber_leadingZeroReturnsNone() throws Exception {\n    setBufferAndPosLimit(\"0123 \");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE\n  }\n\n  @Test\n  void testPeekNumber_decimalNumber() throws Exception {\n    setBufferAndPosLimit(\"123.456 \");\n    int result = invokePeekNumber();\n    assertEquals(16, result); // PEEKED_NUMBER\n    assertEquals(7, getPeekedNumberLength()); // length of \"123.456\"\n    assertEquals(16, getPeeked());\n    // pos should not be advanced for PEEKED_NUMBER\n    assertEquals(0, getPos());\n  }\n\n  @Test\n  void testPeekNumber_exponentNumber() throws Exception {\n    setBufferAndPosLimit(\"1e10 \");\n    int result = invokePeekNumber();\n    assertEquals(16, result); // PEEKED_NUMBER\n    assertEquals(4, getPeekedNumberLength()); // length of \"1e10\"\n    assertEquals(16, getPeeked());\n    assertEquals(0, getPos());\n  }\n\n  @Test\n  void testPeekNumber_exponentWithSign() throws Exception {\n    setBufferAndPosLimit(\"2E-3 \");\n    int result = invokePeekNumber();\n    assertEquals(16, result); // PEEKED_NUMBER\n    assertEquals(4, getPeekedNumberLength()); // length of \"2E-3\"\n    assertEquals(16, getPeeked());\n    assertEquals(0, getPos());\n  }\n\n  @Test\n  void testPeekNumber_invalidPlusSign() throws Exception {\n    setBufferAndPosLimit(\"+123 \");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE\n  }\n\n  @Test\n  void testPeekNumber_invalidPlusSignAfterDigit() throws Exception {\n    setBufferAndPosLimit(\"1+23 \");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE\n  }\n\n  @Test\n  void testPeekNumber_invalidMinusSignInMiddle() throws Exception {\n    setBufferAndPosLimit(\"12-3 \");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE\n  }\n\n  @Test\n  void testPeekNumber_emptyBufferReturnsNone() throws Exception {\n    setBufferAndPosLimit(\"\");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE\n  }\n\n  @Test\n  void testPeekNumber_longNumberTooLongReturnsNone() throws Exception {\n    // Fill buffer with '1' repeated buffer length times (1024)\n    StringBuilder sb = new StringBuilder();\n    for (int i = 0; i < JsonReader.BUFFER_SIZE; i++) {\n      sb.append('1');\n    }\n    setBufferAndPosLimit(sb.toString());\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE because it's too long\n  }\n\n  @Test\n  void testPeekNumber_numberWithNonLiteralTrailingChar() throws Exception {\n    setBufferAndPosLimit(\"1234,\");\n    int result = invokePeekNumber();\n    assertEquals(15, result); // PEEKED_LONG\n    assertEquals(1234L, getPeekedLong());\n    assertEquals(4, getPeekedNumberLength());\n    assertEquals(15, getPeeked());\n    assertEquals(4, getPos());\n  }\n\n  @Test\n  void testPeekNumber_numberWithLiteralTrailingCharReturnsNone() throws Exception {\n    setBufferAndPosLimit(\"1234a\");\n    int result = invokePeekNumber();\n    assertEquals(0, result); // PEEKED_NONE because 'a' is literal (isLiteral returns true)\n  }\n\n  private int getPos() throws Exception {\n    Field posField = JsonReader.class.getDeclaredField(\"pos\");\n    posField.setAccessible(true);\n    return posField.getInt(jsonReader);\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890182,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1593,
+    "prompt_tokens": 1808,
+    "total_tokens": 3401,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.83
+  }
+}

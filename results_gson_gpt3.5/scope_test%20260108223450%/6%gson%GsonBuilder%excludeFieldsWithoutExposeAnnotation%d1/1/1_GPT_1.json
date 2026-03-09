@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmI3powYlwgUMEm5zJOSwCZXlZhh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private Excluder excluderMock;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n    excluderMock = mock(Excluder.class);\n  }\n\n  @Test\n  void excludeFieldsWithoutExposeAnnotation_shouldUpdateExcluderAndReturnThis() throws Exception {\n    // Arrange\n    // Set private field 'excluder' to mocked excluder\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    excluderField.set(gsonBuilder, excluderMock);\n\n    // Prepare mock behavior: when excludeFieldsWithoutExposeAnnotation() called, return a new Excluder instance (mocked)\n    Excluder newExcluderMock = mock(Excluder.class);\n    when(excluderMock.excludeFieldsWithoutExposeAnnotation()).thenReturn(newExcluderMock);\n\n    // Act\n    GsonBuilder returned = gsonBuilder.excludeFieldsWithoutExposeAnnotation();\n\n    // Assert\n    // Verify that excluder.excludeFieldsWithoutExposeAnnotation() was called once\n    verify(excluderMock, times(1)).excludeFieldsWithoutExposeAnnotation();\n\n    // Verify that the excluder field was updated to newExcluderMock\n    Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n    assertSame(newExcluderMock, updatedExcluder);\n\n    // Verify the method returns the same GsonBuilder instance\n    assertSame(gsonBuilder, returned);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886359,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 404,
+    "prompt_tokens": 1126,
+    "total_tokens": 1530,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.96
+  }
+}

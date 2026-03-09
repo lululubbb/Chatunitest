@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmc9vCZ2HYdClXwxxWpiYYsmjYec",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonTreeReaderTest {\n\n    private JsonTreeReader reader;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a JsonPrimitive with a long value\n        JsonPrimitive primitive = new JsonPrimitive(1234567890123L);\n        // Create instance of JsonTreeReader with a dummy JsonPrimitive element\n        reader = new JsonTreeReader(primitive);\n\n        // Using reflection to set private fields stack, stackSize, pathIndices to simulate state\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = new Object[32];\n        stack[0] = primitive;\n        stackField.set(reader, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(reader, 1);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = new int[32];\n        pathIndices[0] = 0;\n        pathIndicesField.set(reader, pathIndices);\n    }\n\n    @Test\n    void nextLong_withNumberToken_returnsLong() throws Exception {\n        // Mock peek() to return JsonToken.NUMBER\n        JsonTreeReader spyReader = Mockito.spy(reader);\n        Mockito.doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(1234567890123L, result);\n\n        // Verify stackSize decremented and pathIndices incremented\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(0, stackSize);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(1, pathIndices[0]);\n    }\n\n    @Test\n    void nextLong_withStringToken_returnsLong() throws Exception {\n        JsonPrimitive primitive = new JsonPrimitive(\"1234567890123\");\n        JsonTreeReader readerWithString = new JsonTreeReader(primitive);\n\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = new Object[32];\n        stack[0] = primitive;\n        stackField.set(readerWithString, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(readerWithString, 1);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = new int[32];\n        pathIndices[0] = 0;\n        pathIndicesField.set(readerWithString, pathIndices);\n\n        JsonTreeReader spyReader = Mockito.spy(readerWithString);\n        Mockito.doReturn(JsonToken.STRING).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(1234567890123L, result);\n\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(0, stackSize);\n\n        int[] updatedPathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(1, updatedPathIndices[0]);\n    }\n\n    @Test\n    void nextLong_withInvalidToken_throwsIllegalStateException() throws Exception {\n        JsonTreeReader spyReader = Mockito.spy(reader);\n        Mockito.doReturn(JsonToken.BEGIN_OBJECT).when(spyReader).peek();\n\n        IllegalStateException exception = assertThrows(IllegalStateException.class, spyReader::nextLong);\n        assertTrue(exception.getMessage().contains(\"Expected \" + JsonToken.NUMBER + \" but was \" + JsonToken.BEGIN_OBJECT));\n    }\n\n    @Test\n    void nextLong_decrementsStackSizeAndIncrementsPathIndices() throws Exception {\n        JsonPrimitive primitive = new JsonPrimitive(42L);\n        JsonTreeReader readerInstance = new JsonTreeReader(primitive);\n\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = new Object[32];\n        stack[0] = primitive;\n        stack[1] = primitive;\n        stackField.set(readerInstance, stack);\n\n        Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(readerInstance, 2);\n\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = new int[32];\n        pathIndices[0] = 5;\n        pathIndicesField.set(readerInstance, pathIndices);\n\n        JsonTreeReader spyReader = Mockito.spy(readerInstance);\n        Mockito.doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n        long result = spyReader.nextLong();\n\n        assertEquals(42L, result);\n\n        int stackSize = stackSizeField.getInt(spyReader);\n        assertEquals(1, stackSize);\n\n        int[] updatedPathIndices = (int[]) pathIndicesField.get(spyReader);\n        assertEquals(6, updatedPathIndices[0]);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887605,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1190,
+    "prompt_tokens": 2459,
+    "total_tokens": 3649,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.99
+  }
+}

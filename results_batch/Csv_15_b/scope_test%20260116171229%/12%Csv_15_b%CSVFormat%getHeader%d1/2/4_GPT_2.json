@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaSGolBM4k6P8KW5s763Z3rAQhT9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.BeforeEach;\n\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        // Use reflection to set private final field header to null\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n\n        // Remove final modifier from the header field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerField, headerField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        headerField.set(csvFormat, null);\n\n        String[] header = csvFormat.getHeader();\n        assertNull(header, \"Header should be null when internal header field is null\");\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNotNull() throws Exception {\n        String[] originalHeader = new String[] {\"col1\", \"col2\", \"col3\"};\n\n        // Use reflection to set private final field header to originalHeader\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n\n        // Remove final modifier from the header field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerField, headerField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        headerField.set(csvFormat, originalHeader);\n\n        String[] headerClone = csvFormat.getHeader();\n\n        assertNotNull(headerClone, \"Header clone should not be null\");\n        assertArrayEquals(originalHeader, headerClone, \"Returned header should equal the original header\");\n        assertNotSame(originalHeader, headerClone, \"Returned header should be a clone, not the same instance\");\n\n        // Modify clone and check original is not affected\n        headerClone[0] = \"modified\";\n        String[] headerAfterModification = (String[]) headerField.get(csvFormat);\n        assertEquals(\"col1\", headerAfterModification[0], \"Original header should not be modified when clone is changed\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555848,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 487,
+    "prompt_tokens": 2230,
+    "total_tokens": 2717,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.75
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbzLNzVaMjfqYR3Ude0m1vRr4jG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nclass GsonFromJsonReaderTypeTokenTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_withValidJson_shouldReturnExpectedObject() throws Exception {\n    String json = \"{\\\"value\\\":42}\";\n    Reader reader = new StringReader(json);\n    TypeToken<Dummy> typeToken = TypeToken.get(Dummy.class);\n\n    Dummy result = gson.fromJson(reader, typeToken);\n\n    assertNotNull(result);\n    assertEquals(42, result.value);\n  }\n\n  @Test\n  void fromJson_withNullJson_shouldReturnNull() throws Exception {\n    Reader reader = new StringReader(\"null\");\n    TypeToken<Dummy> typeToken = TypeToken.get(Dummy.class);\n\n    Dummy result = gson.fromJson(reader, typeToken);\n\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_withMalformedJson_shouldThrowJsonSyntaxException() {\n    String json = \"{invalidJson:\";\n    Reader reader = new StringReader(json);\n    TypeToken<Dummy> typeToken = TypeToken.get(Dummy.class);\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(reader, typeToken));\n  }\n\n  @Test\n  void fromJson_withIOExceptionDuringReading_shouldThrowJsonIOException() throws Exception {\n    Reader mockReader = mock(Reader.class);\n    when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenThrow(new java.io.IOException());\n\n    TypeToken<Dummy> typeToken = TypeToken.get(Dummy.class);\n\n    assertThrows(JsonIOException.class, () -> gson.fromJson(mockReader, typeToken));\n  }\n\n  @Test\n  void fromJson_assertFullConsumption_invoked() throws Exception {\n    // Use reflection to invoke private static assertFullConsumption method\n    Method assertFullConsumption = Gson.class.getDeclaredMethod(\"assertFullConsumption\", Object.class, JsonReader.class);\n    assertFullConsumption.setAccessible(true);\n\n    String json = \"null\";\n    Reader reader = new StringReader(json);\n    JsonReader jsonReader = gson.newJsonReader(reader);\n\n    Object obj = null;\n\n    // Should not throw exception\n    assertFullConsumption.invoke(null, obj, jsonReader);\n\n    // Prepare JsonReader that has extra tokens after deserialization\n    String jsonWithExtra = \"true false\";\n    Reader readerExtra = new StringReader(jsonWithExtra);\n    JsonReader jsonReaderExtra = gson.newJsonReader(readerExtra);\n    jsonReaderExtra.setLenient(true);\n    jsonReaderExtra.nextBoolean(); // consume true\n\n    // Now invoking assertFullConsumption with leftover tokens should throw JsonSyntaxException\n    Exception ex = assertThrows(Exception.class, () -> assertFullConsumption.invoke(null, true, jsonReaderExtra));\n    Throwable cause = ex.getCause();\n    assertTrue(cause instanceof JsonSyntaxException);\n  }\n\n  // Dummy class for testing deserialization\n  static class Dummy {\n    int value;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887595,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 694,
+    "prompt_tokens": 2737,
+    "total_tokens": 3431,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.62
+  }
+}

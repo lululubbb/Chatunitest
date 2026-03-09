@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnF87bxfwzLboVL1w10k7sCX47Wj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = spy(new JsonObject());\n  }\n\n  @Test\n  public void testAddProperty_withNonNullCharacter_addsCorrectJsonPrimitive() throws Exception {\n    Character value = 'a';\n    String property = \"charProperty\";\n\n    // Call the focal method\n    jsonObject.addProperty(property, value);\n\n    // Verify that add was called with correct arguments\n    verify(jsonObject).add(eq(property), argThat(jsonElement -> {\n      if (!(jsonElement instanceof JsonPrimitive)) return false;\n      JsonPrimitive primitive = (JsonPrimitive) jsonElement;\n      return primitive.getAsCharacter().equals(value);\n    }));\n\n    // Verify internal members map contains the key and correct value\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertTrue(members.containsKey(property));\n    JsonElement storedElement = members.get(property);\n    assertTrue(storedElement instanceof JsonPrimitive);\n    JsonPrimitive storedPrimitive = (JsonPrimitive) storedElement;\n    assertEquals(value, storedPrimitive.getAsCharacter());\n  }\n\n  @Test\n  public void testAddProperty_withNullCharacter_addsJsonNullInstance() throws Exception {\n    Character value = null;\n    String property = \"nullCharProperty\";\n\n    // Call the focal method\n    jsonObject.addProperty(property, value);\n\n    // Verify that add was called with correct arguments\n    verify(jsonObject).add(eq(property), eq(JsonNull.INSTANCE));\n\n    // Verify internal members map contains the key and JsonNull instance\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertTrue(members.containsKey(property));\n    JsonElement storedElement = members.get(property);\n    assertSame(JsonNull.INSTANCE, storedElement);\n  }\n\n  @Test\n  public void testAdd_invokedByAddProperty_addsElementToMembers() throws Exception {\n    String property = \"testProperty\";\n    JsonPrimitive primitive = new JsonPrimitive('z');\n\n    // Call addProperty which calls add internally\n    jsonObject.addProperty(property, 'z');\n\n    // Verify members map contains the property with correct JsonElement\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertTrue(members.containsKey(property));\n    JsonElement element = members.get(property);\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(primitive.getAsCharacter(), ((JsonPrimitive) element).getAsCharacter());\n  }\n\n  @Test\n  public void testAddProperty_privateAddMethodInvocation() throws Exception {\n    // Use reflection to invoke private add method directly\n    Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n    addMethod.setAccessible(true);\n\n    String property = \"reflectionProperty\";\n    JsonPrimitive primitive = new JsonPrimitive('x');\n\n    addMethod.invoke(jsonObject, property, primitive);\n\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertTrue(members.containsKey(property));\n    JsonElement element = members.get(property);\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals('x', ((JsonPrimitive) element).getAsCharacter());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890022,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 883,
+    "prompt_tokens": 402,
+    "total_tokens": 1285,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.22
+  }
+}

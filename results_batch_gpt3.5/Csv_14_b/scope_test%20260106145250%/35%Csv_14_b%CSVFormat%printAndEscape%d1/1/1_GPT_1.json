@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvNG6nO7HC1sTaqQHfe0o5BNe20w",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.apache.commons.csv.Constants.BACKSLASH;\nimport static org.apache.commons.csv.Constants.COMMA;\nimport static org.apache.commons.csv.Constants.CR;\nimport static org.apache.commons.csv.Constants.LF;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVFormatPrintAndEscapeTest {\n\n    private CSVFormat csvFormat;\n    private Appendable out;\n\n    @BeforeEach\n    void setUp() {\n        // Use DEFAULT which has delimiter COMMA and escape DOUBLE_QUOTE_CHAR by default\n        csvFormat = CSVFormat.DEFAULT.withDelimiter(COMMA).withEscape('\\\"');\n        out = new StringBuilder();\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len, Appendable out) throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class, Appendable.class);\n        method.setAccessible(true);\n        method.invoke(csvFormat, value, offset, len, out);\n    }\n\n    @Test\n    void testPrintAndEscape_NoSpecialChars() throws Exception {\n        String input = \"simpletext\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n        assertEquals(\"simpletext\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_WithDelimiter() throws Exception {\n        // delimiter is comma ','\n        String input = \"hello,world\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n        // The comma should be escaped with quote character '\"'\n        // So output should be \"hello\" + escape + ',' + \"world\"\n        // escape char is '\"', delimiter is ','\n        String expected = \"hello\\\"\\\",world\";\n        // But per code, it appends escape char + the char, so for ',' it appends '\"' + ','\n        // So output is \"hello\" + '\"' + ',' + \"world\" => hello\",world\n        // So expected is \"hello\\\",world\"\n        expected = \"hello\\\"\\,world\".replace(\"\\\\,\", \",\"); // to clarify\n        // Actually, output is \"hello\" + '\"' + ',' + \"world\" => hello\",world\n        expected = \"hello\\\",world\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_WithEscapeChar() throws Exception {\n        // Escape char is '\"'\n        String input = \"escape\\\"char\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n        // The double quote character should be escaped by prefixing escape char\n        // So output is \"escape\" + '\"' + '\"' + \"char\"\n        String expected = \"escape\\\"\\\"char\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_WithCRandLF() throws Exception {\n        String input = \"line1\\r\\nline2\\nline3\\rend\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n        // CR is replaced with 'r' escaped, LF with 'n' escaped\n        // escape char is '\"'\n        // So output:\n        // line1 + '\"' + 'r' + '\"' + 'n' + line2 + '\"' + 'n' + line3 + '\"' + 'r' + end\n        StringBuilder expected = new StringBuilder();\n        expected.append(\"line1\").append('\"').append('r').append('\"').append('n');\n        expected.append(\"line2\").append('\"').append('n').append(\"line3\").append('\"').append('r').append(\"end\");\n        assertEquals(expected.toString(), out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_EmptyInput() throws Exception {\n        String input = \"\";\n        invokePrintAndEscape(input, 0, 0, out);\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_OffsetAndLength() throws Exception {\n        String input = \"abcdefg\";\n        // offset 2, length 3 => \"cde\"\n        invokePrintAndEscape(input, 2, 3, out);\n        assertEquals(\"cde\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_AllSpecialChars() throws Exception {\n        // delimiter=',' escape='\"'\n        String input = \"\" + CR + LF + ',' + '\"';\n        invokePrintAndEscape(input, 0, input.length(), out);\n        // Each special char escaped with escape char and replaced if CR or LF\n        // CR -> 'r', LF -> 'n'\n        StringBuilder expected = new StringBuilder();\n        expected.append('\"').append('r');\n        expected.append('\"').append('n');\n        expected.append('\"').append(',');\n        expected.append('\"').append('\"');\n        assertEquals(expected.toString(), out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_WithDifferentEscapeAndDelimiter() throws Exception {\n        // Use INFORMIX_UNLOAD which has delimiter PIPE '|' and escape BACKSLASH '\\\\'\n        csvFormat = CSVFormat.INFORMIX_UNLOAD;\n        out = new StringBuilder();\n        String input = \"a|b\\\\c\\r\\n\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n        // delimiter = '|', escape = '\\\\'\n        // So '|' and '\\\\' and CR LF are escaped\n        // CR -> 'r', LF -> 'n'\n        // output: a + '\\' + '|' + b + '\\' + '\\' + c + '\\' + 'r' + '\\' + 'n'\n        StringBuilder expected = new StringBuilder();\n        expected.append(\"a\").append('\\\\').append('|').append(\"b\").append('\\\\').append('\\\\').append(\"c\").append('\\\\').append('r').append('\\\\').append('n');\n        assertEquals(expected.toString(), out.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767682950,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1264,
+    "prompt_tokens": 1727,
+    "total_tokens": 2991,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.69
+  }
+}

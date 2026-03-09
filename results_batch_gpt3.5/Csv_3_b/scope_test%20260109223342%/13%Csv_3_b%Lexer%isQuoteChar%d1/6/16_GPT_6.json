@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7txnJLfIPOIaOQAieFG9LmtgS33",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nclass LexerTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        CSVFormat format = Mockito.mock(CSVFormat.class);\n        ExtendedBufferedReader in = Mockito.mock(ExtendedBufferedReader.class);\n\n        // Create an anonymous subclass with nextToken overridden (since Lexer is abstract)\n        lexer = new Lexer(format, in) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Set quoteChar field via reflection\n        setQuoteChar('\\''); // default quote char for setup\n    }\n\n    @Test\n    void testIsQuoteChar_MatchingChar() throws Exception {\n        setQuoteChar('\\'');\n        Method method = Lexer.class.getDeclaredMethod(\"isQuoteChar\", int.class);\n        method.setAccessible(true);\n        boolean result = (boolean) method.invoke(lexer, (int) '\\'');\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsQuoteChar_NonMatchingChar() throws Exception {\n        setQuoteChar('\\\"');\n        Method method = Lexer.class.getDeclaredMethod(\"isQuoteChar\", int.class);\n        method.setAccessible(true);\n        boolean result = (boolean) method.invoke(lexer, (int) '\\'');\n        assertFalse(result);\n    }\n\n    private void setQuoteChar(char quoteChar) throws Exception {\n        Field field = Lexer.class.getDeclaredField(\"quoteChar\");\n        field.setAccessible(true);\n\n        // Remove final modifier if present (works for JDK 8 and below)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(lexer, quoteChar);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969433,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 420,
+    "prompt_tokens": 898,
+    "total_tokens": 1318,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.12
+  }
+}

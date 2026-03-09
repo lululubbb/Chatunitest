@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  void asMap_shouldReturnUnderlyingMap() throws Exception {\n    // Use reflection to access private field 'members'\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    // Initially, members map should be empty\n    Map<String, JsonElement> mapFromMethod = jsonObject.asMap();\n    assertSame(members, mapFromMethod);\n    assertTrue(mapFromMethod.isEmpty());\n\n    // Add an element to members directly\n    JsonPrimitive element = new JsonPrimitive(\"value\");\n    members.put(\"key\", element);\n\n    // asMap should reflect the change\n    Map<String, JsonElement> mapAfterAdd = jsonObject.asMap();\n    assertSame(members, mapAfterAdd);\n    assertEquals(1, mapAfterAdd.size());\n    assertTrue(mapAfterAdd.containsKey(\"key\"));\n    assertEquals(element, mapAfterAdd.get(\"key\"));\n  }\n\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 408,
+  "completion_tokens": 312,
+  "total_tokens": 720,
+  "llm_elapsed_time_seconds": 5.62
+}

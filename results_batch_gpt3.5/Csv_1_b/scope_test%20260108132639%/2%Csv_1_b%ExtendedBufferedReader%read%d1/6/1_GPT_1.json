@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvcs9zk1jDXNZ7zmAPQIzvMypio2h",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader) {\n            @Override\n            public int read() throws IOException {\n                return super.read();\n            }\n        };\n    }\n\n    @Test\n    void testRead_returnsCharNotNewline_updatesLastCharAndLineCounter() throws IOException {\n        // Spy on extendedBufferedReader to mock super.read()\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        // Mock super.read() to return 'A' (not newline)\n        doReturn((int) 'A').when(spyReader).read();\n        // Call the real read method on spy\n        int result = spyReader.read();\n        assertEquals('A', result);\n        // Using reflection to get lastChar and lineCounter fields\n        int lastChar = getPrivateIntField(spyReader, \"lastChar\");\n        int lineCounter = getPrivateIntField(spyReader, \"lineCounter\");\n        assertEquals('A', lastChar);\n        assertEquals(0, lineCounter);\n    }\n\n    @Test\n    void testRead_returnsNewline_incrementsLineCounterAndUpdatesLastChar() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        doReturn((int) '\\n').when(spyReader).read();\n        int result = spyReader.read();\n        assertEquals('\\n', result);\n        int lastChar = getPrivateIntField(spyReader, \"lastChar\");\n        int lineCounter = getPrivateIntField(spyReader, \"lineCounter\");\n        assertEquals('\\n', lastChar);\n        assertEquals(1, lineCounter);\n    }\n\n    @Test\n    void testRead_returnsEndOfStream_updatesLastCharNoIncrementLineCounter() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        doReturn(ExtendedBufferedReader.END_OF_STREAM).when(spyReader).read();\n        int result = spyReader.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        int lastChar = getPrivateIntField(spyReader, \"lastChar\");\n        int lineCounter = getPrivateIntField(spyReader, \"lineCounter\");\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, lastChar);\n        assertEquals(0, lineCounter);\n    }\n\n    private int getPrivateIntField(Object instance, String fieldName) {\n        try {\n            java.lang.reflect.Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getInt(instance);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767850157,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 637,
+    "prompt_tokens": 304,
+    "total_tokens": 941,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.94
+  }
+}

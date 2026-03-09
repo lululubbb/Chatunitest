@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn1fHPn5klEPOBaSp7dKxOKfw8YT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\nimport org.junit.jupiter.api.Test;\n\nclass PreJava9DateFormatProviderTest {\n\n  @Test\n  void testGetUSDateFormat_returnsSimpleDateFormatWithCorrectPatternAndLocale() throws Exception {\n    // Use reflection to access private static getDateFormatPattern(int) method\n    Method getDateFormatPatternMethod = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDateFormatPattern\", int.class);\n    getDateFormatPatternMethod.setAccessible(true);\n\n    // Test for multiple style values to ensure coverage\n    int[] styles = {DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL};\n\n    for (int style : styles) {\n      String expectedPattern = (String) getDateFormatPatternMethod.invoke(null, style);\n\n      DateFormat df = PreJava9DateFormatProvider.getUSDateFormat(style);\n\n      assertNotNull(df, \"DateFormat should not be null\");\n      assertTrue(df instanceof SimpleDateFormat, \"DateFormat should be instance of SimpleDateFormat\");\n\n      SimpleDateFormat sdf = (SimpleDateFormat) df;\n      assertEquals(expectedPattern, sdf.toPattern(), \"Pattern should match expected pattern\");\n      assertEquals(Locale.US, sdf.getLocale(), \"Locale should be US\");\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889187,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 311,
+    "prompt_tokens": 276,
+    "total_tokens": 587,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.57
+  }
+}

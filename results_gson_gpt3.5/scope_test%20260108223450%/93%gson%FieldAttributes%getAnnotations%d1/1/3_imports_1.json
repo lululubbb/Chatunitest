@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass FieldAttributesTest {\n\n  FieldAttributes fieldAttributes;\n  Field mockField;\n\n  @BeforeEach\n  void setUp() throws NoSuchFieldException, SecurityException {\n    // Use a real Field instance from a dummy class with annotations\n    class Dummy {\n      @Deprecated\n      public int annotatedField;\n    }\n    mockField = Dummy.class.getField(\"annotatedField\");\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void testGetAnnotationsReturnsAllAnnotations() {\n    Collection<Annotation> annotations = fieldAttributes.getAnnotations();\n    assertNotNull(annotations);\n    // The field should have at least the @Deprecated annotation\n    boolean hasDeprecated = annotations.stream()\n        .anyMatch(a -> a.annotationType().equals(Deprecated.class));\n    assertTrue(hasDeprecated);\n  }\n\n  @Test\n  void testGetAnnotationsEmptyWhenNoAnnotations() throws NoSuchFieldException {\n    class DummyNoAnno {\n      public int noAnnotationField;\n    }\n    Field noAnnoField = DummyNoAnno.class.getField(\"noAnnotationField\");\n    FieldAttributes fa = new FieldAttributes(noAnnoField);\n    Collection<Annotation> annotations = fa.getAnnotations();\n    assertNotNull(annotations);\n    assertTrue(annotations.isEmpty());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 277,
+  "completion_tokens": 316,
+  "total_tokens": 593,
+  "llm_elapsed_time_seconds": 4.47,
+  "repair_elapsed_time_seconds": 19.59,
+  "round_total_time_seconds": 19.59
+}

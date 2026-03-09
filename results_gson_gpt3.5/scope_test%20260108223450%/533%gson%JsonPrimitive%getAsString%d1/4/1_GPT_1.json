@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn54hDolXlHyuh4FIpLBsWXNaUex",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  private void setValue(Object instance, Object value) throws NoSuchFieldException, IllegalAccessException {\n    Field field = JsonPrimitive.class.getDeclaredField(\"value\");\n    field.setAccessible(true);\n    field.set(instance, value);\n  }\n\n  @Test\n  public void testGetAsString_whenValueIsString() throws Exception {\n    jsonPrimitive = new JsonPrimitive(\"testString\");\n    assertEquals(\"testString\", jsonPrimitive.getAsString());\n  }\n\n  @Test\n  public void testGetAsString_whenValueIsNumber() throws Exception {\n    jsonPrimitive = new JsonPrimitive(123);\n    // spy to mock isNumber and getAsNumber\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(true).when(spyPrimitive).isNumber();\n    Number number = 456;\n    doReturn(number).when(spyPrimitive).getAsNumber();\n    assertEquals(\"456\", spyPrimitive.getAsString());\n  }\n\n  @Test\n  public void testGetAsString_whenValueIsBoolean() throws Exception {\n    jsonPrimitive = new JsonPrimitive(true);\n    // spy to mock isNumber and isBoolean\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(true).when(spyPrimitive).isBoolean();\n    setValue(spyPrimitive, Boolean.TRUE);\n    assertEquals(\"true\", spyPrimitive.getAsString());\n  }\n\n  @Test\n  public void testGetAsString_whenValueIsUnexpectedType_throwsAssertionError() throws Exception {\n    jsonPrimitive = new JsonPrimitive(\"dummy\");\n    // set private final value field to an unexpected type (e.g. Object)\n    Object unexpected = new Object();\n    setValue(jsonPrimitive, unexpected);\n\n    AssertionError error = assertThrows(AssertionError.class, () -> {\n      jsonPrimitive.getAsString();\n    });\n    assertTrue(error.getMessage().contains(\"Unexpected value type:\"));\n    assertTrue(error.getMessage().contains(unexpected.getClass().toString()));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889398,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 487,
+    "prompt_tokens": 475,
+    "total_tokens": 962,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.27
+  }
+}

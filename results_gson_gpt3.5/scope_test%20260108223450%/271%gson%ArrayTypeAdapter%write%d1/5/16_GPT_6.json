@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm0VE1ukxrZdRd3hyp1RofDFbwTL",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ArrayTypeAdapter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Array;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\npublic class ArrayTypeAdapterTest {\n\n  private JsonWriter jsonWriter;\n  private TypeAdapter<Object> componentTypeAdapter;\n  private ArrayTypeAdapter<Object> arrayTypeAdapter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = spy(new JsonWriter(stringWriter));\n    componentTypeAdapter = mock(TypeAdapter.class);\n    // Mock componentTypeAdapter.write to call real method to avoid swallowing calls\n    try {\n      doAnswer(invocation -> {\n        // simulate writing by forwarding to the real JsonWriter for strings and nulls\n        JsonWriter out = invocation.getArgument(0);\n        Object value = invocation.getArgument(1);\n        if (value == null) {\n          out.nullValue();\n        } else if (value instanceof String) {\n          out.value((String) value);\n        } else {\n          // fallback, do nothing\n        }\n        return null;\n      }).when(componentTypeAdapter).write(any(JsonWriter.class), any());\n    } catch (IOException e) {\n      throw new RuntimeException(e);\n    }\n    // Pass a non-null Gson instance to avoid NullPointerException in ArrayTypeAdapter\n    arrayTypeAdapter = new ArrayTypeAdapter<>(new Gson(), componentTypeAdapter, Object.class);\n  }\n\n  @Test\n  public void write_nullArray_shouldWriteNullValue() throws IOException {\n    arrayTypeAdapter.write(jsonWriter, null);\n    verify(jsonWriter).nullValue();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_emptyArray_shouldWriteBeginAndEndArray() throws IOException {\n    Object emptyArray = Array.newInstance(Object.class, 0);\n    arrayTypeAdapter.write(jsonWriter, emptyArray);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    inOrder.verify(jsonWriter).endArray();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_arrayWithElements_shouldWriteAllElements() throws IOException {\n    Object[] array = new Object[] {\"a\", \"b\", null};\n    arrayTypeAdapter.write(jsonWriter, array);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    // The componentTypeAdapter is mocked and its write method is stubbed,\n    // but the actual calls to componentTypeAdapter.write() are not recorded by Mockito\n    // because the ArrayTypeAdapter calls componentTypeAdapter.write(), but componentTypeAdapter is a mock.\n    // To verify the calls, we need to spy the componentTypeAdapter instead of mock.\n    // So fix: change componentTypeAdapter to spy.\n\n    // To fix this, we will change componentTypeAdapter to spy of a real TypeAdapter implementation.\n    // But since we can't do that easily, the simplest fix is to verify the interactions on componentTypeAdapter.\n\n    // The problem is that the componentTypeAdapter.write() method is called, but Mockito cannot verify it\n    // because the method is stubbed with doAnswer and the call is swallowed.\n\n    // So we fix this by changing componentTypeAdapter to spy and doAnswer on spy.\n\n    // However, since we cannot change the test here, just verify calls on componentTypeAdapter.write instead of verifying inOrder.\n\n    // So the fix is to verify calls on componentTypeAdapter.write with correct arguments.\n\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"a\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"b\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, null);\n    inOrder.verify(jsonWriter).endArray();\n  }\n}\n```\n\n---\n\n**Fixed version with spy on componentTypeAdapter instead of mock:**\n\n```java\npackage com.google.gson.internal.bind;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.bind.ArrayTypeAdapter;\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Array;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\npublic class ArrayTypeAdapterTest {\n\n  private JsonWriter jsonWriter;\n  private TypeAdapter<Object> componentTypeAdapter;\n  private ArrayTypeAdapter<Object> arrayTypeAdapter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = spy(new JsonWriter(stringWriter));\n\n    // Create a real TypeAdapter that writes strings and nulls, then spy it\n    componentTypeAdapter = spy(new TypeAdapter<Object>() {\n      @Override\n      public void write(JsonWriter out, Object value) throws IOException {\n        if (value == null) {\n          out.nullValue();\n        } else if (value instanceof String) {\n          out.value((String) value);\n        } else {\n          // do nothing for other types\n        }\n      }\n\n      @Override\n      public Object read(com.google.gson.stream.JsonReader in) {\n        throw new UnsupportedOperationException();\n      }\n    });\n\n    arrayTypeAdapter = new ArrayTypeAdapter<>(new Gson(), componentTypeAdapter, Object.class);\n  }\n\n  @Test\n  public void write_nullArray_shouldWriteNullValue() throws IOException {\n    arrayTypeAdapter.write(jsonWriter, null);\n    verify(jsonWriter).nullValue();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_emptyArray_shouldWriteBeginAndEndArray() throws IOException {\n    Object emptyArray = Array.newInstance(Object.class, 0);\n    arrayTypeAdapter.write(jsonWriter, emptyArray);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    inOrder.verify(jsonWriter).endArray();\n    verifyNoMoreInteractions(componentTypeAdapter);\n  }\n\n  @Test\n  public void write_arrayWithElements_shouldWriteAllElements() throws IOException {\n    Object[] array = new Object[] {\"a\", \"b\", null};\n    arrayTypeAdapter.write(jsonWriter, array);\n    InOrder inOrder = inOrder(jsonWriter, componentTypeAdapter);\n    inOrder.verify(jsonWriter).beginArray();\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"a\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, \"b\");\n    inOrder.verify(componentTypeAdapter).write(jsonWriter, null);\n    inOrder.verify(jsonWriter).endArray();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885271,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1436,
+    "prompt_tokens": 1629,
+    "total_tokens": 3065,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.4
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn2pSse9aoYc2XOhNlp41AOhtITv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport java.util.function.Supplier;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    // Create JsonReader with a dummy Reader, since we will manipulate buffer directly\n    jsonReader = new JsonReader(null);\n  }\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    var field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    // Remove final modifier if present\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n    field.set(target, value);\n  }\n\n  private Object getField(Object target, String fieldName) throws Exception {\n    var field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(target);\n  }\n\n  private void invokeSkipQuotedValue(Object target, char quote) throws Throwable {\n    Method method = JsonReader.class.getDeclaredMethod(\"skipQuotedValue\", char.class);\n    method.setAccessible(true);\n    try {\n      method.invoke(target, quote);\n    } catch (InvocationTargetException ite) {\n      throw ite.getCause();\n    }\n  }\n\n  // Helper to mock private methods using reflection and spy\n  private void mockPrivateMethod(Object spy, String methodName, Class<?>[] paramTypes, Supplier<?> answer) throws Exception {\n    Method method = JsonReader.class.getDeclaredMethod(methodName, paramTypes);\n    method.setAccessible(true);\n\n    // Use Mockito's doAnswer on a spy with reflection proxy\n    // Because Mockito cannot mock private methods directly, we override the method via a dynamic proxy\n    // Instead, we replace the private method with a public one temporarily for testing via subclassing is complex,\n    // so we use a workaround: we create a subclass that overrides the private methods as public and then spy that.\n\n    // But here, simpler is to use reflection to override the method behavior by subclassing JsonReader in the test\n\n    // This method is not used in current tests, kept for extensibility.\n  }\n\n  @Test\n  public void skipQuotedValue_closesOnQuote() throws Throwable {\n    // Setup buffer with a quoted string ending with quote char '\"'\n    char[] buffer = new char[1024];\n    buffer[0] = 'a';\n    buffer[1] = 'b';\n    buffer[2] = '\"';\n    setField(jsonReader, \"buffer\", buffer);\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 0);\n    setField(jsonReader, \"lineStart\", 0);\n\n    invokeSkipQuotedValue(jsonReader, '\"');\n\n    int pos = (int) getField(jsonReader, \"pos\");\n    assertEquals(3, pos, \"pos should be just after closing quote\");\n  }\n\n  // Subclass to override private methods as protected for testing\n  private static class JsonReaderForTest extends JsonReader {\n    private JsonReaderForTest() {\n      super(null);\n    }\n\n    @Override\n    protected char readEscapeCharacter() throws IOException {\n      // This method will be mocked by Mockito spy\n      return super.readEscapeCharacter();\n    }\n\n    @Override\n    protected boolean fillBuffer(int minimum) throws IOException {\n      // This method will be mocked by Mockito spy\n      return super.fillBuffer(minimum);\n    }\n  }\n\n  @Test\n  public void skipQuotedValue_handlesEscapedCharacters() throws Throwable {\n    // Setup buffer with escaped quote: \"abc\\\"def\"\n    // We simulate buffer: a b \\ \" d e f \"\n    char[] buffer = new char[1024];\n    buffer[0] = 'a';\n    buffer[1] = 'b';\n    buffer[2] = '\\\\';\n    buffer[3] = '\"';\n    buffer[4] = 'd';\n    buffer[5] = 'e';\n    buffer[6] = 'f';\n    buffer[7] = '\"';\n\n    JsonReaderForTest readerForTest = new JsonReaderForTest();\n    setField(readerForTest, \"buffer\", buffer);\n    setField(readerForTest, \"pos\", 0);\n    setField(readerForTest, \"limit\", 8);\n    setField(readerForTest, \"lineNumber\", 0);\n    setField(readerForTest, \"lineStart\", 0);\n\n    JsonReaderForTest spyReader = spy(readerForTest);\n\n    doAnswer(invocation -> {\n      int pos = (int) getField(spyReader, \"pos\");\n      setField(spyReader, \"pos\", pos + 1);\n      return '\\0';\n    }).when(spyReader).readEscapeCharacter();\n\n    doReturn(false).when(spyReader).fillBuffer(1);\n\n    invokeSkipQuotedValue(spyReader, '\"');\n\n    int pos = (int) getField(spyReader, \"pos\");\n    assertEquals(8, pos, \"pos should be after closing quote\");\n  }\n\n  @Test\n  public void skipQuotedValue_incrementsLineNumberOnNewline() throws Throwable {\n    // Setup buffer with a newline inside quotes: a \\n \"\n    char[] buffer = new char[1024];\n    buffer[0] = 'a';\n    buffer[1] = '\\n';\n    buffer[2] = '\"';\n\n    setField(jsonReader, \"buffer\", buffer);\n    setField(jsonReader, \"pos\", 0);\n    setField(jsonReader, \"limit\", 3);\n    setField(jsonReader, \"lineNumber\", 1);\n    setField(jsonReader, \"lineStart\", 0);\n\n    invokeSkipQuotedValue(jsonReader, '\"');\n\n    int pos = (int) getField(jsonReader, \"pos\");\n    int lineNumber = (int) getField(jsonReader, \"lineNumber\");\n    int lineStart = (int) getField(jsonReader, \"lineStart\");\n\n    assertEquals(3, pos, \"pos should be after closing quote\");\n    assertEquals(2, lineNumber, \"lineNumber should increment by 1\");\n    assertEquals(2, lineStart, \"lineStart should be updated to pos after newline\");\n  }\n\n  @Test\n  public void skipQuotedValue_throwsOnUnterminatedString() throws Throwable {\n    // Setup buffer with no closing quote and fillBuffer returns false\n    char[] buffer = new char[1024];\n    buffer[0] = 'a';\n    buffer[1] = 'b';\n\n    JsonReaderForTest readerForTest = new JsonReaderForTest();\n    setField(readerForTest, \"buffer\", buffer);\n    setField(readerForTest, \"pos\", 0);\n    setField(readerForTest, \"limit\", 2);\n    setField(readerForTest, \"lineNumber\", 0);\n    setField(readerForTest, \"lineStart\", 0);\n\n    JsonReaderForTest spyReader = spy(readerForTest);\n    doReturn(false).when(spyReader).fillBuffer(1);\n\n    Method method = JsonReader.class.getDeclaredMethod(\"skipQuotedValue\", char.class);\n    method.setAccessible(true);\n    Throwable thrown = assertThrows(Throwable.class, () -> {\n      try {\n        method.invoke(spyReader, '\"');\n      } catch (InvocationTargetException ite) {\n        throw ite.getCause();\n      }\n    });\n    assertTrue(thrown instanceof IOException);\n    assertTrue(thrown.getMessage().contains(\"Unterminated string\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889259,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1649,
+    "prompt_tokens": 2466,
+    "total_tokens": 4115,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 22.41
+  }
+}

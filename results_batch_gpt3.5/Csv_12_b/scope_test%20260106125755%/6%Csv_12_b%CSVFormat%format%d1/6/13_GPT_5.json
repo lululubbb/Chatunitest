@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutUChJ5qiWaCPrYVm4UqRUVpXVyV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testFormatWithNormalValues() {\n        String formatted = csvFormat.format(\"value1\", \"value2\", \"value3\");\n        assertNotNull(formatted);\n        assertTrue(formatted.contains(\"value1\"));\n        assertTrue(formatted.contains(\"value2\"));\n        assertTrue(formatted.contains(\"value3\"));\n    }\n\n    @Test\n    public void testFormatWithEmptyValues() {\n        String formatted = csvFormat.format();\n        assertNotNull(formatted);\n        assertEquals(\"\", formatted);\n    }\n\n    @Test\n    public void testFormatWithNullValues() {\n        String formatted = csvFormat.format((Object) null);\n        assertNotNull(formatted);\n        assertEquals(\"\", formatted);\n    }\n\n    @Test\n    public void testFormatThrowsIllegalStateExceptionOnIOException() throws Exception {\n        // Mock CSVPrinter to throw IOException on printRecord\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n        doThrow(new IOException(\"IO error\")).when(mockPrinter).printRecord(any());\n\n        // Create a subclass of CSVFormat that overrides print method to return the mockPrinter\n        CSVFormat csvFormatWithMockPrinter = new CSVFormat(\n                csvFormat.getDelimiter(),\n                csvFormat.getQuoteCharacter(),\n                csvFormat.getQuoteMode(),\n                csvFormat.getCommentMarker(),\n                csvFormat.getEscapeCharacter(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                csvFormat.getHeader(),\n                csvFormat.getSkipHeaderRecord(),\n                csvFormat.getAllowMissingColumnNames()\n        ) {\n            @Override\n            public CSVPrinter print(final Appendable out) {\n                return mockPrinter;\n            }\n        };\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            csvFormatWithMockPrinter.format(\"a\", \"b\");\n        });\n        assertTrue(thrown.getCause() instanceof IOException);\n        assertEquals(\"IO error\", thrown.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675692,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 527,
+    "prompt_tokens": 1853,
+    "total_tokens": 2380,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.81
+  }
+}

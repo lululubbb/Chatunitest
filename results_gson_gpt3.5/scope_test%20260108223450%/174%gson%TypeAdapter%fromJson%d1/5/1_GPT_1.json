@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn6MCbZ8Uf3kuh1yCvw1OPNqjOlF",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TypeAdapterFromJsonTest {\n\n  private TypeAdapter<String> typeAdapter;\n\n  @BeforeEach\n  void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(com.google.gson.stream.JsonWriter out, String value) {\n        // no-op for test\n      }\n\n      @Override\n      public String read(JsonReader in) {\n        try {\n          if (in.peek() == JsonToken.STRING) {\n            return in.nextString();\n          } else if (in.peek() == JsonToken.NULL) {\n            in.nextNull();\n            return null;\n          }\n          throw new IllegalStateException(\"Unexpected token\");\n        } catch (IOException e) {\n          throw new RuntimeException(e);\n        }\n      }\n    };\n  }\n\n  @Test\n  void fromJson_withValidJsonString_returnsParsedValue() throws Exception {\n    String json = \"\\\"testValue\\\"\";\n    String result = typeAdapter.fromJson(json);\n    assertEquals(\"testValue\", result);\n  }\n\n  @Test\n  void fromJson_withNullJsonString_returnsNull() throws Exception {\n    String json = \"null\";\n    String result = typeAdapter.fromJson(json);\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_withInvalidJson_throwsIOException() {\n    String invalidJson = \"{ invalid json }\";\n    assertThrows(IOException.class, () -> {\n      // Use reflection to invoke private final fromJson(Reader) to simulate IOException from read()\n      Method fromJsonReaderMethod = TypeAdapter.class.getDeclaredMethod(\"fromJson\", java.io.Reader.class);\n      fromJsonReaderMethod.setAccessible(true);\n\n      // Create a TypeAdapter that throws IOException from read()\n      TypeAdapter<String> adapter = new TypeAdapter<String>() {\n        @Override\n        public void write(com.google.gson.stream.JsonWriter out, String value) {\n          // no-op\n        }\n\n        @Override\n        public String read(JsonReader in) throws IOException {\n          throw new IOException(\"forced\");\n        }\n      };\n\n      fromJsonReaderMethod.invoke(adapter, new StringReader(invalidJson));\n    });\n  }\n\n  @Test\n  void fromJson_invokesPrivateFromJsonReader() throws Exception {\n    String json = \"\\\"reflectionTest\\\"\";\n\n    Method fromJsonReaderMethod = TypeAdapter.class.getDeclaredMethod(\"fromJson\", java.io.Reader.class);\n    fromJsonReaderMethod.setAccessible(true);\n\n    Object result = fromJsonReaderMethod.invoke(typeAdapter, new StringReader(json));\n    assertEquals(\"reflectionTest\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889478,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 582,
+    "prompt_tokens": 341,
+    "total_tokens": 923,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.12
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlZLnoi6hnqYklTLR2NC5al5q6QP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  private Constructor<?> constructor;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    constructor = SampleClass.class.getDeclaredConstructor(String.class, int.class);\n  }\n\n  @Test\n  void constructorToString_returnsCorrectString() throws Exception {\n    String result = ReflectionHelper.constructorToString(constructor);\n    assertTrue(result.startsWith(SampleClass.class.getName() + \"(\"));\n    assertTrue(result.contains(\"java.lang.String\"));\n    assertTrue(result.contains(\"int\"));\n    assertTrue(result.endsWith(\")\"));\n  }\n\n  @Test\n  void appendExecutableParameters_handlesNoParameters() throws Exception {\n    Constructor<?> noParamConstructor = SampleClass.class.getDeclaredConstructor();\n    StringBuilder sb = new StringBuilder(SampleClass.class.getName());\n\n    // Use reflection to invoke private static method appendExecutableParameters\n    Method method = ReflectionHelper.class.getDeclaredMethod(\"appendExecutableParameters\",\n        java.lang.reflect.AccessibleObject.class, StringBuilder.class);\n    method.setAccessible(true);\n    method.invoke(null, noParamConstructor, sb);\n\n    String result = sb.toString();\n    assertEquals(SampleClass.class.getName() + \"()\", result);\n  }\n\n  @Test\n  void appendExecutableParameters_handlesMultipleParameters() throws Exception {\n    StringBuilder sb = new StringBuilder(SampleClass.class.getName());\n\n    Method method = ReflectionHelper.class.getDeclaredMethod(\"appendExecutableParameters\",\n        java.lang.reflect.AccessibleObject.class, StringBuilder.class);\n    method.setAccessible(true);\n    method.invoke(null, constructor, sb);\n\n    String result = sb.toString();\n    assertTrue(result.startsWith(SampleClass.class.getName() + \"(\"));\n    assertTrue(result.contains(\"java.lang.String\"));\n    assertTrue(result.contains(\"int\"));\n    assertTrue(result.endsWith(\")\"));\n  }\n\n  // Sample class for testing\n  static class SampleClass {\n    public SampleClass() {}\n    public SampleClass(String s, int i) {}\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883587,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 459,
+    "prompt_tokens": 1491,
+    "total_tokens": 1950,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.73
+  }
+}

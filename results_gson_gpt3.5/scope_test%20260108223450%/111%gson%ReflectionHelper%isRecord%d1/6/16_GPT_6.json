@@ -1,0 +1,46 @@
+{
+  "id": "chatcmpl-Cvld4QK5ETM9vHiAYWnEHmzWRS0lv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  static class TestRecord {\n    public int x;\n  }\n\n  static class NonRecord {\n  }\n\n  private Field recordHelperField;\n  private Object originalRecordHelper;\n  private int originalModifiers;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Save original value to restore later\n    originalRecordHelper = recordHelperField.get(null);\n\n    // Save original modifiers\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    originalModifiers = recordHelperField.getModifiers();\n\n    // Remove final modifier on RECORD_HELPER field\n    modifiersField.setInt(recordHelperField, originalModifiers & ~Modifier.FINAL);\n  }\n\n  @AfterEach\n  void tearDown() throws Exception {\n    // Restore original RECORD_HELPER value and modifiers\n    recordHelperField.set(null, originalRecordHelper);\n\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, originalModifiers);\n  }\n\n  @Test\n  void isRecord_returnsTrue_whenRecordHelperReturnsTrue() throws Exception {\n    Class<?> recordHelperType = recordHelperField.getType();\n\n    // Create a Mockito mock of the concrete class RecordHelper\n    Object mockRecordHelper = mock(recordHelperType);\n\n    // Use reflection to get the isRecord method\n    Method isRecordMethod = recordHelperType.getDeclaredMethod(\"isRecord\", Class.class);\n    isRecordMethod.setAccessible(true);\n\n    // Stub the isRecord method on the mock to return true for TestRecord.class\n    when(isRecordMethod.invoke(mockRecordHelper, TestRecord.class)).thenReturn(null);\n    // The above won't work because invoke calls the real method, so instead use Mockito's when (on mock)\n    // So use Mockito's when on the mock's isRecord method via reflection proxy:\n    // To do this, use Mockito's 'when' on the mock's isRecord method:\n    // Cast mockRecordHelper to the recordHelperType and use Mockito's when:\n    // We can use Mockito's doReturn(true).when(mockRecordHelper).isRecord(TestRecord.class);\n    // But since the method is not visible, use reflection to get the method and stub it:\n\n    // Instead, use Mockito's 'doAnswer' to stub isRecord method:\n    doAnswer(invocation -> {\n      Class<?> arg = invocation.getArgument(0);\n      return arg == TestRecord.class;\n    }).when(mockRecordHelper).getClass()\n      .getMethod(\"isRecord\", Class.class)\n      .invoke(mockRecordHelper, TestRecord.class);\n\n    // The above is complicated; simpler is to use Mockito's Answer with a custom mock:\n    // So recreate mock with Answer:\n\n    mockRecordHelper = mock(recordHelperType, invocation -> {\n      if (\"isRecord\".equals(invocation.getMethod().getName()) && invocation.getArguments().length == 1) {\n        Class<?> arg = (Class<?>) invocation.getArgument(0);\n        return arg == TestRecord.class;\n      }\n      return invocation.callRealMethod();\n    });\n\n    // Replace the RECORD_HELPER field with the mock\n    recordHelperField.set(null, mockRecordHelper);\n\n    boolean result = ReflectionHelper.isRecord(TestRecord.class);\n\n    assertTrue(result);\n  }\n\n  @Test\n  void isRecord_returnsFalse_whenRecordHelperReturnsFalse() throws Exception {\n    Class<?> recordHelperType = recordHelperField.getType();\n\n    Object mockRecordHelper = mock(recordHelperType, invocation -> {\n      if (\"isRecord\".equals(invocation.getMethod().getName()) && invocation.getArguments().length == 1) {\n        Class<?> arg = (Class<?>) invocation.getArgument(0);\n        return arg == NonRecord.class ? false : true;\n      }\n      return invocation.callRealMethod();\n    });\n\n    recordHelperField.set(null, mockRecordHelper);\n\n    boolean result = ReflectionHelper.isRecord(NonRecord.class);\n\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      },
+      "content_filter_result": {
+        "error": {
+          "code": "content_filter_error",
+          "message": "The contents are not filtered"
+        }
+      }
+    }
+  ],
+  "created": 1767883818,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 916,
+    "prompt_tokens": 2364,
+    "total_tokens": 3280,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.17
+  }
+}

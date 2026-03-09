@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAMR0W6DRM7zQ7Lg3dzAplM2dSbu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Mock CSVFormat as it is a dependency of CSVParser constructor\n        CSVFormat format = mock(CSVFormat.class);\n        // Use a dummy Reader as parameter\n        Reader reader = mock(Reader.class);\n\n        parser = new CSVParser(reader, format);\n\n        // Use reflection to set private field recordNumber to a known value\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        recordNumberField.setLong(parser, 42L);\n    }\n\n    @Test\n    void testGetRecordNumber_returnsCorrectValue() {\n        long recordNumber = parser.getRecordNumber();\n        assertEquals(42L, recordNumber);\n    }\n\n    @Test\n    void testGetRecordNumber_initialValueIsZero() throws Exception {\n        CSVFormat format = mock(CSVFormat.class);\n        Reader reader = mock(Reader.class);\n        CSVParser newParser = new CSVParser(reader, format);\n\n        // Without setting recordNumber, it should be 0\n        assertEquals(0L, newParser.getRecordNumber());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978887,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 299,
+    "prompt_tokens": 850,
+    "total_tokens": 1149,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.62
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmMARq35oZ75OM76E8sOMdzIJAs8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\n\nclass Gson_newJsonReader_Test {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void testNewJsonReader_withLenientTrue() throws Exception {\n    // Create Gson instance with lenient = true by reflection setting the private field\n    gson = createGsonWithLenient(true);\n\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n\n    JsonReader jsonReader = gson.newJsonReader(reader);\n\n    assertNotNull(jsonReader);\n\n    // Use reflection to get the 'in' field from JsonReader (the Reader passed in constructor)\n    Field inField = JsonReader.class.getDeclaredField(\"in\");\n    inField.setAccessible(true);\n    Object actualReader = inField.get(jsonReader);\n\n    assertSame(reader, actualReader);\n    // lenient should be true as set by Gson.lenient and applied by newJsonReader()\n    assertTrue(jsonReader.isLenient());\n  }\n\n  @Test\n  public void testNewJsonReader_withLenientFalse() throws Exception {\n    // Create Gson instance with lenient = false by reflection setting the private field\n    gson = createGsonWithLenient(false);\n\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n\n    JsonReader jsonReader = gson.newJsonReader(reader);\n\n    assertNotNull(jsonReader);\n\n    // Use reflection to get the 'in' field from JsonReader (the Reader passed in constructor)\n    Field inField = JsonReader.class.getDeclaredField(\"in\");\n    inField.setAccessible(true);\n    Object actualReader = inField.get(jsonReader);\n\n    assertSame(reader, actualReader);\n    // lenient should be false as set by Gson.lenient and applied by newJsonReader()\n    assertFalse(jsonReader.isLenient());\n  }\n\n  @Test\n  public void testNewJsonReader_withNullReader() {\n    assertThrows(NullPointerException.class, () -> {\n      gson.newJsonReader(null);\n    });\n  }\n\n  private Gson createGsonWithLenient(boolean lenientValue) throws Exception {\n    // Create a default Gson instance and set its private final 'lenient' field by reflection\n    Gson gsonInstance = new Gson();\n\n    Field lenientField = Gson.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n\n    // Remove final modifier if present (for Java 12+ compatibility)\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(lenientField, lenientField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    lenientField.set(gsonInstance, lenientValue);\n\n    return gsonInstance;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886614,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 633,
+    "prompt_tokens": 2758,
+    "total_tokens": 3391,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.97
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8vvfSZNkoHi26X7QzAdQM0CSgRH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockSettings;\n\nclass CSVPrinterFlushTest {\n\n    private CSVFormat format;\n    private Appendable appendable;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void flush_WithFlushableOut_ShouldInvokeFlush() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Create a mock Appendable that also implements Flushable\n        MockSettings settings = withSettings().extraInterfaces(Flushable.class);\n        Appendable appendableFlushable = mock(Appendable.class, settings);\n\n        // Create CSVPrinter with a dummy Appendable and format (will replace 'out' via reflection)\n        printer = new CSVPrinter(mock(Appendable.class), format);\n\n        // Use reflection to set the private final field 'out' to our mock to ensure the flush call is intercepted\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n\n        // Remove final modifier if present (optional, but safer)\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(outField, outField.getModifiers() & ~Modifier.FINAL);\n\n        outField.set(printer, appendableFlushable);\n\n        // Cast to Flushable for verification\n        Flushable flushable = (Flushable) appendableFlushable;\n\n        // Setup the flush method on the Flushable interface\n        doNothing().when(flushable).flush();\n\n        // Call flush\n        printer.flush();\n\n        // Verify flush was called exactly once\n        verify(flushable, times(1)).flush();\n    }\n\n    @Test\n    void flush_WithNonFlushableOut_ShouldNotThrow() throws IOException {\n        appendable = mock(Appendable.class);\n        printer = new CSVPrinter(appendable, format);\n        // flush should do nothing and not throw\n        printer.flush();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973399,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 488,
+    "prompt_tokens": 980,
+    "total_tokens": 1468,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.0
+  }
+}

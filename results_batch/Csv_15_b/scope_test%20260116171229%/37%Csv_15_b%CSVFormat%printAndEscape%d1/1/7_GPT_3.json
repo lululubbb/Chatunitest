@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyalDFiIehOFV9TbazkGQ70w0VtYf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintAndEscapeTest {\n\n    private CSVFormat csvFormat;\n    private Appendable out;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT.withEscape('\\\\').withDelimiter(',');\n        out = mock(Appendable.class);\n    }\n\n    @Test\n    void testPrintAndEscape_NoSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        // Verify append called once with whole string\n        verify(out).append(input, 0, input.length());\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_WithDelimiter() throws Throwable {\n        String input = \"hello,world\";\n        // delimiter is ',' in DEFAULT\n\n        // Expected calls:\n        // append \"hello\"\n        // append escape char\n        // append ','\n        // append \"world\"\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        verify(out).append(input, 0, 5); // \"hello\"\n        verify(out).append('\\\\');       // escape\n        verify(out).append(',');        // delimiter escaped\n        verify(out).append(input, 6, 11); // \"world\"\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_WithEscapeChar() throws Throwable {\n        // Set escape char to '*'\n        csvFormat = csvFormat.withEscape('*');\n        out = mock(Appendable.class);\n        String input = \"abc*def\";\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        verify(out).append(input, 0, 3); // \"abc\"\n        verify(out).append('*');         // escape\n        verify(out).append('*');         // escaped escape char\n        verify(out).append(input, 4, 7); // \"def\"\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_WithCRandLF() throws Throwable {\n        String input = \"line1\\r\\nline2\\nline3\\rend\";\n        // delimiter is ',' and escape is '\\\\'\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        // Expected sequence:\n        // append \"line1\"\n        // append '\\\\','r' (CR)\n        // append '\\\\','n' (LF)\n        // append \"line2\"\n        // append '\\\\','n' (LF)\n        // append \"line3\"\n        // append '\\\\','r' (CR)\n        // append \"end\"\n\n        verify(out).append(input, 0, 5); // \"line1\"\n        verify(out).append('\\\\');\n        verify(out).append('r');\n        verify(out).append('\\\\');\n        verify(out).append('n');\n        verify(out).append(input, 7, 12); // \"line2\"\n        verify(out).append('\\\\');\n        verify(out).append('n');\n        verify(out).append(input, 13, 18); // \"line3\"\n        verify(out).append('\\\\');\n        verify(out).append('r');\n        verify(out).append(input, 19, 22); // \"end\"\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_EmptyInput() throws Throwable {\n        String input = \"\";\n        invokePrintAndEscape(input, 0, 0, out);\n        verify(out, never()).append(anyChar());\n        verify(out, never()).append(any(CharSequence.class), anyInt(), anyInt());\n        verify(out, never()).append(any(CharSequence.class));\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintAndEscape_PartialInput() throws Throwable {\n        String input = \"abc,def\";\n        // Only escape \"c,d\"\n        invokePrintAndEscape(input, 2, 3, out);\n\n        // substring = \"c,d\"\n        // c = 'c' no escape\n        // ',' delimiter -> escape\n        // 'd' no escape\n\n        verify(out).append(input, 2, 3); // \"c\"\n        verify(out).append('\\\\');\n        verify(out).append(',');\n        verify(out).append(input, 4, 5); // \"d\"\n        verifyNoMoreInteractions(out);\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len, Appendable out) throws Throwable {\n        Method method = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class,\n                Appendable.class);\n        method.setAccessible(true);\n        try {\n            method.invoke(csvFormat, value, offset, len, out);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768557023,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1060,
+    "prompt_tokens": 2258,
+    "total_tokens": 3318,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.99
+  }
+}

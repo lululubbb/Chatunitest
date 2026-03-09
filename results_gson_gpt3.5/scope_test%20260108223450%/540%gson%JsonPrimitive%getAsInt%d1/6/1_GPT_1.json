@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmKNpib6O2hJoxpBYcwYrQfbR96O",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LazilyParsedNumber;\nimport java.lang.reflect.Method;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  void setup() {\n    // no common setup needed\n  }\n\n  @Test\n  void getAsInt_whenIsNumber_returnsIntValue() {\n    // Arrange\n    Number number = 42;\n    jsonPrimitive = new JsonPrimitive(number);\n\n    // Act\n    int result = jsonPrimitive.getAsInt();\n\n    // Assert\n    assertEquals(42, result);\n  }\n\n  @Test\n  void getAsInt_whenIsNumber_withLazilyParsedNumber_returnsIntValue() {\n    // Arrange\n    Number number = new LazilyParsedNumber(\"123\");\n    jsonPrimitive = new JsonPrimitive(number);\n\n    // Act\n    int result = jsonPrimitive.getAsInt();\n\n    // Assert\n    assertEquals(123, result);\n  }\n\n  @Test\n  void getAsInt_whenNotNumber_parsesString() {\n    // Arrange\n    String numberString = \"456\";\n    jsonPrimitive = new JsonPrimitive(numberString);\n\n    // Act\n    int result = jsonPrimitive.getAsInt();\n\n    // Assert\n    assertEquals(456, result);\n  }\n\n  @Test\n  void getAsInt_whenNotNumber_invalidString_throwsNumberFormatException() {\n    // Arrange\n    String invalidNumberString = \"notANumber\";\n    jsonPrimitive = new JsonPrimitive(invalidNumberString);\n\n    // Act & Assert\n    assertThrows(NumberFormatException.class, () -> jsonPrimitive.getAsInt());\n  }\n\n  @Test\n  void getAsInt_withCharacterValue_parsesCharacterToInt() {\n    // Arrange\n    Character c = '7';\n    jsonPrimitive = new JsonPrimitive(c);\n\n    // Act\n    int result = jsonPrimitive.getAsInt();\n\n    // Assert\n    assertEquals(7, result);\n  }\n\n  @Test\n  void getAsInt_privateIsNumberMethod_reflectionConsistent() throws Exception {\n    // Arrange\n    jsonPrimitive = new JsonPrimitive(10);\n\n    Method isNumberMethod = JsonPrimitive.class.getDeclaredMethod(\"isNumber\");\n    isNumberMethod.setAccessible(true);\n\n    // Act\n    boolean isNumber = (boolean) isNumberMethod.invoke(jsonPrimitive);\n    int asInt = jsonPrimitive.getAsInt();\n\n    // Assert\n    assertTrue(isNumber);\n    assertEquals(10, asInt);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886503,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 545,
+    "prompt_tokens": 426,
+    "total_tokens": 971,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.4
+  }
+}

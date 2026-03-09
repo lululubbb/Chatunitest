@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNvKmCuFcIWkq8KULeCa8I5v3WD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.*;\nimport com.google.gson.internal.bind.TreeTypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class TreeTypeAdapterTest {\n\n  private JsonSerializer<String> serializer;\n  private JsonDeserializer<String> deserializer;\n  private Gson gson;\n  private TypeToken<String> typeToken;\n  private TypeAdapterFactory skipPast;\n  private TreeTypeAdapter<String> adapter;\n\n  @BeforeEach\n  public void setUp() {\n    serializer = mock(JsonSerializer.class);\n    deserializer = mock(JsonDeserializer.class);\n    gson = mock(Gson.class);\n    typeToken = TypeToken.get(String.class);\n    skipPast = mock(TypeAdapterFactory.class);\n    adapter = new TreeTypeAdapter<>(serializer, deserializer, gson, typeToken, skipPast, true);\n  }\n\n  @Test\n  public void testRead_withDeserializer_returnsDeserializedValue() throws Exception {\n    JsonReader in = mock(JsonReader.class);\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(gson.getAdapter(JsonElement.class)).thenReturn(mock(TypeAdapter.class));\n    when(gson.fromJson(in, JsonElement.class)).thenReturn(jsonElement);\n    when(deserializer.deserialize(eq(jsonElement), eq(typeToken.getType()), any()))\n        .thenReturn(\"deserialized\");\n\n    String result = adapter.read(in);\n\n    assertEquals(\"deserialized\", result);\n  }\n\n  @Test\n  public void testRead_withNullJsonElement_returnsNull() throws Exception {\n    JsonReader in = mock(JsonReader.class);\n    when(gson.fromJson(in, JsonElement.class)).thenReturn(null);\n\n    String result = adapter.read(in);\n\n    assertNull(result);\n  }\n\n  @Test\n  public void testRead_withDeserializerThrows_throwsJsonParseException() throws Exception {\n    JsonReader in = mock(JsonReader.class);\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(gson.fromJson(in, JsonElement.class)).thenReturn(jsonElement);\n    when(deserializer.deserialize(eq(jsonElement), eq(typeToken.getType()), any()))\n        .thenThrow(new JsonParseException(\"error\"));\n\n    assertThrows(JsonParseException.class, () -> adapter.read(in));\n  }\n\n  @Test\n  public void testWrite_withSerializer_writesJson() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n    String value = \"value\";\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(serializer.serialize(eq(value), eq(typeToken.getType()), any())).thenReturn(jsonElement);\n    TypeAdapter<JsonElement> jsonElementAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(JsonElement.class)).thenReturn(jsonElementAdapter);\n\n    adapter.write(out, value);\n\n    verify(jsonElementAdapter).write(out, jsonElement);\n  }\n\n  @Test\n  public void testWrite_withNullValue_writesNull() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n    TypeAdapter<JsonElement> jsonElementAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(JsonElement.class)).thenReturn(jsonElementAdapter);\n\n    adapter.write(out, null);\n\n    verify(jsonElementAdapter).write(out, null);\n  }\n\n  @Test\n  public void testWrite_withoutSerializer_usesDelegate() throws IOException {\n    JsonWriter out = mock(JsonWriter.class);\n    TreeTypeAdapter<String> adapterNoSerializer = new TreeTypeAdapter<>(null, deserializer, gson, typeToken, skipPast, true);\n\n    TypeAdapter<String> delegate = mock(TypeAdapter.class);\n    setDelegate(adapterNoSerializer, delegate);\n\n    adapterNoSerializer.write(out, \"value\");\n\n    verify(delegate).write(out, \"value\");\n  }\n\n  @Test\n  public void testRead_withoutDeserializer_usesDelegate() throws Exception {\n    JsonReader in = mock(JsonReader.class);\n    TreeTypeAdapter<String> adapterNoDeserializer = new TreeTypeAdapter<>(serializer, null, gson, typeToken, skipPast, true);\n\n    TypeAdapter<String> delegate = mock(TypeAdapter.class);\n    setDelegate(adapterNoDeserializer, delegate);\n    when(delegate.read(in)).thenReturn(\"delegateValue\");\n\n    String result = adapterNoDeserializer.read(in);\n\n    assertEquals(\"delegateValue\", result);\n  }\n\n  @Test\n  public void testDelegate_method_initializesDelegateOnce() throws Exception {\n    Method delegateMethod = TreeTypeAdapter.class.getDeclaredMethod(\"delegate\");\n    delegateMethod.setAccessible(true);\n\n    TypeAdapter<String> first = (TypeAdapter<String>) delegateMethod.invoke(adapter);\n    TypeAdapter<String> second = (TypeAdapter<String>) delegateMethod.invoke(adapter);\n\n    assertSame(first, second);\n  }\n\n  @Test\n  public void testGetSerializationDelegate_returnsDelegate() {\n    TypeAdapter<String> delegate = mock(TypeAdapter.class);\n    setDelegate(adapter, delegate);\n\n    TypeAdapter<String> result = adapter.getSerializationDelegate();\n\n    assertSame(delegate, result);\n  }\n\n  @Test\n  public void testNewFactory_returnsFactory() {\n    Object typeAdapter = new Object();\n    TypeToken<String> exactType = TypeToken.get(String.class);\n\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactory(exactType, typeAdapter);\n\n    assertNotNull(factory);\n  }\n\n  @Test\n  public void testNewFactoryWithMatchRawType_returnsFactory() {\n    Object typeAdapter = new Object();\n    TypeToken<String> exactType = TypeToken.get(String.class);\n\n    TypeAdapterFactory factory = TreeTypeAdapter.newFactoryWithMatchRawType(exactType, typeAdapter);\n\n    assertNotNull(factory);\n  }\n\n  @Test\n  public void testNewTypeHierarchyFactory_returnsFactory() {\n    Object typeAdapter = new Object();\n\n    TypeAdapterFactory factory = TreeTypeAdapter.newTypeHierarchyFactory(String.class, typeAdapter);\n\n    assertNotNull(factory);\n  }\n\n  private void setDelegate(TreeTypeAdapter<String> adapter, TypeAdapter<String> delegate) {\n    try {\n      Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n      delegateField.setAccessible(true);\n      delegateField.set(adapter, delegate);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886723,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1316,
+    "prompt_tokens": 580,
+    "total_tokens": 1896,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.34
+  }
+}

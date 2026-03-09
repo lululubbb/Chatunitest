@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmaILBqwrFmHeAYaaQllpxKqTVyt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  // Since ReflectionHelper.RecordHelper is private, we create our own interface with the same method signature\n  interface RecordHelperInterface {\n    Method getAccessor(Class<?> raw, Field field);\n  }\n\n  static class DummyRecordHelper implements RecordHelperInterface {\n    Method accessor;\n\n    DummyRecordHelper(Method accessor) {\n      this.accessor = accessor;\n    }\n\n    @Override\n    public Method getAccessor(Class<?> raw, Field field) {\n      return accessor;\n    }\n  }\n\n  static class DummyClass {\n    public String field;\n    public String accessorMethod() { return \"accessor\"; }\n  }\n\n  private static Field dummyField;\n  private static Method dummyMethod;\n  private static Object originalRecordHelper;\n\n  @BeforeAll\n  static void setup() throws Exception {\n    dummyField = DummyClass.class.getField(\"field\");\n    dummyMethod = DummyClass.class.getMethod(\"accessorMethod\");\n\n    java.lang.reflect.Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier from RECORD_HELPER\n    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    // Save original value to restore if needed\n    originalRecordHelper = recordHelperField.get(null);\n\n    // Set dummy RecordHelper via an anonymous class that responds to getAccessor\n    Object dummyRecordHelper = new Object() {\n      public Method getAccessor(Class<?> raw, Field field) {\n        return dummyMethod;\n      }\n    };\n\n    recordHelperField.set(null, dummyRecordHelper);\n  }\n\n  private void setDummyRecordHelper(final Method accessor) throws Exception {\n    java.lang.reflect.Field recordHelperField = ReflectionHelper.class.getDeclaredField(\"RECORD_HELPER\");\n    recordHelperField.setAccessible(true);\n\n    // Remove final modifier if still present\n    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(recordHelperField, recordHelperField.getModifiers() & ~Modifier.FINAL);\n\n    recordHelperField.set(null, new Object() {\n      public Method getAccessor(Class<?> raw, Field field) {\n        return accessor;\n      }\n    });\n  }\n\n  @Test\n  void getAccessor_returnsMethodFromRecordHelper() throws Exception {\n    setDummyRecordHelper(dummyMethod);\n    Method result = ReflectionHelper.getAccessor(DummyClass.class, dummyField);\n    assertNotNull(result);\n    assertEquals(dummyMethod, result);\n  }\n\n  @Test\n  void getAccessor_nullField_returnsNull() throws Exception {\n    setDummyRecordHelper(null);\n    Method result = ReflectionHelper.getAccessor(DummyClass.class, null);\n    assertNull(result);\n  }\n\n  @Test\n  void getAccessor_nullClass_returnsNull() throws Exception {\n    setDummyRecordHelper(null);\n    Method result = ReflectionHelper.getAccessor(null, dummyField);\n    assertNull(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887490,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 692,
+    "prompt_tokens": 1366,
+    "total_tokens": 2058,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.49
+  }
+}

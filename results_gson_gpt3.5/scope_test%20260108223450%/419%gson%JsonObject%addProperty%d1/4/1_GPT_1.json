@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlWgEoksz616U5sFxuur75BKW9Ts",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = spy(new JsonObject());\n  }\n\n  @Test\n  public void testAddProperty_withNonNullNumber_addsCorrectJsonPrimitive() {\n    Number number = 123;\n    doNothing().when(jsonObject).add(eq(\"age\"), any(JsonElement.class));\n\n    jsonObject.addProperty(\"age\", number);\n\n    verify(jsonObject).add(eq(\"age\"), argThat(element -> {\n      if (!(element instanceof JsonPrimitive)) return false;\n      JsonPrimitive primitive = (JsonPrimitive) element;\n      return primitive.getAsNumber().equals(number);\n    }));\n  }\n\n  @Test\n  public void testAddProperty_withNullNumber_addsJsonNullInstance() {\n    doNothing().when(jsonObject).add(eq(\"key\"), any(JsonElement.class));\n\n    jsonObject.addProperty(\"key\", null);\n\n    verify(jsonObject).add(eq(\"key\"), eq(JsonNull.INSTANCE));\n  }\n\n  @Test\n  public void testAddMethod_addsElementToMembersMap() throws Exception {\n    // Use reflection to invoke private add method\n    Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n    addMethod.setAccessible(true);\n\n    JsonPrimitive primitive = new JsonPrimitive(42);\n    addMethod.invoke(jsonObject, \"answer\", primitive);\n\n    JsonElement retrieved = jsonObject.get(\"answer\");\n    assertEquals(primitive, retrieved);\n  }\n\n  @Test\n  public void testAddProperty_invokesAddMethodCorrectly() throws Exception {\n    // Use reflection to invoke private add method to verify integration indirectly\n    jsonObject.addProperty(\"pi\", 3.14);\n\n    JsonElement element = jsonObject.get(\"pi\");\n    assertNotNull(element);\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(3.14, ((JsonPrimitive) element).getAsNumber().doubleValue());\n  }\n\n  @Test\n  public void testAddProperty_withDifferentNumberTypes() {\n    jsonObject.addProperty(\"int\", 10);\n    jsonObject.addProperty(\"long\", 10L);\n    jsonObject.addProperty(\"float\", 1.5f);\n    jsonObject.addProperty(\"double\", 2.5d);\n    jsonObject.addProperty(\"byte\", (byte) 1);\n    jsonObject.addProperty(\"short\", (short) 2);\n\n    assertEquals(10, jsonObject.getAsJsonPrimitive(\"int\").getAsInt());\n    assertEquals(10L, jsonObject.getAsJsonPrimitive(\"long\").getAsLong());\n    assertEquals(1.5f, jsonObject.getAsJsonPrimitive(\"float\").getAsFloat());\n    assertEquals(2.5d, jsonObject.getAsJsonPrimitive(\"double\").getAsDouble());\n    assertEquals(1, jsonObject.getAsJsonPrimitive(\"byte\").getAsByte());\n    assertEquals(2, jsonObject.getAsJsonPrimitive(\"short\").getAsShort());\n  }\n\n  @Test\n  public void testAddProperty_withNullPropertyName() {\n    assertThrows(NullPointerException.class, () -> jsonObject.addProperty(null, 1));\n  }\n\n  @Test\n  public void testAddProperty_withNullPropertyNameAndNullValue() {\n    assertThrows(NullPointerException.class, () -> jsonObject.addProperty(null, (Number) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883422,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 769,
+    "prompt_tokens": 402,
+    "total_tokens": 1171,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.23
+  }
+}

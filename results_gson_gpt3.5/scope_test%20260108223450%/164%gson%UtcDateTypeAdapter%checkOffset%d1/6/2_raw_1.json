@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class UtcDateTypeAdapterTest {\n\n  @Test\n  public void testCheckOffset() throws Exception {\n    Method checkOffsetMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"checkOffset\", String.class, int.class, char.class);\n    checkOffsetMethod.setAccessible(true);\n\n    // Case: offset < value.length() and char at offset == expected -> true\n    boolean result1 = (boolean) checkOffsetMethod.invoke(null, \"2023-06-25\", 4, '-');\n    assertTrue(result1);\n\n    // Case: offset < value.length() but char at offset != expected -> false\n    boolean result2 = (boolean) checkOffsetMethod.invoke(null, \"2023/06/25\", 4, '-');\n    assertFalse(result2);\n\n    // Case: offset == value.length() -> false\n    boolean result3 = (boolean) checkOffsetMethod.invoke(null, \"2023-06-25\", 10, '-');\n    assertFalse(result3);\n\n    // Case: offset > value.length() -> false\n    boolean result4 = (boolean) checkOffsetMethod.invoke(null, \"2023-06-25\", 15, '-');\n    assertFalse(result4);\n\n    // Case: empty string -> false\n    boolean result5 = (boolean) checkOffsetMethod.invoke(null, \"\", 0, 'a');\n    assertFalse(result5);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 397,
+  "completion_tokens": 324,
+  "total_tokens": 721,
+  "llm_elapsed_time_seconds": 7.24
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.lang.reflect.Type;\nimport java.util.Arrays;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\nimport java.util.Collection;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass FieldAttributesTest {\n\n  @Mock\n  private Field mockField;\n\n  @Mock\n  private Annotation mockAnnotation1;\n\n  @Mock\n  private Annotation mockAnnotation2;\n\n  private FieldAttributes fieldAttributes;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void getAnnotations_returnsAllAnnotations() throws Exception {\n    Annotation[] annotations = new Annotation[] {mockAnnotation1, mockAnnotation2};\n    when(mockField.getAnnotations()).thenReturn(annotations);\n\n    Collection<Annotation> result = fieldAttributes.getAnnotations();\n\n    assertNotNull(result, \"Returned collection should not be null\");\n    assertEquals(2, result.size(), \"Should contain exactly 2 annotations\");\n    assertTrue(result.contains(mockAnnotation1), \"Should contain mockAnnotation1\");\n    assertTrue(result.contains(mockAnnotation2), \"Should contain mockAnnotation2\");\n  }\n\n  @Test\n  void getAnnotations_returnsEmptyCollectionWhenNoAnnotations() throws Exception {\n    when(mockField.getAnnotations()).thenReturn(new Annotation[0]);\n\n    Collection<Annotation> result = fieldAttributes.getAnnotations();\n\n    assertNotNull(result, \"Returned collection should not be null\");\n    assertTrue(result.isEmpty(), \"Collection should be empty when no annotations\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 277,
+  "completion_tokens": 339,
+  "total_tokens": 616,
+  "llm_elapsed_time_seconds": 7.26,
+  "repair_elapsed_time_seconds": 36.1,
+  "round_total_time_seconds": 36.1
+}

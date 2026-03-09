@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmhK5s2FmB0thmfqrpOA7v8Fd0Tu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\nimport java.util.Map;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a dummy JsonElement to instantiate JsonTreeReader\n        JsonElement dummyElement = mock(JsonElement.class);\n        jsonTreeReader = new JsonTreeReader(dummyElement);\n    }\n\n    @Test\n    public void testPromoteNameToValue() throws Throwable {\n        // Prepare a mocked Iterator<Map.Entry<?, ?>> with one entry\n        @SuppressWarnings(\"unchecked\")\n        Iterator<Map.Entry<Object, Object>> iterator = mock(Iterator.class);\n        @SuppressWarnings(\"unchecked\")\n        Map.Entry<Object, Object> entry = mock(Map.Entry.class);\n\n        when(iterator.next()).thenReturn(entry);\n        when(entry.getKey()).thenReturn(\"testKey\");\n        when(entry.getValue()).thenReturn(new JsonPrimitive(\"testValue\"));\n\n        // Use reflection to access private peekStack() and push(Object)\n        Method peekStackMethod = JsonTreeReader.class.getDeclaredMethod(\"peekStack\");\n        peekStackMethod.setAccessible(true);\n\n        Method pushMethod = JsonTreeReader.class.getDeclaredMethod(\"push\", Object.class);\n        pushMethod.setAccessible(true);\n\n        // Use reflection to access private expect(JsonToken)\n        Method expectMethod = JsonTreeReader.class.getDeclaredMethod(\"expect\", JsonToken.class);\n        expectMethod.setAccessible(true);\n\n        // Use reflection to set stack and stackSize so peekStack returns our iterator\n        java.lang.reflect.Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stackArray = new Object[32];\n        stackArray[0] = iterator;\n        stackField.set(jsonTreeReader, stackArray);\n\n        java.lang.reflect.Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonTreeReader, 1);\n\n        // Push JsonToken.NAME on top of stack to satisfy expect\n        stackArray[1] = JsonToken.NAME;\n        stackSizeField.setInt(jsonTreeReader, 2);\n\n        // Now invoke promoteNameToValue on jsonTreeReader\n        Method promoteNameToValueMethod = JsonTreeReader.class.getDeclaredMethod(\"promoteNameToValue\");\n        promoteNameToValueMethod.setAccessible(true);\n\n        promoteNameToValueMethod.invoke(jsonTreeReader);\n\n        // After invocation, stackSize should be 4 (iterator + JsonToken.NAME + value + key)\n        int stackSizeAfter = stackSizeField.getInt(jsonTreeReader);\n        assertEquals(4, stackSizeAfter);\n\n        // The stack should be:\n        // 0: iterator\n        // 1: JsonToken.NAME\n        // 2: value (JsonPrimitive \"testValue\")\n        // 3: key (JsonPrimitive \"testKey\")\n\n        Object[] stackAfter = (Object[]) stackField.get(jsonTreeReader);\n        assertTrue(stackAfter[0] instanceof Iterator);\n        assertEquals(JsonToken.NAME, stackAfter[1]);\n        assertTrue(stackAfter[2] instanceof JsonElement);\n        assertTrue(stackAfter[3] instanceof JsonPrimitive);\n\n        JsonPrimitive keyPrimitive = (JsonPrimitive) stackAfter[3];\n        assertEquals(\"testKey\", keyPrimitive.getAsString());\n\n        JsonElement valueElement = (JsonElement) stackAfter[2];\n        assertEquals(\"testValue\", valueElement.getAsString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887926,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 784,
+    "prompt_tokens": 1834,
+    "total_tokens": 2618,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.05
+  }
+}

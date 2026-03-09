@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvXHJabfatYBPFDhiCM8P8wmTBTC",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.ArgumentMatchers.anyChar;\nimport static org.mockito.ArgumentMatchers.anyInt;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n        appendable = mock(Appendable.class);\n    }\n\n    private void invokePrint(Object object, CharSequence value, int offset, int len, Appendable out, boolean newRecord)\n            throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        printMethod.invoke(csvFormat, object, value, offset, len, out, newRecord);\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_ObjectNull_AppendsDelimiterAndValue() throws Throwable {\n        // newRecord = false and object == null\n        doNothing().when(appendable).append(anyChar());\n        doNothing().when(appendable).append(any(CharSequence.class));\n        try {\n            invokePrint(null, \"value\", 0, 5, appendable, false);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n        verify(appendable).append(csvFormat.getDelimiter());\n        verify(appendable).append(\"value\");\n        verifyNoMoreInteractions(appendable);\n    }\n\n    @Test\n    void testPrint_NewRecordTrue_ObjectNull_AppendsValueOnly() throws Throwable {\n        // newRecord = true and object == null\n        doNothing().when(appendable).append(any(CharSequence.class));\n        try {\n            invokePrint(null, \"value\", 0, 5, appendable, true);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n        verify(appendable, never()).append(csvFormat.getDelimiter());\n        verify(appendable).append(\"value\");\n        verifyNoMoreInteractions(appendable);\n    }\n\n    @Test\n    void testPrint_QuoteCharacterSet_InvokesPrintAndQuote() throws Throwable {\n        // Use CSVFormat with quoteCharacter set to non-null to trigger printAndQuote\n        CSVFormat formatWithQuote = CSVFormat.DEFAULT.withQuote('\\\"');\n        Appendable mockOut = mock(Appendable.class);\n\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(formatWithQuote, \"object\", \"value\", 0, 5, mockOut, true);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n        // We cannot verify internals of printAndQuote as it's private, but no exception means success\n    }\n\n    @Test\n    void testPrint_EscapeCharacterSet_InvokesPrintAndEscape() throws Throwable {\n        // Use CSVFormat with escapeCharacter set to non-null and quoteCharacter null to trigger printAndEscape\n        CSVFormat formatWithEscape = CSVFormat.DEFAULT.withEscape('\\\\').withQuote(null);\n        Appendable mockOut = mock(Appendable.class);\n\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(formatWithEscape, \"object\", \"value\", 0, 5, mockOut, true);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n        // We cannot verify internals of printAndEscape as it's private, but no exception means success\n    }\n\n    @Test\n    void testPrint_NoQuoteNoEscape_AppendsValueRange() throws Throwable {\n        // Use CSVFormat with quoteCharacter null and escapeCharacter null\n        CSVFormat formatNoQuoteEscape = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n        Appendable mockOut = mock(Appendable.class);\n\n        doNothing().when(mockOut).append(any(CharSequence.class), anyInt(), anyInt());\n\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(formatNoQuoteEscape, \"object\", \"value\", 1, 3, mockOut, true);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n\n        verify(mockOut).append(\"value\", 1, 4);\n        verifyNoMoreInteractions(mockOut);\n    }\n\n    @Test\n    void testPrint_NewRecordFalse_ObjectNonNull_AppendsDelimiter() throws Throwable {\n        // newRecord = false and object != null, with quoteCharacter null and escapeCharacter null\n        CSVFormat formatNoQuoteEscape = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n        Appendable mockOut = mock(Appendable.class);\n\n        doNothing().when(mockOut).append(anyChar());\n        doNothing().when(mockOut).append(any(CharSequence.class), anyInt(), anyInt());\n\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(formatNoQuoteEscape, \"obj\", \"value\", 0, 5, mockOut, false);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n\n        verify(mockOut).append(formatNoQuoteEscape.getDelimiter());\n        verify(mockOut).append(\"value\", 0, 5);\n        verifyNoMoreInteractions(mockOut);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683571,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1297,
+    "prompt_tokens": 2270,
+    "total_tokens": 3567,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.08
+  }
+}

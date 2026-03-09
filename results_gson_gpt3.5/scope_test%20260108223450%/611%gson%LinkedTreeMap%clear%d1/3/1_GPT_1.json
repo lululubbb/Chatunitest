@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnRVk3SclwRY6Sk2bCjbo6eJdCAR",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class LinkedTreeMapTest {\n    LinkedTreeMap<String, String> map;\n\n    @BeforeEach\n    void setUp() {\n        map = new LinkedTreeMap<>();\n    }\n\n    @Test\n    void testClear_onEmptyMap() throws Exception {\n        // Initially empty map\n        assertEquals(0, map.size());\n\n        // Call clear\n        map.clear();\n\n        // Verify size is zero\n        assertEquals(0, map.size());\n\n        // Verify root is null\n        Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n        rootField.setAccessible(true);\n        assertNull(rootField.get(map));\n\n        // Verify modCount incremented (should be 1)\n        Field modCountField = LinkedTreeMap.class.getDeclaredField(\"modCount\");\n        modCountField.setAccessible(true);\n        assertEquals(1, modCountField.getInt(map));\n\n        // Verify header's next and prev point to itself\n        Field headerField = LinkedTreeMap.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        Object header = headerField.get(map);\n\n        Field nextField = header.getClass().getDeclaredField(\"next\");\n        Field prevField = header.getClass().getDeclaredField(\"prev\");\n        nextField.setAccessible(true);\n        prevField.setAccessible(true);\n\n        Object next = nextField.get(header);\n        Object prev = prevField.get(header);\n\n        assertSame(header, next);\n        assertSame(header, prev);\n    }\n\n    @Test\n    void testClear_onPopulatedMap() throws Exception {\n        // Put some entries\n        map.put(\"key1\", \"value1\");\n        map.put(\"key2\", \"value2\");\n        map.put(\"key3\", \"value3\");\n\n        // Verify size before clear\n        assertEquals(3, map.size());\n\n        // Capture modCount before clear\n        Field modCountField = LinkedTreeMap.class.getDeclaredField(\"modCount\");\n        modCountField.setAccessible(true);\n        int modCountBefore = modCountField.getInt(map);\n\n        // Call clear\n        map.clear();\n\n        // Verify size is zero\n        assertEquals(0, map.size());\n\n        // Verify root is null\n        Field rootField = LinkedTreeMap.class.getDeclaredField(\"root\");\n        rootField.setAccessible(true);\n        assertNull(rootField.get(map));\n\n        // Verify modCount incremented by 1\n        int modCountAfter = modCountField.getInt(map);\n        assertEquals(modCountBefore + 1, modCountAfter);\n\n        // Verify header's next and prev point to itself\n        Field headerField = LinkedTreeMap.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n        Object header = headerField.get(map);\n\n        Field nextField = header.getClass().getDeclaredField(\"next\");\n        Field prevField = header.getClass().getDeclaredField(\"prev\");\n        nextField.setAccessible(true);\n        prevField.setAccessible(true);\n\n        Object next = nextField.get(header);\n        Object prev = prevField.get(header);\n\n        assertSame(header, next);\n        assertSame(header, prev);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890789,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 681,
+    "prompt_tokens": 733,
+    "total_tokens": 1414,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.3
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutkokWxC1y5UwaLOlMSm0EogRLoW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\nclass CSVFormatTest {\n\n    private CSVFormat createCSVFormat(char delimiter, Character quoteChar, QuoteMode quoteMode,\n                                      Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n                                      boolean ignoreEmptyLines, String recordSeparator, String nullString,\n                                      String[] header, boolean skipHeaderRecord, boolean allowMissingColumnNames) throws Exception {\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        return constructor.newInstance(delimiter, quoteChar, quoteMode, commentStart, escape,\n                ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, header,\n                skipHeaderRecord, allowMissingColumnNames);\n    }\n\n    @Test\n    void testToString_allFieldsSet() throws Exception {\n        // Create CSVFormat instance with all fields set\n        String[] header = {\"col1\", \"col2\"};\n        CSVFormat format = createCSVFormat(\n                ';',\n                '\"',\n                QuoteMode.ALL,\n                '#',\n                '\\\\',\n                true,\n                true,\n                \"\\n\",\n                \"NULL\",\n                header,\n                true,\n                true);\n\n        String result = format.toString();\n\n        assertTrue(result.contains(\"Delimiter=<;>\"));\n        assertTrue(result.contains(\"Escape=<\\\\>\"));\n        assertTrue(result.contains(\"QuoteChar=<\\\">\"));\n        assertTrue(result.contains(\"CommentStart=<#>\"));\n        assertTrue(result.contains(\"NullString=<NULL>\"));\n        assertTrue(result.contains(\"RecordSeparator=<\\n>\"));\n        assertTrue(result.contains(\"EmptyLines:ignored\"));\n        assertTrue(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:true\"));\n        assertTrue(result.contains(\"Header:\" + Arrays.toString(header)));\n    }\n\n    @Test\n    void testToString_minimalFields() throws Exception {\n        // Create CSVFormat instance with minimal fields set (only delimiter)\n        CSVFormat format = createCSVFormat(\n                ',',\n                null,\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                null,\n                false,\n                false);\n\n        String result = format.toString();\n\n        assertEquals(\"Delimiter=<,> SkipHeaderRecord:false\", result);\n    }\n\n    @Test\n    void testToString_someFieldsSet() throws Exception {\n        // Create CSVFormat instance with some fields set\n        CSVFormat format = createCSVFormat(\n                ',',\n                '\\'',\n                null,\n                null,\n                null,\n                false,\n                false,\n                null,\n                null,\n                null,\n                false,\n                false);\n\n        String result = format.toString();\n\n        assertTrue(result.contains(\"Delimiter=<,>\"));\n        assertTrue(result.contains(\"QuoteChar=<'\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    void testToString_ignoreFlags() throws Exception {\n        // Create CSVFormat instance with ignoreEmptyLines and ignoreSurroundingSpaces true\n        CSVFormat format = createCSVFormat(\n                ',',\n                null,\n                null,\n                null,\n                null,\n                true,\n                true,\n                null,\n                null,\n                null,\n                false,\n                false);\n\n        String result = format.toString();\n\n        assertTrue(result.contains(\"Delimiter=<,>\"));\n        assertTrue(result.contains(\"EmptyLines:ignored\"));\n        assertTrue(result.contains(\"SurroundingSpaces:ignored\"));\n        assertTrue(result.contains(\"SkipHeaderRecord:false\"));\n    }\n\n    @Test\n    void testPrivateIsLineBreak_char() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        method.setAccessible(true);\n\n        assertTrue((Boolean) method.invoke(null, '\\n'));\n        assertTrue((Boolean) method.invoke(null, '\\r'));\n        assertFalse((Boolean) method.invoke(null, 'a'));\n    }\n\n    @Test\n    void testPrivateIsLineBreak_Character() throws Exception {\n        Method method = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        method.setAccessible(true);\n\n        assertTrue((Boolean) method.invoke(null, Character.valueOf('\\n')));\n        assertTrue((Boolean) method.invoke(null, Character.valueOf('\\r')));\n        assertFalse((Boolean) method.invoke(null, Character.valueOf('a')));\n        assertFalse((Boolean) method.invoke(null, (Character) null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767676722,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 983,
+    "prompt_tokens": 2284,
+    "total_tokens": 3267,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.32
+  }
+}

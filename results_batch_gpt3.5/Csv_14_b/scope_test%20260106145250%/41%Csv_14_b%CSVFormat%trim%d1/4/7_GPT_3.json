@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvSu9fHzD51jJTjG3vcAwRjwdu3o",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Method;\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTrimTest {\n\n    private CSVFormat csvFormat;\n    private Method trimMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        csvFormat = CSVFormat.DEFAULT;\n        trimMethod = CSVFormat.class.getDeclaredMethod(\"trim\", CharSequence.class);\n        trimMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testTrim_withString_trimsWhitespace() throws Exception {\n        String input = \"  abc  \";\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertTrue(result instanceof String);\n        assertEquals(\"abc\", result);\n    }\n\n    @Test\n    public void testTrim_withString_noWhitespace() throws Exception {\n        String input = \"abc\";\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertTrue(result instanceof String);\n        assertEquals(\"abc\", result);\n    }\n\n    @Test\n    public void testTrim_withCharSequence_subSequenceTrim() throws Exception {\n        CharSequence input = new CharSequence() {\n            private final String s = \"\\t abc \\n\";\n            @Override public int length() { return s.length(); }\n            @Override public char charAt(int index) { return s.charAt(index); }\n            @Override public CharSequence subSequence(int start, int end) { return s.subSequence(start, end); }\n            @Override public String toString() { return s; }\n        };\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertFalse(result instanceof String);\n        assertEquals(\"abc\", result.toString());\n    }\n\n    @Test\n    public void testTrim_withCharSequence_noTrimNeeded() throws Exception {\n        CharSequence input = new CharSequence() {\n            private final String s = \"abc\";\n            @Override public int length() { return s.length(); }\n            @Override public char charAt(int index) { return s.charAt(index); }\n            @Override public CharSequence subSequence(int start, int end) { return s.subSequence(start, end); }\n            @Override public String toString() { return s; }\n        };\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertSame(input, result);\n    }\n\n    @Test\n    public void testTrim_withCharSequence_allWhitespace() throws Exception {\n        CharSequence input = new CharSequence() {\n            private final String s = \"  \\t\\n\\r \";\n            @Override public int length() { return s.length(); }\n            @Override public char charAt(int index) { return s.charAt(index); }\n            @Override public CharSequence subSequence(int start, int end) { return s.subSequence(start, end); }\n            @Override public String toString() { return s; }\n        };\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertEquals(\"\", result.toString());\n    }\n\n    @Test\n    public void testTrim_withEmptyString() throws Exception {\n        String input = \"\";\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertTrue(result instanceof String);\n        assertEquals(\"\", result);\n    }\n\n    @Test\n    public void testTrim_withEmptyCharSequence() throws Exception {\n        CharSequence input = new CharSequence() {\n            @Override public int length() { return 0; }\n            @Override public char charAt(int index) { throw new IndexOutOfBoundsException(); }\n            @Override public CharSequence subSequence(int start, int end) { return \"\"; }\n            @Override public String toString() { return \"\"; }\n        };\n        CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (Object) input);\n        assertSame(input, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767683300,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 847,
+    "prompt_tokens": 2330,
+    "total_tokens": 3177,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.68
+  }
+}

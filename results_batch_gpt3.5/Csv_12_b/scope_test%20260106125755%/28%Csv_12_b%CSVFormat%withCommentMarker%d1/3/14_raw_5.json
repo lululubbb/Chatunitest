@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass CSVFormatTest {\n\n    @Test\n    void testWithCommentMarker_char_overload() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char commentChar = '#';\n\n        // Call the public withCommentMarker(char) method\n        CSVFormat result = original.withCommentMarker(commentChar);\n\n        // The result should not be the same instance (immutable pattern)\n        assertNotSame(original, result);\n\n        // The comment marker in result should be equal to Character.valueOf(commentChar)\n        assertEquals(Character.valueOf(commentChar), result.getCommentMarker());\n\n        // Also test that original is unchanged\n        assertNull(original.getCommentMarker());\n\n        // Using reflection to invoke private withCommentMarker(Character)\n        Method privateWithCommentMarker = CSVFormat.class.getDeclaredMethod(\"withCommentMarker\", Character.class);\n        privateWithCommentMarker.setAccessible(true);\n\n        // Invoke with a Character argument\n        CSVFormat reflectedResult = (CSVFormat) privateWithCommentMarker.invoke(original, Character.valueOf(commentChar));\n        assertEquals(Character.valueOf(commentChar), reflectedResult.getCommentMarker());\n\n        // Invoke with null Character argument (should unset comment marker)\n        CSVFormat resultNull = (CSVFormat) privateWithCommentMarker.invoke(original, (Object) null);\n        assertNull(resultNull.getCommentMarker());\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_12_b/scope_test%20260106125755%/28%Csv_12_b%CSVFormat%withCommentMarker%d1/3/runtemp/Csv_12_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1342,
+  "completion_tokens": 299,
+  "total_tokens": 1641,
+  "llm_elapsed_time_seconds": 3.77
+}

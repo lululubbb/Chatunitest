@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  void testAsMap_EmptyInitially() throws Exception {\n    Map<String, JsonElement> map = jsonObject.asMap();\n    assertNotNull(map);\n    assertTrue(map.isEmpty());\n\n    // Use reflection to verify that returned map is the actual members field\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    Map<String, JsonElement> members = (Map<String, JsonElement>) membersField.get(jsonObject);\n    assertSame(members, map);\n  }\n\n  @Test\n  void testAsMap_WithEntries() throws Exception {\n    JsonElement element1 = mock(JsonElement.class);\n    JsonElement element2 = mock(JsonElement.class);\n\n    jsonObject.add(\"key1\", element1);\n    jsonObject.add(\"key2\", element2);\n\n    Map<String, JsonElement> map = jsonObject.asMap();\n    assertNotNull(map);\n    assertEquals(2, map.size());\n    assertSame(element1, map.get(\"key1\"));\n    assertSame(element2, map.get(\"key2\"));\n\n    // Modifying the map should reflect in the JsonObject members map\n    JsonElement element3 = mock(JsonElement.class);\n    map.put(\"key3\", element3);\n    assertSame(element3, jsonObject.get(\"key3\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 408,
+  "completion_tokens": 374,
+  "total_tokens": 782,
+  "llm_elapsed_time_seconds": 7.2,
+  "repair_elapsed_time_seconds": 20.83,
+  "round_total_time_seconds": 20.83
+}

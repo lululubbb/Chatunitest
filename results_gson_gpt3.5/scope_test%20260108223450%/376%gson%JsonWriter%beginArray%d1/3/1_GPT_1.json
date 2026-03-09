@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnK4qjxuxs8nRjlpXYRW3PfqMTCj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.io.Writer;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void beginArray_shouldOpenEmptyArray() throws IOException {\n    JsonWriter writer = jsonWriter.beginArray();\n    assertSame(jsonWriter, writer);\n    assertEquals('[', stringWriter.toString().charAt(0));\n  }\n\n  @Test\n  void beginArray_shouldWriteDeferredNameIfSet() throws Exception {\n    // Use reflection to set deferredName field\n    java.lang.reflect.Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n    deferredNameField.setAccessible(true);\n    deferredNameField.set(jsonWriter, \"name\");\n\n    // Use reflection to invoke private writeDeferredName method and spy on it\n    JsonWriter spyWriter = spy(jsonWriter);\n    doCallRealMethod().when(spyWriter).writeDeferredName();\n\n    // Begin array should call writeDeferredName and consume deferredName\n    JsonWriter result = spyWriter.beginArray();\n    assertSame(spyWriter, result);\n\n    // deferredName should be null after beginArray\n    Object deferredNameAfter = deferredNameField.get(spyWriter);\n    assertNull(deferredNameAfter);\n\n    // The output should start with '['\n    assertEquals('[', stringWriter.toString().charAt(0));\n  }\n\n  @Test\n  void beginArray_shouldThrowIOExceptionIfUnderlyingWriterThrows() throws IOException {\n    Writer failingWriter = mock(Writer.class);\n    doThrow(new IOException(\"fail\")).when(failingWriter).write(anyInt());\n    JsonWriter failingJsonWriter = new JsonWriter(failingWriter);\n\n    IOException thrown = assertThrows(IOException.class, failingJsonWriter::beginArray);\n    assertEquals(\"fail\", thrown.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890328,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 452,
+    "prompt_tokens": 730,
+    "total_tokens": 1182,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.0
+  }
+}

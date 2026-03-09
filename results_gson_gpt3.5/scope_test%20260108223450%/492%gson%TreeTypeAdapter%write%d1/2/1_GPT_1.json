@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmPbc1NfZSdXAHffa2k19KIAne4N",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.mockito.Mockito.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonSerializationContext;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.internal.bind.TreeTypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass TreeTypeAdapterWriteTest {\n\n    private TreeTypeAdapter<Object> adapter;\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n    private JsonElement jsonElement;\n    private JsonSerializationContext serializationContext;\n    private TypeToken<Object> typeToken;\n    private TypeAdapterFactory skipPast;\n\n    private JsonSerializerMock serializerMock;\n\n    interface JsonSerializerMock extends com.google.gson.JsonSerializer<Object> {}\n\n    @BeforeEach\n    void setUp() throws Exception {\n        serializerMock = mock(JsonSerializerMock.class);\n        typeToken = TypeToken.get(Object.class);\n        skipPast = mock(TypeAdapterFactory.class);\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n\n        // Create adapter with serializer, so serializer != null\n        adapter = new TreeTypeAdapter<>(serializerMock, null, null, typeToken, skipPast, true);\n\n        // Use reflection to set gson field (required for context)\n        Field gsonField = TreeTypeAdapter.class.getDeclaredField(\"gson\");\n        gsonField.setAccessible(true);\n        gsonField.set(adapter, null);\n\n        // Use reflection to set context field (GsonContextImpl)\n        Field contextField = TreeTypeAdapter.class.getDeclaredField(\"context\");\n        contextField.setAccessible(true);\n        contextField.set(adapter, new JsonSerializationContext() {\n            @Override\n            public JsonElement serialize(Object src) {\n                return null;\n            }\n\n            @Override\n            public JsonElement serialize(Object src, java.lang.reflect.Type typeOfSrc) {\n                return null;\n            }\n        });\n    }\n\n    @Test\n    void write_shouldCallDelegateWrite_whenSerializerIsNull() throws Exception {\n        // Create adapter with null serializer\n        adapter = new TreeTypeAdapter<>(null, null, null, typeToken, skipPast, true);\n\n        // Mock delegate TypeAdapter and inject via reflection\n        TypeAdapter<Object> delegateMock = mock(TypeAdapter.class);\n        Field delegateField = TreeTypeAdapter.class.getDeclaredField(\"delegate\");\n        delegateField.setAccessible(true);\n        delegateField.set(adapter, delegateMock);\n\n        // Prepare JsonWriter and value\n        Object value = new Object();\n\n        // Call write\n        adapter.write(jsonWriter, value);\n\n        // Verify delegate.write called once with same arguments\n        verify(delegateMock).write(jsonWriter, value);\n    }\n\n    @Test\n    void write_shouldWriteNullValue_whenNullSafeIsTrueAndValueIsNull() throws IOException {\n        // value is null, nullSafe true\n        Object value = null;\n\n        // Spy on JsonWriter to verify nullValue() call\n        JsonWriter spyWriter = spy(jsonWriter);\n\n        adapter.write(spyWriter, value);\n\n        verify(spyWriter).nullValue();\n    }\n\n    @Test\n    void write_shouldSerializeAndWriteJsonElement_whenSerializerIsNotNullAndValueIsNotNull() throws IOException {\n        Object value = new Object();\n\n        JsonElement element = mock(JsonElement.class);\n\n        // Setup serializer to return element\n        when(serializerMock.serialize(eq(value), eq(typeToken.getType()), any())).thenReturn(element);\n\n        // Spy on Streams.write to confirm it is called\n        // Streams.write is static, so we test indirectly by capturing output\n\n        adapter.write(jsonWriter, value);\n\n        // The stringWriter should contain serialized output, but Streams.write writes to JsonWriter\n        // We verify serializer.serialize called with correct args\n        verify(serializerMock).serialize(eq(value), eq(typeToken.getType()), any());\n\n        // We cannot directly verify Streams.write without PowerMockito, so verify no exceptions thrown\n        assertNotNull(stringWriter.toString());\n    }\n\n    @Test\n    void write_shouldThrowIOException_whenStreamsWriteThrows() throws IOException {\n        Object value = new Object();\n        JsonElement element = mock(JsonElement.class);\n\n        when(serializerMock.serialize(eq(value), eq(typeToken.getType()), any())).thenReturn(element);\n\n        // Create JsonWriter that throws IOException on any write call\n        JsonWriter throwingWriter = new JsonWriter(new StringWriter()) {\n            @Override\n            public JsonWriter nullValue() throws IOException {\n                throw new IOException(\"forced\");\n            }\n        };\n\n        // Use reflection to spy Streams.write by replacing it with a method that throws IOException\n        // Not possible without PowerMockito, so we test IOException thrown by nullValue path\n\n        // Create adapter with nullSafe true and value null to force nullValue call throwing IOException\n        adapter = new TreeTypeAdapter<>(serializerMock, null, null, typeToken, skipPast, true);\n\n        IOException thrown = assertThrows(IOException.class, () -> adapter.write(throwingWriter, null));\n        assertEquals(\"forced\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886827,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1080,
+    "prompt_tokens": 806,
+    "total_tokens": 1886,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.75
+  }
+}

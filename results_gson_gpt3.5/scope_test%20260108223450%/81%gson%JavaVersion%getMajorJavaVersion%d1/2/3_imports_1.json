@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\nclass JavaVersionTest {\n\n  @Test\n  void testGetMajorJavaVersion_withValidDottedVersion() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    // \"1.8.0_181\" should parse to 8 by parseDotted\n    int result = (int) method.invoke(null, \"1.8.0_181\");\n    assertEquals(8, result);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withValidBeginningIntVersion() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    // \"9\" should fail parseDotted (return -1), but extractBeginningInt returns 9\n    int result = (int) method.invoke(null, \"9\");\n    assertEquals(9, result);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withInvalidVersion() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    // \"invalid\" returns -1 from both parseDotted and extractBeginningInt, so default 6\n    int result = (int) method.invoke(null, \"invalid\");\n    assertEquals(6, result);\n  }\n\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 304,
+  "completion_tokens": 326,
+  "total_tokens": 630,
+  "llm_elapsed_time_seconds": 7.9,
+  "repair_elapsed_time_seconds": 20.05,
+  "round_total_time_seconds": 20.05
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.util.AbstractList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Objects;\nimport java.util.RandomAccess;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> list;\n  private Method nonNullMethod;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    list = new NonNullElementWrapperList<>(new ArrayList<>());\n    nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n  }\n\n  @Test\n  void testNonNull_withNonNullElement_returnsElement() throws Exception {\n    String element = \"test\";\n    Object result = nonNullMethod.invoke(list, element);\n    assertEquals(element, result);\n  }\n\n  @Test\n  void testNonNull_withNullElement_throwsNullPointerException() throws Exception {\n    try {\n      nonNullMethod.invoke(list, new Object[] { null });\n      fail(\"Expected NullPointerException\");\n    } catch (InvocationTargetException e) {\n      Throwable cause = e.getCause();\n      assertNotNull(cause);\n      assertTrue(cause instanceof NullPointerException);\n      assertEquals(\"Element must be non-null\", cause.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1171,
+  "completion_tokens": 284,
+  "total_tokens": 1455,
+  "llm_elapsed_time_seconds": 5.19,
+  "repair_elapsed_time_seconds": 21.58,
+  "round_total_time_seconds": 21.58
+}

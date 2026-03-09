@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn6zALmq8PYbmROvcMg3e0kGzyJo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentMatchers;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.List;\n\nclass GsonTest {\n\n  private Gson gson;\n  private TypeAdapterFactory skipPastFactory;\n  private TypeAdapterFactory factory1;\n  private TypeAdapterFactory factory2;\n  private TypeToken<Object> typeToken;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    gson = new Gson();\n\n    // Create mock factories\n    skipPastFactory = mock(TypeAdapterFactory.class);\n    factory1 = mock(TypeAdapterFactory.class);\n    factory2 = mock(TypeAdapterFactory.class);\n\n    // Prepare factories list: skipPastFactory, factory1, factory2\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(skipPastFactory);\n    factories.add(factory1);\n    factories.add(factory2);\n\n    // Use reflection to set the private final field 'factories'\n    Field factoriesField = Gson.class.getDeclaredField(\"factories\");\n    factoriesField.setAccessible(true);\n    factoriesField.set(gson, factories);\n\n    // Set jsonAdapterFactory field to a different mock for coverage of that branch\n    Field jsonAdapterFactoryField = Gson.class.getDeclaredField(\"jsonAdapterFactory\");\n    jsonAdapterFactoryField.setAccessible(true);\n    TypeAdapterFactory jsonAdapterFactory = mock(TypeAdapterFactory.class);\n    jsonAdapterFactoryField.set(gson, jsonAdapterFactory);\n\n    typeToken = TypeToken.get(Object.class);\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastNotInFactories_usesJsonAdapterFactory() throws Exception {\n    // Arrange: skipPastFactory is NOT in factories list\n    // So getDelegateAdapter should use jsonAdapterFactory as skipPast\n\n    // Setup jsonAdapterFactory to create a non-null TypeAdapter\n    TypeAdapter<Object> adapter = mock(TypeAdapter.class);\n    TypeAdapterFactory jsonAdapterFactory = (TypeAdapterFactory) getField(gson, \"jsonAdapterFactory\");\n    when(jsonAdapterFactory.create(eq(gson), eq(typeToken))).thenReturn(null); // first factory after skipPast is jsonAdapterFactory itself, but it is skipPast now\n    // We need to add a factory after jsonAdapterFactory that returns a non-null adapter\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(jsonAdapterFactory);\n    TypeAdapterFactory nextFactory = mock(TypeAdapterFactory.class);\n    factories.add(nextFactory);\n    setField(gson, \"factories\", factories);\n\n    when(nextFactory.create(eq(gson), eq(typeToken))).thenReturn(adapter);\n\n    // Act\n    TypeAdapter<Object> result = gson.getDelegateAdapter(skipPastFactory, typeToken);\n\n    // Assert\n    assertSame(adapter, result);\n    verify(nextFactory).create(gson, typeToken);\n  }\n\n  @Test\n  void getDelegateAdapter_skipPastInFactories_returnsAdapterFromNextFactory() throws Exception {\n    // Arrange: skipPastFactory is in factories list, followed by factory1 and factory2\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(factory1);\n    factories.add(skipPastFactory);\n    factories.add(factory2);\n    setField(gson, \"factories\", factories);\n\n    // Setup factory2 to return a non-null adapter\n    TypeAdapter<Object> adapter = mock(TypeAdapter.class);\n    when(factory2.create(eq(gson), eq(typeToken))).thenReturn(adapter);\n\n    // Act\n    TypeAdapter<Object> result = gson.getDelegateAdapter(skipPastFactory, typeToken);\n\n    // Assert\n    assertSame(adapter, result);\n    verify(factory2).create(gson, typeToken);\n    verify(factory1, never()).create(any(), any());\n    verify(skipPastFactory, never()).create(any(), any());\n  }\n\n  @Test\n  void getDelegateAdapter_noFactoryReturnsAdapter_throwsIllegalArgumentException() throws Exception {\n    // Arrange: skipPastFactory is in factories list, but no factory returns non-null adapter\n    List<TypeAdapterFactory> factories = new ArrayList<>();\n    factories.add(skipPastFactory);\n    factories.add(factory1);\n    factories.add(factory2);\n    setField(gson, \"factories\", factories);\n\n    when(factory1.create(eq(gson), eq(typeToken))).thenReturn(null);\n    when(factory2.create(eq(gson), eq(typeToken))).thenReturn(null);\n\n    // Act & Assert\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () ->\n        gson.getDelegateAdapter(skipPastFactory, typeToken));\n    assertTrue(thrown.getMessage().contains(\"GSON cannot serialize\"));\n  }\n\n  // Helper methods to set and get private fields via reflection\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    Field field = Gson.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  private Object getField(Object target, String fieldName) throws Exception {\n    Field field = Gson.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(target);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889517,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1080,
+    "prompt_tokens": 1723,
+    "total_tokens": 2803,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.12
+  }
+}

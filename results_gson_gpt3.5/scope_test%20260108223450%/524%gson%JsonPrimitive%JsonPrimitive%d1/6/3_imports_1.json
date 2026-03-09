@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.LazilyParsedNumber;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Objects;\n\nclass JsonPrimitiveTest {\n\n  @Test\n  void constructor_Number_shouldSetValue() throws NoSuchFieldException, IllegalAccessException {\n    Number number = 123;\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(number);\n\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    Object value = valueField.get(jsonPrimitive);\n\n    assertSame(number, value);\n  }\n\n  @Test\n  void constructor_Number_nullShouldThrow() {\n    assertThrows(NullPointerException.class, () -> new JsonPrimitive((Number) null));\n  }\n\n  @Test\n  void isIntegral_privateStaticMethod() throws Exception {\n    Constructor<JsonPrimitive> constructor = JsonPrimitive.class.getDeclaredConstructor(Number.class);\n    constructor.setAccessible(true);\n    JsonPrimitive jpInt = constructor.newInstance(10);\n    JsonPrimitive jpLong = constructor.newInstance(10L);\n    JsonPrimitive jpDouble = constructor.newInstance(10.5);\n    JsonPrimitive jpBigInt = constructor.newInstance(BigInteger.TEN);\n    JsonPrimitive jpBigDec = constructor.newInstance(BigDecimal.TEN);\n\n    var isIntegralMethod = JsonPrimitive.class.getDeclaredMethod(\"isIntegral\", JsonPrimitive.class);\n    isIntegralMethod.setAccessible(true);\n\n    assertTrue((Boolean) isIntegralMethod.invoke(null, jpInt));\n    assertTrue((Boolean) isIntegralMethod.invoke(null, jpLong));\n    assertFalse((Boolean) isIntegralMethod.invoke(null, jpDouble));\n    assertTrue((Boolean) isIntegralMethod.invoke(null, jpBigInt));\n    assertFalse((Boolean) isIntegralMethod.invoke(null, jpBigDec));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 412,
+  "completion_tokens": 396,
+  "total_tokens": 808,
+  "llm_elapsed_time_seconds": 10.31,
+  "repair_elapsed_time_seconds": 20.9,
+  "round_total_time_seconds": 20.9
+}

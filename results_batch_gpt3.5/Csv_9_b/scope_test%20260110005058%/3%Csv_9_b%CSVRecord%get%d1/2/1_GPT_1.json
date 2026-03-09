@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA2lNuiy1s30TLIxLEi8YB5bQav8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n    private String[] values;\n    private Map<String, Integer> mapping;\n    private String comment;\n    private long recordNumber;\n\n    @BeforeEach\n    public void setUp() {\n        values = new String[] {\"value0\", \"value1\", \"value2\"};\n        mapping = new HashMap<>();\n        mapping.put(\"col0\", 0);\n        mapping.put(\"col1\", 1);\n        mapping.put(\"col2\", 2);\n        comment = \"test comment\";\n        recordNumber = 123L;\n        csvRecord = new CSVRecord(values, mapping, comment, recordNumber);\n    }\n\n    @Test\n    public void testGet_ValidIndex() {\n        assertEquals(\"value0\", csvRecord.get(0));\n        assertEquals(\"value1\", csvRecord.get(1));\n        assertEquals(\"value2\", csvRecord.get(2));\n    }\n\n    @Test\n    public void testGet_IndexOutOfBounds_Negative() {\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> csvRecord.get(-1));\n    }\n\n    @Test\n    public void testGet_IndexOutOfBounds_TooLarge() {\n        assertThrows(ArrayIndexOutOfBoundsException.class, () -> csvRecord.get(values.length));\n    }\n\n    @Test\n    public void testPrivateValuesFieldAccessUsingReflection() throws Exception {\n        // Use reflection to get private 'values' field and verify it matches expected array\n        var valuesField = CSVRecord.class.getDeclaredField(\"values\");\n        valuesField.setAccessible(true);\n        String[] reflectedValues = (String[]) valuesField.get(csvRecord);\n        assertArrayEquals(values, reflectedValues);\n    }\n\n    @Test\n    public void testPrivateToListMethodUsingReflection() throws Exception {\n        Method toListMethod = CSVRecord.class.getDeclaredMethod(\"toList\");\n        toListMethod.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        java.util.List<String> list = (java.util.List<String>) toListMethod.invoke(csvRecord);\n        assertEquals(values.length, list.size());\n        for (int i = 0; i < values.length; i++) {\n            assertEquals(values[i], list.get(i));\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977667,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 528,
+    "prompt_tokens": 390,
+    "total_tokens": 918,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.26
+  }
+}

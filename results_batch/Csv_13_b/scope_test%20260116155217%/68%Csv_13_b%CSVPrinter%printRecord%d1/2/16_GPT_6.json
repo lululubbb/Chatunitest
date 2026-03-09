@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZ39XuGXJnx2uuHTUxeSQohIgcKa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n    }\n\n    private CSVPrinter createPrinter() throws IOException {\n        return new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecord_withNoValues_callsPrintlnOnly() throws IOException {\n        CSVPrinter printer = createPrinter();\n        printer.printRecord();\n        verify(out).append('\\n');\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrintRecord_withSingleValue_callsPrintAndPrintln() throws IOException {\n        CSVPrinter printer = createPrinter();\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecord((Object) \"value1\");\n\n        verify(spyPrinter).print(\"value1\");\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withMultipleValues_callsPrintForEachAndPrintln() throws IOException {\n        CSVPrinter printer = createPrinter();\n        CSVPrinter spyPrinter = spy(printer);\n\n        Object[] values = {\"value1\", 123, null};\n        spyPrinter.printRecord(values);\n\n        for (Object value : values) {\n            verify(spyPrinter).print(value);\n        }\n        verify(spyPrinter).println();\n    }\n\n    @Test\n    void testPrintRecord_withIOExceptionFromPrint_propagatesException() throws IOException {\n        CSVPrinter printer = createPrinter();\n        CSVPrinter spyPrinter = spy(printer);\n        doThrow(new IOException(\"test exception\")).when(spyPrinter).print(any());\n\n        IOException thrown = assertThrows(IOException.class, () -> spyPrinter.printRecord((Object) \"value\"));\n\n        assertEquals(\"test exception\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550447,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 419,
+    "prompt_tokens": 917,
+    "total_tokens": 1336,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.56
+  }
+}

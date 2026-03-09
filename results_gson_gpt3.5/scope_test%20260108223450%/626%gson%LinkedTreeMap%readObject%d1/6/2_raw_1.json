@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  @Test\n  void testReadObject_throwsInvalidObjectException() throws Exception {\n    LinkedTreeMap<Object, Object> map = new LinkedTreeMap<>();\n\n    ObjectInputStream mockIn = org.mockito.Mockito.mock(ObjectInputStream.class);\n\n    Method readObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObjectMethod.setAccessible(true);\n\n    assertThrows(InvalidObjectException.class, () -> {\n      try {\n        readObjectMethod.invoke(map, mockIn);\n      } catch (java.lang.reflect.InvocationTargetException e) {\n        throw e.getCause();\n      }\n    });\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 727,
+  "completion_tokens": 190,
+  "total_tokens": 917,
+  "llm_elapsed_time_seconds": 3.9
+}

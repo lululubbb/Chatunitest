@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Qx72HAir2uFv2G1xzuxH8Ggzbb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockFormat = mock(CSVFormat.class);\n        // Create CSVParser instance with a dummy Reader and mocked format\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), mockFormat);\n\n        // Setup reusableToken field with a real Token instance\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        // Token is a package-private class, so instantiate via reflection\n        Class<?> tokenClass = Class.forName(\"org.apache.commons.csv.Token\");\n        Object token = tokenClass.getDeclaredConstructor().newInstance();\n        reusableTokenField.set(csvParser, token);\n\n        // Setup record field to empty ArrayList\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        recordField.set(csvParser, new java.util.ArrayList<String>());\n    }\n\n    @Test\n    void testAddRecordValue_nullStringIsNull_addsInput() throws Exception {\n        // Arrange\n        when(mockFormat.getNullString()).thenReturn(null);\n\n        // Set reusableToken.content to a StringBuilder with some content\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Object token = reusableTokenField.get(csvParser);\n\n        Field contentField = token.getClass().getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        contentField.set(token, new StringBuilder(\"testValue\"));\n\n        // Clear record before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> record = (List<String>) recordField.get(csvParser);\n        record.clear();\n\n        // Act\n        Method addRecordValue = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValue.setAccessible(true);\n        addRecordValue.invoke(csvParser);\n\n        // Assert\n        record = (List<String>) recordField.get(csvParser);\n        assertEquals(1, record.size());\n        assertEquals(\"testValue\", record.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringMatches_addsNull() throws Exception {\n        // Arrange\n        when(mockFormat.getNullString()).thenReturn(\"NULL\");\n\n        // Set reusableToken.content to \"NULL\" (case insensitive match)\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Object token = reusableTokenField.get(csvParser);\n\n        Field contentField = token.getClass().getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        contentField.set(token, new StringBuilder(\"NULL\"));\n\n        // Clear record before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> record = (List<String>) recordField.get(csvParser);\n        record.clear();\n\n        // Act\n        Method addRecordValue = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValue.setAccessible(true);\n        addRecordValue.invoke(csvParser);\n\n        // Assert\n        record = (List<String>) recordField.get(csvParser);\n        assertEquals(1, record.size());\n        assertNull(record.get(0));\n    }\n\n    @Test\n    void testAddRecordValue_nullStringDoesNotMatch_addsInput() throws Exception {\n        // Arrange\n        when(mockFormat.getNullString()).thenReturn(\"NULL\");\n\n        // Set reusableToken.content to a different string\n        Field reusableTokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        reusableTokenField.setAccessible(true);\n        Object token = reusableTokenField.get(csvParser);\n\n        Field contentField = token.getClass().getDeclaredField(\"content\");\n        contentField.setAccessible(true);\n        contentField.set(token, new StringBuilder(\"value\"));\n\n        // Clear record before test\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        List<String> record = (List<String>) recordField.get(csvParser);\n        record.clear();\n\n        // Act\n        Method addRecordValue = CSVParser.class.getDeclaredMethod(\"addRecordValue\");\n        addRecordValue.setAccessible(true);\n        addRecordValue.invoke(csvParser);\n\n        // Assert\n        record = (List<String>) recordField.get(csvParser);\n        assertEquals(1, record.size());\n        assertEquals(\"value\", record.get(0));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975323,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1002,
+    "prompt_tokens": 1699,
+    "total_tokens": 2701,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.33
+  }
+}

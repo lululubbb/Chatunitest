@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAP1RgFUPpNwCc7aTsJ4cxchjngW",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.net.URL;\nimport java.nio.charset.Charset;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n    }\n\n    @Test\n    void parse_withValidArguments_shouldReturnCSVParserInstance() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVFormat format = mock(CSVFormat.class);\n\n        CSVParser parser = CSVParser.parse(mockUrl, charset, format);\n\n        assertNotNull(parser);\n\n        // Access private field 'format' via reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object actualFormat = formatField.get(parser);\n\n        assertEquals(format, actualFormat);\n        // The parser should use an InputStreamReader wrapping the InputStream from URL with charset\n        // We cannot access the reader directly, but no exception means success\n    }\n\n    @Test\n    void parse_withNullUrl_shouldThrowException() {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVFormat format = mock(CSVFormat.class);\n\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((URL) null, charset, format);\n        });\n        assertEquals(\"url\", exception.getMessage());\n    }\n\n    @Test\n    void parse_withNullCharset_shouldThrowException() {\n        Charset charset = null;\n        CSVFormat format = mock(CSVFormat.class);\n\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, format);\n        });\n        assertEquals(\"charset\", exception.getMessage());\n    }\n\n    @Test\n    void parse_withNullFormat_shouldThrowException() {\n        Charset charset = Charset.forName(\"UTF-8\");\n        CSVFormat format = null;\n\n        NullPointerException exception = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, format);\n        });\n        assertEquals(\"format\", exception.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979047,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 525,
+    "prompt_tokens": 1120,
+    "total_tokens": 1645,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.24
+  }
+}

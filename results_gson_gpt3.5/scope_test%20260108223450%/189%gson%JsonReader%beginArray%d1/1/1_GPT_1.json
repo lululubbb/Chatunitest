@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlUQZhYJt8bIMSScKdhOBZDdTweh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void beginArray_peekedIsPeekedBeginArray_pushCalledAndStateUpdated() throws Exception {\n    // Set peeked to PEEKED_BEGIN_ARRAY (3)\n    setField(jsonReader, \"peeked\", 3);\n    // Set stackSize to 1 (simulate stack has one element)\n    setField(jsonReader, \"stackSize\", 1);\n    // Initialize pathIndices array with length >= stackSize\n    int[] pathIndices = new int[32];\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    // Call beginArray()\n    jsonReader.beginArray();\n\n    // Verify peeked is reset to PEEKED_NONE (0)\n    int peeked = (int) getField(jsonReader, \"peeked\");\n    assertEquals(0, peeked);\n\n    // Verify pathIndices[stackSize - 1] == 0\n    assertEquals(0, pathIndices[0]);\n\n    // Verify stack top is JsonScope.EMPTY_ARRAY (4)\n    int[] stack = (int[]) getField(jsonReader, \"stack\");\n    int stackSize = (int) getField(jsonReader, \"stackSize\");\n    assertEquals(2, stackSize); // stackSize incremented by push\n    assertEquals(JsonScope.EMPTY_ARRAY, stack[stackSize - 1]);\n  }\n\n  @Test\n  void beginArray_peekedIsPeekedNone_callsDoPeekAndSucceeds() throws Exception {\n    // Set peeked to PEEKED_NONE (0)\n    setField(jsonReader, \"peeked\", 0);\n    // Set stackSize to 1\n    setField(jsonReader, \"stackSize\", 1);\n    // Initialize pathIndices array\n    int[] pathIndices = new int[32];\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    // Spy on jsonReader to stub doPeek()\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(3).when(spyReader).doPeek();\n\n    // Call beginArray()\n    spyReader.beginArray();\n\n    // Verify peeked reset\n    int peeked = (int) getField(spyReader, \"peeked\");\n    assertEquals(0, peeked);\n\n    // Verify pathIndices[stackSize - 1] == 0\n    assertEquals(0, pathIndices[0]);\n\n    // Verify stack top is JsonScope.EMPTY_ARRAY (4)\n    int[] stack = (int[]) getField(spyReader, \"stack\");\n    int stackSize = (int) getField(spyReader, \"stackSize\");\n    assertEquals(2, stackSize);\n    assertEquals(JsonScope.EMPTY_ARRAY, stack[stackSize - 1]);\n  }\n\n  @Test\n  void beginArray_peekedIsInvalid_throwsIllegalStateException() throws Exception {\n    // Set peeked to an invalid value (e.g., PEEKED_BEGIN_OBJECT = 1)\n    setField(jsonReader, \"peeked\", 1);\n\n    // Stub peek() to return some JsonToken (simulate wrong token)\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(JsonToken.BEGIN_OBJECT).when(spyReader).peek();\n\n    // Stub locationString() to return a known string\n    doReturn(\" at path $\").when(spyReader).locationString();\n\n    IllegalStateException ex = assertThrows(IllegalStateException.class, spyReader::beginArray);\n    assertTrue(ex.getMessage().contains(\"Expected BEGIN_ARRAY but was BEGIN_OBJECT at path $\"));\n  }\n\n  // Helper methods to access private fields and methods\n  private static Object getField(Object target, String fieldName) throws Exception {\n    Field field = target.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(target);\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = target.getClass().getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883282,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 967,
+    "prompt_tokens": 1087,
+    "total_tokens": 2054,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.52
+  }
+}

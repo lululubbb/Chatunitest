@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuJeAv31HQCxc36yIctlZkjU9EEZ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects() throws IOException {\n        Iterable<Object> iterable = Arrays.asList(\"one\", \"two\", \"three\");\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(iterable);\n\n        for (Object val : iterable) {\n            verify(spyPrinter).printRecord(val);\n        }\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjectArrays() throws IOException {\n        Object[] arr1 = new Object[] {\"a\", \"b\"};\n        Object[] arr2 = new Object[] {\"c\", \"d\"};\n        Iterable<Object> iterable = Arrays.asList(arr1, arr2);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter).printRecord(arr1);\n        verify(spyPrinter).printRecord(arr2);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfIterables() throws IOException {\n        Iterable<String> inner1 = Arrays.asList(\"x\", \"y\");\n        Iterable<String> inner2 = Arrays.asList(\"z\");\n        Iterable<Object> iterable = Arrays.asList(inner1, inner2);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(iterable);\n\n        verify(spyPrinter).printRecord(inner1);\n        verify(spyPrinter).printRecord(inner2);\n    }\n\n    @Test\n    void testPrintRecords_withMixedValues() throws IOException {\n        Object[] arr = new Object[] {\"arr1\"};\n        Iterable<String> iterable = Collections.singletonList(\"iter1\");\n        String single = \"single\";\n\n        Iterable<Object> values = Arrays.asList(arr, iterable, single);\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        spyPrinter.printRecords(values);\n\n        verify(spyPrinter).printRecord(arr);\n        verify(spyPrinter).printRecord(iterable);\n        verify(spyPrinter).printRecord(single);\n    }\n\n    @Test\n    void testPrintRecords_reflectionInvoke() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Iterable<Object> iterable = Arrays.asList(\"one\", \"two\");\n        Method method = CSVPrinter.class.getDeclaredMethod(\"printRecords\", Iterable.class);\n        method.setAccessible(true);\n\n        CSVPrinter spyPrinter = Mockito.spy(printer);\n        method.invoke(spyPrinter, iterable);\n\n        for (Object val : iterable) {\n            verify(spyPrinter).printRecord(val);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767678882,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 645,
+    "prompt_tokens": 1187,
+    "total_tokens": 1832,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.01
+  }
+}

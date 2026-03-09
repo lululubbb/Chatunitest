@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxBNFRBlNm3WkukaAktJvWEVHr7d",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass CSVFormatTest {\n\n    @Test\n    void testGetTrailingDelimiter_DefaultFalse() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertFalse(format.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_TrueViaWithTrailingDelimiter() throws Exception {\n        CSVFormat formatWithTrailing = CSVFormat.DEFAULT.withTrailingDelimiter(true);\n        assertTrue(formatWithTrailing.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_FalseViaWithTrailingDelimiter() throws Exception {\n        CSVFormat formatWithTrailing = CSVFormat.DEFAULT.withTrailingDelimiter(false);\n        assertFalse(formatWithTrailing.getTrailingDelimiter());\n    }\n\n    @Test\n    void testGetTrailingDelimiter_ReflectionAccess() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withTrailingDelimiter(true);\n        Field trailingDelimiterField = CSVFormat.class.getDeclaredField(\"trailingDelimiter\");\n        trailingDelimiterField.setAccessible(true);\n\n        // Since CSVFormat is immutable, we cannot just set the field on the existing instance.\n        // Instead, create a new instance with trailingDelimiter=false using reflection on constructor.\n\n        // Get the constructor with all parameters\n        var constructor = CSVFormat.class.getDeclaredConstructors()[0];\n        constructor.setAccessible(true);\n\n        // Extract all fields from the original instance\n        Field[] fields = CSVFormat.class.getDeclaredFields();\n        Object[] params = new Object[constructor.getParameterCount()];\n\n        // Map fields by name to their values\n        for (int i = 0; i < params.length; i++) {\n            params[i] = null;\n        }\n\n        // The order of parameters in constructor is:\n        // (char delimiter, Character quoteChar, QuoteMode quoteMode,\n        // Character commentStart, Character escape, boolean ignoreSurroundingSpaces,\n        // boolean ignoreEmptyLines, String recordSeparator, String nullString,\n        // Object[] headerComments, String[] header, boolean skipHeaderRecord,\n        // boolean allowMissingColumnNames, boolean ignoreHeaderCase, boolean trim,\n        // boolean trailingDelimiter, boolean autoFlush)\n\n        // So we need to read all these fields from the existing instance\n\n        params[0] = getFieldValue(format, \"delimiter\");\n        params[1] = getFieldValue(format, \"quoteCharacter\");\n        params[2] = getFieldValue(format, \"quoteMode\");\n        params[3] = getFieldValue(format, \"commentMarker\");\n        params[4] = getFieldValue(format, \"escapeCharacter\");\n        params[5] = getFieldValue(format, \"ignoreSurroundingSpaces\");\n        params[6] = getFieldValue(format, \"ignoreEmptyLines\");\n        params[7] = getFieldValue(format, \"recordSeparator\");\n        params[8] = getFieldValue(format, \"nullString\");\n        params[9] = getFieldValue(format, \"headerComments\");\n        params[10] = getFieldValue(format, \"header\");\n        params[11] = getFieldValue(format, \"skipHeaderRecord\");\n        params[12] = getFieldValue(format, \"allowMissingColumnNames\");\n        params[13] = getFieldValue(format, \"ignoreHeaderCase\");\n        params[14] = getFieldValue(format, \"trim\");\n        params[15] = false; // trailingDelimiter set to false here\n        params[16] = getFieldValue(format, \"autoFlush\");\n\n        CSVFormat modifiedFormat = (CSVFormat) constructor.newInstance(params);\n\n        assertFalse(modifiedFormat.getTrailingDelimiter());\n    }\n\n    private Object getFieldValue(CSVFormat format, String fieldName) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return field.get(format);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767689901,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 805,
+    "prompt_tokens": 2101,
+    "total_tokens": 2906,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.6
+  }
+}

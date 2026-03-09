@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm6R4q1dMIpyi9pRpZTM6v82XuTu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Map.Entry;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMap_findByEntry_Test {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    // Use default constructor which assumes natural ordering and no null values allowed\n    map = new LinkedTreeMap<>(null, false);\n  }\n\n  @Test\n  void findByEntry_returnsNode_whenKeyAndValueMatch() throws Exception {\n    map.put(\"key1\", \"value1\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(\"key1\");\n    when(entry.getValue()).thenReturn(\"value1\");\n\n    Node<String, String> result = invokeFindByEntry(map, entry);\n\n    assertNotNull(result);\n    assertEquals(\"key1\", result.key);\n    assertEquals(\"value1\", result.value);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenKeyMatchesButValueDiffers() throws Exception {\n    map.put(\"key1\", \"value1\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(\"key1\");\n    when(entry.getValue()).thenReturn(\"differentValue\");\n\n    Node<String, String> result = invokeFindByEntry(map, entry);\n\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenKeyNotFound() throws Exception {\n    map.put(\"key1\", \"value1\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(\"absentKey\");\n    when(entry.getValue()).thenReturn(\"value1\");\n\n    Node<String, String> result = invokeFindByEntry(map, entry);\n\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenEntryIsNull() throws Exception {\n    Node<String, String> result = invokeFindByEntry(map, null);\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenEntryKeyIsNull_and_keyNotPresent() throws Exception {\n    map.put(\"key1\", \"value1\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(null);\n    when(entry.getValue()).thenReturn(\"value1\");\n\n    Node<String, String> result = invokeFindByEntry(map, entry);\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNode_whenKeyIsNull_andValueMatches_and_nullsAllowed() throws Exception {\n    LinkedTreeMap<String, String> mapAllowNull = new LinkedTreeMap<>(null, true);\n    mapAllowNull.put(null, \"nullValue\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(null);\n    when(entry.getValue()).thenReturn(\"nullValue\");\n\n    Node<String, String> result = invokeFindByEntry(mapAllowNull, entry);\n\n    assertNotNull(result);\n    assertNull(result.key);\n    assertEquals(\"nullValue\", result.value);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenValueIsNull_butValueDoesNotMatch() throws Exception {\n    map.put(\"key1\", \"value1\");\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(\"key1\");\n    when(entry.getValue()).thenReturn(null);\n\n    Node<String, String> result = invokeFindByEntry(map, entry);\n    assertNull(result);\n  }\n\n  // Helper method to invoke private or package-private findByEntry via reflection\n  @SuppressWarnings(\"unchecked\")\n  private Node<String, String> invokeFindByEntry(LinkedTreeMap<String, String> map, Entry<?, ?> entry)\n      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    if (entry == null) {\n      return null;\n    }\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n    try {\n      return (Node<String, String>) method.invoke(map, entry);\n    } catch (InvocationTargetException e) {\n      if (e.getCause() instanceof NullPointerException) {\n        return null;\n      }\n      throw e;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885639,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 998,
+    "prompt_tokens": 2816,
+    "total_tokens": 3814,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.83
+  }
+}

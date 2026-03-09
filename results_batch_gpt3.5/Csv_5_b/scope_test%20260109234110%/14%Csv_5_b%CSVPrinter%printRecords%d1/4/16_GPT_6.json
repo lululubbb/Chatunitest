@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw90A1o4k0YquJhAPOzqqO8IeMjpf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_multipleRows_multipleColumns() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(3);\n\n        // Simulate 2 rows\n        when(rs.next()).thenReturn(true, true, false);\n\n        when(rs.getString(1)).thenReturn(\"a1\", \"a2\");\n        when(rs.getString(2)).thenReturn(\"b1\", \"b2\");\n        when(rs.getString(3)).thenReturn(\"c1\", \"c2\");\n\n        CSVPrinter spyPrinter = spy(printer);\n        // We want to verify calls to print(Object) and println()\n        doCallRealMethod().when(spyPrinter).print(any());\n        doCallRealMethod().when(spyPrinter).println();\n\n        spyPrinter.printRecords(rs);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        // For first row\n        inOrder.verify(spyPrinter).print(\"a1\");\n        inOrder.verify(spyPrinter).print(\"b1\");\n        inOrder.verify(spyPrinter).print(\"c1\");\n        inOrder.verify(spyPrinter).println();\n        // For second row\n        inOrder.verify(spyPrinter).print(\"a2\");\n        inOrder.verify(spyPrinter).print(\"b2\");\n        inOrder.verify(spyPrinter).print(\"c2\");\n        inOrder.verify(spyPrinter).println();\n\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_noRows() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(2);\n\n        // no rows\n        when(rs.next()).thenReturn(false);\n\n        CSVPrinter spyPrinter = spy(printer);\n        doCallRealMethod().when(spyPrinter).print(any());\n        doCallRealMethod().when(spyPrinter).println();\n\n        spyPrinter.printRecords(rs);\n\n        // print and println should never be called\n        verify(spyPrinter, never()).print(any());\n        verify(spyPrinter, never()).println();\n    }\n\n    @Test\n    void testPrintRecords_singleRow_singleColumn() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n\n        when(rs.next()).thenReturn(true, false);\n\n        when(rs.getString(1)).thenReturn(\"onlyValue\");\n\n        CSVPrinter spyPrinter = spy(printer);\n        doCallRealMethod().when(spyPrinter).print(any());\n        doCallRealMethod().when(spyPrinter).println();\n\n        spyPrinter.printRecords(rs);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).print(\"onlyValue\");\n        inOrder.verify(spyPrinter).println();\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_throwsSQLException() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n\n        when(rs.next()).thenThrow(new SQLException(\"DB error\"));\n\n        try {\n            printer.printRecords(rs);\n        } catch (SQLException e) {\n            // expected\n            assert (e.getMessage().contains(\"DB error\"));\n        }\n    }\n\n    @Test\n    void testPrintRecords_throwsIOExceptionFromPrint() throws SQLException, IOException {\n        ResultSet rs = mock(ResultSet.class);\n        ResultSetMetaData meta = mock(ResultSetMetaData.class);\n\n        when(rs.getMetaData()).thenReturn(meta);\n        when(meta.getColumnCount()).thenReturn(1);\n\n        when(rs.next()).thenReturn(true);\n        when(rs.getString(1)).thenReturn(\"value\");\n\n        CSVPrinter spyPrinter = spy(printer);\n        doThrow(new IOException(\"IO error\")).when(spyPrinter).print(any());\n\n        try {\n            spyPrinter.printRecords(rs);\n        } catch (IOException e) {\n            // expected\n            assert (e.getMessage().contains(\"IO error\"));\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973662,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1062,
+    "prompt_tokens": 1602,
+    "total_tokens": 2664,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.51
+  }
+}

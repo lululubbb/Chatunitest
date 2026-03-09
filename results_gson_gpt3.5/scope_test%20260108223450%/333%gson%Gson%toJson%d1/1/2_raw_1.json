@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonElement;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Method;\n\nclass GsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_whenSrcIsNull_returnsJsonNullString() throws Exception {\n    // Use reflection to invoke private toJson(JsonElement) method\n    Method toJsonJsonElementMethod = Gson.class.getDeclaredMethod(\"toJson\", JsonElement.class);\n    toJsonJsonElementMethod.setAccessible(true);\n\n    String json = (String) toJsonJsonElementMethod.invoke(gson, JsonNull.INSTANCE);\n    String result = gson.toJson(null);\n\n    assertEquals(json, result);\n  }\n\n  @Test\n  void toJson_whenSrcIsNonNull_callsToJsonWithSrcAndClass() throws Exception {\n    String src = \"testString\";\n\n    // Spy on gson to verify internal call\n    Gson spyGson = Mockito.spy(gson);\n\n    // Mock toJson(Object, Type) to return fixed string\n    doReturn(\"mockedJson\").when(spyGson).toJson(src, src.getClass());\n\n    String json = spyGson.toJson(src);\n\n    assertEquals(\"mockedJson\", json);\n    verify(spyGson).toJson(src, src.getClass());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1605,
+  "completion_tokens": 346,
+  "total_tokens": 1951,
+  "llm_elapsed_time_seconds": 9.62
+}

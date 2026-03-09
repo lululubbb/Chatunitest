@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnG07nowqFJGxAYIHbszInWYxr30",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.DateTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.ParseException;\nimport java.text.ParsePosition;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\n\nimport com.google.gson.internal.bind.util.ISO8601Utils;\n\npublic class DateTypeAdapterTest {\n\n    private DateTypeAdapter dateTypeAdapter;\n    private Method deserializeToDateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        dateTypeAdapter = new DateTypeAdapter();\n        deserializeToDateMethod = DateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        deserializeToDateMethod.setAccessible(true);\n    }\n\n    private void setDateFormats(List<DateFormat> dateFormats) throws Exception {\n        Field dateFormatsField = DateTypeAdapter.class.getDeclaredField(\"dateFormats\");\n        dateFormatsField.setAccessible(true);\n        dateFormatsField.set(dateTypeAdapter, dateFormats);\n    }\n\n    @Test\n    public void testDeserializeToDate_withDateFormatParsingSuccess() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        String dateString = \"2023-06-01\";\n        when(jsonReader.nextString()).thenReturn(dateString);\n\n        // Create a DateFormat mock that successfully parses the date string\n        DateFormat dateFormat = mock(DateFormat.class);\n        Date expectedDate = new Date();\n        when(dateFormat.parse(dateString)).thenReturn(expectedDate);\n\n        List<DateFormat> dateFormats = new ArrayList<>();\n        dateFormats.add(dateFormat);\n        setDateFormats(dateFormats);\n\n        Date result = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n\n        assertSame(expectedDate, result);\n        verify(jsonReader).nextString();\n        verify(dateFormat).parse(dateString);\n    }\n\n    @Test\n    public void testDeserializeToDate_withDateFormatParsingFailure_thenISO8601Success() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        String dateString = \"2023-06-01T12:00:00Z\";\n        when(jsonReader.nextString()).thenReturn(dateString);\n\n        // Create a DateFormat mock that throws ParseException\n        DateFormat dateFormat = mock(DateFormat.class);\n        when(dateFormat.parse(dateString)).thenThrow(ParseException.class);\n\n        List<DateFormat> dateFormats = new ArrayList<>();\n        dateFormats.add(dateFormat);\n        setDateFormats(dateFormats);\n\n        Date expectedDate = new Date();\n\n        try (MockedStatic<ISO8601Utils> mockedISO8601Utils = Mockito.mockStatic(ISO8601Utils.class)) {\n            mockedISO8601Utils.when(() -> ISO8601Utils.parse(eq(dateString), any(ParsePosition.class))).thenReturn(expectedDate);\n\n            Date result = (Date) deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n\n            assertSame(expectedDate, result);\n            verify(jsonReader).nextString();\n            verify(dateFormat).parse(dateString);\n            mockedISO8601Utils.verify(() -> ISO8601Utils.parse(eq(dateString), any(ParsePosition.class)));\n        }\n    }\n\n    @Test\n    public void testDeserializeToDate_withAllParsingFailures_throwsJsonSyntaxException() throws Exception {\n        JsonReader jsonReader = mock(JsonReader.class);\n        String dateString = \"invalid-date\";\n        when(jsonReader.nextString()).thenReturn(dateString);\n        when(jsonReader.getPreviousPath()).thenReturn(\"$.date\");\n\n        // DateFormat throws ParseException\n        DateFormat dateFormat = mock(DateFormat.class);\n        when(dateFormat.parse(dateString)).thenThrow(ParseException.class);\n\n        List<DateFormat> dateFormats = new ArrayList<>();\n        dateFormats.add(dateFormat);\n        setDateFormats(dateFormats);\n\n        try (MockedStatic<ISO8601Utils> mockedISO8601Utils = Mockito.mockStatic(ISO8601Utils.class)) {\n            mockedISO8601Utils.when(() -> ISO8601Utils.parse(eq(dateString), any(ParsePosition.class)))\n                    .thenThrow(new ParseException(\"error\", 0));\n\n            Exception exception = assertThrows(Exception.class, () -> {\n                deserializeToDateMethod.invoke(dateTypeAdapter, jsonReader);\n            });\n\n            // Because invoke wraps exception in InvocationTargetException, we unwrap it\n            Throwable cause = exception.getCause();\n            assertTrue(cause instanceof JsonSyntaxException);\n            assertTrue(cause.getMessage().contains(\"Failed parsing\"));\n            assertTrue(cause.getMessage().contains(dateString));\n            assertTrue(cause.getMessage().contains(\"$.date\"));\n\n            verify(jsonReader).nextString();\n            verify(dateFormat).parse(dateString);\n            mockedISO8601Utils.verify(() -> ISO8601Utils.parse(eq(dateString), any(ParsePosition.class)));\n            verify(jsonReader).getPreviousPath();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890076,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1052,
+    "prompt_tokens": 1154,
+    "total_tokens": 2206,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 42.4
+  }
+}

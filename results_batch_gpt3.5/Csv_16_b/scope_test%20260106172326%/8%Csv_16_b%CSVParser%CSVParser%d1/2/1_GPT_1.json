@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxkRG49rcIdIWuZIWrp6BRGyZ7NQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    public void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    public void testConstructor_withValidReaderAndFormat_shouldInitializeFields() throws Exception {\n        String csvData = \"header1,header2\\nvalue1,value2\";\n        Reader reader = new StringReader(csvData);\n\n        // Use reflection to get the constructor with Reader, CSVFormat, long, long\n        Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n        constructor.setAccessible(true);\n\n        CSVParser parser = constructor.newInstance(reader, mockFormat, 0L, 1L);\n\n        // Validate that fields are set correctly\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(mockFormat, formatField.get(parser));\n\n        Field characterOffsetField = CSVParser.class.getDeclaredField(\"characterOffset\");\n        characterOffsetField.setAccessible(true);\n        assertEquals(0L, characterOffsetField.getLong(parser));\n\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        assertEquals(0L, recordNumberField.getLong(parser)); // recordNumber is recordNumber-1 in constructor\n\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        Map<?, ?> headerMap = (Map<?, ?>) headerMapField.get(parser);\n        assertNotNull(headerMap);\n\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        Object lexer = lexerField.get(parser);\n        assertNotNull(lexer);\n\n        Field recordListField = CSVParser.class.getDeclaredField(\"recordList\");\n        recordListField.setAccessible(true);\n        Object recordList = recordListField.get(parser);\n        assertNotNull(recordList);\n    }\n\n    @Test\n    public void testConstructor_nullReader_shouldThrowException() {\n        assertThrows(InvocationTargetException.class, () -> {\n            Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n            constructor.setAccessible(true);\n            constructor.newInstance(null, mockFormat, 0L, 1L);\n        });\n    }\n\n    @Test\n    public void testConstructor_nullFormat_shouldThrowException() {\n        String csvData = \"header1,header2\\nvalue1,value2\";\n        Reader reader = new StringReader(csvData);\n        assertThrows(InvocationTargetException.class, () -> {\n            Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class, long.class, long.class);\n            constructor.setAccessible(true);\n            constructor.newInstance(reader, null, 0L, 1L);\n        });\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692075,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 703,
+    "prompt_tokens": 664,
+    "total_tokens": 1367,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.82
+  }
+}

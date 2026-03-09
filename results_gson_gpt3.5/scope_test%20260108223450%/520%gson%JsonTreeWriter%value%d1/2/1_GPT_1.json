@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmEdUUrLde7DALlYGsF66vtNddNM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void value_nullValue_callsNullValue() throws Exception {\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(true).when(spyWriter).isLenient();\n    doReturn(spyWriter).when(spyWriter).nullValue();\n\n    JsonWriter result = spyWriter.value((Number) null);\n\n    verify(spyWriter).nullValue();\n    assertSame(spyWriter, result);\n  }\n\n  @Test\n  public void value_validNumber_putsJsonPrimitiveAndReturnsThis() throws Exception {\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(true).when(spyWriter).isLenient();\n\n    Number number = 123;\n    JsonWriter returned = spyWriter.value(number);\n\n    // Verify put called with JsonPrimitive wrapping the number\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", com.google.gson.JsonElement.class);\n    putMethod.setAccessible(true);\n    // We cannot directly verify private method call with spy, so we verify effect on field \"product\"\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    Object productValue = productField.get(spyWriter);\n    assertTrue(productValue instanceof JsonPrimitive);\n    assertEquals(number, ((JsonPrimitive) productValue).getAsNumber());\n\n    assertSame(spyWriter, returned);\n  }\n\n  @Test\n  public void value_nonLenientWithNaN_throwsIllegalArgumentException() {\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(false).when(spyWriter).isLenient();\n\n    Number nan = Double.NaN;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      spyWriter.value(nan);\n    });\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n\n  @Test\n  public void value_nonLenientWithPositiveInfinity_throwsIllegalArgumentException() {\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(false).when(spyWriter).isLenient();\n\n    Number posInf = Double.POSITIVE_INFINITY;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      spyWriter.value(posInf);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void value_nonLenientWithNegativeInfinity_throwsIllegalArgumentException() {\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(false).when(spyWriter).isLenient();\n\n    Number negInf = Double.NEGATIVE_INFINITY;\n\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      spyWriter.value(negInf);\n    });\n    assertTrue(thrown.getMessage().contains(\"infinities\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886147,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 697,
+    "prompt_tokens": 584,
+    "total_tokens": 1281,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.41
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaO5LAauO1ZmQzZhJGAAr5qo96y0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private static Method isLineBreakCharMethod;\n    private static Method isLineBreakCharacterMethod;\n\n    @BeforeAll\n    public static void setUp() throws Exception {\n        // Access private static method isLineBreak(char)\n        isLineBreakCharMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", char.class);\n        isLineBreakCharMethod.setAccessible(true);\n\n        // Access private static method isLineBreak(Character)\n        isLineBreakCharacterMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakCharacterMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testIsLineBreakWithNullCharacter() throws Exception {\n        Boolean result = (Boolean) isLineBreakCharacterMethod.invoke(null, (Object) null);\n        assertFalse(result);\n    }\n\n    @Test\n    public void testIsLineBreakWithLineBreakCharacters() throws Exception {\n        // Characters that should return true\n        char[] lineBreakChars = {'\\r', '\\n'};\n        for (char c : lineBreakChars) {\n            // test char version\n            Boolean resultChar = (Boolean) isLineBreakCharMethod.invoke(null, c);\n            assertTrue(resultChar, \"Expected true for char: \" + (int) c);\n\n            // test Character version\n            Boolean resultCharacter = (Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf(c));\n            assertTrue(resultCharacter, \"Expected true for Character: \" + (int) c);\n        }\n    }\n\n    @Test\n    public void testIsLineBreakWithNonLineBreakCharacters() throws Exception {\n        // Characters that should return false\n        char[] nonLineBreakChars = {'a', ' ', ',', '\\t', '1', 'X', 0, 127};\n        for (char c : nonLineBreakChars) {\n            // test char version\n            Boolean resultChar = (Boolean) isLineBreakCharMethod.invoke(null, c);\n            assertFalse(resultChar, \"Expected false for char: \" + (int) c);\n\n            // test Character version\n            Boolean resultCharacter = (Boolean) isLineBreakCharacterMethod.invoke(null, Character.valueOf(c));\n            assertFalse(resultCharacter, \"Expected false for Character: \" + (int) c);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555589,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 520,
+    "prompt_tokens": 2165,
+    "total_tokens": 2685,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.25
+  }
+}

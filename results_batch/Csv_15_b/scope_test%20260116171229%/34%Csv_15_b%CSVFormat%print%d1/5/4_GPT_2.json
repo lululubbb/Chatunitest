@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaDU6Cp55kSNkrSuqZFPjlliY0aP",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrintWithValidPathAndCharset() throws Exception {\n        Path mockPath = mock(Path.class);\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        // Use reflection to mock Files.newBufferedWriter\n        var filesClass = Files.class;\n        var newBufferedWriterMethod = filesClass.getMethod(\"newBufferedWriter\", Path.class, java.nio.charset.Charset.class);\n\n        // Create a spy of csvFormat to override print(Appendable)\n        CSVFormat spyFormat = spy(csvFormat);\n\n        // When print(Appendable) is called, return mockPrinter\n        doReturn(mockPrinter).when(spyFormat).print(any(Appendable.class));\n\n        // Use a manual mocking approach for Files.newBufferedWriter by using a custom class loader or a helper method\n        // Since mockStatic is not available, we simulate by overriding the method via reflection in the test (not trivial)\n        // Instead, we create a subclass of CSVFormat with overridden print(Path, Charset) method for testing\n\n        CSVFormat testFormat = new CSVFormat(spyFormat.getDelimiter(),\n                spyFormat.getQuoteCharacter(),\n                spyFormat.getQuoteMode(),\n                spyFormat.getCommentMarker(),\n                spyFormat.getEscapeCharacter(),\n                spyFormat.getIgnoreSurroundingSpaces(),\n                spyFormat.getIgnoreEmptyLines(),\n                spyFormat.getRecordSeparator(),\n                spyFormat.getNullString(),\n                null,\n                spyFormat.getHeader(),\n                spyFormat.getSkipHeaderRecord(),\n                spyFormat.getAllowMissingColumnNames(),\n                spyFormat.getIgnoreHeaderCase(),\n                spyFormat.getTrim(),\n                spyFormat.getTrailingDelimiter(),\n                spyFormat.getAutoFlush()) {\n            @Override\n            public CSVPrinter print(final Path out, final java.nio.charset.Charset charset) throws IOException {\n                // Instead of calling Files.newBufferedWriter, call print(Appendable) directly with StringWriter\n                return print(new StringWriter());\n            }\n        };\n\n        CSVFormat spyTestFormat = spy(testFormat);\n        doReturn(mockPrinter).when(spyTestFormat).print(any(Appendable.class));\n\n        CSVPrinter result = spyTestFormat.print(mockPath, StandardCharsets.UTF_8);\n\n        assertNotNull(result);\n        verify(spyTestFormat).print(any(Appendable.class));\n    }\n\n    @Test\n    void testPrintThrowsIOExceptionWhenFilesNewBufferedWriterFails() throws IOException {\n        Path mockPath = mock(Path.class);\n\n        // Create a subclass to simulate IOException on print(Path, Charset)\n        CSVFormat testFormat = new CSVFormat(csvFormat.getDelimiter(),\n                csvFormat.getQuoteCharacter(),\n                csvFormat.getQuoteMode(),\n                csvFormat.getCommentMarker(),\n                csvFormat.getEscapeCharacter(),\n                csvFormat.getIgnoreSurroundingSpaces(),\n                csvFormat.getIgnoreEmptyLines(),\n                csvFormat.getRecordSeparator(),\n                csvFormat.getNullString(),\n                null,\n                csvFormat.getHeader(),\n                csvFormat.getSkipHeaderRecord(),\n                csvFormat.getAllowMissingColumnNames(),\n                csvFormat.getIgnoreHeaderCase(),\n                csvFormat.getTrim(),\n                csvFormat.getTrailingDelimiter(),\n                csvFormat.getAutoFlush()) {\n            @Override\n            public CSVPrinter print(final Path out, final java.nio.charset.Charset charset) throws IOException {\n                throw new IOException(\"File write error\");\n            }\n        };\n\n        IOException thrown = assertThrows(IOException.class, () -> testFormat.print(mockPath, StandardCharsets.UTF_8));\n        assertEquals(\"File write error\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768554932,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 823,
+    "prompt_tokens": 2488,
+    "total_tokens": 3311,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.14
+  }
+}

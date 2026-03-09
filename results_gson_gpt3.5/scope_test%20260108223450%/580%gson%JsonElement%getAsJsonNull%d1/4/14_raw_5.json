@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullTrue_returnsThisAsJsonNull() throws Exception {\n    // Create a mock JsonNull instance via Mockito\n    JsonNull jsonNull = mock(JsonNull.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonNull.isJsonNull()).thenReturn(true);\n    when(jsonNull.toString()).thenReturn(\"JsonNull\");\n    // deepCopy returns itself for simplicity\n    when(jsonNull.deepCopy()).thenReturn(jsonNull);\n\n    JsonNull result = jsonNull.getAsJsonNull();\n\n    assertSame(jsonNull, result);\n  }\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullFalse_throwsIllegalStateException() {\n    // Instead of mocking JsonElement (which causes serialization issues in toString),\n    // create an anonymous subclass overriding isJsonNull and toString.\n\n    JsonElement jsonElement = new JsonElement() {\n      @Override\n      public boolean isJsonNull() {\n        return false;\n      }\n\n      @Override\n      public JsonElement deepCopy() {\n        return this;\n      }\n\n      @Override\n      public String toString() {\n        return \"NotJsonNull\";\n      }\n    };\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElement::getAsJsonNull);\n    assertEquals(\"Not a JSON Null: NotJsonNull\", exception.getMessage());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1033,
+  "completion_tokens": 325,
+  "total_tokens": 1358,
+  "llm_elapsed_time_seconds": 6.4
+}

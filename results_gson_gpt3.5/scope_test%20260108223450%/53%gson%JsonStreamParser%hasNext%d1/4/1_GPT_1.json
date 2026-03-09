@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn6Ary8v9yeX8Iy9GvZLWeTnZc3h",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass JsonStreamParserTest {\n\n    private JsonReader mockJsonReader;\n    private JsonStreamParser jsonStreamParser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockJsonReader = mock(JsonReader.class);\n        jsonStreamParser = new JsonStreamParser(new StringReader(\"\"));\n\n        // Use reflection to inject the mock JsonReader into the private final field 'parser'\n        Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n        parserField.setAccessible(true);\n        parserField.set(jsonStreamParser, mockJsonReader);\n\n        // Use reflection to get the 'lock' field and set it to a new Object for synchronization\n        Field lockField = JsonStreamParser.class.getDeclaredField(\"lock\");\n        lockField.setAccessible(true);\n        lockField.set(jsonStreamParser, new Object());\n    }\n\n    @Test\n    void hasNext_returnsTrue_whenPeekIsNotEndDocument() throws IOException {\n        when(mockJsonReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n\n        boolean result = jsonStreamParser.hasNext();\n\n        assertTrue(result);\n        verify(mockJsonReader, times(1)).peek();\n    }\n\n    @Test\n    void hasNext_returnsFalse_whenPeekIsEndDocument() throws IOException {\n        when(mockJsonReader.peek()).thenReturn(JsonToken.END_DOCUMENT);\n\n        boolean result = jsonStreamParser.hasNext();\n\n        assertFalse(result);\n        verify(mockJsonReader, times(1)).peek();\n    }\n\n    @Test\n    void hasNext_throwsJsonSyntaxException_whenMalformedJsonExceptionThrown() throws IOException {\n        when(mockJsonReader.peek()).thenThrow(new MalformedJsonException(\"Malformed\"));\n\n        JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> jsonStreamParser.hasNext());\n\n        assertNotNull(thrown);\n        assertTrue(thrown.getCause() instanceof MalformedJsonException);\n        verify(mockJsonReader, times(1)).peek();\n    }\n\n    @Test\n    void hasNext_throwsJsonIOException_whenIOExceptionThrown() throws IOException {\n        when(mockJsonReader.peek()).thenThrow(new IOException(\"IO error\"));\n\n        JsonIOException thrown = assertThrows(JsonIOException.class, () -> jsonStreamParser.hasNext());\n\n        assertNotNull(thrown);\n        assertTrue(thrown.getCause() instanceof IOException);\n        verify(mockJsonReader, times(1)).peek();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889466,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 555,
+    "prompt_tokens": 934,
+    "total_tokens": 1489,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.86
+  }
+}

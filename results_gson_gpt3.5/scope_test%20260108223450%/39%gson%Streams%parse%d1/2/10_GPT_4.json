@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnQmly0QNUKvvB0zOc51hk50AYeg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.EOFException;\nimport java.io.IOException;\n\npublic class StreamsTest {\n\n    private JsonReader mockReader;\n\n    @BeforeEach\n    public void setup() {\n        mockReader = mock(JsonReader.class);\n    }\n\n    @Test\n    public void testParse_ReturnsJsonElement_WhenNoException() throws Exception {\n        // Arrange\n        when(mockReader.peek()).thenReturn(com.google.gson.stream.JsonToken.BEGIN_OBJECT); // peek returns valid JsonToken\n\n        JsonElement expectedElement = mock(JsonElement.class);\n\n        try (MockedStatic<TypeAdapters> typeAdaptersMockedStatic = Mockito.mockStatic(TypeAdapters.class)) {\n            typeAdaptersMockedStatic.when(() -> TypeAdapters.JSON_ELEMENT.read(mockReader)).thenReturn(expectedElement);\n\n            // Act\n            JsonElement result = Streams.parse(mockReader);\n\n            // Assert\n            assertSame(expectedElement, result);\n            verify(mockReader, atLeastOnce()).peek();\n            // Verify static method call by invoking it inside verify\n            typeAdaptersMockedStatic.verify(() -> TypeAdapters.JSON_ELEMENT.read(mockReader), atLeastOnce());\n        }\n    }\n\n    @Test\n    public void testParse_ReturnsJsonNull_WhenEOFExceptionAndEmpty() throws Exception {\n        // Arrange\n        // peek throws EOFException on first call (empty)\n        when(mockReader.peek()).thenThrow(new EOFException());\n\n        // Act\n        JsonElement result = Streams.parse(mockReader);\n\n        // Assert\n        assertSame(JsonNull.INSTANCE, result);\n        verify(mockReader, atLeastOnce()).peek();\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_WhenEOFExceptionAndNotEmpty() throws Exception {\n        // Arrange\n        when(mockReader.peek()).thenReturn(com.google.gson.stream.JsonToken.BEGIN_OBJECT);\n\n        try (MockedStatic<TypeAdapters> typeAdaptersMockedStatic = Mockito.mockStatic(TypeAdapters.class)) {\n            typeAdaptersMockedStatic.when(() -> TypeAdapters.JSON_ELEMENT.read(mockReader))\n                    .thenThrow(new EOFException());\n\n            // Act & Assert\n            JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n            assertTrue(ex.getCause() instanceof EOFException);\n\n            verify(mockReader, atLeastOnce()).peek();\n            typeAdaptersMockedStatic.verify(() -> TypeAdapters.JSON_ELEMENT.read(mockReader), atLeastOnce());\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_WhenMalformedJsonException() throws Exception {\n        // Arrange\n        when(mockReader.peek()).thenReturn(com.google.gson.stream.JsonToken.BEGIN_OBJECT);\n        try (MockedStatic<TypeAdapters> typeAdaptersMockedStatic = Mockito.mockStatic(TypeAdapters.class)) {\n            typeAdaptersMockedStatic.when(() -> TypeAdapters.JSON_ELEMENT.read(mockReader))\n                    .thenThrow(new MalformedJsonException(\"malformed\"));\n\n            // Act & Assert\n            JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n            assertTrue(ex.getCause() instanceof MalformedJsonException);\n\n            verify(mockReader, atLeastOnce()).peek();\n            typeAdaptersMockedStatic.verify(() -> TypeAdapters.JSON_ELEMENT.read(mockReader), atLeastOnce());\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonIOException_WhenIOException() throws Exception {\n        // Arrange\n        when(mockReader.peek()).thenReturn(com.google.gson.stream.JsonToken.BEGIN_OBJECT);\n        try (MockedStatic<TypeAdapters> typeAdaptersMockedStatic = Mockito.mockStatic(TypeAdapters.class)) {\n            typeAdaptersMockedStatic.when(() -> TypeAdapters.JSON_ELEMENT.read(mockReader))\n                    .thenThrow(new IOException(\"io error\"));\n\n            // Act & Assert\n            JsonIOException ex = assertThrows(JsonIOException.class, () -> Streams.parse(mockReader));\n            assertTrue(ex.getCause() instanceof IOException);\n\n            verify(mockReader, atLeastOnce()).peek();\n            typeAdaptersMockedStatic.verify(() -> TypeAdapters.JSON_ELEMENT.read(mockReader), atLeastOnce());\n        }\n    }\n\n    @Test\n    public void testParse_ThrowsJsonSyntaxException_WhenNumberFormatException() throws Exception {\n        // Arrange\n        when(mockReader.peek()).thenReturn(com.google.gson.stream.JsonToken.BEGIN_OBJECT);\n        try (MockedStatic<TypeAdapters> typeAdaptersMockedStatic = Mockito.mockStatic(TypeAdapters.class)) {\n            typeAdaptersMockedStatic.when(() -> TypeAdapters.JSON_ELEMENT.read(mockReader))\n                    .thenThrow(new NumberFormatException(\"number format\"));\n\n            // Act & Assert\n            JsonSyntaxException ex = assertThrows(JsonSyntaxException.class, () -> Streams.parse(mockReader));\n            assertTrue(ex.getCause() instanceof NumberFormatException);\n\n            verify(mockReader, atLeastOnce()).peek();\n            typeAdaptersMockedStatic.verify(() -> TypeAdapters.JSON_ELEMENT.read(mockReader), atLeastOnce());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890744,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1093,
+    "prompt_tokens": 2658,
+    "total_tokens": 3751,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.95
+  }
+}

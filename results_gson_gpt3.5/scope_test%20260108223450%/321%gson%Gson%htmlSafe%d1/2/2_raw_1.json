@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\n\npublic class GsonTest {\n\n  @Test\n  public void testHtmlSafe_defaultTrue() throws Exception {\n    Gson gson = new Gson();\n\n    // Access private final field htmlSafe via reflection\n    Field htmlSafeField = Gson.class.getDeclaredField(\"htmlSafe\");\n    htmlSafeField.setAccessible(true);\n\n    // By default, htmlSafe should be true as per DEFAULT_ESCAPE_HTML constant\n    boolean htmlSafeValue = htmlSafeField.getBoolean(gson);\n    assertTrue(htmlSafeValue);\n\n    // Call the method and verify it returns the field value\n    boolean result = gson.htmlSafe();\n    assertEquals(htmlSafeValue, result);\n  }\n\n  @Test\n  public void testHtmlSafe_reflectSetFalse() throws Exception {\n    Gson gson = new Gson();\n\n    // Set the private final field htmlSafe to false via reflection\n    Field htmlSafeField = Gson.class.getDeclaredField(\"htmlSafe\");\n    htmlSafeField.setAccessible(true);\n\n    // Remove final modifier using reflection hacks\n    Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    modifiersField.setInt(htmlSafeField, htmlSafeField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n    htmlSafeField.setBoolean(gson, false);\n\n    // Call the method and verify it returns the updated field value\n    boolean result = gson.htmlSafe();\n    assertFalse(result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1582,
+  "completion_tokens": 316,
+  "total_tokens": 1898,
+  "llm_elapsed_time_seconds": 5.73
+}

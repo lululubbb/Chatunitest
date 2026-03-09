@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwjnzY8PkcrpyM4EyqoMak1oo00pQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testPrintAndEscape() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.newFormat(',').withQuote('\"').withRecordSeparator(\"\\r\\n\");\n        CSVFormat spyCsvFormat = spy(csvFormat);\n        CharSequence value = \"abc,def\";\n        int offset = 0;\n        int len = value.length();\n        StringWriter out = new StringWriter();\n\n        // When\n        try {\n            Method method = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class, Appendable.class);\n            method.setAccessible(true);\n            method.invoke(spyCsvFormat, value, offset, len, out);\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n\n        // Then\n        assertEquals(\"abc\\\",\\\"def\", out.toString());\n    }\n}",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768115135,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 220,
+    "prompt_tokens": 2003,
+    "total_tokens": 2223,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 2.85
+  }
+}

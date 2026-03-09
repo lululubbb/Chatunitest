@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyamV2moYV8WmocDKwNtK8FIROT5D",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintAndEscapeTest {\n\n    private CSVFormat csvFormat;\n    private Method printAndEscapeMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        csvFormat = CSVFormat.INFORMIX_UNLOAD; // Use a CSVFormat with a non-null escape char\n        printAndEscapeMethod = CSVFormat.class.getDeclaredMethod(\"printAndEscape\", CharSequence.class, int.class, int.class, Appendable.class);\n        printAndEscapeMethod.setAccessible(true);\n    }\n\n    @Test\n    void testPrintAndEscape_noSpecialChars() throws Throwable {\n        String input = \"simpletext\";\n        StringBuilder out = new StringBuilder();\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        assertEquals(\"simpletext\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withDelimiter() throws Throwable {\n        // delimiter is '|' in INFORMIX_UNLOAD, so test with '|'\n        String input = \"value1|value2\";\n        StringBuilder out = new StringBuilder();\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        // The '|' delimiter should be escaped with escape char '\\'\n        // So output: value1\\|value2\n        assertEquals(\"value1\\\\|value2\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withEscapeChar() throws Throwable {\n        // escape char is '\\' in INFORMIX_UNLOAD\n        String input = \"value\\\\quote\";\n        StringBuilder out = new StringBuilder();\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        // The escape char '\\' should be escaped by doubling it\n        // So output: value\\\\quote\n        assertEquals(\"value\\\\\\\\quote\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_withCRandLF() throws Throwable {\n        String input = \"line1\\r\\nline2\\nline3\\rline4\";\n        StringBuilder out = new StringBuilder();\n\n        invokePrintAndEscape(input, 0, input.length(), out);\n\n        // CR is replaced by 'r' and LF by 'n' after escape char '\\'\n        // So output should have \\r\\n\\n\\r sequences\n        String expected = \"line1\\\\r\\\\nline2\\\\nline3\\\\rline4\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_partialInput() throws Throwable {\n        String input = \"abc|def\\\\ghi\\rjkl\\nmno\";\n        StringBuilder out = new StringBuilder();\n\n        // print substring \"def\\\\ghi\\rj\"\n        int offset = 4;\n        int len = 9;\n\n        invokePrintAndEscape(input, offset, len, out);\n\n        // substring is: def\\ghi\\rj\n        // '|' is delimiter, '\\' is escape char, '\\r' is CR\n        // So '\\' and '\\r' are escaped\n\n        // Expected output:\n        // def\\\\ghi\\rj\n        String expected = \"def\\\\\\\\ghi\\\\rj\";\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_emptyInput() throws Throwable {\n        String input = \"\";\n        StringBuilder out = new StringBuilder();\n\n        invokePrintAndEscape(input, 0, 0, out);\n\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrintAndEscape_offsetLenEdgeCases() throws Throwable {\n        String input = \"abc|def\";\n        StringBuilder out = new StringBuilder();\n\n        // offset = length, len = 0, no output expected\n        invokePrintAndEscape(input, input.length(), 0, out);\n        assertEquals(\"\", out.toString());\n\n        // offset + len = input.length()\n        out.setLength(0);\n        invokePrintAndEscape(input, 0, input.length(), out);\n        assertEquals(\"abc\\\\|def\", out.toString());\n    }\n\n    private void invokePrintAndEscape(CharSequence value, int offset, int len, Appendable out) throws Throwable {\n        try {\n            printAndEscapeMethod.invoke(csvFormat, value, offset, len, out);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768557103,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 951,
+    "prompt_tokens": 2167,
+    "total_tokens": 3118,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.97
+  }
+}

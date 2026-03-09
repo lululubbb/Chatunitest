@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\npublic class MalformedJsonExceptionTest {\n\n  @Test\n  public void testConstructor_MessageAndThrowable() {\n    String message = \"Error message\";\n    Throwable cause = new RuntimeException(\"Cause exception\");\n    MalformedJsonException ex = new MalformedJsonException(message, cause);\n    assertEquals(message, ex.getMessage());\n    assertEquals(cause, ex.getCause());\n  }\n\n  @Test\n  public void testConstructor_MessageOnly() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n    Constructor<MalformedJsonException> constructor = MalformedJsonException.class.getDeclaredConstructor(String.class);\n    constructor.setAccessible(true);\n    String message = \"Only message\";\n    MalformedJsonException ex = constructor.newInstance(message);\n    assertEquals(message, ex.getMessage());\n    assertNull(ex.getCause());\n  }\n\n  @Test\n  public void testConstructor_ThrowableOnly() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n    Constructor<MalformedJsonException> constructor = MalformedJsonException.class.getDeclaredConstructor(Throwable.class);\n    constructor.setAccessible(true);\n    Throwable cause = new RuntimeException(\"Only cause\");\n    MalformedJsonException ex = constructor.newInstance(cause);\n    assertEquals(cause.toString(), ex.getMessage());\n    assertEquals(cause, ex.getCause());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 226,
+  "completion_tokens": 319,
+  "total_tokens": 545,
+  "llm_elapsed_time_seconds": 5.95
+}

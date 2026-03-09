@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbpO6x7oOftm3av0tSJZDf9ZXyz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  public void fromJson_validJson_shouldReturnObject() throws Exception {\n    String json = \"{\\\"value\\\":123}\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    // Spy on gson to mock fromJson(JsonReader, TypeToken)\n    Gson spyGson = Mockito.spy(gson);\n\n    // Prepare a JsonReader to be passed to fromJson(JsonReader, TypeToken)\n    JsonReader jsonReader = new JsonReader(reader);\n\n    // Mock newJsonReader to return the prepared JsonReader\n    try (MockedStatic<Gson> gsonStatic = mockStatic(Gson.class, Mockito.CALLS_REAL_METHODS)) {\n      doReturn(jsonReader).when(spyGson).newJsonReader(reader);\n      // Mock fromJson(JsonReader, TypeToken) to return a TestClass instance\n      TestClass expected = new TestClass(123);\n      doReturn(expected).when(spyGson).fromJson(jsonReader, typeToken);\n\n      // Use reflection to invoke private static method assertFullConsumption\n      Method assertFullConsumptionMethod = Gson.class.getDeclaredMethod(\"assertFullConsumption\", Object.class, JsonReader.class);\n      assertFullConsumptionMethod.setAccessible(true);\n\n      // Call the real fromJson(Reader, TypeToken) method\n      TestClass actual = spyGson.fromJson(reader, typeToken);\n\n      // Verify the returned object\n      assertNotNull(actual);\n      assertEquals(123, actual.value);\n\n      // Verify that assertFullConsumption was called without exception\n      assertDoesNotThrow(() -> assertFullConsumptionMethod.invoke(null, actual, jsonReader));\n    }\n  }\n\n  @Test\n  public void fromJson_invalidJson_shouldThrowJsonSyntaxException() {\n    String json = \"{invalid json}\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    assertThrows(JsonSyntaxException.class, () -> gson.fromJson(reader, typeToken));\n  }\n\n  @Test\n  public void fromJson_emptyJson_shouldThrowJsonIOException() {\n    String json = \"\";\n    Reader reader = new StringReader(json);\n    TypeToken<TestClass> typeToken = TypeToken.get(TestClass.class);\n\n    assertThrows(JsonIOException.class, () -> gson.fromJson(reader, typeToken));\n  }\n\n  // Helper test class\n  static class TestClass {\n    int value;\n\n    public TestClass(int value) {\n      this.value = value;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887585,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 653,
+    "prompt_tokens": 2320,
+    "total_tokens": 2973,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.86
+  }
+}

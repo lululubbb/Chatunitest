@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JsonElementTest {\n\n  private static class JsonArrayStub extends JsonElement {\n    @Override\n    public boolean isJsonArray() {\n      return true;\n    }\n\n    @Override\n    public JsonArray getAsJsonArray() {\n      return (JsonArray) this;\n    }\n\n    @Override\n    public JsonElement deepCopy() {\n      throw new UnsupportedOperationException();\n    }\n  }\n\n  @Test\n  public void testGetAsJsonArray_WhenIsJsonArrayTrue_ReturnsThisAsJsonArray() {\n    JsonElement jsonElement = new JsonArrayStub();\n    JsonArray result = jsonElement.getAsJsonArray();\n    assertSame(jsonElement, result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_WhenIsJsonArrayFalse_ThrowsIllegalStateException() {\n    JsonElement element = mock(JsonElement.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(element.isJsonArray()).thenReturn(false);\n    when(element.toString()).thenReturn(\"mocked element\");\n    IllegalStateException exception = assertThrows(IllegalStateException.class, element::getAsJsonArray);\n    assertTrue(exception.getMessage().startsWith(\"Not a JSON Array: \"));\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/578%gson%JsonElement%getAsJsonArray%d1/6/temp/JsonElement_578_6Test.java:19: 错误: 不兼容的类型: JsonArrayStub无法转换为JsonArray\n      return (JsonArray) this;\n                         ^\n注: /home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/578%gson%JsonElement%getAsJsonArray%d1/6/temp/JsonElement_578_6Test.java使用或覆盖了已过时的 API。\n注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。\n1 个错误\n",
+  "prompt_tokens": 1471,
+  "completion_tokens": 281,
+  "total_tokens": 1752,
+  "llm_elapsed_time_seconds": 7.12
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvn0pfecjqKJOCMhrZg0gKifwq9Jk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() {\n        jsonTreeReader = new JsonTreeReader(new JsonObject());\n    }\n\n    @Test\n    public void testGetPreviousPath_emptyStack() throws Exception {\n        // stackSize = 0, so getPath(true) should return \"$\"\n        setField(jsonTreeReader, \"stackSize\", 0);\n        String path = jsonTreeReader.getPreviousPath();\n        assertEquals(\"$\", path);\n    }\n\n    @Test\n    public void testGetPreviousPath_withObjectAndName() throws Exception {\n        // Prepare stack with one JsonObject and stackSize=1\n        JsonObject jsonObject = new JsonObject();\n        setField(jsonTreeReader, \"stack\", new Object[]{jsonObject});\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        // pathNames[0] = \"fieldName\"\n        setField(jsonTreeReader, \"pathNames\", new String[]{\"fieldName\"});\n        // pathIndices[0] = 0\n        setField(jsonTreeReader, \"pathIndices\", new int[]{0});\n\n        String path = jsonTreeReader.getPreviousPath();\n        // Expected \"$.fieldName\"\n        assertEquals(\"$.fieldName\", path);\n    }\n\n    @Test\n    public void testGetPreviousPath_withArrayAndIndex() throws Exception {\n        // Prepare stack with one JsonArray and stackSize=1\n        JsonArray jsonArray = new JsonArray();\n        setField(jsonTreeReader, \"stack\", new Object[]{jsonArray});\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        // pathNames[0] = null (arrays don't have names)\n        setField(jsonTreeReader, \"pathNames\", new String[]{null});\n        // pathIndices[0] = 3\n        setField(jsonTreeReader, \"pathIndices\", new int[]{3});\n\n        String path = jsonTreeReader.getPreviousPath();\n        // Expected \"$[3]\"\n        assertEquals(\"$[3]\", path);\n    }\n\n    @Test\n    public void testGetPreviousPath_withMultipleStackElements() throws Exception {\n        // stack with JsonObject, JsonArray, JsonObject\n        JsonObject obj1 = new JsonObject();\n        JsonArray arr = new JsonArray();\n        JsonObject obj2 = new JsonObject();\n\n        Object[] stack = new Object[3];\n        stack[0] = obj1;\n        stack[1] = arr;\n        stack[2] = obj2;\n\n        setField(jsonTreeReader, \"stack\", stack);\n        setField(jsonTreeReader, \"stackSize\", 3);\n\n        String[] pathNames = new String[3];\n        pathNames[0] = \"obj1name\";\n        pathNames[1] = null;\n        pathNames[2] = \"obj2name\";\n\n        int[] pathIndices = new int[3];\n        pathIndices[0] = 0;\n        pathIndices[1] = 5;\n        pathIndices[2] = 0;\n\n        setField(jsonTreeReader, \"pathNames\", pathNames);\n        setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n        String path = jsonTreeReader.getPreviousPath();\n        // Expected \"$.obj1name[5].obj2name\"\n        assertEquals(\"$.obj1name[5].obj2name\", path);\n    }\n\n    @Test\n    public void testGetPreviousPath_withNullPathNameAndArrayIndexZero() throws Exception {\n        // stack with one JsonArray and stackSize=1\n        JsonArray jsonArray = new JsonArray();\n        setField(jsonTreeReader, \"stack\", new Object[]{jsonArray});\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        // pathNames[0] = null\n        setField(jsonTreeReader, \"pathNames\", new String[]{null});\n        // pathIndices[0] = 0\n        setField(jsonTreeReader, \"pathIndices\", new int[]{0});\n\n        String path = jsonTreeReader.getPreviousPath();\n        // Expected \"$[0]\"\n        assertEquals(\"$[0]\", path);\n    }\n\n    @Test\n    public void testGetPreviousPath_withNullStackElement() throws Exception {\n        // stack with null element at index 0 and stackSize=1\n        setField(jsonTreeReader, \"stack\", new Object[]{null});\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        setField(jsonTreeReader, \"pathNames\", new String[]{null});\n        setField(jsonTreeReader, \"pathIndices\", new int[]{0});\n\n        String path = jsonTreeReader.getPreviousPath();\n        // Expected \"$\"\n        assertEquals(\"$\", path);\n    }\n\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889135,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1133,
+    "prompt_tokens": 552,
+    "total_tokens": 1685,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 16.81
+  }
+}

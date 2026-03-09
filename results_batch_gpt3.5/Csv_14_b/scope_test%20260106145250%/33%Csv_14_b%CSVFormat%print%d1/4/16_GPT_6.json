@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuvonc4LyPXkN9bP87S4k4ADrUoN9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT.withTrim(false);\n    }\n\n    @Test\n    void testPrint_nullValue_nullString_null() throws IOException {\n        // Setup CSVFormat with nullString = null\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(null);\n        Appendable out = new StringBuilder();\n\n        // Invoke public print\n        format.print(null, out, true);\n\n        // Output should be empty string\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringSet() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\");\n        Appendable out = new StringBuilder();\n        format.print(null, out, false);\n        // Output should contain \"NULL\"\n        assertEquals(\"NULL\", out.toString());\n    }\n\n    @Test\n    void testPrint_valueIsCharSequence_trimFalse() throws IOException {\n        Appendable out = new StringBuilder();\n        String value = \"  abc  \";\n        csvFormat = csvFormat.withTrim(false);\n        csvFormat.print(value, out, false);\n        // Output should contain original value\n        assertEquals(\"  abc  \", out.toString());\n    }\n\n    @Test\n    void testPrint_valueIsCharSequence_trimTrue() throws IOException {\n        Appendable out = new StringBuilder();\n        String value = \"  abc  \";\n        csvFormat = csvFormat.withTrim(true);\n        csvFormat.print(value, out, false);\n        // Output should contain trimmed value\n        assertEquals(\"abc\", out.toString());\n    }\n\n    @Test\n    void testPrint_valueIsNotCharSequence() throws IOException {\n        Appendable out = new StringBuilder();\n        Integer value = 123;\n        csvFormat.print(value, out, true);\n        // Output should contain string representation of value\n        assertEquals(\"123\", out.toString());\n    }\n\n    @Test\n    void testPrint_trimNullCharSequence() throws IOException {\n        // Use reflection to invoke private trim with null\n        try {\n            Method trimMethod = CSVFormat.class.getDeclaredMethod(\"trim\", CharSequence.class);\n            trimMethod.setAccessible(true);\n            CharSequence result = (CharSequence) trimMethod.invoke(csvFormat, (CharSequence) null);\n            assertNull(result);\n        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n            fail(\"Reflection failure: \" + e.getMessage());\n        }\n    }\n\n    @Test\n    void testPrint_privatePrintInvocation() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        Appendable out = new StringBuilder();\n        String value = \"abc\";\n        Method privatePrint = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        privatePrint.setAccessible(true);\n\n        // Prepare the CharSequence argument as the substring of value (whole string)\n        CharSequence charSequence = value;\n\n        // Invoke private print directly\n        privatePrint.invoke(csvFormat, value, charSequence, 0, charSequence.length(), out, true);\n\n        // Output should contain \"abc\"\n        assertEquals(\"abc\", out.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767684657,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 743,
+    "prompt_tokens": 2254,
+    "total_tokens": 2997,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.33
+  }
+}

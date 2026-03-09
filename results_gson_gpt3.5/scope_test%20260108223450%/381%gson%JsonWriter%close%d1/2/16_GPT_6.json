@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm8ivi9qNWOAAFwp3fjvSNXhJlaY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterCloseTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n        // Initialize stackSize to 1 and stack with EMPTY_DOCUMENT as default context\n        setStackAndSize(new int[]{JsonScope.EMPTY_DOCUMENT}, 1);\n        // Clear deferredName to avoid interference\n        setDeferredName(null);\n    }\n\n    @Test\n    void close_shouldWriteCloseBracketAndDecreaseStackSize_whenContextIsEmpty() throws Throwable {\n        // Setup stack and stackSize to simulate EMPTY_ARRAY context\n        setStackAndSize(new int[]{JsonScope.EMPTY_ARRAY}, 1);\n        setDeferredName(null);\n\n        // Use reflection to invoke private close(int, int, char)\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        JsonWriter result = (JsonWriter) closeMethod.invoke(jsonWriter, JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, ']');\n\n        assertSame(jsonWriter, result, \"close should return this\");\n        assertEquals(0, getStackSize(), \"stackSize should be decremented\");\n        assertEquals(\"]\", stringWriter.toString(), \"Output should contain close bracket\");\n    }\n\n    @Test\n    void close_shouldWriteCloseBracketAndDecreaseStackSize_whenContextIsNonEmpty() throws Throwable {\n        setStackAndSize(new int[]{JsonScope.NONEMPTY_OBJECT}, 1);\n        setDeferredName(null);\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        JsonWriter result = (JsonWriter) closeMethod.invoke(jsonWriter, JsonScope.NONEMPTY_OBJECT, JsonScope.EMPTY_OBJECT, '}');\n\n        assertSame(jsonWriter, result);\n        assertEquals(0, getStackSize());\n        // Should have newline before close bracket, so output ends with newline + '}'\n        String output = stringWriter.toString();\n        // The newline() method writes a newline before the close bracket, so output should end with \"\\n}\"\n        assertTrue(output.endsWith(\"\\n}\") || output.endsWith(\"}\\n\"), \"Output should contain newline and close bracket\");\n    }\n\n    @Test\n    void close_shouldThrowIllegalStateException_whenContextIsInvalid() throws Exception {\n        setStackAndSize(new int[]{JsonScope.EMPTY_DOCUMENT}, 1);\n        setDeferredName(null);\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        try {\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n            fail(\"Expected IllegalStateException\");\n        } catch (InvocationTargetException e) {\n            Throwable cause = e.getCause();\n            assertTrue(cause instanceof IllegalStateException);\n            assertEquals(\"Nesting problem.\", cause.getMessage());\n        }\n    }\n\n    @Test\n    void close_shouldThrowIllegalStateException_whenDeferredNameIsNotNull() throws Exception {\n        setStackAndSize(new int[]{JsonScope.EMPTY_OBJECT}, 1);\n\n        // Set deferredName via reflection to simulate dangling name\n        setDeferredName(\"danglingName\");\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        try {\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n            fail(\"Expected IllegalStateException\");\n        } catch (InvocationTargetException e) {\n            Throwable cause = e.getCause();\n            assertTrue(cause instanceof IllegalStateException);\n            assertTrue(cause.getMessage().contains(\"Dangling name: danglingName\"));\n        } finally {\n            setDeferredName(null);\n        }\n    }\n\n    private void setStackAndSize(int[] stackValues, int size) throws Exception {\n        // set stack field\n        Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        // Copy stackValues into a new array of length 32 (default)\n        int[] stackArray = new int[32];\n        System.arraycopy(stackValues, 0, stackArray, 0, stackValues.length);\n        stackField.set(jsonWriter, stackArray);\n\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, size);\n    }\n\n    private int getStackSize() throws Exception {\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        return stackSizeField.getInt(jsonWriter);\n    }\n\n    private void setDeferredName(String name) throws Exception {\n        Field deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, name);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885780,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1106,
+    "prompt_tokens": 2753,
+    "total_tokens": 3859,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.43
+  }
+}

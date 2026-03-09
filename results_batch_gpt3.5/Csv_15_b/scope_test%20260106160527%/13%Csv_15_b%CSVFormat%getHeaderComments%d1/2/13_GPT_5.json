@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwPh1HLxBpXM4ltwKO4EoW4clBP6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n\n    @Test\n    public void testGetHeaderComments_Null() throws Exception {\n        // Create a new CSVFormat instance with headerComments = null via withHeaderComments\n        CSVFormat format = CSVFormat.DEFAULT.withHeaderComments((Object[]) null);\n        // Use reflection to forcibly set private final field headerComments to null to simulate the test case\n        setFinalField(format, \"headerComments\", null);\n\n        String[] result = format.getHeaderComments();\n        assertNull(result, \"Expected null when headerComments is null\");\n    }\n\n    @Test\n    public void testGetHeaderComments_NotNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withHeaderComments(\"comment1\", \"comment2\");\n        String[] comments = new String[]{\"comment1\", \"comment2\"};\n        // Use reflection to forcibly set private final field headerComments to comments array\n        setFinalField(format, \"headerComments\", comments);\n\n        String[] result = format.getHeaderComments();\n        assertNotNull(result, \"Expected non-null when headerComments is set\");\n        assertArrayEquals(comments, result, \"Returned array should be equal to original\");\n\n        // Verify that returned array is a clone, not the same reference\n        assertNotSame(comments, result, \"Returned array should be a clone, not the same reference\");\n\n        // Modify returned array and verify original is not changed\n        result[0] = \"modified\";\n        String[] original = (String[]) getField(format, \"headerComments\");\n        assertEquals(\"comment1\", original[0], \"Original array should not be affected by modification of returned array\");\n    }\n\n    private Object getField(Object target, String fieldName) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return field.get(target);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767686945,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 513,
+    "prompt_tokens": 2159,
+    "total_tokens": 2672,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.91
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.PrintStream;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private PrintStream originalOut;\n\n    @BeforeEach\n    void setUp() {\n        // Save the original System.out\n        originalOut = System.out;\n    }\n\n    @AfterEach\n    void tearDown() {\n        // Restore original System.out\n        System.setOut(originalOut);\n    }\n\n    @Test\n    void testPrinterReturnsCSVPrinter() throws IOException, NoSuchFieldException, IllegalAccessException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVPrinter printer = format.printer();\n        assertNotNull(printer);\n        // The printer should use System.out (PrintStream) as its output\n        assertEquals(System.out, printer.getOut());\n\n        // Use reflection to access the private 'format' field in CSVPrinter\n        Field formatField = CSVPrinter.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        Object printerFormat = formatField.get(printer);\n\n        // The printer should have the same CSVFormat instance\n        assertEquals(format, printerFormat);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_15_b/scope_test%20260116171229%/32%Csv_15_b%CSVFormat%printer%d1/1/runtemp/Csv_15_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 2163,
+  "completion_tokens": 278,
+  "total_tokens": 2441,
+  "llm_elapsed_time_seconds": 6.53
+}

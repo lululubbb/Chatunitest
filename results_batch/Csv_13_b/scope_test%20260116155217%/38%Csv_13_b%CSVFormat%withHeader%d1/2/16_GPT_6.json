@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZAZnRlCzX5LbW4ohKsYipyLbhXB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithHeaderTest {\n\n    private CSVFormat csvFormatDefault;\n\n    @BeforeEach\n    void setUp() {\n        csvFormatDefault = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithHeader_withNullResultSet_returnsWithHeaderNull() throws SQLException {\n        CSVFormat result = csvFormatDefault.withHeader((ResultSet) null);\n        assertNotNull(result);\n        String[] header = getHeaderArray(result);\n        assertNull(header);\n    }\n\n    @Test\n    void testWithHeader_withResultSet_callsWithHeaderWithMetaData() throws SQLException {\n        ResultSet resultSet = mock(ResultSet.class);\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(resultSet.getMetaData()).thenReturn(metaData);\n\n        CSVFormat spyFormatWithMock = spy(csvFormatDefault);\n        CSVFormat expectedFormat = csvFormatDefault.withHeader(\"a\", \"b\");\n        doReturn(expectedFormat).when(spyFormatWithMock).withHeader(metaData);\n\n        CSVFormat result = spyFormatWithMock.withHeader(resultSet);\n\n        verify(spyFormatWithMock).withHeader(metaData);\n        assertSame(expectedFormat, result);\n    }\n\n    @Test\n    void testWithHeader_withResultSetThrowsSQLException_propagatesException() throws SQLException {\n        ResultSet resultSet = mock(ResultSet.class);\n        when(resultSet.getMetaData()).thenThrow(new SQLException(\"MetaData error\"));\n\n        SQLException thrown = assertThrows(SQLException.class, () -> csvFormatDefault.withHeader(resultSet));\n        assertEquals(\"MetaData error\", thrown.getMessage());\n    }\n\n    private String[] getHeaderArray(CSVFormat format) {\n        try {\n            java.lang.reflect.Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n            headerField.setAccessible(true);\n            return (String[]) headerField.get(format);\n        } catch (ReflectiveOperationException e) {\n            fail(\"Reflection error: \" + e.getMessage());\n            return null;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550907,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 467,
+    "prompt_tokens": 1680,
+    "total_tokens": 2147,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.43
+  }
+}

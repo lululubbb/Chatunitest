@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuqkhjrXBaO7Kn2xCyjpYbnhZgg07",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVRecord;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private Map<String, Integer> mapping;\n    private String[] values;\n    private CSVRecord record;\n\n    @BeforeEach\n    public void setUp() {\n        mapping = new HashMap<>();\n        mapping.put(\"Name\", 0);\n        mapping.put(\"Age\", 1);\n        values = new String[] { \"Alice\", \"30\" };\n        record = new CSVRecord(values, mapping, null, 1L);\n    }\n\n    @Test\n    public void testGet_WithValidName() {\n        assertEquals(\"Alice\", record.get(\"Name\"));\n        assertEquals(\"30\", record.get(\"Age\"));\n    }\n\n    @Test\n    public void testGet_WithNameNotInMapping() {\n        assertNull(record.get(\"NonExistent\"));\n    }\n\n    @Test\n    public void testGet_WithNullMapping_ThrowsException() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        // Create CSVRecord with null mapping using reflection (constructor is package-private)\n        CSVRecord recordWithNullMapping = createCSVRecordWithNullMapping();\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            recordWithNullMapping.get(\"Name\");\n        });\n        assertEquals(\n                \"No header mapping was specified, the record values can't be accessed by name\",\n                thrown.getMessage());\n    }\n\n    private CSVRecord createCSVRecordWithNullMapping() {\n        // Using reflection to invoke package-private constructor\n        try {\n            Class<CSVRecord> clazz = CSVRecord.class;\n            return clazz.getDeclaredConstructor(String[].class, Map.class, String.class, long.class)\n                    .newInstance(new String[] { \"Alice\", \"30\" }, null, null, 1L);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767665183,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 458,
+    "prompt_tokens": 393,
+    "total_tokens": 851,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.1
+  }
+}

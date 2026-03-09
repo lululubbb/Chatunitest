@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm8WWAiwTUrccmvTIj60kAo4DZPK",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void testClose_withEmptyContext() throws Exception {\n        // Set up stack and stackSize for EMPTY_OBJECT context\n        setStack(new int[]{JsonScope.EMPTY_OBJECT}, 1);\n        setDeferredName(null);\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        JsonWriter result = (JsonWriter) closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n\n        assertSame(jsonWriter, result);\n        assertEquals(0, getStackSize());\n        assertEquals(\"}\", stringWriter.toString());\n    }\n\n    @Test\n    public void testClose_withNonEmptyContext() throws Exception {\n        // Set up stack and stackSize for NONEMPTY_OBJECT context\n        setStack(new int[]{JsonScope.NONEMPTY_OBJECT}, 1);\n        setDeferredName(null);\n\n        // Spy on jsonWriter to verify newline() call via reflection\n        JsonWriter spyWriter = spy(jsonWriter);\n\n        // We need to replace the 'out' field in spyWriter to use the same stringWriter to capture output\n        // Because spying may cause the original 'out' to be replaced or wrapped, set it explicitly\n        var outField = JsonWriter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(spyWriter, stringWriter);\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Because close() throws IOException, wrap invocation in try-catch and rethrow as RuntimeException for test\n        JsonWriter result = (JsonWriter) closeMethod.invoke(spyWriter, JsonScope.NONEMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n\n        assertSame(spyWriter, result);\n        assertEquals(0, getStackSize(spyWriter));\n\n        // Verify output contains newline before '}'\n        String output = stringWriter.toString();\n        assertTrue(output.endsWith(\"}\"), \"Output should end with '}'\");\n        // The newline is added before the closing bracket, so output length should be at least 2\n        assertTrue(output.length() >= 2, \"Output should be at least 2 characters long\");\n\n        // Check that the character before '}' is a newline character\n        char beforeLastChar = output.charAt(output.length() - 2);\n        assertTrue(beforeLastChar == '\\n' || beforeLastChar == '\\r', \"Output should contain a newline before '}'\");\n    }\n\n    @Test\n    public void testClose_withInvalidContext_throwsIllegalStateException() throws Exception {\n        setStack(new int[]{JsonScope.EMPTY_DOCUMENT}, 1);\n        setDeferredName(null);\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        InvocationTargetException exception = assertThrows(InvocationTargetException.class, () ->\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}')\n        );\n        Throwable cause = exception.getCause();\n        assertTrue(cause instanceof IllegalStateException);\n        assertEquals(\"Nesting problem.\", cause.getMessage());\n    }\n\n    @Test\n    public void testClose_withDeferredName_throwsIllegalStateException() throws Exception {\n        setStack(new int[]{JsonScope.EMPTY_OBJECT}, 1);\n        setDeferredName(\"name\");\n\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        InvocationTargetException exception = assertThrows(InvocationTargetException.class, () ->\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}')\n        );\n        Throwable cause = exception.getCause();\n        assertTrue(cause instanceof IllegalStateException);\n        assertEquals(\"Dangling name: name\", cause.getMessage());\n    }\n\n    // Helper methods to set private fields via reflection\n\n    private void setStack(int[] stack, int stackSize) throws Exception {\n        setStack(jsonWriter, stack, stackSize);\n    }\n\n    private void setStack(JsonWriter writer, int[] stack, int stackSize) throws Exception {\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        stackField.set(writer, stack);\n\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(writer, stackSize);\n    }\n\n    private int getStackSize() throws Exception {\n        return getStackSize(jsonWriter);\n    }\n\n    private int getStackSize(JsonWriter writer) throws Exception {\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        return stackSizeField.getInt(writer);\n    }\n\n    private void setDeferredName(String name) throws Exception {\n        var deferredNameField = JsonWriter.class.getDeclaredField(\"deferredName\");\n        deferredNameField.setAccessible(true);\n        deferredNameField.set(jsonWriter, name);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885768,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1178,
+    "prompt_tokens": 2243,
+    "total_tokens": 3421,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.74
+  }
+}

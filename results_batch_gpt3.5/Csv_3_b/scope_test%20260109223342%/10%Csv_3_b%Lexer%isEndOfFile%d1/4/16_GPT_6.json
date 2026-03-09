@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7yxpkzhIqz6BC16jsd6V1DTlo4C",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.apache.commons.csv.Lexer;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.ExtendedBufferedReader;\nimport org.apache.commons.csv.Token;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\nclass LexerIsEndOfFileTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        CSVFormat format = mock(CSVFormat.class);\n        ExtendedBufferedReader in = mock(ExtendedBufferedReader.class);\n\n        // Create anonymous subclass because Lexer is abstract\n        lexer = new Lexer(format, in) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n    }\n\n    @Test\n    void testIsEndOfFile_withEndOfStream() throws Exception {\n        // Use reflection to access END_OF_STREAM constant from Constants class\n        Class<?> constantsClass = Class.forName(\"org.apache.commons.csv.Constants\");\n        Field field = constantsClass.getDeclaredField(\"END_OF_STREAM\");\n        field.setAccessible(true);\n        int END_OF_STREAM = field.getInt(null);\n\n        // Call isEndOfFile with END_OF_STREAM\n        boolean result = lexer.isEndOfFile(END_OF_STREAM);\n        assertTrue(result);\n    }\n\n    @Test\n    void testIsEndOfFile_withNonEndOfStream() throws Exception {\n        // Use reflection to get END_OF_STREAM constant\n        Class<?> constantsClass = Class.forName(\"org.apache.commons.csv.Constants\");\n        Field field = constantsClass.getDeclaredField(\"END_OF_STREAM\");\n        field.setAccessible(true);\n        int END_OF_STREAM = field.getInt(null);\n\n        // Test with a character that is not END_OF_STREAM (e.g. 0)\n        int nonEofChar = END_OF_STREAM == 0 ? 1 : 0;\n        boolean result = lexer.isEndOfFile(nonEofChar);\n        assertFalse(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969743,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 426,
+    "prompt_tokens": 916,
+    "total_tokens": 1342,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.69
+  }
+}

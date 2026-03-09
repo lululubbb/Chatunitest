@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvldN602xRm9CXf1HZg64bCHPjBMX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.ArgumentMatchers.eq;\nimport static org.mockito.Mockito.times;\nimport static org.mockito.Mockito.verify;\nimport static org.mockito.Mockito.mock;\n\nimport com.google.gson.Gson;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.List;\n\npublic class CollectionsDeserializationBenchmarkTest {\n\n  private CollectionsDeserializationBenchmark benchmark;\n  private Gson gsonMock;\n  private String jsonSample;\n  private TypeToken<List<BagOfPrimitives>> listTypeToken;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    benchmark = new CollectionsDeserializationBenchmark();\n\n    // Prepare Gson mock\n    gsonMock = mock(Gson.class);\n\n    // Set gson field via reflection\n    Field gsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(benchmark, gsonMock);\n\n    // Prepare sample json string\n    jsonSample = \"[{\\\"anInt\\\":1,\\\"aLong\\\":2,\\\"aBoolean\\\":true,\\\"aString\\\":\\\"str\\\"}]\";\n    Field jsonField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, jsonSample);\n\n    // Prepare LIST_TYPE_TOKEN field\n    Field listTypeTokenField = CollectionsDeserializationBenchmark.class.getDeclaredField(\"LIST_TYPE_TOKEN\");\n    listTypeTokenField.setAccessible(true);\n    listTypeToken = (TypeToken<List<BagOfPrimitives>>) listTypeTokenField.get(null);\n  }\n\n  @Test\n  public void testTimeCollectionsDefault_zeroReps() {\n    benchmark.timeCollectionsDefault(0);\n    // Verify gson.fromJson never called\n    verify(gsonMock, times(0)).fromJson(Mockito.anyString(), Mockito.any(TypeToken.class));\n  }\n\n  @Test\n  public void testTimeCollectionsDefault_positiveReps() {\n    int reps = 5;\n    benchmark.timeCollectionsDefault(reps);\n    // Verify gson.fromJson called reps times with correct arguments\n    verify(gsonMock, times(reps)).fromJson(eq(jsonSample), eq(listTypeToken));\n  }\n\n  @Test\n  public void testTimeCollectionsDefault_oneRep() {\n    benchmark.timeCollectionsDefault(1);\n    verify(gsonMock, times(1)).fromJson(eq(jsonSample), eq(listTypeToken));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883837,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 514,
+    "prompt_tokens": 966,
+    "total_tokens": 1480,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.2
+  }
+}

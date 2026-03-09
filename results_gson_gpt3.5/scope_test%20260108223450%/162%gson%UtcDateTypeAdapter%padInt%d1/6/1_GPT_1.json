@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmimaSYr0MTkS4fHH1qpjywQj4tV",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class UtcDateTypeAdapterTest {\n\n    private Method padIntMethod;\n\n    @BeforeEach\n    public void setUp() throws NoSuchMethodException {\n        padIntMethod = UtcDateTypeAdapter.class.getDeclaredMethod(\"padInt\", StringBuilder.class, int.class, int.class);\n        padIntMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testPadInt_valueLengthEqualsLength() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder buffer = new StringBuilder();\n        // value length = 3, length = 3, no padding expected\n        padIntMethod.invoke(null, buffer, 123, 3);\n        assertEquals(\"123\", buffer.toString());\n    }\n\n    @Test\n    public void testPadInt_valueLengthLessThanLength() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder buffer = new StringBuilder();\n        // value length = 2, length = 5, expect 3 zeros padded\n        padIntMethod.invoke(null, buffer, 45, 5);\n        assertEquals(\"00045\", buffer.toString());\n    }\n\n    @Test\n    public void testPadInt_valueLengthGreaterThanLength() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder buffer = new StringBuilder();\n        // value length = 4, length = 3, no padding, just append value\n        padIntMethod.invoke(null, buffer, 1234, 3);\n        assertEquals(\"1234\", buffer.toString());\n    }\n\n    @Test\n    public void testPadInt_zeroValue() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder buffer = new StringBuilder();\n        // value = 0, length = 3, expect \"000\"\n        padIntMethod.invoke(null, buffer, 0, 3);\n        assertEquals(\"000\", buffer.toString());\n    }\n\n    @Test\n    public void testPadInt_lengthZero() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder buffer = new StringBuilder();\n        // length = 0, no padding, just append value\n        padIntMethod.invoke(null, buffer, 7, 0);\n        assertEquals(\"7\", buffer.toString());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888016,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 509,
+    "prompt_tokens": 423,
+    "total_tokens": 932,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.73
+  }
+}

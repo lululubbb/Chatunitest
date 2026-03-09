@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuuWn3MWtPVMA9lW9FEhB9wJIJPzX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatWithHeaderTest {\n\n    private CSVFormat baseFormat;\n\n    @BeforeEach\n    void setUp() {\n        baseFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testWithHeader_NullMetaData_ReturnsFormatWithNullHeader() throws SQLException {\n        CSVFormat formatWithHeader = baseFormat.withHeader((ResultSetMetaData) null);\n        assertNotNull(formatWithHeader);\n        assertNull(formatWithHeader.getHeader());\n        // Other properties remain unchanged\n        assertEquals(baseFormat.getDelimiter(), formatWithHeader.getDelimiter());\n        assertEquals(baseFormat.getQuoteCharacter(), formatWithHeader.getQuoteCharacter());\n        assertEquals(baseFormat.getQuoteMode(), formatWithHeader.getQuoteMode());\n        assertEquals(baseFormat.getCommentMarker(), formatWithHeader.getCommentMarker());\n        assertEquals(baseFormat.getEscapeCharacter(), formatWithHeader.getEscapeCharacter());\n        assertEquals(baseFormat.getIgnoreSurroundingSpaces(), formatWithHeader.getIgnoreSurroundingSpaces());\n        assertEquals(baseFormat.getIgnoreEmptyLines(), formatWithHeader.getIgnoreEmptyLines());\n        assertEquals(baseFormat.getRecordSeparator(), formatWithHeader.getRecordSeparator());\n        assertArrayEquals(baseFormat.getHeaderComments(), formatWithHeader.getHeaderComments());\n        assertEquals(baseFormat.getSkipHeaderRecord(), formatWithHeader.getSkipHeaderRecord());\n        assertEquals(baseFormat.getAllowMissingColumnNames(), formatWithHeader.getAllowMissingColumnNames());\n        assertEquals(baseFormat.getIgnoreHeaderCase(), formatWithHeader.getIgnoreHeaderCase());\n    }\n\n    @Test\n    void testWithHeader_MetaDataWithZeroColumns_ReturnsFormatWithEmptyHeader() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(0);\n\n        CSVFormat formatWithHeader = baseFormat.withHeader(metaData);\n        assertNotNull(formatWithHeader);\n        String[] header = formatWithHeader.getHeader();\n        assertNotNull(header);\n        assertEquals(0, header.length);\n    }\n\n    @Test\n    void testWithHeader_MetaDataWithColumns_ReturnsFormatWithCorrectHeader() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenReturn(3);\n        when(metaData.getColumnLabel(1)).thenReturn(\"id\");\n        when(metaData.getColumnLabel(2)).thenReturn(\"name\");\n        when(metaData.getColumnLabel(3)).thenReturn(\"age\");\n\n        CSVFormat formatWithHeader = baseFormat.withHeader(metaData);\n        assertNotNull(formatWithHeader);\n        String[] header = formatWithHeader.getHeader();\n        assertNotNull(header);\n        assertArrayEquals(new String[] {\"id\", \"name\", \"age\"}, header);\n    }\n\n    @Test\n    void testWithHeader_MetaDataThrowsSQLException_PropagatesException() throws SQLException {\n        ResultSetMetaData metaData = mock(ResultSetMetaData.class);\n        when(metaData.getColumnCount()).thenThrow(new SQLException(\"fail\"));\n\n        SQLException thrown = assertThrows(SQLException.class, () -> baseFormat.withHeader(metaData));\n        assertEquals(\"fail\", thrown.getMessage());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767679697,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 703,
+    "prompt_tokens": 1257,
+    "total_tokens": 1960,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.15
+  }
+}

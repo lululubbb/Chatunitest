@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlfu6n4aZOxhyfZkro4n9jSX7qQx",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n    private JsonTreeReader jsonTreeReader;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Create a dummy JsonPrimitive to initialize JsonTreeReader constructor.\n        // Since JsonTreeReader's constructor requires a JsonElement, we create a JsonPrimitive.\n        JsonPrimitive jsonPrimitive = new JsonPrimitive(\"initial\");\n        jsonTreeReader = new JsonTreeReader(jsonPrimitive);\n\n        // Initialize stack and stackSize properly to avoid NullPointerException or array index issues\n        setField(jsonTreeReader, \"stackSize\", 1);\n        Object[] stack = new Object[32];\n        stack[0] = jsonPrimitive;\n        setField(jsonTreeReader, \"stack\", stack);\n\n        int[] pathIndices = new int[32];\n        setField(jsonTreeReader, \"pathIndices\", pathIndices);\n\n        String[] pathNames = new String[32];\n        setField(jsonTreeReader, \"pathNames\", pathNames);\n    }\n\n    @Test\n    public void testNextString_WithStringToken_ReturnsString() throws Exception {\n        // Set stackSize to 1\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        // Set stack[0] to a JsonPrimitive mock that returns a known string when getAsString() is called\n        JsonPrimitive jsonPrimitiveMock = mock(JsonPrimitive.class);\n        when(jsonPrimitiveMock.getAsString()).thenReturn(\"testString\");\n        setStackElement(jsonTreeReader, 0, jsonPrimitiveMock);\n\n        // Mock peek() method to return JsonToken.STRING using spy\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.STRING).when(spyReader).peek();\n\n        // Set pathIndices[0] to 0 before increment\n        setPathIndex(spyReader, 0, 0);\n\n        String result = spyReader.nextString();\n\n        assertEquals(\"testString\", result);\n        assertEquals(1, getPathIndex(spyReader, 0));\n    }\n\n    @Test\n    public void testNextString_WithNumberToken_ReturnsString() throws Exception {\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        JsonPrimitive jsonPrimitiveMock = mock(JsonPrimitive.class);\n        when(jsonPrimitiveMock.getAsString()).thenReturn(\"123\");\n        setStackElement(jsonTreeReader, 0, jsonPrimitiveMock);\n\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.NUMBER).when(spyReader).peek();\n\n        setPathIndex(spyReader, 0, 5);\n\n        String result = spyReader.nextString();\n\n        assertEquals(\"123\", result);\n        assertEquals(6, getPathIndex(spyReader, 0));\n    }\n\n    @Test\n    public void testNextString_WithInvalidToken_ThrowsIllegalStateException() throws Exception {\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.BEGIN_ARRAY).when(spyReader).peek();\n\n        IllegalStateException exception = assertThrows(IllegalStateException.class, spyReader::nextString);\n        assertTrue(exception.getMessage().contains(\"Expected STRING but was BEGIN_ARRAY\"));\n    }\n\n    @Test\n    public void testNextString_WithStackSizeZero_DoesNotIncrementPathIndices() throws Exception {\n        // Set stackSize to 1 and stack[0] to a mock JsonPrimitive\n        setField(jsonTreeReader, \"stackSize\", 1);\n\n        JsonPrimitive jsonPrimitiveMock = mock(JsonPrimitive.class);\n        when(jsonPrimitiveMock.getAsString()).thenReturn(\"value\");\n        setStackElement(jsonTreeReader, 0, jsonPrimitiveMock);\n\n        JsonTreeReader spyReader = spy(jsonTreeReader);\n        doReturn(JsonToken.STRING).when(spyReader).peek();\n\n        // Set pathIndices[0] to 0 before calling nextString\n        setPathIndex(spyReader, 0, 0);\n\n        // Call nextString(), which will popStack and decrement stackSize internally\n        String result = spyReader.nextString();\n\n        assertEquals(\"value\", result);\n\n        // After popStack, stackSize is 0, so pathIndices should not have been incremented\n        // pathIndices[0] should remain 0\n        assertEquals(0, getPathIndex(spyReader, 0));\n    }\n\n    // Helper methods to set private fields via reflection\n\n    private void setStackElement(Object target, int index, Object value) throws Exception {\n        Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        Object[] stack = (Object[]) stackField.get(target);\n        if (stack == null) {\n            stack = new Object[32];\n            stackField.set(target, stack);\n        }\n        stack[index] = value;\n    }\n\n    private void setPathIndex(Object target, int index, int value) throws Exception {\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(target);\n        if (pathIndices == null) {\n            pathIndices = new int[32];\n            pathIndicesField.set(target, pathIndices);\n        }\n        pathIndices[index] = value;\n    }\n\n    private int getPathIndex(Object target, int index) throws Exception {\n        Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n        pathIndicesField.setAccessible(true);\n        int[] pathIndices = (int[]) pathIndicesField.get(target);\n        if (pathIndices == null) {\n            return 0;\n        }\n        return pathIndices[index];\n    }\n\n    private void setField(Object target, String fieldName, Object value) throws Exception {\n        Field field = JsonTreeReader.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883994,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1280,
+    "prompt_tokens": 2554,
+    "total_tokens": 3834,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.27
+  }
+}

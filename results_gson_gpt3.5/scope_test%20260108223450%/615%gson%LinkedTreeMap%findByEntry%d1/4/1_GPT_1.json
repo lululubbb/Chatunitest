@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4PuwOdU8To7uJscKagfAuGWxy8",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\n\nimport java.lang.reflect.Method;\nimport java.util.Map.Entry;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LinkedTreeMap_FindByEntry_Test {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void findByEntry_returnsNode_whenEntryMatches() throws Exception {\n    // Prepare entry with key and value that exist in map\n    String key = \"key1\";\n    String value = \"value1\";\n    map.put(key, value);\n\n    // Create Entry mock with matching key and value\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(key);\n    when(entry.getValue()).thenReturn(value);\n\n    // Use reflection to invoke findByEntry\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> result = (Node<String, String>) method.invoke(map, entry);\n\n    assertNotNull(result);\n    assertEquals(key, result.key);\n    assertEquals(value, result.value);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenKeyNotFound() throws Exception {\n    // Entry with key not in map\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(\"missingKey\");\n    when(entry.getValue()).thenReturn(\"anyValue\");\n\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> result = (Node<String, String>) method.invoke(map, entry);\n\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenValueDoesNotMatch() throws Exception {\n    // Put key with value\n    String key = \"key2\";\n    String value = \"value2\";\n    map.put(key, value);\n\n    // Entry with same key but different value\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(key);\n    when(entry.getValue()).thenReturn(\"differentValue\");\n\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> result = (Node<String, String>) method.invoke(map, entry);\n\n    assertNull(result);\n  }\n\n  @Test\n  void findByEntry_returnsNode_whenValueIsNull_andMatches() throws Exception {\n    // Put key with null value\n    String key = \"keyNull\";\n    map.put(key, null);\n\n    @SuppressWarnings(\"unchecked\")\n    Entry<String, String> entry = mock(Entry.class);\n    when(entry.getKey()).thenReturn(key);\n    when(entry.getValue()).thenReturn(null);\n\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n\n    @SuppressWarnings(\"unchecked\")\n    Node<String, String> result = (Node<String, String>) method.invoke(map, entry);\n\n    assertNotNull(result);\n    assertEquals(key, result.key);\n    assertNull(result.value);\n  }\n\n  @Test\n  void findByEntry_returnsNull_whenEntryIsNull() throws Exception {\n    // Defensive test - entry is null, should throw NullPointerException or return null depending on impl\n    Method method = LinkedTreeMap.class.getDeclaredMethod(\"findByEntry\", Entry.class);\n    method.setAccessible(true);\n\n    assertThrows(NullPointerException.class, () -> method.invoke(map, (Entry<?, ?>) null));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885513,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 836,
+    "prompt_tokens": 736,
+    "total_tokens": 1572,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.02
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwgWSVCG7VZgdz9UHENXJiqtmtcJ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass CSVFormatWithHeaderTest {\n\n    @Mock\n    private ResultSetMetaData metaData;\n\n    private AutoCloseable mocks;\n\n    @BeforeEach\n    void setUp() {\n        // Use initMocks(this) instead of openMocks(this) for Mockito 3 compatibility\n        MockitoAnnotations.initMocks(this);\n    }\n\n    @AfterEach\n    void tearDown() throws Exception {\n        if (mocks != null) {\n            mocks.close();\n        }\n    }\n\n    @Test\n    void testWithHeader_NullMetaData() throws SQLException {\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader((ResultSetMetaData) null);\n        assertNotNull(result);\n        assertArrayEquals(null, result.getHeader());\n    }\n\n    @Test\n    void testWithHeader_EmptyMetaData() throws SQLException {\n        when(metaData.getColumnCount()).thenReturn(0);\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(metaData);\n        assertNotNull(result);\n        assertArrayEquals(new String[0], result.getHeader());\n        verify(metaData).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    void testWithHeader_MultipleColumns() throws SQLException {\n        when(metaData.getColumnCount()).thenReturn(3);\n        when(metaData.getColumnLabel(1)).thenReturn(\"col1\");\n        when(metaData.getColumnLabel(2)).thenReturn(\"col2\");\n        when(metaData.getColumnLabel(3)).thenReturn(\"col3\");\n\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        CSVFormat result = baseFormat.withHeader(metaData);\n\n        assertNotNull(result);\n        String[] expected = {\"col1\", \"col2\", \"col3\"};\n        assertArrayEquals(expected, result.getHeader());\n\n        verify(metaData).getColumnCount();\n        verify(metaData).getColumnLabel(1);\n        verify(metaData).getColumnLabel(2);\n        verify(metaData).getColumnLabel(3);\n        verifyNoMoreInteractions(metaData);\n    }\n\n    @Test\n    void testWithHeader_MetaDataThrowsSQLException() throws SQLException {\n        when(metaData.getColumnCount()).thenThrow(new SQLException(\"Test exception\"));\n\n        CSVFormat baseFormat = CSVFormat.DEFAULT;\n        SQLException thrown = assertThrows(SQLException.class, () -> baseFormat.withHeader(metaData));\n        assertEquals(\"Test exception\", thrown.getMessage());\n\n        verify(metaData).getColumnCount();\n        verifyNoMoreInteractions(metaData);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687988,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 605,
+    "prompt_tokens": 2359,
+    "total_tokens": 2964,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.05
+  }
+}

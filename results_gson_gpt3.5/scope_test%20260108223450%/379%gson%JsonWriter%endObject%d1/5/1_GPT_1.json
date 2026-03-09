@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlldz4DdDvlnT8TJTEypHtGIo9NE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonWriterTest {\n\n    private StringWriter stringWriter;\n    private JsonWriter jsonWriter;\n\n    @BeforeEach\n    void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    void endObject_shouldCloseEmptyObject() throws Exception {\n        // Arrange: begin an object so stack is set\n        jsonWriter.beginObject();\n\n        // Act: call endObject()\n        JsonWriter returned = jsonWriter.endObject();\n\n        // Assert: returned is the same instance\n        assertSame(jsonWriter, returned);\n\n        // The underlying writer should contain \"{}\"\n        assertEquals(\"{}\", stringWriter.toString());\n    }\n\n    @Test\n    void endObject_shouldCloseNonEmptyObject() throws Exception {\n        // Arrange: begin an object, add a name and value pair\n        jsonWriter.beginObject();\n        jsonWriter.name(\"key\");\n        jsonWriter.value(\"value\");\n\n        // Act: call endObject()\n        JsonWriter returned = jsonWriter.endObject();\n\n        // Assert: returned is the same instance\n        assertSame(jsonWriter, returned);\n\n        // The underlying writer should contain {\"key\":\"value\"}\n        assertEquals(\"{\\\"key\\\":\\\"value\\\"}\", stringWriter.toString());\n    }\n\n    @Test\n    void endObject_shouldThrowIOExceptionIfStackEmpty() throws Exception {\n        // Using reflection to invoke private close method with invalid stack state\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        // Clear stack to simulate invalid state\n        // Reflection to set stackSize = 0 forcibly\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 0);\n\n        // Expect IOException because stack is empty and close will fail\n        IOException thrown = assertThrows(IOException.class, () -> {\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n        });\n        assertNotNull(thrown.getCause());\n        assertTrue(thrown.getCause() instanceof IOException);\n    }\n\n    @Test\n    void endObject_shouldThrowIOExceptionIfTopStackInvalid() throws Exception {\n        // Arrange: forcibly set invalid top stack value\n        var stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        int[] stackArray = (int[]) stackField.get(jsonWriter);\n        stackArray[0] = JsonScope.EMPTY_ARRAY; // invalid for endObject\n        var stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 1);\n\n        // Using reflection to invoke private close method with invalid top stack value\n        Method closeMethod = JsonWriter.class.getDeclaredMethod(\"close\", int.class, int.class, char.class);\n        closeMethod.setAccessible(true);\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            closeMethod.invoke(jsonWriter, JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, '}');\n        });\n        assertNotNull(thrown.getCause());\n        assertTrue(thrown.getCause() instanceof IOException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884349,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 725,
+    "prompt_tokens": 729,
+    "total_tokens": 1454,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.69
+  }
+}

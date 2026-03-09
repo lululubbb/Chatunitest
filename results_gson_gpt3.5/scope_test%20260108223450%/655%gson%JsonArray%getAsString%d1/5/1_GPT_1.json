@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmapyneiJ3GoLjYWp9bup2J86g1A",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Iterator;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void getAsString_singleElement_returnsElementString() {\n    // Arrange\n    JsonElement mockElement = mock(JsonElement.class);\n    when(mockElement.getAsString()).thenReturn(\"mockString\");\n\n    jsonArray.add(mockElement);\n\n    // Act\n    String result = jsonArray.getAsString();\n\n    // Assert\n    assertEquals(\"mockString\", result);\n    verify(mockElement).getAsString();\n  }\n\n  @Test\n  public void getAsString_emptyArray_throwsIndexOutOfBoundsException() throws Exception {\n    // Act & Assert\n    IndexOutOfBoundsException thrown = assertThrows(IndexOutOfBoundsException.class, () -> {\n      jsonArray.getAsString();\n    });\n    assertNotNull(thrown);\n  }\n\n  @Test\n  public void getAsSingleElement_reflection_behavior() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Arrange\n    JsonElement mockElement = mock(JsonElement.class);\n    when(mockElement.getAsString()).thenReturn(\"reflectString\");\n    jsonArray.add(mockElement);\n\n    Method method = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    method.setAccessible(true);\n\n    // Act\n    JsonElement result = (JsonElement) method.invoke(jsonArray);\n\n    // Assert\n    assertNotNull(result);\n    assertEquals(mockElement, result);\n  }\n\n  @Test\n  public void getAsString_multipleElements_returnsFirstElementString() {\n    // Arrange\n    JsonElement firstMock = mock(JsonElement.class);\n    JsonElement secondMock = mock(JsonElement.class);\n    when(firstMock.getAsString()).thenReturn(\"first\");\n    when(secondMock.getAsString()).thenReturn(\"second\");\n\n    jsonArray.add(firstMock);\n    jsonArray.add(secondMock);\n\n    // Act\n    String result = jsonArray.getAsString();\n\n    // Assert\n    assertEquals(\"first\", result);\n    verify(firstMock).getAsString();\n    verify(secondMock, never()).getAsString();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887523,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 509,
+    "prompt_tokens": 488,
+    "total_tokens": 997,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.93
+  }
+}

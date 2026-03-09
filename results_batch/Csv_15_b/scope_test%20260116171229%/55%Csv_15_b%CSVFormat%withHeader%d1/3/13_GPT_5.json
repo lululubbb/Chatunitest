@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaNwiwhB6MiVJyDWU7w46KDkNgIO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private ResultSetMetaData metaDataMock;\n\n    @BeforeEach\n    void setUp() {\n        metaDataMock = mock(ResultSetMetaData.class);\n    }\n\n    @Test\n    void testWithHeader_nullMetaData() throws SQLException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((ResultSetMetaData) null);\n        assertNotNull(result);\n        // The header should be null because metaData was null\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    void testWithHeader_emptyColumns() throws SQLException {\n        when(metaDataMock.getColumnCount()).thenReturn(0);\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(metaDataMock);\n\n        assertNotNull(result);\n        assertArrayEquals(new String[0], result.getHeader());\n        verify(metaDataMock, times(1)).getColumnCount();\n        verifyNoMoreInteractions(metaDataMock);\n    }\n\n    @Test\n    void testWithHeader_multipleColumns() throws SQLException {\n        when(metaDataMock.getColumnCount()).thenReturn(3);\n        when(metaDataMock.getColumnLabel(1)).thenReturn(\"id\");\n        when(metaDataMock.getColumnLabel(2)).thenReturn(\"name\");\n        when(metaDataMock.getColumnLabel(3)).thenReturn(\"email\");\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(metaDataMock);\n\n        assertNotNull(result);\n        String[] expected = new String[] { \"id\", \"name\", \"email\" };\n        assertArrayEquals(expected, result.getHeader());\n        verify(metaDataMock, times(1)).getColumnCount();\n        verify(metaDataMock, times(1)).getColumnLabel(1);\n        verify(metaDataMock, times(1)).getColumnLabel(2);\n        verify(metaDataMock, times(1)).getColumnLabel(3);\n        verifyNoMoreInteractions(metaDataMock);\n    }\n\n    @Test\n    void testWithHeader_columnLabelNull() throws SQLException {\n        when(metaDataMock.getColumnCount()).thenReturn(2);\n        when(metaDataMock.getColumnLabel(1)).thenReturn(null);\n        when(metaDataMock.getColumnLabel(2)).thenReturn(\"label2\");\n\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader(metaDataMock);\n\n        assertNotNull(result);\n        String[] expected = new String[] { null, \"label2\" };\n        assertArrayEquals(expected, result.getHeader());\n        verify(metaDataMock, times(1)).getColumnCount();\n        verify(metaDataMock, times(1)).getColumnLabel(1);\n        verify(metaDataMock, times(1)).getColumnLabel(2);\n        verifyNoMoreInteractions(metaDataMock);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768555580,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 635,
+    "prompt_tokens": 2345,
+    "total_tokens": 2980,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.77
+  }
+}

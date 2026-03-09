@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlOzrLymqhmxfZXFRdPmt8UiU76I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.internal.bind.NumberTypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n    private ToNumberStrategy toNumberStrategy;\n    private NumberTypeAdapter numberTypeAdapter;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        toNumberStrategy = mock(ToNumberStrategy.class);\n        Constructor<NumberTypeAdapter> constructor = NumberTypeAdapter.class.getDeclaredConstructor(ToNumberStrategy.class);\n        constructor.setAccessible(true);\n        numberTypeAdapter = constructor.newInstance(toNumberStrategy);\n    }\n\n    @Test\n    void read_NullToken_ReturnsNull() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        doNothing().when(jsonReader).nextNull();\n\n        Number result = numberTypeAdapter.read(jsonReader);\n\n        assertNull(result);\n\n        InOrder inOrder = inOrder(jsonReader);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(jsonReader).nextNull();\n        inOrder.verifyNoMoreInteractions();\n        verifyNoInteractions(toNumberStrategy);\n    }\n\n    @Test\n    void read_NumberToken_DelegatesToToNumberStrategy() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NUMBER);\n        Number expectedNumber = 123;\n        when(toNumberStrategy.readNumber(jsonReader)).thenReturn(expectedNumber);\n\n        Number result = numberTypeAdapter.read(jsonReader);\n\n        assertSame(expectedNumber, result);\n\n        InOrder inOrder = inOrder(jsonReader, toNumberStrategy);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(toNumberStrategy).readNumber(jsonReader);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void read_StringToken_DelegatesToToNumberStrategy() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n        Number expectedNumber = 456;\n        when(toNumberStrategy.readNumber(jsonReader)).thenReturn(expectedNumber);\n\n        Number result = numberTypeAdapter.read(jsonReader);\n\n        assertSame(expectedNumber, result);\n\n        InOrder inOrder = inOrder(jsonReader, toNumberStrategy);\n        inOrder.verify(jsonReader).peek();\n        inOrder.verify(toNumberStrategy).readNumber(jsonReader);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void read_OtherToken_ThrowsJsonSyntaxException() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.BEGIN_ARRAY);\n        when(jsonReader.getPath()).thenReturn(\"$.somePath\");\n\n        JsonSyntaxException exception = assertThrows(JsonSyntaxException.class, () -> numberTypeAdapter.read(jsonReader));\n        assertEquals(\"Expecting number, got: BEGIN_ARRAY; at path $.somePath\", exception.getMessage());\n\n        verify(jsonReader).peek();\n        verify(jsonReader).getPath();\n        verifyNoInteractions(toNumberStrategy);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767882945,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 697,
+    "prompt_tokens": 1025,
+    "total_tokens": 1722,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.29
+  }
+}

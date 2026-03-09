@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnBtfdqbQMLAwYPdDeE6dSAicwbf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\n\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method as ReflectMethod;\n\nclass ReflectionAccessFilterHelperTest {\n\n    private ReflectionAccessFilter filterAllow;\n    private ReflectionAccessFilter filterDeny;\n    private ReflectionAccessFilter filterNeutral;\n\n    @BeforeEach\n    void setUp() {\n        filterAllow = mock(ReflectionAccessFilter.class);\n        when(filterAllow.apply(any(Class.class))).thenReturn(FilterResult.ALLOW);\n\n        filterDeny = mock(ReflectionAccessFilter.class);\n        when(filterDeny.apply(any(Class.class))).thenReturn(FilterResult.DENY);\n\n        filterNeutral = mock(ReflectionAccessFilter.class);\n        when(filterNeutral.apply(any(Class.class))).thenReturn(FilterResult.NEUTRAL);\n    }\n\n    @Test\n    void testIsJavaType_Class() throws Exception {\n        // Access private static method isJavaType(String)\n        ReflectMethod method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n        method.setAccessible(true);\n\n        // Test with known Java type names\n        assertTrue((Boolean) method.invoke(null, \"java.lang.String\"));\n        assertTrue((Boolean) method.invoke(null, \"java.util.List\"));\n        assertFalse((Boolean) method.invoke(null, \"com.google.SomeClass\"));\n        assertFalse((Boolean) method.invoke(null, \"android.app.Activity\"));\n    }\n\n    @Test\n    void testIsJavaType_Public() {\n        assertTrue(ReflectionAccessFilterHelper.isJavaType(String.class));\n        assertTrue(ReflectionAccessFilterHelper.isJavaType(List.class));\n        assertFalse(ReflectionAccessFilterHelper.isJavaType(ReflectionAccessFilterHelper.class));\n    }\n\n    @Test\n    void testIsAndroidType_Class() throws Exception {\n        // Access private static method isAndroidType(String)\n        ReflectMethod method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n        method.setAccessible(true);\n\n        assertTrue((Boolean) method.invoke(null, \"android.app.Activity\"));\n        assertTrue((Boolean) method.invoke(null, \"android.widget.TextView\"));\n        assertFalse((Boolean) method.invoke(null, \"java.lang.String\"));\n        assertFalse((Boolean) method.invoke(null, \"com.google.SomeClass\"));\n    }\n\n    @Test\n    void testIsAndroidType_Public() {\n        // android types usually start with \"android.\"\n        Class<?> androidTypeMock = new Object() {\n            public String getName() { return \"android.app.Activity\"; }\n        }.getClass();\n\n        // We cannot create a real android class, so test with string method\n        assertTrue(invokePrivateIsAndroidType(\"android.app.Activity\"));\n        assertFalse(ReflectionAccessFilterHelper.isAndroidType(String.class));\n    }\n\n    private boolean invokePrivateIsAndroidType(String className) {\n        try {\n            ReflectMethod method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isAndroidType\", String.class);\n            method.setAccessible(true);\n            return (Boolean) method.invoke(null, className);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Test\n    void testIsAnyPlatformType() {\n        assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(String.class));\n        assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(List.class));\n        assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(Object.class)); // likely false, check actual impl\n        // Android type\n        assertTrue(ReflectionAccessFilterHelper.isAnyPlatformType(new Object() {\n            public String getName() { return \"android.app.Activity\"; }\n        }.getClass()));\n\n        // Custom class (non-java, non-android)\n        assertFalse(ReflectionAccessFilterHelper.isAnyPlatformType(ReflectionAccessFilterHelperTest.class));\n    }\n\n    @Test\n    void testGetFilterResult_EmptyFilters() {\n        List<ReflectionAccessFilter> empty = Collections.emptyList();\n        FilterResult result = ReflectionAccessFilterHelper.getFilterResult(empty, String.class);\n        assertEquals(FilterResult.NEUTRAL, result);\n    }\n\n    @Test\n    void testGetFilterResult_Allow() {\n        List<ReflectionAccessFilter> filters = Arrays.asList(filterNeutral, filterAllow, filterDeny);\n        FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n        assertEquals(FilterResult.ALLOW, result);\n        verify(filterNeutral).apply(String.class);\n        verify(filterAllow).apply(String.class);\n        // filterDeny should not be called because allow short circuits\n        verify(filterDeny, never()).apply(any());\n    }\n\n    @Test\n    void testGetFilterResult_Deny() {\n        List<ReflectionAccessFilter> filters = Arrays.asList(filterNeutral, filterDeny, filterAllow);\n        FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n        assertEquals(FilterResult.DENY, result);\n        verify(filterNeutral).apply(String.class);\n        verify(filterDeny).apply(String.class);\n        // filterAllow should not be called because deny short circuits\n        verify(filterAllow, never()).apply(any());\n    }\n\n    @Test\n    void testGetFilterResult_Neutral() {\n        List<ReflectionAccessFilter> filters = Arrays.asList(filterNeutral, filterNeutral);\n        FilterResult result = ReflectionAccessFilterHelper.getFilterResult(filters, String.class);\n        assertEquals(FilterResult.NEUTRAL, result);\n        verify(filterNeutral, times(2)).apply(String.class);\n    }\n\n    @Test\n    void testCanAccess_AccessibleObjectTrue() throws Exception {\n        AccessibleObject accessibleObject = mock(AccessibleObject.class);\n        when(accessibleObject.isAccessible()).thenReturn(true);\n\n        Object obj = new Object();\n\n        assertTrue(ReflectionAccessFilterHelper.canAccess(accessibleObject, obj));\n        verify(accessibleObject).isAccessible();\n    }\n\n    @Test\n    void testCanAccess_AccessibleObjectFalse() throws Exception {\n        AccessibleObject accessibleObject = mock(AccessibleObject.class);\n        when(accessibleObject.isAccessible()).thenReturn(false);\n\n        Object obj = new Object();\n\n        assertFalse(ReflectionAccessFilterHelper.canAccess(accessibleObject, obj));\n        verify(accessibleObject).isAccessible();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889821,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1356,
+    "prompt_tokens": 300,
+    "total_tokens": 1656,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 29.99
+  }
+}

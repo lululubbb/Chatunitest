@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmBlOEpVf8aRcJVOHoaHynqcphj9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  // Using reflection to access the private static resolve method with 4 parameters\n  private static Type invokeResolve(Type context, Class<?> contextRawType, Type toResolve, Map<TypeVariable<?>, Type> visited) throws Exception {\n    Method resolveMethod = $Gson$Types.class.getDeclaredMethod(\"resolve\", Type.class, Class.class, Type.class, Map.class);\n    resolveMethod.setAccessible(true);\n    return (Type) resolveMethod.invoke(null, context, contextRawType, toResolve, visited);\n  }\n\n  @Test\n  void testResolve_withTypeVariable_resolvesProperly() throws Exception {\n    // Setup a class with a type variable\n    class GenericClass<T> {}\n    TypeVariable<?>[] typeParameters = GenericClass.class.getTypeParameters();\n    TypeVariable<?> tVar = typeParameters[0];\n\n    // Context and raw type are GenericClass and GenericClass.class respectively\n    Type context = GenericClass.class;\n    Class<?> contextRawType = GenericClass.class;\n    Map<TypeVariable<?>, Type> visited = new HashMap<>();\n\n    // We expect resolveTypeVariable to be called internally and return something different than the original variable\n    // Since resolveTypeVariable is private, we cannot mock it directly, but we can test that resolve returns the variable if no resolution possible\n    Type resolved = invokeResolve(context, contextRawType, tVar, visited);\n\n    // Because GenericClass<T> has no bounds, resolveTypeVariable returns the variable itself, so resolved == tVar\n    assertSame(tVar, resolved);\n    // visited map should contain the type variable mapped to Void.TYPE (placeholder)\n    assertEquals(Void.TYPE, visited.get(tVar));\n  }\n\n  @Test\n  void testResolve_withClassArray_resolvesComponentType() throws Exception {\n    Class<?> contextRawType = String[].class;\n    Type context = String[].class;\n    Map<TypeVariable<?>, Type> visited = new HashMap<>();\n\n    Class<?> arrayClass = Integer[].class;\n    Type resolved = invokeResolve(context, contextRawType, arrayClass, visited);\n\n    // Should return the same array class because component type is a class and no change expected\n    assertSame(arrayClass, resolved);\n\n    // Now test with an array whose component type is a type variable\n    class GenericArray<T> { T[] array; }\n    TypeVariable<?> tVar = GenericArray.class.getTypeParameters()[0];\n    Type arrayType = Array.newInstance(Object.class, 0).getClass(); // Object[]\n    Type toResolve = Array.newInstance(Object.class, 0).getClass();\n\n    // Actually, to test the branch, create a GenericArrayType with component type as TypeVariable\n    GenericArrayType genericArrayType = new GenericArrayType() {\n      @Override public Type getGenericComponentType() { return tVar; }\n      @Override public String toString() { return tVar.getTypeName() + \"[]\"; }\n    };\n\n    Map<TypeVariable<?>, Type> visited2 = new HashMap<>();\n    Type resolvedGenericArray = invokeResolve(context, contextRawType, genericArrayType, visited2);\n\n    // Since resolveTypeVariable returns the type variable itself, no change expected\n    assertSame(genericArrayType, resolvedGenericArray);\n  }\n\n  @Test\n  void testResolve_withParameterizedType_resolvesArguments() throws Exception {\n    // Create a ParameterizedType mock with type arguments to test resolution\n    ParameterizedType parameterizedType = mock(ParameterizedType.class);\n    Type ownerType = null;\n    Type rawType = Map.class;\n    Type[] typeArgs = new Type[] {String.class, Integer.class};\n\n    when(parameterizedType.getOwnerType()).thenReturn(ownerType);\n    when(parameterizedType.getRawType()).thenReturn(rawType);\n    when(parameterizedType.getActualTypeArguments()).thenReturn(typeArgs);\n\n    Map<TypeVariable<?>, Type> visited = new HashMap<>();\n\n    Type resolved = invokeResolve(null, Map.class, parameterizedType, visited);\n\n    // Because all type arguments are concrete classes, resolved should be the same instance (no changes)\n    assertSame(parameterizedType, resolved);\n  }\n\n  @Test\n  void testResolve_withWildcardType_resolvesBounds() throws Exception {\n    WildcardType wildcardType = new WildcardType() {\n      @Override public Type[] getUpperBounds() { return new Type[] {Number.class}; }\n      @Override public Type[] getLowerBounds() { return new Type[0]; }\n      @Override public String toString() { return \"? extends Number\"; }\n    };\n\n    Map<TypeVariable<?>, Type> visited = new HashMap<>();\n\n    Type resolved = invokeResolve(null, Object.class, wildcardType, visited);\n\n    // Because upper bound is Number and no changes expected, resolved should be the same instance\n    assertSame(wildcardType, resolved);\n\n    // Now test with wildcard with lower bound\n    WildcardType wildcardWithLower = new WildcardType() {\n      @Override public Type[] getUpperBounds() { return new Type[] {Object.class}; }\n      @Override public Type[] getLowerBounds() { return new Type[] {Integer.class}; }\n      @Override public String toString() { return \"? super Integer\"; }\n    };\n\n    Type resolvedLower = invokeResolve(null, Object.class, wildcardWithLower, visited);\n\n    assertSame(wildcardWithLower, resolvedLower);\n  }\n\n  @Test\n  void testResolve_withOtherType_breaksLoopAndReturns() throws Exception {\n    Type toResolve = String.class;\n    Map<TypeVariable<?>, Type> visited = new HashMap<>();\n\n    Type resolved = invokeResolve(null, Object.class, toResolve, visited);\n\n    assertSame(toResolve, resolved);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885969,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1237,
+    "prompt_tokens": 1406,
+    "total_tokens": 2643,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 24.72
+  }
+}

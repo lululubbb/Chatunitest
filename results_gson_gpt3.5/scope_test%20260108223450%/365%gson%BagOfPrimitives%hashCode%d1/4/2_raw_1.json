@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass BagOfPrimitivesTest {\n\n  @Test\n  void testHashCode_allFieldsSet() {\n    BagOfPrimitives bag = new BagOfPrimitives(123456789L, 42, true, \"testString\");\n    int expected = 31 * (31 * (31 * (31 * 1 + 1231) + 42) + (int) (123456789L ^ (123456789L >>> 32)))\n        + \"testString\".hashCode();\n    assertEquals(expected, bag.hashCode());\n  }\n\n  @Test\n  void testHashCode_booleanFalse() {\n    BagOfPrimitives bag = new BagOfPrimitives(123456789L, 42, false, \"testString\");\n    int expected = 31 * (31 * (31 * (31 * 1 + 1237) + 42) + (int) (123456789L ^ (123456789L >>> 32)))\n        + \"testString\".hashCode();\n    assertEquals(expected, bag.hashCode());\n  }\n\n  @Test\n  void testHashCode_stringValueNull() {\n    BagOfPrimitives bag = new BagOfPrimitives(123456789L, 42, true, null);\n    int expected = 31 * (31 * (31 * (31 * 1 + 1231) + 42) + (int) (123456789L ^ (123456789L >>> 32))) + 0;\n    assertEquals(expected, bag.hashCode());\n  }\n\n  @Test\n  void testHashCode_defaultConstructor() {\n    BagOfPrimitives bag = new BagOfPrimitives();\n    int expected = 31 * (31 * (31 * (31 * 1 + (bag.booleanValue ? 1231 : 1237)) + bag.intValue)\n        + (int) (bag.longValue ^ (bag.longValue >>> 32))) + 0;\n    assertEquals(expected, bag.hashCode());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 354,
+  "completion_tokens": 445,
+  "total_tokens": 799,
+  "llm_elapsed_time_seconds": 9.31
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmg1U8T0CBB3mZjwAThWH6p0WhWv",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Reader mockReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void nextNull_whenPeekedIsPeekedNull_shouldConsumeNullAndIncrementPathIndex() throws Exception {\n    // Set peeked to PEEKED_NULL (7)\n    setField(jsonReader, \"peeked\", Integer.valueOf(7));\n    setField(jsonReader, \"stackSize\", Integer.valueOf(1));\n    int[] pathIndices = new int[32];\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    jsonReader.nextNull();\n\n    assertEquals(Integer.valueOf(0), getField(jsonReader, \"peeked\"));\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextNull_whenPeekedIsPeekedNoneAndDoPeekReturnsPeekedNull_shouldConsumeNullAndIncrementPathIndex() throws Exception {\n    setField(jsonReader, \"peeked\", Integer.valueOf(0));\n    setField(jsonReader, \"stackSize\", Integer.valueOf(1));\n    int[] pathIndices = new int[32];\n    setField(jsonReader, \"pathIndices\", pathIndices);\n\n    // Spy on jsonReader to mock doPeek()\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(7).when(spyReader).doPeek();\n\n    spyReader.nextNull();\n\n    assertEquals(Integer.valueOf(0), getField(spyReader, \"peeked\"));\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  void nextNull_whenPeekedIsNotNull_shouldThrowIllegalStateException() throws Exception {\n    setField(jsonReader, \"peeked\", Integer.valueOf(5));\n    setField(jsonReader, \"stackSize\", Integer.valueOf(1));\n    // We need to mock peek() and locationString() to avoid null pointer and get proper message\n    JsonReader spyReader = spy(jsonReader);\n    doReturn(JsonToken.BOOLEAN).when(spyReader).peek();\n    doReturn(\" at path $\").when(spyReader).locationString();\n\n    IllegalStateException ex = assertThrows(IllegalStateException.class, spyReader::nextNull);\n    assertTrue(ex.getMessage().contains(\"Expected null but was BOOLEAN at path $\"));\n  }\n\n  // Helper methods to access private fields via reflection\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  private <T> T getField(Object target, String fieldName) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    T value = (T) field.get(target);\n    return value;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887845,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 676,
+    "prompt_tokens": 1899,
+    "total_tokens": 2575,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.9
+  }
+}

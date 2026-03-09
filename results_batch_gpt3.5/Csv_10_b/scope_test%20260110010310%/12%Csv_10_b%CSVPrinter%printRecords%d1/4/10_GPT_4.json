@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAHiWDHgp9NtZS1OriSXvrQBP7X0",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjects_callsPrintRecordWithObject() throws IOException {\n        Iterable<Object> input = Arrays.asList(\"one\", \"two\", \"three\");\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(input);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).printRecord(\"one\");\n        inOrder.verify(spyPrinter).printRecord(\"two\");\n        inOrder.verify(spyPrinter).printRecord(\"three\");\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfObjectArrays_callsPrintRecordWithObjectArray() throws IOException {\n        Object[] array1 = new Object[] { \"a\", \"b\" };\n        Object[] array2 = new Object[] { \"c\", \"d\" };\n        Iterable<Object> input = Arrays.asList(array1, array2);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(input);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).printRecord(array1);\n        inOrder.verify(spyPrinter).printRecord(array2);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_withIterableOfIterables_callsPrintRecordWithIterable() throws IOException {\n        Iterable<String> inner1 = Arrays.asList(\"x\", \"y\");\n        Iterable<String> inner2 = Collections.singletonList(\"z\");\n        Iterable<Iterable<String>> input = Arrays.asList(inner1, inner2);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(input);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).printRecord(inner1);\n        inOrder.verify(spyPrinter).printRecord(inner2);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_withMixedIterable_callsAppropriatePrintRecord() throws IOException {\n        Object[] objArray = new Object[] { \"1\", \"2\" };\n        Iterable<String> iterable = Arrays.asList(\"a\", \"b\");\n        String singleObject = \"single\";\n\n        Iterable<Object> input = Arrays.asList(objArray, iterable, singleObject);\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(input);\n\n        InOrder inOrder = inOrder(spyPrinter);\n        inOrder.verify(spyPrinter).printRecord(objArray);\n        inOrder.verify(spyPrinter).printRecord(iterable);\n        inOrder.verify(spyPrinter).printRecord(singleObject);\n        inOrder.verifyNoMoreInteractions();\n    }\n\n    @Test\n    void testPrintRecords_withEmptyIterable_doesNotCallPrintRecord() throws IOException {\n        Iterable<Object> input = Collections.emptyList();\n        CSVPrinter spyPrinter = spy(printer);\n\n        spyPrinter.printRecords(input);\n\n        // Use reflection to get the overloaded printRecord methods and verify no calls\n        verify(spyPrinter, never()).printRecord((Iterable<?>) any());\n        verify(spyPrinter, never()).printRecord((Object[]) any());\n        verify(spyPrinter, never()).printRecord((Object) any());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978594,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 786,
+    "prompt_tokens": 1311,
+    "total_tokens": 2097,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.03
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlx7hdCdSRKjJPRkFFKpeEJ4L8Il",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\nimport java.text.SimpleDateFormat;\nimport java.util.Locale;\nimport org.junit.jupiter.api.Test;\n\npublic class PreJava9DateFormatProviderTest {\n\n  @Test\n  public void testGetUSDateTimeFormat_shouldReturnCorrectFormat() {\n    int dateStyle = DateFormat.SHORT;\n    int timeStyle = DateFormat.MEDIUM;\n\n    DateFormat dateFormat = PreJava9DateFormatProvider.getUSDateTimeFormat(dateStyle, timeStyle);\n\n    assertNotNull(dateFormat);\n    assertTrue(dateFormat instanceof SimpleDateFormat);\n    SimpleDateFormat sdf = (SimpleDateFormat) dateFormat;\n\n    String expectedPattern = invokePrivateGetDatePartOfDateTimePattern(dateStyle) + \" \" +\n                             invokePrivateGetTimePartOfDateTimePattern(timeStyle);\n\n    assertEquals(expectedPattern, sdf.toPattern());\n\n    // Locale is not accessible via getLocale(), so check locale via reflection on the private field\n    Locale locale = getLocaleFromSimpleDateFormat(sdf);\n    assertEquals(Locale.US, locale);\n  }\n\n  private String invokePrivateGetDatePartOfDateTimePattern(int dateStyle) {\n    try {\n      Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getDatePartOfDateTimePattern\", int.class);\n      method.setAccessible(true);\n      return (String) method.invoke(null, dateStyle);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Failed to invoke getDatePartOfDateTimePattern: \" + e.getMessage());\n      return null;\n    }\n  }\n\n  private String invokePrivateGetTimePartOfDateTimePattern(int timeStyle) {\n    try {\n      Method method = PreJava9DateFormatProvider.class.getDeclaredMethod(\"getTimePartOfDateTimePattern\", int.class);\n      method.setAccessible(true);\n      return (String) method.invoke(null, timeStyle);\n    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {\n      fail(\"Failed to invoke getTimePartOfDateTimePattern: \" + e.getMessage());\n      return null;\n    }\n  }\n\n  private Locale getLocaleFromSimpleDateFormat(SimpleDateFormat sdf) {\n    try {\n      // SimpleDateFormat has a private field 'locale'\n      java.lang.reflect.Field localeField = SimpleDateFormat.class.getDeclaredField(\"locale\");\n      localeField.setAccessible(true);\n      return (Locale) localeField.get(sdf);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Failed to access locale field of SimpleDateFormat: \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885061,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 580,
+    "prompt_tokens": 806,
+    "total_tokens": 1386,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.96
+  }
+}

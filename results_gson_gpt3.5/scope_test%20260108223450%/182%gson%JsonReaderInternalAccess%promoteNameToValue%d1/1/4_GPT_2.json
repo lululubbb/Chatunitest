@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlkC2FCKpORu6YIncOtCEGbzws1G",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport com.google.gson.stream.JsonReader;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonReaderInternalAccessTest {\n\n    private JsonReaderInternalAccess jsonReaderInternalAccess;\n    private JsonReader jsonReader;\n\n    @BeforeEach\n    void setUp() {\n        // Create a concrete subclass to test promoteNameToValue\n        jsonReaderInternalAccess = new JsonReaderInternalAccess() {\n            @Override\n            public void promoteNameToValue(JsonReader reader) throws IOException {\n                throw new AbstractMethodError();\n            }\n        };\n        jsonReader = new JsonReader(null);\n    }\n\n    @Test\n    void testPromoteNameToValue_invocation() throws IOException {\n        // Use reflection to invoke promoteNameToValue\n        try {\n            Method method = JsonReaderInternalAccess.class.getDeclaredMethod(\"promoteNameToValue\", JsonReader.class);\n            method.setAccessible(true);\n            // Invocation should throw AbstractMethodError because of our override\n            Throwable thrown = assertThrows(Throwable.class, () -> method.invoke(jsonReaderInternalAccess, jsonReader));\n            Throwable cause = thrown.getCause() != null ? thrown.getCause() : thrown;\n            assertTrue(cause instanceof AbstractMethodError);\n        } catch (NoSuchMethodException e) {\n            fail(\"Method promoteNameToValue not found\");\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884260,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 305,
+    "prompt_tokens": 958,
+    "total_tokens": 1263,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.81
+  }
+}

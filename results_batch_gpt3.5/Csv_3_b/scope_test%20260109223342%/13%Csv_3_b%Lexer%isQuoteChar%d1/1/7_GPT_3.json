@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7rxgrkySOkUhXM3DZoMFk2hOb8y",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\nclass LexerTest {\n\n    private Lexer lexer;\n\n    @BeforeEach\n    void setUp() {\n        CSVFormat format = Mockito.mock(CSVFormat.class);\n        ExtendedBufferedReader in = Mockito.mock(ExtendedBufferedReader.class);\n\n        lexer = new Lexer(format, in) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        // Use reflection to set the private final field quoteChar\n        try {\n            Field quoteCharField = Lexer.class.getDeclaredField(\"quoteChar\");\n            quoteCharField.setAccessible(true);\n\n            // Remove final modifier on quoteChar field\n            Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n            modifiersField.setAccessible(true);\n            modifiersField.setInt(quoteCharField, quoteCharField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n            quoteCharField.set(lexer, '\"');\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Failed to set quoteChar field via reflection: \" + e.getMessage());\n        }\n    }\n\n    @Test\n    void testIsQuoteChar_withQuoteChar() {\n        assertTrue(lexer.isQuoteChar('\"'));\n    }\n\n    @Test\n    void testIsQuoteChar_withNonQuoteChar() {\n        assertFalse(lexer.isQuoteChar('a'));\n\n        // Access private static final DISABLED field via reflection\n        try {\n            Field disabledField = Lexer.class.getDeclaredField(\"DISABLED\");\n            disabledField.setAccessible(true);\n            char disabledValue = disabledField.getChar(null);\n            assertFalse(lexer.isQuoteChar(disabledValue));\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Failed to access DISABLED field via reflection: \" + e.getMessage());\n        }\n\n        assertFalse(lexer.isQuoteChar('\\0'));\n        assertFalse(lexer.isQuoteChar(' '));\n        assertFalse(lexer.isQuoteChar('\\n'));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969309,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 449,
+    "prompt_tokens": 879,
+    "total_tokens": 1328,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.98
+  }
+}

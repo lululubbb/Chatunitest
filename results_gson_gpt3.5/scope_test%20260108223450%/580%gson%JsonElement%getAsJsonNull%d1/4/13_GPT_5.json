@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnUBBrPr3MbXpzyvE3dkS3ZYVMKX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullTrue_returnsThisAsJsonNull() throws Exception {\n    // Create a mock JsonNull instance via Mockito\n    JsonNull jsonNull = mock(JsonNull.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));\n    when(jsonNull.isJsonNull()).thenReturn(true);\n    when(jsonNull.toString()).thenReturn(\"JsonNull\");\n    // deepCopy returns itself for simplicity\n    when(jsonNull.deepCopy()).thenReturn(jsonNull);\n\n    JsonNull result = jsonNull.getAsJsonNull();\n\n    assertSame(jsonNull, result);\n  }\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullFalse_throwsIllegalStateException() {\n    // Instead of mocking JsonElement (which causes serialization issues in toString),\n    // create an anonymous subclass overriding isJsonNull and toString.\n\n    JsonElement jsonElement = new JsonElement() {\n      @Override\n      public boolean isJsonNull() {\n        return false;\n      }\n\n      @Override\n      public JsonElement deepCopy() {\n        return this;\n      }\n\n      @Override\n      public String toString() {\n        return \"NotJsonNull\";\n      }\n    };\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElement::getAsJsonNull);\n    assertEquals(\"Not a JSON Null: NotJsonNull\", exception.getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890955,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 325,
+    "prompt_tokens": 1033,
+    "total_tokens": 1358,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.4
+  }
+}

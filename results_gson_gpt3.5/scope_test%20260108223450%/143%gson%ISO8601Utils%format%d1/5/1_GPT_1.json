@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmByBgLZLz5JW64xOSdbG1iDM472",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind.util;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.text.ParsePosition;\nimport java.util.Date;\nimport java.util.TimeZone;\n\nimport org.junit.jupiter.api.BeforeAll;\nimport org.junit.jupiter.api.Test;\n\npublic class ISO8601UtilsTest {\n\n    private static Method formatDateMillisTzMethod;\n    private static Method checkOffsetMethod;\n    private static Method parseIntMethod;\n    private static Method padIntMethod;\n    private static Method indexOfNonDigitMethod;\n\n    @BeforeAll\n    public static void setUp() throws NoSuchMethodException {\n        formatDateMillisTzMethod = ISO8601Utils.class.getDeclaredMethod(\"format\", Date.class, boolean.class, TimeZone.class);\n        formatDateMillisTzMethod.setAccessible(true);\n\n        checkOffsetMethod = ISO8601Utils.class.getDeclaredMethod(\"checkOffset\", String.class, int.class, char.class);\n        checkOffsetMethod.setAccessible(true);\n\n        parseIntMethod = ISO8601Utils.class.getDeclaredMethod(\"parseInt\", String.class, int.class, int.class);\n        parseIntMethod.setAccessible(true);\n\n        padIntMethod = ISO8601Utils.class.getDeclaredMethod(\"padInt\", StringBuilder.class, int.class, int.class);\n        padIntMethod.setAccessible(true);\n\n        indexOfNonDigitMethod = ISO8601Utils.class.getDeclaredMethod(\"indexOfNonDigit\", String.class, int.class);\n        indexOfNonDigitMethod.setAccessible(true);\n    }\n\n    @Test\n    public void testFormat_Date() {\n        Date date = new Date(0L); // Epoch\n        String expected = ISO8601Utils.format(date, false, TimeZone.getTimeZone(\"UTC\"));\n        String actual = ISO8601Utils.format(date);\n        assertEquals(expected, actual);\n    }\n\n    @Test\n    public void testFormat_DateWithMillisTrue() throws InvocationTargetException, IllegalAccessException {\n        Date date = new Date(0L);\n        String formatted = (String) formatDateMillisTzMethod.invoke(null, date, true, TimeZone.getTimeZone(\"UTC\"));\n        // It should contain milliseconds part\n        // e.g. 1970-01-01T00:00:00.000Z\n        assertEquals(\"1970-01-01T00:00:00.000Z\", formatted);\n    }\n\n    @Test\n    public void testFormat_DateWithMillisFalse() throws InvocationTargetException, IllegalAccessException {\n        Date date = new Date(0L);\n        String formatted = (String) formatDateMillisTzMethod.invoke(null, date, false, TimeZone.getTimeZone(\"UTC\"));\n        // It should NOT contain milliseconds part\n        // e.g. 1970-01-01T00:00:00Z\n        assertEquals(\"1970-01-01T00:00:00Z\", formatted);\n    }\n\n    @Test\n    public void testFormat_DateWithNonUTC() throws InvocationTargetException, IllegalAccessException {\n        Date date = new Date(0L);\n        TimeZone tz = TimeZone.getTimeZone(\"GMT+02:00\");\n        String formatted = (String) formatDateMillisTzMethod.invoke(null, date, false, tz);\n        // Expected output with offset +02:00\n        assertEquals(\"1970-01-01T02:00:00+02:00\", formatted);\n    }\n\n    @Test\n    public void testCheckOffset_True() throws InvocationTargetException, IllegalAccessException {\n        String value = \"a:b\";\n        boolean result = (boolean) checkOffsetMethod.invoke(null, value, 1, ':');\n        assertEquals(true, result);\n    }\n\n    @Test\n    public void testCheckOffset_False() throws InvocationTargetException, IllegalAccessException {\n        String value = \"abc\";\n        boolean result = (boolean) checkOffsetMethod.invoke(null, value, 1, ':');\n        assertEquals(false, result);\n    }\n\n    @Test\n    public void testParseInt_Valid() throws InvocationTargetException, IllegalAccessException {\n        String value = \"1234567890\";\n        int result = (int) parseIntMethod.invoke(null, value, 2, 5);\n        assertEquals(345, result);\n    }\n\n    @Test\n    public void testParseInt_Invalid() {\n        String value = \"12a456\";\n        assertThrows(InvocationTargetException.class, () -> {\n            parseIntMethod.invoke(null, value, 0, 6);\n        });\n    }\n\n    @Test\n    public void testPadInt() throws InvocationTargetException, IllegalAccessException {\n        StringBuilder sb = new StringBuilder();\n        padIntMethod.invoke(null, sb, 5, 3);\n        assertEquals(\"005\", sb.toString());\n    }\n\n    @Test\n    public void testIndexOfNonDigit() throws InvocationTargetException, IllegalAccessException {\n        String str = \"12345a6789\";\n        int index = (int) indexOfNonDigitMethod.invoke(null, str, 0);\n        assertEquals(5, index);\n\n        int index2 = (int) indexOfNonDigitMethod.invoke(null, str, 6);\n        assertEquals(9, index2);\n\n        int index3 = (int) indexOfNonDigitMethod.invoke(null, \"123456789\", 0);\n        assertEquals(9, index3);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885982,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1149,
+    "prompt_tokens": 355,
+    "total_tokens": 1504,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.25
+  }
+}

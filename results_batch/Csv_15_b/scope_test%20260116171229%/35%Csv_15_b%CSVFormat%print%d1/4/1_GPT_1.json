@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaAYbft0k9IcCxMSaIwVfyK8swwO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        // Use default CSVFormat instance for tests\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrint_NullValue_NullStringNull_QuoteModeNotAll() throws IOException {\n        // Setup CSVFormat with nullString = null and quoteMode != ALL\n        CSVFormat format = new CSVFormat(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                QuoteMode.MINIMAL,\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                null, // nullString = null\n                null,\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                CSVFormat.DEFAULT.getTrim(),\n                CSVFormat.DEFAULT.getTrailingDelimiter(),\n                CSVFormat.DEFAULT.getAutoFlush());\n\n        StringBuilder out = new StringBuilder();\n        format.print(null, out, true);\n\n        // nullString is null, so should print EMPTY (empty string)\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    void testPrint_NullValue_NullStringSet_QuoteModeAll() throws IOException {\n        // Setup CSVFormat with nullString set and QuoteMode.ALL\n        CSVFormat format = new CSVFormat(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                QuoteMode.ALL,\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                \"NULL\",\n                null,\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                CSVFormat.DEFAULT.getTrim(),\n                CSVFormat.DEFAULT.getTrailingDelimiter(),\n                CSVFormat.DEFAULT.getAutoFlush());\n\n        StringBuilder out = new StringBuilder();\n        format.print(null, out, false);\n\n        // Should print quoted nullString \"NULL\"\n        String expected = format.getQuoteCharacter() + \"NULL\" + format.getQuoteCharacter();\n        assertEquals(expected, out.toString());\n    }\n\n    @Test\n    void testPrint_ValueIsCharSequence_TrimFalse() throws IOException {\n        // Setup CSVFormat with trim = false\n        CSVFormat format = new CSVFormat(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                QuoteMode.MINIMAL,\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                null,\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                false, // trim = false\n                CSVFormat.DEFAULT.getTrailingDelimiter(),\n                CSVFormat.DEFAULT.getAutoFlush());\n\n        StringBuilder out = new StringBuilder();\n        CharSequence value = \"  testValue  \";\n        format.print(value, out, true);\n\n        // The printed value should include spaces because trim is false\n        assertTrue(out.toString().contains(\"testValue\"));\n        assertTrue(out.toString().contains(\"  \"));\n    }\n\n    @Test\n    void testPrint_ValueIsNotCharSequence_TrimTrue() throws IOException {\n        // Setup CSVFormat with trim = true\n        CSVFormat format = new CSVFormat(\n                CSVFormat.DEFAULT.getDelimiter(),\n                CSVFormat.DEFAULT.getQuoteCharacter(),\n                QuoteMode.MINIMAL,\n                CSVFormat.DEFAULT.getCommentMarker(),\n                CSVFormat.DEFAULT.getEscapeCharacter(),\n                CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                CSVFormat.DEFAULT.getRecordSeparator(),\n                CSVFormat.DEFAULT.getNullString(),\n                null,\n                CSVFormat.DEFAULT.getHeader(),\n                CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                true, // trim = true\n                CSVFormat.DEFAULT.getTrailingDelimiter(),\n                CSVFormat.DEFAULT.getAutoFlush());\n\n        StringBuilder out = new StringBuilder();\n        Integer value = 12345;\n        format.print(value, out, false);\n\n        // The printed value should be \"12345\"\n        assertTrue(out.toString().contains(\"12345\"));\n    }\n\n    @Test\n    void testPrint_InvokesPrivatePrintMethod() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n        // Spy on CSVFormat to verify private print method invocation\n        CSVFormat spyFormat = spy(csvFormat);\n\n        StringBuilder out = new StringBuilder();\n        String value = \"value\";\n\n        // Use reflection to get private print method\n        Method privatePrint = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class,\n                int.class, Appendable.class, boolean.class);\n        privatePrint.setAccessible(true);\n\n        // Call focal print method\n        spyFormat.print(value, out, true);\n\n        // Verify private print method was called with expected parameters\n        verify(spyFormat, times(1)).print(eq(value), eq(value), eq(0), eq(value.length()), eq(out), eq(true));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768554750,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1220,
+    "prompt_tokens": 1953,
+    "total_tokens": 3173,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.74
+  }
+}

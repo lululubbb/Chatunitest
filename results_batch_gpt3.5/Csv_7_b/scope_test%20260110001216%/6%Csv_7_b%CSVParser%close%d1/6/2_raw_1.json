@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVParserTest {\n\n    private CSVParser parser;\n    private Lexer lexerMock;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        lexerMock = mock(Lexer.class);\n        parser = Mockito.mock(CSVParser.class, Mockito.CALLS_REAL_METHODS);\n        // Use reflection to set the private final lexer field\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(parser, lexerMock);\n    }\n\n    @Test\n    void testClose_whenLexerNotNull_callsLexerClose() throws IOException {\n        parser.close();\n        verify(lexerMock, times(1)).close();\n    }\n\n    @Test\n    void testClose_whenLexerIsNull_noException() throws Exception {\n        // Set lexer field to null via reflection\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(parser, null);\n\n        parser.close();\n        // No exception expected, no interactions with lexerMock\n        verifyNoInteractions(lexerMock);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_7_b/scope_test%20260110001216%/6%Csv_7_b%CSVParser%close%d1/6/runtemp/Csv_7_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n/home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_7_b/scope_test%20260110001216%/6%Csv_7_b%CSVParser%close%d1/6/runtemp/Csv_7_b/.test_suite/org/apache/commons/csv/CSVParser_6_6Test.java:44: 错误: 找不到符号\n        verifyNoInteractions(lexerMock);\n        ^\n  符号:   方法 verifyNoInteractions(Lexer)\n  位置: 类 CSVParser_6_6Test\n1 个错误\n1 个警告",
+  "prompt_tokens": 481,
+  "completion_tokens": 271,
+  "total_tokens": 752,
+  "llm_elapsed_time_seconds": 7.06
+}

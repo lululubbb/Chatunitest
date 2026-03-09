@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZDVxagTJLAZ4AhcDZ79C9dKFkXt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\npublic class CSVPrinterTest {\n\n    private CSVFormat formatMock;\n    private Appendable outMock;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        formatMock = mock(CSVFormat.class);\n        outMock = mock(Appendable.class);\n        printer = new CSVPrinter(outMock, formatMock);\n\n        // Set newRecord to true initially by reflection (default true)\n        Field newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, true);\n    }\n\n    @Test\n    public void testPrintComment_noCommentMarkerSet() throws IOException {\n        when(formatMock.isCommentMarkerSet()).thenReturn(false);\n\n        printer.printComment(\"any comment\");\n\n        verify(formatMock).isCommentMarkerSet();\n        verify(formatMock, times(1)).isCommentMarkerSet();\n        verifyNoMoreInteractions(formatMock);\n        verifyNoInteractions(outMock);\n    }\n\n    @Test\n    public void testPrintComment_newRecordTrue_singleLineComment() throws IOException {\n        when(formatMock.isCommentMarkerSet()).thenReturn(true);\n        when(formatMock.getCommentMarker()).thenReturn('#');\n\n        String comment = \"comment\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n\n        inOrder.verify(outMock).append('#');\n        inOrder.verify(outMock).append(' ');\n\n        for (char c : comment.toCharArray()) {\n            inOrder.verify(outMock).append(c);\n        }\n\n        inOrder.verify(outMock).append('\\n');\n\n        verify(formatMock, times(2)).isCommentMarkerSet();\n        verify(formatMock, times(1)).getCommentMarker();\n        verifyNoMoreInteractions(formatMock);\n        verifyNoMoreInteractions(outMock);\n    }\n\n    @Test\n    public void testPrintComment_newRecordFalse_singleLineComment() throws Exception {\n        when(formatMock.isCommentMarkerSet()).thenReturn(true);\n        when(formatMock.getCommentMarker()).thenReturn('!');\n\n        Field newRecordField = CSVPrinter.class.getDeclaredField(\"newRecord\");\n        newRecordField.setAccessible(true);\n        newRecordField.set(printer, false);\n\n        String comment = \"test\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n\n        inOrder.verify(outMock).append('\\n');\n\n        inOrder.verify(outMock).append('!');\n        inOrder.verify(outMock).append(' ');\n\n        for (char c : comment.toCharArray()) {\n            inOrder.verify(outMock).append(c);\n        }\n\n        inOrder.verify(outMock).append('\\n');\n\n        verify(formatMock, times(2)).isCommentMarkerSet();\n        verify(formatMock, times(1)).getCommentMarker();\n        verifyNoMoreInteractions(formatMock);\n        verifyNoMoreInteractions(outMock);\n    }\n\n    @Test\n    public void testPrintComment_multilineCommentWithCRLF() throws IOException {\n        when(formatMock.isCommentMarkerSet()).thenReturn(true);\n        when(formatMock.getCommentMarker()).thenReturn('%');\n\n        String comment = \"line1\\r\\nline2\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n\n        inOrder.verify(outMock).append('%');\n        inOrder.verify(outMock).append(' ');\n\n        inOrder.verify(outMock).append('l');\n        inOrder.verify(outMock).append('i');\n        inOrder.verify(outMock).append('n');\n        inOrder.verify(outMock).append('e');\n        inOrder.verify(outMock).append('1');\n\n        inOrder.verify(outMock).append('\\n');\n\n        inOrder.verify(outMock).append('%');\n        inOrder.verify(outMock).append(' ');\n\n        inOrder.verify(outMock).append('l');\n        inOrder.verify(outMock).append('i');\n        inOrder.verify(outMock).append('n');\n        inOrder.verify(outMock).append('e');\n        inOrder.verify(outMock).append('2');\n\n        inOrder.verify(outMock).append('\\n');\n\n        verify(formatMock, times(2)).isCommentMarkerSet();\n        verify(formatMock, times(1)).getCommentMarker();\n        verifyNoMoreInteractions(formatMock);\n        verifyNoMoreInteractions(outMock);\n    }\n\n    @Test\n    public void testPrintComment_multilineCommentWithLF() throws IOException {\n        when(formatMock.isCommentMarkerSet()).thenReturn(true);\n        when(formatMock.getCommentMarker()).thenReturn('*');\n\n        String comment = \"line1\\nline2\";\n\n        printer.printComment(comment);\n\n        InOrder inOrder = inOrder(outMock);\n\n        inOrder.verify(outMock).append('*');\n        inOrder.verify(outMock).append(' ');\n\n        inOrder.verify(outMock).append('l');\n        inOrder.verify(outMock).append('i');\n        inOrder.verify(outMock).append('n');\n        inOrder.verify(outMock).append('e');\n        inOrder.verify(outMock).append('1');\n\n        inOrder.verify(outMock).append('\\n');\n\n        inOrder.verify(outMock).append('*');\n        inOrder.verify(outMock).append(' ');\n\n        inOrder.verify(outMock).append('l');\n        inOrder.verify(outMock).append('i');\n        inOrder.verify(outMock).append('n');\n        inOrder.verify(outMock).append('e');\n        inOrder.verify(outMock).append('2');\n\n        inOrder.verify(outMock).append('\\n');\n\n        verify(formatMock, times(2)).isCommentMarkerSet();\n        verify(formatMock, times(1)).getCommentMarker();\n        verifyNoMoreInteractions(formatMock);\n        verify(outMock, never()).append(anyChar()); // replaced verifyNoInteractions(outMock)\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551089,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1259,
+    "prompt_tokens": 2008,
+    "total_tokens": 3267,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.81
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnC99TEAYQyIBKhXjvCszVanIBTh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.Date;\n\nclass DefaultDateTypeAdapterTest {\n\n    private DefaultDateTypeAdapter<Date> adapter;\n    private DefaultDateTypeAdapter.DateType<Date> dateTypeMock;\n\n    @BeforeEach\n    void setUp() {\n        dateTypeMock = mock(DefaultDateTypeAdapter.DateType.class);\n        adapter = new DefaultDateTypeAdapter<>(dateTypeMock, \"yyyy-MM-dd\");\n    }\n\n    @Test\n    void read_shouldReturnNull_whenJsonTokenIsNull() throws IOException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.NULL);\n\n        when(jsonReader.nextNull()).thenAnswer(invocation -> null);\n\n        Date result = adapter.read(jsonReader);\n\n        verify(jsonReader).peek();\n        verify(jsonReader).nextNull();\n        assertNull(result);\n    }\n\n    @Test\n    void read_shouldDeserializeDateAndReturnDeserializedValue() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        JsonReader jsonReader = mock(JsonReader.class);\n        when(jsonReader.peek()).thenReturn(JsonToken.STRING);\n\n        // Prepare a Date instance to be returned by deserializeToDate\n        Date dateInstance = new Date();\n\n        // Use reflection to invoke private method deserializeToDate\n        Method method = DefaultDateTypeAdapter.class.getDeclaredMethod(\"deserializeToDate\", JsonReader.class);\n        method.setAccessible(true);\n        // We need to mock deserializeToDate to return our dateInstance\n        // But since it is private, we cannot mock it directly.\n        // So instead, we create a spy on adapter and stub deserializeToDate.\n        DefaultDateTypeAdapter<Date> spyAdapter = Mockito.spy(adapter);\n        doReturn(dateInstance).when(spyAdapter).deserializeToDate(jsonReader);\n\n        // Mock dateType.deserialize to return a specific value\n        Date deserializedDate = new Date(dateInstance.getTime() + 1000);\n        when(dateTypeMock.deserialize(dateInstance)).thenReturn(deserializedDate);\n\n        Date result = spyAdapter.read(jsonReader);\n\n        verify(jsonReader).peek();\n        verify(spyAdapter).deserializeToDate(jsonReader);\n        verify(dateTypeMock).deserialize(dateInstance);\n        assertEquals(deserializedDate, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889837,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 531,
+    "prompt_tokens": 1079,
+    "total_tokens": 1610,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.78
+  }
+}

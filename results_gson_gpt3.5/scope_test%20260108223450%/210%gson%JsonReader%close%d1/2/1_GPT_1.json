@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm6ekAPqBFnLnfkBPubKFXHGIbet",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.doThrow;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.verify;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private Reader mockReader;\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n  }\n\n  @Test\n  void close_shouldResetFieldsAndCloseReader() throws Exception {\n    // Arrange: set fields to non-default values to verify they are reset\n    setField(jsonReader, \"peeked\", 123);\n    setField(jsonReader, \"stackSize\", 5);\n    int[] stack = (int[]) getField(jsonReader, \"stack\");\n    stack[0] = 999;\n\n    // Act\n    jsonReader.close();\n\n    // Assert peeked reset to PEEKED_NONE (0)\n    assertEquals(0, getField(jsonReader, \"peeked\"));\n\n    // Assert stack[0] set to JsonScope.CLOSED (6)\n    assertEquals(JsonScope.CLOSED, ((int[]) getField(jsonReader, \"stack\"))[0]);\n\n    // Assert stackSize reset to 1\n    assertEquals(1, getField(jsonReader, \"stackSize\"));\n\n    // Verify reader.close() called\n    verify(mockReader).close();\n  }\n\n  @Test\n  void close_shouldThrowIOExceptionWhenReaderCloseFails() throws Exception {\n    // Arrange\n    doThrow(new IOException(\"close failed\")).when(mockReader).close();\n\n    // Act & Assert\n    IOException thrown = null;\n    try {\n      jsonReader.close();\n    } catch (IOException e) {\n      thrown = e;\n    }\n    assertEquals(\"close failed\", thrown.getMessage());\n  }\n\n  // Helper to set private fields via reflection\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n\n  // Helper to get private fields via reflection\n  private <T> T getField(Object target, String fieldName) throws Exception {\n    Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    T value = (T) field.get(target);\n    return value;\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885652,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 539,
+    "prompt_tokens": 1023,
+    "total_tokens": 1562,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.28
+  }
+}

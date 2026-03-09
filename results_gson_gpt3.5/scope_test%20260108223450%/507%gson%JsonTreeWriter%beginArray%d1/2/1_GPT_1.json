@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmqRlYSKjCBpeVwJUkETcPDdjsAd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void testBeginArray_shouldReturnThisAndAddNewJsonArrayToStack() throws IOException, NoSuchFieldException, IllegalAccessException {\n    // Call beginArray\n    JsonWriter returned = jsonTreeWriter.beginArray();\n\n    // Returned object should be the same instance\n    assertSame(jsonTreeWriter, returned);\n\n    // Use reflection to access private field 'stack'\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    // The stack should not be empty\n    assertFalse(stack.isEmpty());\n\n    // The last element in stack should be a JsonArray\n    JsonElement lastElement = stack.get(stack.size() - 1);\n    assertTrue(lastElement instanceof JsonArray);\n\n    // Use reflection to access private method peek to verify top of stack\n    // peek() is private, so we use reflection to invoke it\n    JsonElement peeked = invokePrivatePeek(jsonTreeWriter);\n    assertSame(lastElement, peeked);\n  }\n\n  private JsonElement invokePrivatePeek(JsonTreeWriter writer) {\n    try {\n      var method = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n      method.setAccessible(true);\n      return (JsonElement) method.invoke(writer);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888491,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 437,
+    "prompt_tokens": 525,
+    "total_tokens": 962,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.64
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutUmJkmUHmp4ImowTaROarfz3LZl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Constructor;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsEscapeCharacterSet_whenEscapeCharacterIsNull() throws Exception {\n        // Use DEFAULT which has escapeCharacter null\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertFalse(format.isEscapeCharacterSet());\n    }\n\n    @Test\n    void testIsEscapeCharacterSet_whenEscapeCharacterIsSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\');\n        assertTrue(format.isEscapeCharacterSet());\n    }\n\n    @Test\n    void testIsEscapeCharacterSet_withReflection_escapeCharacterNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Create a new instance with escapeCharacter null using reflection since fields are final\n        CSVFormat newFormat = createCSVFormatWithEscapeCharacter(null);\n        assertFalse(newFormat.isEscapeCharacterSet());\n    }\n\n    @Test\n    void testIsEscapeCharacterSet_withReflection_escapeCharacterSet() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Create a new instance with escapeCharacter set to '\\\\' using reflection since fields are final\n        CSVFormat newFormat = createCSVFormatWithEscapeCharacter('\\\\');\n        assertTrue(newFormat.isEscapeCharacterSet());\n    }\n\n    private CSVFormat createCSVFormatWithEscapeCharacter(Character escapeCharacter) throws Exception {\n        // Get constructor with all parameters\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class,\n                boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Use DEFAULT's other field values\n        CSVFormat defaultFormat = CSVFormat.DEFAULT;\n\n        return constructor.newInstance(\n                defaultFormat.getDelimiter(),\n                defaultFormat.getQuoteCharacter(),\n                defaultFormat.getQuoteMode(),\n                defaultFormat.getCommentMarker(),\n                escapeCharacter,\n                defaultFormat.getIgnoreSurroundingSpaces(),\n                defaultFormat.getIgnoreEmptyLines(),\n                defaultFormat.getRecordSeparator(),\n                defaultFormat.getNullString(),\n                defaultFormat.getHeader(),\n                defaultFormat.getSkipHeaderRecord(),\n                defaultFormat.getAllowMissingColumnNames()\n        );\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675728,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 481,
+    "prompt_tokens": 1753,
+    "total_tokens": 2234,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.7
+  }
+}

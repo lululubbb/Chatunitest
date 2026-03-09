@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\npublic class RuntimeTypeAdapterFactoryTest {\n\n  @Test\n  void testOfWithBaseType() {\n    RuntimeTypeAdapterFactory<Object> factory = RuntimeTypeAdapterFactory.of(Object.class);\n    assertNotNull(factory);\n    // Using reflection to verify private fields\n    try {\n      var baseTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"baseType\");\n      baseTypeField.setAccessible(true);\n      assertEquals(Object.class, baseTypeField.get(factory));\n\n      var typeFieldNameField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"typeFieldName\");\n      typeFieldNameField.setAccessible(true);\n      assertEquals(\"type\", typeFieldNameField.get(factory));\n\n      var maintainTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"maintainType\");\n      maintainTypeField.setAccessible(true);\n      assertFalse(maintainTypeField.getBoolean(factory));\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection access failed: \" + e.getMessage());\n    }\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 492,
+  "completion_tokens": 236,
+  "total_tokens": 728,
+  "llm_elapsed_time_seconds": 4.53
+}

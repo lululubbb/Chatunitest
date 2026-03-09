@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOb1RIyIf2kzdFW2UPeYkE0OsAxO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testReadReturnsCharAndUpdatesLastCharNoNewline() throws IOException {\n        ExtendedBufferedReader spyReader = Mockito.spy(extendedBufferedReader);\n        doReturn((int) 'a').when(spyReader).read();\n\n        // Because read() is overridden, calling super.read() in read() will call BufferedReader.read()\n        // We need to mock BufferedReader.read() but it's not possible directly, so we spy and override read() call\n        // Instead, we mock the super.read() by spying and calling the real method for read(), then override super.read() by mocking read() of BufferedReader\n\n        // We cannot mock super.read() directly; workaround: create a subclass with a method to expose super.read()\n        // But here, we just spy and mock the super.read() call via doCallRealMethod and doReturn, but this is complicated.\n        // Instead, use a subclass to expose super.read() for testing or use reflection.\n\n        // Alternative: Create a subclass to override super.read() to return desired values.\n        ExtendedBufferedReader testReader = new ExtendedBufferedReader(mockReader) {\n            @Override\n            public int read() throws IOException {\n                return (int) 'a';\n            }\n        };\n\n        // But this overrides the focal method itself, so no.\n        // So better to test the focal method via reflection to call the original method.\n\n        // Instead, we create a spy and mock the super.read() call via reflection:\n        // But super.read() is called inside read(), so spy.read() calls read(), which calls super.read(), which calls BufferedReader.read()\n\n        // So we mock the Reader to provide data to BufferedReader.read()\n\n        // Setup mockReader to return 'a' then EOF\n        when(mockReader.read()).thenReturn((int) 'a', -1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals('a', result);\n        // lastChar should be 'a', lineCounter 0\n        assertEquals('a', getPrivateField(reader, \"lastChar\"));\n        assertEquals(0, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    @Test\n    void testReadReturnsNewlineAndIncrementsLineCounter() throws IOException {\n        when(mockReader.read()).thenReturn((int) '\\n', -1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals('\\n', result);\n        assertEquals('\\n', getPrivateField(reader, \"lastChar\"));\n        assertEquals(1, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    @Test\n    void testReadReturnsEOF() throws IOException {\n        when(mockReader.read()).thenReturn(-1);\n\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(mockReader);\n\n        int result = reader.read();\n        assertEquals(-1, result);\n        assertEquals(-1, getPrivateField(reader, \"lastChar\"));\n        assertEquals(0, getPrivateField(reader, \"lineCounter\"));\n    }\n\n    // Utility method to read private fields via reflection\n    private int getPrivateField(ExtendedBufferedReader reader, String fieldName) {\n        try {\n            java.lang.reflect.Field field = ExtendedBufferedReader.class.getDeclaredField(fieldName);\n            field.setAccessible(true);\n            return field.getInt(reader);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748591,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 823,
+    "prompt_tokens": 304,
+    "total_tokens": 1127,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.05
+  }
+}

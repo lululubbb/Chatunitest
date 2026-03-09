@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutTKN04rvCmWIp7lidjuvbpmPHzh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    private Reader mockReader;\n\n    @BeforeEach\n    public void setUp() {\n        mockReader = mock(Reader.class);\n    }\n\n    @Test\n    public void testParseReturnsCSVParser() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVParser parser = format.parse(mockReader);\n        assertNotNull(parser);\n        // Verify that CSVParser was created with the Reader and this CSVFormat instance\n        assertEquals(format, getCSVParserFormat(parser));\n    }\n\n    @Test\n    public void testParseWithNullReaderThrowsException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertThrows(NullPointerException.class, () -> {\n            format.parse(null);\n        });\n    }\n\n    // Helper method to access private 'format' field inside CSVParser via reflection\n    private CSVFormat getCSVParserFormat(CSVParser parser) {\n        try {\n            java.lang.reflect.Field formatField = CSVParser.class.getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            return (CSVFormat) formatField.get(parser);\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Reflection on CSVParser.format failed: \" + e.getMessage());\n            return null;\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767675638,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 311,
+    "prompt_tokens": 1349,
+    "total_tokens": 1660,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.15
+  }
+}

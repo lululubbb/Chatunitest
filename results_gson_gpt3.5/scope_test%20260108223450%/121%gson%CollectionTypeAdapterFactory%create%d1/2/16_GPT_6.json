@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnDzpQWRUSjMo7lN7aWo1Vgr8Ufz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Type;\nimport java.util.Collection;\nimport java.util.List;\n\nclass CollectionTypeAdapterFactoryTest {\n\n  private ConstructorConstructor constructorConstructor;\n  private CollectionTypeAdapterFactory factory;\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    constructorConstructor = mock(ConstructorConstructor.class);\n    factory = new CollectionTypeAdapterFactory(constructorConstructor);\n    gson = mock(Gson.class);\n  }\n\n  @Test\n  void create_returnsNull_whenRawTypeIsNotCollection() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = factory.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_returnsAdapter_whenRawTypeIsCollection() throws Exception {\n    // Prepare a Collection type token using an anonymous subclass to avoid capture issues\n    TypeToken<List<String>> listTypeToken = new TypeToken<List<String>>() {};\n    Type elementType = String.class;\n    Class<?> rawType = listTypeToken.getRawType();\n    assertTrue(Collection.class.isAssignableFrom(rawType));\n\n    // Mock $Gson$Types.getCollectionElementType to return elementType\n    try (MockedStatic<com.google.gson.internal.$Gson$Types> mockedTypes = Mockito.mockStatic(com.google.gson.internal.$Gson$Types.class)) {\n      mockedTypes.when(() -> com.google.gson.internal.$Gson$Types.getCollectionElementType(listTypeToken.getType(), rawType))\n          .thenReturn(elementType);\n\n      // Mock gson.getAdapter to return a dummy TypeAdapter for elementType\n      @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n      TypeAdapter elementAdapter = mock(TypeAdapter.class);\n      when(gson.getAdapter(TypeToken.get(elementType))).thenReturn(elementAdapter);\n\n      // Mock constructorConstructor.get to return a dummy ObjectConstructor\n      @SuppressWarnings(\"unchecked\")\n      ObjectConstructor<List<String>> objectConstructor = mock(ObjectConstructor.class);\n      when(constructorConstructor.get(listTypeToken)).thenReturn(objectConstructor);\n\n      // Call create\n      @SuppressWarnings(\"unchecked\")\n      TypeAdapter<List<String>> adapter = factory.create(gson, listTypeToken);\n\n      assertNotNull(adapter);\n      // The returned adapter class name should be CollectionTypeAdapterFactory$Adapter\n      assertEquals(\"com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter\", adapter.getClass().getName());\n\n      // Verify that the adapter's element type is correctly set via reflection\n      Class<?> adapterClass = adapter.getClass();\n\n      java.lang.reflect.Field elementTypeField = adapterClass.getDeclaredField(\"elementType\");\n      elementTypeField.setAccessible(true);\n      assertEquals(elementType, elementTypeField.get(adapter));\n\n      java.lang.reflect.Field elementTypeAdapterField = adapterClass.getDeclaredField(\"elementTypeAdapter\");\n      elementTypeAdapterField.setAccessible(true);\n      assertSame(elementAdapter, elementTypeAdapterField.get(adapter));\n\n      java.lang.reflect.Field constructorField = adapterClass.getDeclaredField(\"constructor\");\n      constructorField.setAccessible(true);\n      assertSame(objectConstructor, constructorField.get(adapter));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889951,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 719,
+    "prompt_tokens": 1498,
+    "total_tokens": 2217,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.68
+  }
+}

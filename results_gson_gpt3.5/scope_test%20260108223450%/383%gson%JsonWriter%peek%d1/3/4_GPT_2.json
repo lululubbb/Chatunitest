@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmNbirUzbHTORKKAn1Zyxa9mLt5q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n    private JsonWriter jsonWriter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    public void setUp() {\n        stringWriter = new StringWriter();\n        jsonWriter = new JsonWriter(stringWriter);\n    }\n\n    @Test\n    public void peek_stackSizeZero_throwsIllegalStateException() throws Exception {\n        // Use reflection to set stackSize to 0 explicitly (should be 0 by default)\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 0);\n\n        Method peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {\n            try {\n                peekMethod.invoke(jsonWriter);\n            } catch (InvocationTargetException e) {\n                // Rethrow the cause to be caught by assertThrows\n                throw e.getCause();\n            }\n        });\n        assertEquals(\"JsonWriter is closed.\", thrown.getMessage());\n    }\n\n    @Test\n    public void peek_stackSizePositive_returnsTopOfStack() throws Exception {\n        // Set stackSize to 3\n        Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n        stackSizeField.setAccessible(true);\n        stackSizeField.setInt(jsonWriter, 3);\n\n        // Create stack array and set values\n        Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n        stackField.setAccessible(true);\n        int[] stackArray = new int[32];\n        stackArray[0] = 10;\n        stackArray[1] = 20;\n        stackArray[2] = 30; // top of stack for stackSize=3\n        stackField.set(jsonWriter, stackArray);\n\n        Method peekMethod = JsonWriter.class.getDeclaredMethod(\"peek\");\n        peekMethod.setAccessible(true);\n\n        int result = (int) peekMethod.invoke(jsonWriter);\n\n        assertEquals(30, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886703,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 496,
+    "prompt_tokens": 1616,
+    "total_tokens": 2112,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.06
+  }
+}

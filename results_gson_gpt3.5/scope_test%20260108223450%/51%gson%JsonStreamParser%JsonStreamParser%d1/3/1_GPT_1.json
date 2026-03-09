@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlqMsYVu7FILQcSixVnpSScijjWX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.MalformedJsonException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.NoSuchElementException;\n\npublic class JsonStreamParserTest {\n\n  private JsonReader mockReader;\n  private JsonStreamParser parser;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Mock JsonReader\n    mockReader = mock(JsonReader.class);\n    // Create JsonStreamParser with dummy Reader, then inject mockReader via reflection\n    parser = new JsonStreamParser(new StringReader(\"{}\"));\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    parserField.set(parser, mockReader);\n  }\n\n  @Test\n  public void testConstructor_withReader_setsLenient() throws Exception {\n    Reader reader = new StringReader(\"{}\");\n    JsonStreamParser p = new JsonStreamParser(reader);\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(p);\n    assertNotNull(jsonReader);\n    // JsonReader#setLenient is void so we cannot verify directly, but no exceptions means success\n  }\n\n  @Test\n  public void testConstructor_withString_setsLenient() throws Exception {\n    JsonStreamParser p = new JsonStreamParser(\"{}\");\n    Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n    parserField.setAccessible(true);\n    JsonReader jsonReader = (JsonReader) parserField.get(p);\n    assertNotNull(jsonReader);\n  }\n\n  @Test\n  public void testHasNext_true() throws IOException {\n    when(mockReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    assertTrue(parser.hasNext());\n    verify(mockReader).peek();\n  }\n\n  @Test\n  public void testHasNext_false() throws IOException {\n    when(mockReader.peek()).thenReturn(JsonToken.END_DOCUMENT);\n    assertFalse(parser.hasNext());\n    verify(mockReader).peek();\n  }\n\n  @Test\n  public void testHasNext_throwsIOException() throws IOException {\n    when(mockReader.peek()).thenThrow(new IOException(\"io error\"));\n    assertThrows(RuntimeException.class, () -> parser.hasNext());\n  }\n\n  @Test\n  public void testNext_returnsJsonElement() throws IOException {\n    // Mock Streams.parse to return a dummy JsonElement\n    JsonElement dummyElement = mock(JsonElement.class);\n\n    // Spy Streams class to override parse method\n    // Since Streams.parse is static final, we cannot mock it easily here.\n    // Instead, we will mock parser.peek() and parser.next* methods to simulate normal flow.\n    when(mockReader.peek()).thenReturn(JsonToken.STRING);\n    // We cannot mock Streams.parse directly, so we use partial real method call\n    // Instead, we test that next() calls Streams.parse(parser)\n\n    // We invoke next() and expect no exceptions (we can't verify Streams.parse output here)\n    // So we test next() throws no exception with valid peek token\n    try {\n      parser.next();\n    } catch (Exception e) {\n      fail(\"next() threw exception: \" + e);\n    }\n  }\n\n  @Test\n  public void testNext_noSuchElementException() throws IOException {\n    when(mockReader.peek()).thenReturn(JsonToken.END_DOCUMENT);\n    assertThrows(NoSuchElementException.class, () -> parser.next());\n  }\n\n  @Test\n  public void testNext_malformedJsonException() throws IOException {\n    when(mockReader.peek()).thenReturn(JsonToken.BEGIN_OBJECT);\n    // Simulate Streams.parse throwing MalformedJsonException by mocking parser methods to throw\n    doThrow(new MalformedJsonException(\"malformed\")).when(mockReader).peek();\n    // Because next calls Streams.parse(parser) which calls parser.peek() internally, this will throw\n\n    JsonStreamParser p = new JsonStreamParser(new StringReader(\"{}\"));\n    try {\n      Field parserField = JsonStreamParser.class.getDeclaredField(\"parser\");\n      parserField.setAccessible(true);\n      parserField.set(p, mockReader);\n    } catch (Exception ignored) {}\n\n    assertThrows(JsonParseException.class, () -> p.next());\n  }\n\n  @Test\n  public void testRemove_throwsUnsupportedOperationException() {\n    assertThrows(UnsupportedOperationException.class, () -> parser.remove());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884642,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 965,
+    "prompt_tokens": 301,
+    "total_tokens": 1266,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.19
+  }
+}

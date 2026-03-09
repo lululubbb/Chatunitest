@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwA2vFkekGrtgIRwXScOrTnIADn13",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    private CSVRecord csvRecord;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Prepare dummy values array\n        String[] values = new String[] {\"a\", \"b\", \"c\"};\n        // Prepare dummy mapping\n        Map<String, Integer> mapping = new HashMap<>();\n        mapping.put(\"key1\", 0);\n        mapping.put(\"key2\", 1);\n        // Create instance via constructor\n        csvRecord = new CSVRecord(values, mapping, \"comment\", 1L);\n    }\n\n    @Test\n    void testIsMapped_mappingContainsKey_true() {\n        assertTrue(csvRecord.isMapped(\"key1\"));\n        assertTrue(csvRecord.isMapped(\"key2\"));\n    }\n\n    @Test\n    void testIsMapped_mappingDoesNotContainKey_false() {\n        assertFalse(csvRecord.isMapped(\"unknown\"));\n    }\n\n    @Test\n    void testIsMapped_mappingNull_false() throws Exception {\n        // Use reflection to set private final mapping field to null\n        Field mappingField = CSVRecord.class.getDeclaredField(\"mapping\");\n        mappingField.setAccessible(true);\n\n        // Remove final modifier from the field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(mappingField, mappingField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        mappingField.set(csvRecord, null);\n\n        assertFalse(csvRecord.isMapped(\"key1\"));\n    }\n\n    @Test\n    void testIsMapped_nullKey_false() {\n        // mapping contains keys, but null key should return false since containsKey(null) is false\n        assertFalse(csvRecord.isMapped(null));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767977677,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 411,
+    "prompt_tokens": 821,
+    "total_tokens": 1232,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.37
+  }
+}

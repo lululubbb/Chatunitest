@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlUzLmj7VAXPbpBLZdnchk14XK2u",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n    private JsonPrimitive jsonPrimitive;\n\n    @BeforeEach\n    public void setUp() {\n        // no default constructor, will create per test\n    }\n\n    private void setValue(JsonPrimitive instance, Object value) throws Exception {\n        Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n        valueField.setAccessible(true);\n        valueField.set(instance, value);\n    }\n\n    private byte invokeGetAsByte(JsonPrimitive instance) throws Exception {\n        Method method = JsonPrimitive.class.getDeclaredMethod(\"getAsByte\");\n        method.setAccessible(true);\n        return (byte) method.invoke(instance);\n    }\n\n    @Test\n    public void testGetAsByte_withNumberValue() throws Exception {\n        // Arrange: create JsonPrimitive with Number value\n        jsonPrimitive = new JsonPrimitive( (Number) 123 );\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert\n        assertEquals((byte)123, result);\n    }\n\n    @Test\n    public void testGetAsByte_withLazilyParsedNumberValue() throws Exception {\n        // Arrange: LazilyParsedNumber is a subclass of Number\n        jsonPrimitive = new JsonPrimitive( new LazilyParsedNumber(\"127\") );\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert\n        assertEquals((byte)127, result);\n    }\n\n    @Test\n    public void testGetAsByte_withStringValue() throws Exception {\n        // Arrange: create JsonPrimitive with String that parses to byte\n        jsonPrimitive = new JsonPrimitive(\"42\");\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert\n        assertEquals((byte)42, result);\n    }\n\n    @Test\n    public void testGetAsByte_withStringValue_negative() throws Exception {\n        // Arrange: negative byte value string\n        jsonPrimitive = new JsonPrimitive(\"-128\");\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert\n        assertEquals((byte)-128, result);\n    }\n\n    @Test\n    public void testGetAsByte_withStringValue_nonNumeric_throwsNumberFormatException() throws Exception {\n        // Arrange: create JsonPrimitive with non-numeric string\n        jsonPrimitive = new JsonPrimitive(\"notANumber\");\n        // Act & Assert\n        assertThrows(NumberFormatException.class, () -> invokeGetAsByte(jsonPrimitive));\n    }\n\n    @Test\n    public void testGetAsByte_withNumberValue_outOfByteRange() throws Exception {\n        // Arrange: Number larger than byte max value\n        jsonPrimitive = new JsonPrimitive(300); // 300 > 127\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert: byteValue truncates, expect (byte)300 == 44\n        assertEquals((byte)300, result);\n    }\n\n    @Test\n    public void testGetAsByte_withNumberValue_negativeOutOfByteRange() throws Exception {\n        // Arrange: Number less than byte min value\n        jsonPrimitive = new JsonPrimitive(-130); // -130 < -128\n        // Act\n        byte result = invokeGetAsByte(jsonPrimitive);\n        // Assert: byteValue truncates, expect (byte)-130 == 126\n        assertEquals((byte)-130, result);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883317,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 748,
+    "prompt_tokens": 426,
+    "total_tokens": 1174,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.77
+  }
+}

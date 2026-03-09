@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvmt7n4zbcd7htaViUemYMdA7cVpa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport com.google.gson.internal.LinkedTreeMap.Node;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\nclass LinkedTreeMap_FindByObjectTest {\n\n    private LinkedTreeMap<String, String> map;\n\n    @BeforeEach\n    public void setUp() {\n        // Using default constructor (assumes natural ordering)\n        map = new LinkedTreeMap<>();\n    }\n\n    @Test\n    public void testFindByObject_withExistingKey_returnsNode() throws Exception {\n        // Put a key-value pair\n        map.put(\"key1\", \"value1\");\n\n        // Access private findByObject via reflection\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        // Retrieve node for existing key\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, \"key1\");\n\n        assertNotNull(node);\n        assertEquals(\"key1\", node.key);\n        assertEquals(\"value1\", node.value);\n    }\n\n    @Test\n    public void testFindByObject_withNonExistingKey_returnsNull() throws Exception {\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, \"nonExistingKey\");\n\n        assertNull(node);\n    }\n\n    @Test\n    public void testFindByObject_withNullKey_returnsNull() throws Exception {\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(map, (Object) null);\n\n        assertNull(node);\n    }\n\n    @Test\n    public void testFindByObject_withIncompatibleKeyType_returnsNull() throws Exception {\n        // Create a map with natural ordering (String keys)\n        LinkedTreeMap<String, String> stringMap = new LinkedTreeMap<>();\n\n        // Put a key-value pair to have some content\n        stringMap.put(\"key1\", \"value1\");\n\n        Method findByObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n        findByObjectMethod.setAccessible(true);\n\n        // Pass an incompatible key type (Integer) to cause ClassCastException internally\n        Node<String, String> node = (Node<String, String>) findByObjectMethod.invoke(stringMap, 123);\n\n        // Should catch ClassCastException and return null\n        assertNull(node);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888657,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 594,
+    "prompt_tokens": 1468,
+    "total_tokens": 2062,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.24
+  }
+}

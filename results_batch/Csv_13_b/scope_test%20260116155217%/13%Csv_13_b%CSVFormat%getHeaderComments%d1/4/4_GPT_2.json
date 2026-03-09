@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZOg6mD7aRAFh4Y3RWxo6sCsMlc7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier from field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        field.set(target, value);\n    }\n\n    @Test\n    void testGetHeaderCommentsReturnsCloneWhenNotNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        String[] comments = new String[]{\"comment1\", \"comment2\"};\n        setFinalField(format, \"headerComments\", comments);\n\n        String[] result = format.getHeaderComments();\n        assertNotNull(result);\n        assertArrayEquals(comments, result);\n\n        // Verify that returned array is a clone, not the same instance\n        assertNotSame(comments, result);\n    }\n\n    @Test\n    void testGetHeaderCommentsReturnsNullWhenNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        setFinalField(format, \"headerComments\", null);\n\n        String[] result = format.getHeaderComments();\n        assertNull(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551782,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 301,
+    "prompt_tokens": 1488,
+    "total_tokens": 1789,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.02
+  }
+}

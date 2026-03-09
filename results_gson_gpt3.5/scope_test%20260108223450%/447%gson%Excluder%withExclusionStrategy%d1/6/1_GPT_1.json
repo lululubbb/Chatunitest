@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmsIhqOKi020rcbsxyEPYq2mTmes",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ExclusionStrategy;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.List;\n\nclass ExcluderTest {\n\n  private Excluder excluder;\n  private ExclusionStrategy exclusionStrategy;\n\n  @BeforeEach\n  void setUp() {\n    excluder = new Excluder();\n    exclusionStrategy = mock(ExclusionStrategy.class);\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationFalse() throws Exception {\n    Excluder result = excluder.withExclusionStrategy(exclusionStrategy, true, false);\n\n    assertNotSame(excluder, result);\n\n    // serializationStrategies should contain the new exclusionStrategy\n    List<ExclusionStrategy> serializationStrategies = getPrivateField(result, \"serializationStrategies\");\n    assertNotNull(serializationStrategies);\n    assertTrue(serializationStrategies.contains(exclusionStrategy));\n\n    // deserializationStrategies should be empty list (original)\n    List<ExclusionStrategy> deserializationStrategies = getPrivateField(result, \"deserializationStrategies\");\n    assertNotNull(deserializationStrategies);\n    assertTrue(deserializationStrategies.isEmpty());\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationTrue() throws Exception {\n    Excluder result = excluder.withExclusionStrategy(exclusionStrategy, false, true);\n\n    assertNotSame(excluder, result);\n\n    // serializationStrategies should be empty list (original)\n    List<ExclusionStrategy> serializationStrategies = getPrivateField(result, \"serializationStrategies\");\n    assertNotNull(serializationStrategies);\n    assertTrue(serializationStrategies.isEmpty());\n\n    // deserializationStrategies should contain the new exclusionStrategy\n    List<ExclusionStrategy> deserializationStrategies = getPrivateField(result, \"deserializationStrategies\");\n    assertNotNull(deserializationStrategies);\n    assertTrue(deserializationStrategies.contains(exclusionStrategy));\n  }\n\n  @Test\n  void withExclusionStrategy_serializationTrue_deserializationTrue() throws Exception {\n    Excluder result = excluder.withExclusionStrategy(exclusionStrategy, true, true);\n\n    assertNotSame(excluder, result);\n\n    List<ExclusionStrategy> serializationStrategies = getPrivateField(result, \"serializationStrategies\");\n    assertNotNull(serializationStrategies);\n    assertTrue(serializationStrategies.contains(exclusionStrategy));\n\n    List<ExclusionStrategy> deserializationStrategies = getPrivateField(result, \"deserializationStrategies\");\n    assertNotNull(deserializationStrategies);\n    assertTrue(deserializationStrategies.contains(exclusionStrategy));\n  }\n\n  @Test\n  void withExclusionStrategy_serializationFalse_deserializationFalse() throws Exception {\n    Excluder result = excluder.withExclusionStrategy(exclusionStrategy, false, false);\n\n    assertNotSame(excluder, result);\n\n    List<ExclusionStrategy> serializationStrategies = getPrivateField(result, \"serializationStrategies\");\n    assertNotNull(serializationStrategies);\n    assertTrue(serializationStrategies.isEmpty());\n\n    List<ExclusionStrategy> deserializationStrategies = getPrivateField(result, \"deserializationStrategies\");\n    assertNotNull(deserializationStrategies);\n    assertTrue(deserializationStrategies.isEmpty());\n  }\n\n  // Helper method to access private fields via reflection\n  @SuppressWarnings(\"unchecked\")\n  private <T> T getPrivateField(Object target, String fieldName) throws Exception {\n    Field field = Excluder.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return (T) field.get(target);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888606,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 754,
+    "prompt_tokens": 655,
+    "total_tokens": 1409,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.63
+  }
+}

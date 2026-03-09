@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnNesnNdFWVeznbPexiMBvCCIEY6",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement mockSingleElement;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n    mockSingleElement = mock(JsonElement.class);\n  }\n\n  @Test\n  public void testGetAsDouble_singleElement_returnsDouble() {\n    // Use reflection to set private elements list with one mocked element\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      list.add(mockSingleElement);\n      elementsField.set(jsonArray, list);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    when(mockSingleElement.getAsDouble()).thenReturn(123.456);\n\n    double result = jsonArray.getAsDouble();\n\n    assertEquals(123.456, result, 0.000001);\n    verify(mockSingleElement).getAsDouble();\n  }\n\n  @Test\n  public void testGetAsDouble_emptyArray_throwsException() {\n    // Ensure elements list is empty\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      var list = new java.util.ArrayList<JsonElement>();\n      elementsField.set(jsonArray, list);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    // getAsSingleElement() will throw IllegalStateException because no elements\n    assertThrows(IllegalStateException.class, () -> {\n      jsonArray.getAsDouble();\n    });\n  }\n\n  @Test\n  public void testGetAsSingleElement_reflection_access() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {\n    // Prepare elements list with one mock element\n    var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    var list = new java.util.ArrayList<JsonElement>();\n    list.add(mockSingleElement);\n    elementsField.set(jsonArray, list);\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    Object result = getAsSingleElementMethod.invoke(jsonArray);\n\n    assertSame(mockSingleElement, result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890550,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 562,
+    "prompt_tokens": 488,
+    "total_tokens": 1050,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.03
+  }
+}

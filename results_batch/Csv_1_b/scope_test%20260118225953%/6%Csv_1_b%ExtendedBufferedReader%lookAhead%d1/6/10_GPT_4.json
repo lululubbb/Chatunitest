@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzObqtwz6UsP16uVOn2gsLPXaLENt",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertNotNull;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testLookAheadReturnsNextChar() throws IOException {\n        // Arrange\n        ExtendedBufferedReader spyReader = spy(extendedBufferedReader);\n        doNothing().when(spyReader).mark(1);\n        doReturn((int) 'a').when(spyReader).read();\n        doNothing().when(spyReader).reset();\n\n        // Act\n        int result = spyReader.lookAhead();\n\n        // Assert\n        assertEquals('a', result);\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws IOException {\n        // Arrange\n        ExtendedBufferedReader spyReader = spy(extendedBufferedReader);\n        doNothing().when(spyReader).mark(1);\n        doReturn(ExtendedBufferedReader.END_OF_STREAM).when(spyReader).read();\n        doNothing().when(spyReader).reset();\n\n        // Act\n        int result = spyReader.lookAhead();\n\n        // Assert\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOException() throws IOException {\n        // Arrange\n        ExtendedBufferedReader spyReader = spy(extendedBufferedReader);\n        doThrow(new IOException(\"mark failed\")).when(spyReader).mark(1);\n\n        // Act & Assert\n        IOException thrown = null;\n        try {\n            spyReader.lookAhead();\n        } catch (IOException e) {\n            thrown = e;\n        }\n        assertNotNull(thrown);\n        assertEquals(\"mark failed\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748642,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 483,
+    "prompt_tokens": 823,
+    "total_tokens": 1306,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.15
+  }
+}

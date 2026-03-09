@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8yVE6z2gvDNtPkf3kF8n7u4Hwdr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable appendable;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() {\n        appendable = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(appendable, format);\n    }\n\n    @Test\n    void close_whenOutIsCloseable_shouldCloseOut() throws Exception {\n        Closeable closeable = mock(Closeable.class);\n\n        CSVPrinter printerWithCloseable = createCSVPrinterWithOut(closeable, format);\n\n        printerWithCloseable.close();\n\n        verify(closeable, times(1)).close();\n    }\n\n    @Test\n    void close_whenOutIsNotCloseable_shouldNotThrow() {\n        assertDoesNotThrow(() -> printer.close());\n    }\n\n    private static CSVPrinter createCSVPrinterWithOut(Object out, CSVFormat format) throws Exception {\n        // Use the public constructor to create CSVPrinter instance with a dummy Appendable\n        Appendable dummyAppendable = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) {\n                return this;\n            }\n\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) {\n                return this;\n            }\n\n            @Override\n            public Appendable append(char c) {\n                return this;\n            }\n        };\n\n        CSVPrinter printer = new CSVPrinter(dummyAppendable, format);\n\n        // Use reflection to set the private final field 'out' to the passed 'out' object\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n\n        outField.set(printer, out);\n\n        return printer;\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973559,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 414,
+    "prompt_tokens": 988,
+    "total_tokens": 1402,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.94
+  }
+}

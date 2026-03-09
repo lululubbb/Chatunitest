@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuvDvD9mkoDqd5Ol8gQ0PGz1er2Nz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testHashCode_DefaultInstances() {\n        // Test hashCode for DEFAULT instance\n        int defaultHashCode = CSVFormat.DEFAULT.hashCode();\n        assertNotEquals(0, defaultHashCode);\n\n        // Test hashCode for EXCEL instance\n        int excelHashCode = CSVFormat.EXCEL.hashCode();\n        assertNotEquals(0, excelHashCode);\n        assertNotEquals(defaultHashCode, excelHashCode);\n\n        // Test hashCode for INFORMIX_UNLOAD instance\n        int informixUnloadHashCode = CSVFormat.INFORMIX_UNLOAD.hashCode();\n        assertNotEquals(0, informixUnloadHashCode);\n        assertNotEquals(defaultHashCode, informixUnloadHashCode);\n\n        // Test hashCode for INFORMIX_UNLOAD_CSV instance\n        int informixUnloadCsvHashCode = CSVFormat.INFORMIX_UNLOAD_CSV.hashCode();\n        assertNotEquals(0, informixUnloadCsvHashCode);\n        assertNotEquals(defaultHashCode, informixUnloadCsvHashCode);\n\n        // Test hashCode for MYSQL instance\n        int mysqlHashCode = CSVFormat.MYSQL.hashCode();\n        assertNotEquals(0, mysqlHashCode);\n        assertNotEquals(defaultHashCode, mysqlHashCode);\n\n        // Test hashCode for RFC4180 instance\n        int rfc4180HashCode = CSVFormat.RFC4180.hashCode();\n        assertNotEquals(0, rfc4180HashCode);\n        assertNotEquals(defaultHashCode, rfc4180HashCode);\n\n        // Test hashCode for TDF instance\n        int tdfHashCode = CSVFormat.TDF.hashCode();\n        assertNotEquals(0, tdfHashCode);\n        assertNotEquals(defaultHashCode, tdfHashCode);\n    }\n\n    @Test\n    public void testHashCode_CustomInstance() throws Exception {\n        // Create CSVFormat instance with reflection to access private constructor\n        Class<CSVFormat> clazz = CSVFormat.class;\n        java.lang.reflect.Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] header = new String[] {\"col1\", \"col2\"};\n        Object[] headerComments = new Object[] {\"comment1\"};\n\n        CSVFormat csvFormat = constructor.newInstance(\n                ';', // delimiter\n                '\"', // quoteChar\n                QuoteMode.ALL, // quoteMode\n                '#', // commentStart\n                '\\\\', // escape\n                true, // ignoreSurroundingSpaces\n                true, // ignoreEmptyLines\n                \"\\n\", // recordSeparator\n                \"NULL\", // nullString\n                headerComments, // headerComments\n                header, // header\n                true, // skipHeaderRecord\n                true, // allowMissingColumnNames\n                true, // ignoreHeaderCase\n                true, // trim\n                true // trailingDelimiter\n        );\n\n        int hash1 = csvFormat.hashCode();\n        int hash2 = csvFormat.hashCode();\n        assertEquals(hash1, hash2);\n\n        // Change a field by creating another instance with a different delimiter\n        CSVFormat csvFormatDiff = constructor.newInstance(\n                ',', // delimiter changed\n                '\"', // quoteChar\n                QuoteMode.ALL,\n                '#',\n                '\\\\',\n                true,\n                true,\n                \"\\n\",\n                \"NULL\",\n                headerComments,\n                header,\n                true,\n                true,\n                true,\n                true,\n                true\n        );\n        int hashDiff = csvFormatDiff.hashCode();\n        assertNotEquals(hash1, hashDiff);\n    }\n\n    @Test\n    public void testHashCode_NullFields() throws Exception {\n        // Create CSVFormat instance with null quoteMode, quoteCharacter, commentMarker, escapeCharacter, nullString, recordSeparator, header\n        Class<CSVFormat> clazz = CSVFormat.class;\n        java.lang.reflect.Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat csvFormat = constructor.newInstance(\n                ',', // delimiter\n                null, // quoteChar null\n                null, // quoteMode null\n                null, // commentStart null\n                null, // escape null\n                false, // ignoreSurroundingSpaces\n                false, // ignoreEmptyLines\n                null, // recordSeparator null\n                null, // nullString null\n                null, // headerComments null\n                null, // header null\n                false, // skipHeaderRecord\n                false, // allowMissingColumnNames\n                false, // ignoreHeaderCase\n                false, // trim\n                false // trailingDelimiter\n        );\n\n        int hash = csvFormat.hashCode();\n        assertNotEquals(0, hash);\n    }\n\n    @Test\n    public void testHashCode_ConsistencyWithEquals() throws Exception {\n        // Create two equal CSVFormat instances and verify that their hashCodes are equal\n        Class<CSVFormat> clazz = CSVFormat.class;\n        java.lang.reflect.Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, QuoteMode.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, Object[].class,\n                String[].class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        String[] header = new String[] {\"a\", \"b\"};\n        Object[] headerComments = new Object[] {\"comm\"};\n\n        CSVFormat csvFormat1 = constructor.newInstance(\n                ',', '\"', QuoteMode.MINIMAL, '#', '\\\\', true, true, \"\\r\\n\", \"NULL\",\n                headerComments, header, true, true, true, true, true);\n\n        CSVFormat csvFormat2 = constructor.newInstance(\n                ',', '\"', QuoteMode.MINIMAL, '#', '\\\\', true, true, \"\\r\\n\", \"NULL\",\n                headerComments, header, true, true, true, true, true);\n\n        assertEquals(csvFormat1, csvFormat2);\n        assertEquals(csvFormat1.hashCode(), csvFormat2.hashCode());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767682371,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1398,
+    "prompt_tokens": 1779,
+    "total_tokens": 3177,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 17.71
+  }
+}

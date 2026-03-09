@@ -1,0 +1,12 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.reflect;\nimport com.google.gson.internal.$Gson$Types;\nimport java.lang.reflect.GenericArrayType;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport java.util.Map;\nimport java.util.Objects;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Type;\n\nclass TypeTokenTest {\n\n  @Test\n  void testGetType_withDefaultConstructor() {\n    TypeToken<String> typeToken = new TypeToken<String>() {};\n    Type type = typeToken.getType();\n    assertNotNull(type);\n    assertEquals(String.class, type);\n  }\n\n  @Test\n  void testGetType_withParameterizedConstructor() throws Exception {\n    // Use reflection to invoke private constructor TypeToken(Type)\n    Type stringType = String.class;\n    TypeToken<?> typeToken = java.lang.reflect.Constructor.class\n        .getDeclaredConstructor(Type.class)\n        .newInstance(stringType);\n    // Above line won't work because Constructor.class is wrong, correct approach below:\n    var constructor = TypeToken.class.getDeclaredConstructor(Type.class);\n    constructor.setAccessible(true);\n    TypeToken<?> typeTokenInstance = constructor.newInstance(stringType);\n    Type type = typeTokenInstance.getType();\n    assertNotNull(type);\n    assertEquals(stringType, type);\n  }\n\n  @Test\n  void testGetType_consistency() {\n    TypeToken<Integer> token = new TypeToken<Integer>() {};\n    Type type1 = token.getType();\n    Type type2 = token.getType();\n    assertSame(type1, type2);\n  }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "/home/chenlu/ChatUniTest_GPT3.5/results_gson/scope_test%20260108223450%/126%gson%TypeToken%getType%d1/1/temp/TypeToken_126_1Test.java:33: 错误: 不兼容的类型: Constructor无法转换为TypeToken<?>\n        .newInstance(stringType);\n                    ^\n1 个错误\n",
+  "prompt_tokens": 498,
+  "completion_tokens": 286,
+  "total_tokens": 784,
+  "llm_elapsed_time_seconds": 5.57,
+  "repair_elapsed_time_seconds": 12.33,
+  "round_total_time_seconds": 12.33
+}

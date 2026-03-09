@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaAYf6JCRCCzNPTVzfj11QVa8tIY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT.withTrim(false).withNullString(null).withQuoteMode(QuoteMode.MINIMAL);\n        appendable = mock(Appendable.class);\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringNull_quoteModeNotAll() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(null).withQuoteMode(QuoteMode.MINIMAL).withTrim(false);\n        Appendable out = mock(Appendable.class);\n\n        // call print with null value and newRecord false\n        format.print(null, out, false);\n\n        // verify that appendable append called at least once\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_nullValue_nullStringSet_quoteModeAll() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\").withQuoteMode(QuoteMode.ALL).withTrim(false);\n        Appendable out = mock(Appendable.class);\n\n        format.print(null, out, true);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_valueIsCharSequence_trimTrue() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrim(true).withNullString(null).withQuoteMode(QuoteMode.MINIMAL);\n        Appendable out = mock(Appendable.class);\n\n        CharSequence value = \"  abc  \";\n        format.print(value, out, false);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_valueIsNotCharSequence_trimFalse() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withTrim(false).withNullString(null).withQuoteMode(QuoteMode.MINIMAL);\n        Appendable out = mock(Appendable.class);\n\n        Integer value = 123;\n        format.print(value, out, true);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_invokesPrivatePrintMethod() throws Exception {\n        Appendable out = mock(Appendable.class);\n        String testValue = \"test\";\n\n        // Use reflection to invoke private print method with CharSequence param\n        Method privatePrint = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        privatePrint.setAccessible(true);\n\n        // Call public print to set up charSequence param and call private print\n        csvFormat.print(testValue, out, true);\n\n        // Also directly invoke private print to cover it explicitly\n        privatePrint.invoke(csvFormat, testValue, testValue, 0, testValue.length(), out, false);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_trimMethodViaReflection() throws Exception {\n        CharSequence input = \"  trim me  \";\n\n        Method trimMethod = CSVFormat.class.getDeclaredMethod(\"trim\", CharSequence.class);\n        trimMethod.setAccessible(true);\n\n        CharSequence trimmed = (CharSequence) trimMethod.invoke(csvFormat, input);\n        assertEquals(\"trim me\", trimmed.toString());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768554750,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 744,
+    "prompt_tokens": 1953,
+    "total_tokens": 2697,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.84
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8qHUutXZjaS6MY6phjUHJZCToen",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.lang.reflect.Constructor;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private Closeable mockLexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a mock Lexer that implements Closeable\n        mockLexer = mock(Closeable.class);\n\n        // Use reflection to create CSVParser instance with dummy Reader and CSVFormat\n        Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(java.io.Reader.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        csvParser = constructor.newInstance(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n\n        // Use reflection to set private final lexer field\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier on lexer field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n\n        lexerField.set(csvParser, mockLexer);\n    }\n\n    @Test\n    void close_callsLexerClose_whenLexerNotNull() throws IOException {\n        csvParser.close();\n        verify(mockLexer, times(1)).close();\n    }\n\n    @Test\n    void close_doesNotThrow_whenLexerIsNull() throws Exception {\n        // Set lexer to null\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier on lexer field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n\n        lexerField.set(csvParser, null);\n\n        assertDoesNotThrow(() -> csvParser.close());\n    }\n\n    @Test\n    void close_throwsIOException_whenLexerCloseThrows() throws Exception {\n        doThrow(new IOException(\"close failed\")).when(mockLexer).close();\n\n        IOException thrown = assertThrows(IOException.class, () -> csvParser.close());\n        assertEquals(\"close failed\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973049,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 498,
+    "prompt_tokens": 1029,
+    "total_tokens": 1527,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.21
+  }
+}

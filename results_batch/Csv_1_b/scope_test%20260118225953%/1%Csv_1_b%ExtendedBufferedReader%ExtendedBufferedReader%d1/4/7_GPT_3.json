@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOYuftADt5nPsTUlnvghlNTM5Mcb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    private Reader mockReader;\n    private ExtendedBufferedReader extendedBufferedReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testRead_whenReaderReturnsChar() throws IOException {\n        when(mockReader.read()).thenReturn((int) 'a');\n        int result = extendedBufferedReader.read();\n        assertEquals('a', result);\n    }\n\n    @Test\n    void testRead_whenReaderReturnsEndOfStream() throws IOException {\n        when(mockReader.read()).thenReturn(-1);\n        int result = extendedBufferedReader.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, result);\n    }\n\n    @Test\n    void testReadAgain_reflective() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        when(mockReader.read()).thenReturn((int) 'b').thenReturn(-1);\n\n        Method readAgainMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"readAgain\");\n        readAgainMethod.setAccessible(true);\n\n        int firstCall = (int) readAgainMethod.invoke(extendedBufferedReader);\n        assertEquals('b', firstCall);\n\n        int secondCall = (int) readAgainMethod.invoke(extendedBufferedReader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, secondCall);\n    }\n\n    @Test\n    void testReadBuffer() throws IOException {\n        char[] buffer = new char[5];\n        when(mockReader.read(buffer, 0, 5)).thenReturn(3);\n\n        int readCount = extendedBufferedReader.read(buffer, 0, 5);\n        assertEquals(3, readCount);\n    }\n\n    @Test\n    void testReadLine() throws IOException {\n        String line = \"test line\";\n        when(mockReader.read(any(char[].class), anyInt(), anyInt()))\n            .thenAnswer(invocation -> {\n                char[] buf = invocation.getArgument(0);\n                int off = invocation.getArgument(1);\n                String s = line + \"\\n\";\n                for (int i = 0; i < s.length(); i++) {\n                    buf[off + i] = s.charAt(i);\n                }\n                return s.length();\n            });\n\n        String readLine = extendedBufferedReader.readLine();\n        assertEquals(line, readLine);\n    }\n\n    @Test\n    void testLookAhead_reflective() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {\n        when(mockReader.read()).thenReturn((int) 'c');\n\n        Method lookAheadMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"lookAhead\");\n        lookAheadMethod.setAccessible(true);\n\n        int result = (int) lookAheadMethod.invoke(extendedBufferedReader);\n        assertEquals('c', result);\n    }\n\n    @Test\n    void testGetLineNumber_reflective() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {\n        Field field = ExtendedBufferedReader.class.getDeclaredField(\"lineCounter\");\n        field.setAccessible(true);\n        field.setInt(extendedBufferedReader, 42);\n\n        Method getLineNumberMethod = ExtendedBufferedReader.class.getDeclaredMethod(\"getLineNumber\");\n        getLineNumberMethod.setAccessible(true);\n\n        int lineNumber = (int) getLineNumberMethod.invoke(extendedBufferedReader);\n        assertEquals(42, lineNumber);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748460,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 781,
+    "prompt_tokens": 1134,
+    "total_tokens": 1915,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.82
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxotBLdXrz0uZ6YtvDSqUoR4zlDN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Method;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVFormat formatMock;\n    private Reader readerMock;\n\n    @BeforeEach\n    void setup() {\n        formatMock = mock(CSVFormat.class);\n        readerMock = mock(Reader.class);\n    }\n\n    @Test\n    void testParse_WithValidReaderAndFormat_ShouldReturnCSVParserInstance() throws IOException {\n        when(formatMock.getHeader()).thenReturn(null);\n        CSVParser parser = CSVParser.parse(readerMock, formatMock);\n        assertNotNull(parser);\n        assertFalse(parser.isClosed());\n        assertEquals(0L, parser.getRecordNumber());\n        assertNotNull(parser.getHeaderMap());\n    }\n\n    @Test\n    void testParse_WithNullReader_ShouldThrowNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVParser.parse((Reader) null, formatMock));\n    }\n\n    @Test\n    void testParse_WithNullFormat_ShouldThrowNullPointerException() {\n        assertThrows(NullPointerException.class, () -> CSVParser.parse(readerMock, null));\n    }\n\n    @Test\n    void testParse_PrivateConstructorInvocation() throws Exception {\n        Constructor<CSVParser> constructor = CSVParser.class.getDeclaredConstructor(Reader.class, CSVFormat.class);\n        constructor.setAccessible(true);\n        when(formatMock.getHeader()).thenReturn(null);\n        CSVParser parser = constructor.newInstance(readerMock, formatMock);\n        assertNotNull(parser);\n        assertEquals(0L, parser.getRecordNumber());\n    }\n\n    @Test\n    void testAddRecordValueViaReflection() throws Exception {\n        when(formatMock.getHeader()).thenReturn(null);\n        CSVParser parser = CSVParser.parse(readerMock, formatMock);\n        Method method = CSVParser.class.getDeclaredMethod(\"addRecordValue\", boolean.class);\n        method.setAccessible(true);\n        method.invoke(parser, true);\n    }\n\n    @Test\n    void testInitializeHeaderViaReflection() throws Exception {\n        when(formatMock.getHeader()).thenReturn(null);\n        CSVParser parser = CSVParser.parse(readerMock, formatMock);\n        Method method = CSVParser.class.getDeclaredMethod(\"initializeHeader\");\n        method.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        Map<String, Integer> headerMap = (Map<String, Integer>) method.invoke(parser);\n        assertNotNull(headerMap);\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692351,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 539,
+    "prompt_tokens": 1252,
+    "total_tokens": 1791,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.34
+  }
+}

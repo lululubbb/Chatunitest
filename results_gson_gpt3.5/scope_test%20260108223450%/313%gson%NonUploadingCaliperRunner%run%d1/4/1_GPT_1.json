@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnLpbS3Tr4clw1VqtsZdKwWYWYVO",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.ArgumentMatchers.eq;\nimport static org.mockito.Mockito.mockStatic;\nimport static org.mockito.Mockito.verify;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\n\nclass NonUploadingCaliperRunnerTest {\n\n  @Test\n  void testRun_invokesCaliperMainWithConcatenatedArgs() {\n    Class<?> testClass = String.class;\n    String[] args = new String[] {\"arg1\", \"arg2\"};\n\n    try (MockedStatic<CaliperMain> caliperMainMock = mockStatic(CaliperMain.class)) {\n      NonUploadingCaliperRunner.run(testClass, args);\n\n      String[] expectedArgs = new String[args.length + 1];\n      expectedArgs[0] = \"-Cresults.upload.options.url=\";\n      System.arraycopy(args, 0, expectedArgs, 1, args.length);\n\n      caliperMainMock.verify(() -> CaliperMain.main(eq(testClass), eq(expectedArgs)));\n    }\n  }\n\n  @Test\n  void testConcat_privateMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method concatMethod = NonUploadingCaliperRunner.class.getDeclaredMethod(\"concat\", String.class, String[].class);\n    concatMethod.setAccessible(true);\n\n    String first = \"prefix\";\n    String[] others = new String[] {\"a\", \"b\"};\n\n    String[] result = (String[]) concatMethod.invoke(null, first, others);\n\n    // Expected array length is others.length + 1\n    assert result.length == others.length + 1;\n    assert result[0].equals(first);\n    for (int i = 0; i < others.length; i++) {\n      assert result[i + 1].equals(others[i]);\n    }\n\n    // Test with empty others\n    String[] emptyOthers = new String[0];\n    String[] resultEmpty = (String[]) concatMethod.invoke(null, first, emptyOthers);\n    assert resultEmpty.length == 1;\n    assert resultEmpty[0].equals(first);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890437,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 440,
+    "prompt_tokens": 250,
+    "total_tokens": 690,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.87
+  }
+}

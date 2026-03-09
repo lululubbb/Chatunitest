@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAQpicTRpF7V5zuQVdTNyu4POoNG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.Iterator;\nimport java.util.NoSuchElementException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVParser_iterator_Test {\n\n    CSVParser parser;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        parser = Mockito.spy(new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT));\n        // Use reflection to set the private 'closed' field if exists (to avoid side effects)\n        try {\n            Field closedField = CSVParser.class.getDeclaredField(\"closed\");\n            closedField.setAccessible(true);\n            closedField.set(parser, false);\n        } catch (NoSuchFieldException ignored) {\n            // If no such field, ignore\n        }\n    }\n\n    @Test\n    void iterator_hasNext_and_next_normalFlow() throws IOException {\n        // Arrange: prepare nextRecord to return a CSVRecord then null\n        CSVRecord rec1 = mock(CSVRecord.class);\n        doReturn(rec1).doReturn(null).when(parser).nextRecord();\n        doReturn(false).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // Act & Assert\n        assertTrue(iterator.hasNext());\n        assertSame(rec1, iterator.next());\n        assertFalse(iterator.hasNext());\n        assertThrows(NoSuchElementException.class, iterator::next);\n    }\n\n    @Test\n    void iterator_hasNext_returnsFalse_whenParserClosed() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertFalse(iterator.hasNext());\n        assertThrows(NoSuchElementException.class, iterator::next);\n    }\n\n    @Test\n    void iterator_next_throwsNoSuchElementException_whenClosed() {\n        doReturn(true).when(parser).isClosed();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        assertThrows(NoSuchElementException.class, iterator::next);\n    }\n\n    @Test\n    void iterator_next_calls_getNextRecord_whenCurrentNull() throws IOException {\n        CSVRecord rec1 = mock(CSVRecord.class);\n        doReturn(false).when(parser).isClosed();\n        doReturn(rec1).when(parser).nextRecord();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        // current is null initially so next() calls getNextRecord internally\n        assertSame(rec1, iterator.next());\n    }\n\n    @Test\n    void iterator_remove_throwsUnsupportedOperationException() {\n        Iterator<CSVRecord> iterator = parser.iterator();\n        assertThrows(UnsupportedOperationException.class, iterator::remove);\n    }\n\n    @Test\n    void iterator_next_throwsRuntimeException_whenNextRecordThrowsIOException() throws IOException {\n        doReturn(false).when(parser).isClosed();\n        doThrow(new IOException(\"io\")).when(parser).nextRecord();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        RuntimeException ex = assertThrows(RuntimeException.class, iterator::next);\n        assertTrue(ex.getCause() instanceof IOException);\n        assertEquals(\"io\", ex.getCause().getMessage());\n    }\n\n    @Test\n    void iterator_hasNext_throwsRuntimeException_whenNextRecordThrowsIOException() throws IOException {\n        doReturn(false).when(parser).isClosed();\n        doThrow(new IOException(\"io\")).when(parser).nextRecord();\n\n        Iterator<CSVRecord> iterator = parser.iterator();\n\n        RuntimeException ex = assertThrows(RuntimeException.class, iterator::hasNext);\n        assertTrue(ex.getCause() instanceof IOException);\n        assertEquals(\"io\", ex.getCause().getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979159,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 758,
+    "prompt_tokens": 1462,
+    "total_tokens": 2220,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.88
+  }
+}

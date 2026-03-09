@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  @Test\n  public void testConstructor_initializesEmptyMembers() throws Exception {\n    JsonObject jsonObject = new JsonObject();\n\n    // Access private field 'members' via reflection\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    Object members = membersField.get(jsonObject);\n\n    assertNotNull(members);\n    assertTrue(members instanceof com.google.gson.internal.LinkedTreeMap);\n\n    com.google.gson.internal.LinkedTreeMap<?, ?> map = (com.google.gson.internal.LinkedTreeMap<?, ?>) members;\n    assertEquals(0, map.size());\n  }\n\n  @Test\n  public void testConstructor_createsDistinctInstances() throws Exception {\n    JsonObject jsonObject1 = new JsonObject();\n    JsonObject jsonObject2 = new JsonObject();\n\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n\n    Object members1 = membersField.get(jsonObject1);\n    Object members2 = membersField.get(jsonObject2);\n\n    assertNotSame(members1, members2);\n  }\n\n  @Test\n  public void testPrivateMethodViaReflection_ifAny() throws Exception {\n    // No private methods provided for testing in the focal class beyond constructor.\n    // This test is a placeholder if private methods are added later.\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 386,
+  "completion_tokens": 331,
+  "total_tokens": 717,
+  "llm_elapsed_time_seconds": 6.08
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw7zKYNcsnZK8DFuW22PNUM3PAVeN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerTest {\n\n    private Lexer lexer;\n    private ExtendedBufferedReader inMock;\n\n    @BeforeEach\n    void setUp() {\n        inMock = mock(ExtendedBufferedReader.class);\n        CSVFormat format = mock(CSVFormat.class);\n\n        lexer = new Lexer(format, inMock) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n\n            @Override\n            boolean isWhitespace(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isStartOfLine(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEndOfFile(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isDelimiter(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isEscape(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isQuoteChar(int c) {\n                return false;\n            }\n\n            @Override\n            boolean isCommentStart(int c) {\n                return false;\n            }\n        };\n    }\n\n    @Test\n    void testReadEndOfLine_CR_followedByLF() throws IOException {\n        when(inMock.lookAhead()).thenReturn((int) '\\n');\n        when(inMock.read()).thenReturn((int) '\\n');\n\n        boolean result = lexer.readEndOfLine('\\r');\n\n        verify(inMock).lookAhead();\n        verify(inMock).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_CR_notFollowedByLF() throws IOException {\n        when(inMock.lookAhead()).thenReturn((int) 'x');\n\n        boolean result = lexer.readEndOfLine('\\r');\n\n        verify(inMock).lookAhead();\n        verify(inMock, never()).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_LF() throws IOException {\n        boolean result = lexer.readEndOfLine('\\n');\n\n        verify(inMock, never()).lookAhead();\n        verify(inMock, never()).read();\n        assertTrue(result);\n    }\n\n    @Test\n    void testReadEndOfLine_otherChar() throws IOException {\n        boolean result = lexer.readEndOfLine('a');\n\n        verify(inMock, never()).lookAhead();\n        verify(inMock, never()).read();\n        assertFalse(result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767969766,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 527,
+    "prompt_tokens": 1525,
+    "total_tokens": 2052,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.78
+  }
+}

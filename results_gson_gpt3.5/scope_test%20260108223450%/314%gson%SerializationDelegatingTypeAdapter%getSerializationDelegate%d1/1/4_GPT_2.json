@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmpKCEeriA71YtPzIBngKGXu8fPk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass SerializationDelegatingTypeAdapterTest {\n\n    static class ConcreteSerializationDelegatingTypeAdapter extends SerializationDelegatingTypeAdapter<String> {\n        private final TypeAdapter<String> delegate;\n\n        ConcreteSerializationDelegatingTypeAdapter(TypeAdapter<String> delegate) {\n            this.delegate = delegate;\n        }\n\n        @Override\n        public TypeAdapter<String> getSerializationDelegate() {\n            return delegate;\n        }\n\n        @Override\n        public String read(JsonReader in) throws IOException {\n            // Provide a dummy implementation to satisfy abstract method\n            return null;\n        }\n\n        @Override\n        public void write(JsonWriter out, String value) throws IOException {\n            // Provide a dummy implementation to satisfy abstract method\n        }\n    }\n\n    @Test\n    void testGetSerializationDelegate_returnsDelegate() {\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<String> mockDelegate = mock(TypeAdapter.class);\n        ConcreteSerializationDelegatingTypeAdapter adapter = new ConcreteSerializationDelegatingTypeAdapter(mockDelegate);\n\n        TypeAdapter<String> result = adapter.getSerializationDelegate();\n\n        assertSame(mockDelegate, result);\n    }\n\n    @Test\n    void testGetSerializationDelegate_reflectionInvocation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<String> mockDelegate = mock(TypeAdapter.class);\n        ConcreteSerializationDelegatingTypeAdapter adapter = new ConcreteSerializationDelegatingTypeAdapter(mockDelegate);\n\n        Method method = SerializationDelegatingTypeAdapter.class.getDeclaredMethod(\"getSerializationDelegate\");\n        method.setAccessible(true);\n\n        Object result = method.invoke(adapter);\n\n        assertSame(mockDelegate, result);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888422,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 403,
+    "prompt_tokens": 585,
+    "total_tokens": 988,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.92
+  }
+}

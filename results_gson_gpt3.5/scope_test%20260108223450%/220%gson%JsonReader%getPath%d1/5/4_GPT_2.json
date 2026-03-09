@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnHN4Y6onMr7L6D3N97LQZqZJ8fz",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.StringReader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method getPathMethod;\n\n  @BeforeEach\n  public void setUp() throws NoSuchMethodException {\n    jsonReader = new JsonReader(new StringReader(\"\"));  // Provide non-null Reader\n    getPathMethod = JsonReader.class.getDeclaredMethod(\"getPath\", boolean.class);\n    getPathMethod.setAccessible(true);\n  }\n\n  @Test\n  public void testGetPath_emptyStack() throws InvocationTargetException, IllegalAccessException {\n    // stackSize = 0, should return \"$\"\n    setField(\"stackSize\", 0);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$\", path);\n  }\n\n  @Test\n  public void testGetPath_arrayUsePreviousPathFalse() throws InvocationTargetException, IllegalAccessException {\n    // stack with one array scope, pathIndices = 3, usePreviousPath = false\n    setField(\"stackSize\", 1);\n    setField(\"stack\", new int[]{JsonScope.EMPTY_ARRAY});\n    setField(\"pathIndices\", new int[]{3});\n    setField(\"pathNames\", new String[32]);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$[3]\", path);\n  }\n\n  @Test\n  public void testGetPath_arrayUsePreviousPathTrue_pathIndexGreaterThanZero_lastElement() throws InvocationTargetException, IllegalAccessException {\n    // stack with one array scope, pathIndices = 3, usePreviousPath = true, i == stackSize - 1\n    setField(\"stackSize\", 1);\n    setField(\"stack\", new int[]{JsonScope.NONEMPTY_ARRAY});\n    setField(\"pathIndices\", new int[]{3});\n    setField(\"pathNames\", new String[32]);\n    String path = (String) getPathMethod.invoke(jsonReader, true);\n    assertEquals(\"$[2]\", path);\n  }\n\n  @Test\n  public void testGetPath_objectWithName() throws InvocationTargetException, IllegalAccessException {\n    // stack with one object scope, pathNames set to \"name\"\n    setField(\"stackSize\", 1);\n    setField(\"stack\", new int[]{JsonScope.EMPTY_OBJECT});\n    setField(\"pathIndices\", new int[32]);\n    String[] pathNames = new String[32];\n    pathNames[0] = \"name\";\n    setField(\"pathNames\", pathNames);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$.name\", path);\n  }\n\n  @Test\n  public void testGetPath_objectWithNullName() throws InvocationTargetException, IllegalAccessException {\n    // stack with one object scope, pathNames null at index\n    setField(\"stackSize\", 1);\n    setField(\"stack\", new int[]{JsonScope.NONEMPTY_OBJECT});\n    setField(\"pathIndices\", new int[32]);\n    String[] pathNames = new String[32];\n    pathNames[0] = null;\n    setField(\"pathNames\", pathNames);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$.\", path);\n  }\n\n  @Test\n  public void testGetPath_multipleMixedScopes() throws InvocationTargetException, IllegalAccessException {\n    // stack with multiple scopes: [NONEMPTY_DOCUMENT, NONEMPTY_OBJECT, NONEMPTY_ARRAY]\n    // pathNames[1]=\"obj\", pathIndices[2]=5\n    setField(\"stackSize\", 3);\n    setField(\"stack\", new int[]{\n        JsonScope.NONEMPTY_DOCUMENT,\n        JsonScope.NONEMPTY_OBJECT,\n        JsonScope.NONEMPTY_ARRAY});\n    String[] pathNames = new String[32];\n    pathNames[1] = \"obj\";\n    setField(\"pathNames\", pathNames);\n    int[] pathIndices = new int[32];\n    pathIndices[2] = 5;\n    setField(\"pathIndices\", pathIndices);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$.obj[5]\", path);\n  }\n\n  @Test\n  public void testGetPath_scopesWithNoAppend() throws InvocationTargetException, IllegalAccessException {\n    // stack with CLOSED, EMPTY_DOCUMENT, NONEMPTY_DOCUMENT scopes which do not append anything\n    setField(\"stackSize\", 3);\n    setField(\"stack\", new int[]{\n        JsonScope.CLOSED,\n        JsonScope.EMPTY_DOCUMENT,\n        JsonScope.NONEMPTY_DOCUMENT});\n    setField(\"pathIndices\", new int[32]);\n    setField(\"pathNames\", new String[32]);\n    String path = (String) getPathMethod.invoke(jsonReader, false);\n    assertEquals(\"$\", path);\n  }\n\n  private void setField(String fieldName, Object value) {\n    try {\n      java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(jsonReader, value);\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890161,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1112,
+    "prompt_tokens": 2763,
+    "total_tokens": 3875,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.47
+  }
+}

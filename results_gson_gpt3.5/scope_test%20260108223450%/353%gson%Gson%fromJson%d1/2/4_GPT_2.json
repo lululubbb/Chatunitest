@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlhpGBQJxxU0NrEWA4hjB8ZTi95q",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonFromJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void fromJson_withJsonElementAndType_returnsExpectedObject() throws Exception {\n    // Arrange\n    String jsonString = \"\\\"test\\\"\"; // JSON string representing a String literal\n    Type type = String.class;\n\n    // Create a JsonElement by parsing the JSON string using Gson's fromJson(String, JsonElement.class)\n    JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    Object result = fromJsonMethod.invoke(gson, jsonElement, type);\n\n    // Assert\n    assertNotNull(result);\n    assertTrue(result instanceof String);\n    assertEquals(\"test\", result);\n  }\n\n  @Test\n  void fromJson_withNullJsonElement_returnsNull() throws Exception {\n    // Arrange\n    JsonElement jsonElement = null;\n    Type type = String.class;\n\n    // Act\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n    Object result = fromJsonMethod.invoke(gson, jsonElement, type);\n\n    // Assert\n    assertNull(result);\n  }\n\n  @Test\n  void fromJson_withInvalidJson_throwsJsonSyntaxException() throws Exception {\n    // Arrange\n    String invalidJson = \"invalid json\";\n    Type type = String.class;\n\n    // Parse invalid JSON string into JsonElement using fromJson(String, JsonElement.class)\n    JsonElement jsonElement = gson.fromJson(invalidJson, JsonElement.class);\n\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Act & Assert\n    try {\n      fromJsonMethod.invoke(gson, jsonElement, type);\n      fail(\"Expected JsonSyntaxException\");\n    } catch (Exception e) {\n      Throwable cause = e.getCause();\n      assertTrue(cause instanceof JsonSyntaxException || cause == null);\n    }\n  }\n\n  @Test\n  void fromJson_withComplexTypeToken_returnsExpectedObject() throws Exception {\n    // Arrange\n    String jsonString = \"[\\\"one\\\", \\\"two\\\"]\";\n    TypeToken<java.util.List<String>> typeToken = new TypeToken<java.util.List<String>>() {};\n\n    // Parse JSON string into JsonElement using fromJson(String, JsonElement.class)\n    JsonElement jsonElement = gson.fromJson(jsonString, JsonElement.class);\n\n    Method fromJsonMethod = Gson.class.getDeclaredMethod(\"fromJson\", JsonElement.class, Type.class);\n    fromJsonMethod.setAccessible(true);\n\n    // Act\n    Object result = fromJsonMethod.invoke(gson, jsonElement, typeToken.getType());\n\n    // Assert\n    assertNotNull(result);\n    assertTrue(result instanceof java.util.List);\n    @SuppressWarnings(\"unchecked\")\n    java.util.List<String> list = (java.util.List<String>) result;\n    assertEquals(2, list.size());\n    assertEquals(\"one\", list.get(0));\n    assertEquals(\"two\", list.get(1));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884113,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 731,
+    "prompt_tokens": 2781,
+    "total_tokens": 3512,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.69
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.NonNullElementWrapperList;\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\nimport java.util.Iterator;\nimport java.util.List;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement elementMock1;\n  private JsonElement elementMock2;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n    elementMock1 = mock(JsonElement.class);\n    elementMock2 = mock(JsonElement.class);\n  }\n\n  @Test\n  void testGet_withValidIndex_returnsElement() throws Exception {\n    // Using reflection to set private field 'elements'\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    ArrayList<JsonElement> elements = new ArrayList<>();\n    elements.add(elementMock1);\n    elements.add(elementMock2);\n    elementsField.set(jsonArray, elements);\n\n    JsonElement result0 = jsonArray.get(0);\n    JsonElement result1 = jsonArray.get(1);\n\n    assertSame(elementMock1, result0);\n    assertSame(elementMock2, result1);\n  }\n\n  @Test\n  void testGet_withIndexOutOfBounds_throwsException() throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    ArrayList<JsonElement> elements = new ArrayList<>();\n    elements.add(elementMock1);\n    elementsField.set(jsonArray, elements);\n\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.get(1));\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.get(-1));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 479,
+  "completion_tokens": 358,
+  "total_tokens": 837,
+  "llm_elapsed_time_seconds": 5.59,
+  "repair_elapsed_time_seconds": 26.64,
+  "round_total_time_seconds": 26.64
+}

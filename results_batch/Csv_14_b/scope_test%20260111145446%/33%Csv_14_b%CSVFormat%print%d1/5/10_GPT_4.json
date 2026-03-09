@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwkClIOPu2AoKCoElZoAQGe1X6rAI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testPrint() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Object value = \"Test\";\n        Appendable out = new StringWriter();\n        boolean newRecord = true;\n\n        // When\n        csvFormat.print(value, out, newRecord);\n\n        // Then\n        assertEquals(\"Test\", out.toString());\n    }\n\n    @Test\n    public void testPrintWithNullValue() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Object value = null;\n        Appendable out = new StringWriter();\n        boolean newRecord = true;\n\n        // When\n        csvFormat.print(value, out, newRecord);\n\n        // Then\n        assertEquals(\"\", out.toString());\n    }\n\n    @Test\n    public void testPrintWithCharSequenceValue() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Object value = new StringBuilder(\"Hello\");\n        Appendable out = new StringWriter();\n        boolean newRecord = false;\n\n        // When\n        csvFormat.print(value, out, newRecord);\n\n        // Then\n        assertEquals(\"Hello\", out.toString());\n    }\n\n    @Test\n    public void testPrintWithTrim() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Object value = \"   Trimmed   \";\n        Appendable out = new StringWriter();\n        boolean newRecord = true;\n\n        // When\n        csvFormat.print(value, out, newRecord);\n\n        // Then\n        assertEquals(\"Trimmed\", out.toString());\n    }\n\n    @Test\n    public void testPrintAndEscape() {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        CharSequence value = \"Escaped, Value\";\n        Appendable out = new StringWriter();\n\n        // When\n        assertDoesNotThrow(() -> {\n            csvFormat.printAndEscape(value, 0, value.length(), out);\n        });\n    }\n\n    @Test\n    public void testPrintAndQuote() throws Exception {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Object value = \"Quoted Value\";\n        Appendable out = new StringWriter();\n        boolean newRecord = true;\n\n        // When\n        Method method = CSVFormat.class.getDeclaredMethod(\"printAndQuote\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        method.setAccessible(true);\n        method.invoke(csvFormat, value, (CharSequence) value, 0, value.toString().length(), out, newRecord);\n\n        // Then\n        assertEquals(\"\\\"Quoted Value\\\"\", out.toString());\n    }\n\n    @Test\n    public void testPrintRecord() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Appendable out = new StringWriter();\n        Object[] values = {\"Record\", \"Values\"};\n\n        // When\n        csvFormat.printRecord(out, values);\n\n        // Then\n        assertEquals(\"Record,Values\", out.toString());\n    }\n\n    @Test\n    public void testPrintln() throws IOException {\n        // Given\n        CSVFormat csvFormat = CSVFormat.DEFAULT;\n        Appendable out = new StringWriter();\n\n        // When\n        csvFormat.println(out);\n\n        // Then\n        assertEquals(System.lineSeparator(), out.toString());\n    }\n\n}",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768116671,
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 728,
+    "prompt_tokens": 2322,
+    "total_tokens": 3050,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.87
+  }
+}

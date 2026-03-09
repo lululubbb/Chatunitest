@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnMxmltxJYqSCtXi16KZ8SmJqIr5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.internal.ObjectConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass MapTypeAdapterFactoryTest {\n\n  @Mock\n  private ConstructorConstructor mockConstructorConstructor;\n\n  @Mock\n  private Gson mockGson;\n\n  @Mock\n  private ObjectConstructor<Object> mockObjectConstructor;\n\n  @Mock\n  private TypeAdapter<Object> mockKeyAdapter;\n\n  @Mock\n  private TypeAdapter<Object> mockValueAdapter;\n\n  private MapTypeAdapterFactory mapTypeAdapterFactory;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    mapTypeAdapterFactory = new MapTypeAdapterFactory(mockConstructorConstructor, true);\n  }\n\n  @Test\n  void create_shouldReturnNullIfNotMapType() {\n    TypeToken<String> stringTypeToken = TypeToken.get(String.class);\n\n    TypeAdapter<String> adapter = mapTypeAdapterFactory.create(mockGson, stringTypeToken);\n\n    assertNull(adapter);\n  }\n\n  @Test\n  void create_shouldReturnAdapterForMapType() throws Exception {\n    TypeToken<Map<String, String>> mapTypeToken = new TypeToken<Map<String, String>>() {};\n\n    // Mock constructorConstructor.get(TypeToken) to return mockObjectConstructor\n    when(mockConstructorConstructor.get(mapTypeToken)).thenReturn((ObjectConstructor) mockObjectConstructor);\n    // Mock gson.getAdapter(TypeToken) to return mockValueAdapter\n    when(mockGson.getAdapter(TypeToken.get(String.class))).thenReturn((TypeAdapter) mockValueAdapter);\n\n    // Use reflection to inject mockConstructorConstructor into mapTypeAdapterFactory\n    Field constructorConstructorField = MapTypeAdapterFactory.class.getDeclaredField(\"constructorConstructor\");\n    constructorConstructorField.setAccessible(true);\n    constructorConstructorField.set(mapTypeAdapterFactory, mockConstructorConstructor);\n\n    // Use reflection to invoke private getKeyAdapter method\n    Method getKeyAdapterMethod = MapTypeAdapterFactory.class.getDeclaredMethod(\"getKeyAdapter\", Gson.class, Type.class);\n    getKeyAdapterMethod.setAccessible(true);\n\n    // Mock getKeyAdapter by creating a spy and overriding the method via reflection is complicated,\n    // so instead we prepare a spy and use doReturn with a workaround:\n    MapTypeAdapterFactory spyFactory = spy(mapTypeAdapterFactory);\n    // Override getKeyAdapter using a spy and doAnswer with reflection call fallback\n    doAnswer(invocation -> mockKeyAdapter)\n        .when(spyFactory, \"getKeyAdapter\", any(Gson.class), any(Type.class));\n\n    // Since Mockito cannot mock private methods directly, use reflection to invoke getKeyAdapter and verify result\n    // But for create(), it calls private getKeyAdapter internally, so we must allow it to call our spy method.\n    // The above doAnswer will fail because getKeyAdapter is private.\n    // Instead, we can create a subclass to override getKeyAdapter for testing:\n\n    MapTypeAdapterFactory testFactory = new MapTypeAdapterFactory(mockConstructorConstructor, true) {\n      @Override\n      @SuppressWarnings(\"unchecked\")\n      TypeAdapter<?> getKeyAdapter(Gson context, Type keyType) {\n        return mockKeyAdapter;\n      }\n    };\n\n    TypeAdapter<Map<String, String>> adapter = testFactory.create(mockGson, mapTypeToken);\n\n    assertNotNull(adapter);\n\n    // Use reflection to get the Adapter class and check the instance type\n    Class<?> adapterClass = null;\n    for (Class<?> innerClass : MapTypeAdapterFactory.class.getDeclaredClasses()) {\n      if (\"Adapter\".equals(innerClass.getSimpleName())) {\n        adapterClass = innerClass;\n        break;\n      }\n    }\n    assertNotNull(adapterClass);\n    assertEquals(adapterClass, adapter.getClass());\n\n    // Verify interactions\n    verify(mockConstructorConstructor).get(mapTypeToken);\n    verify(mockGson).getAdapter(TypeToken.get(String.class));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890507,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 881,
+    "prompt_tokens": 1475,
+    "total_tokens": 2356,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 18.53
+  }
+}

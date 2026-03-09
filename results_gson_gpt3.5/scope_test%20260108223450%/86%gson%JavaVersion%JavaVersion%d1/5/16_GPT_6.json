@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmZ9SukN3a58R9hqSv7fNsQH8q8C",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class JavaVersionTest {\n\n    private int invokeIntMethod(Method method, Object... args) throws Exception {\n        Object result = method.invoke(null, args);\n        if (result instanceof Integer) {\n            return (Integer) result;\n        } else if (result instanceof Number) {\n            return ((Number) result).intValue();\n        } else if (result == null) {\n            return 0;\n        } else {\n            fail(\"Expected method to return an integer but got: \" + result.getClass());\n            return -1; // unreachable\n        }\n    }\n\n    @Test\n    public void testDetermineMajorJavaVersion() throws Exception {\n        Method method = JavaVersion.class.getDeclaredMethod(\"determineMajorJavaVersion\", String.class);\n        method.setAccessible(true);\n        int version = invokeIntMethod(method, System.getProperty(\"java.version\"));\n        assertTrue(version > 0, \"Major Java version should be positive\");\n    }\n\n    @Test\n    public void testGetMajorJavaVersion_String() throws Exception {\n        Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n        method.setAccessible(true);\n\n        assertEquals(8, invokeIntMethod(method, \"1.8.0_151\"));\n        assertEquals(9, invokeIntMethod(method, \"9\"));\n        assertEquals(11, invokeIntMethod(method, \"11.0.2\"));\n        assertEquals(17, invokeIntMethod(method, \"17\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"abc\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"\"));\n        assertEquals(0, invokeIntMethod(method, (Object) null));\n    }\n\n    @Test\n    public void testParseDotted() throws Exception {\n        Method method = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n        method.setAccessible(true);\n\n        assertEquals(8, invokeIntMethod(method, \"1.8.0_151\"));\n        assertEquals(9, invokeIntMethod(method, \"9\"));\n        assertEquals(11, invokeIntMethod(method, \"11.0.2\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"abc\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"\"));\n        assertEquals(0, invokeIntMethod(method, (Object) null));\n    }\n\n    @Test\n    public void testExtractBeginningInt() throws Exception {\n        Method method = JavaVersion.class.getDeclaredMethod(\"extractBeginningInt\", String.class);\n        method.setAccessible(true);\n\n        assertEquals(1, invokeIntMethod(method, \"1.8.0_151\"));\n        assertEquals(9, invokeIntMethod(method, \"9\"));\n        assertEquals(11, invokeIntMethod(method, \"11.0.2\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"abc\"));\n        assertEquals(0, invokeIntMethod(method, (Object) \"\"));\n        assertEquals(0, invokeIntMethod(method, (Object) null));\n    }\n\n    @Test\n    public void testGetMajorJavaVersion_NoArgs() {\n        int version = JavaVersion.getMajorJavaVersion();\n        assertTrue(version > 0, \"Major Java version should be positive\");\n    }\n\n    @Test\n    public void testIsJava9OrLater() {\n        boolean result = JavaVersion.isJava9OrLater();\n        int version = JavaVersion.getMajorJavaVersion();\n        if (version >= 9) {\n            assertTrue(result);\n        } else {\n            assertFalse(result);\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887419,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 775,
+    "prompt_tokens": 1868,
+    "total_tokens": 2643,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.04
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwARvtMlrbmpXTfw7bnircN2HchZc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.invoke.MethodHandles;\nimport java.lang.invoke.VarHandle;\nimport java.lang.reflect.Modifier;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n    private Lexer mockLexer;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Create a CSVParser instance with a dummy Reader and CSVFormat\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n\n        // Create a mock Lexer\n        mockLexer = mock(Lexer.class);\n\n        // Use reflection to set the private final lexer field to the mock\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier using VarHandle (works in Java 12+)\n        try {\n            // Try to remove final modifier via reflection (Java 8-11)\n            Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n            modifiersField.setAccessible(true);\n            modifiersField.setInt(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n        } catch (NoSuchFieldException ignored) {\n            // For Java 12+, modifiers field is removed, so use VarHandle to override final\n            VarHandle modifiersVarHandle = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup())\n                    .findVarHandle(Field.class, \"modifiers\", int.class);\n            modifiersVarHandle.set(lexerField, lexerField.getModifiers() & ~Modifier.FINAL);\n        }\n\n        lexerField.set(csvParser, mockLexer);\n    }\n\n    @Test\n    void testIsClosed_WhenLexerIsClosed_ReturnsTrue() {\n        when(mockLexer.isClosed()).thenReturn(true);\n\n        boolean result = csvParser.isClosed();\n\n        assertTrue(result);\n        verify(mockLexer, times(1)).isClosed();\n    }\n\n    @Test\n    void testIsClosed_WhenLexerIsNotClosed_ReturnsFalse() {\n        when(mockLexer.isClosed()).thenReturn(false);\n\n        boolean result = csvParser.isClosed();\n\n        assertFalse(result);\n        verify(mockLexer, times(1)).isClosed();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767979227,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 475,
+    "prompt_tokens": 908,
+    "total_tokens": 1383,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.21
+  }
+}

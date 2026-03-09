@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnEY7PYJ2ugTEWmT3Xadx4sbIes3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.JsonElement;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Setup with a simple JsonElement to allow instantiation\n    JsonElement element = new JsonPrimitive(\"test\");\n    jsonTreeReader = new JsonTreeReader(element);\n\n    // Initialize stack, stackSize, pathNames, and pathIndices properly to allow path building\n    java.lang.reflect.Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = element; // root element\n    stackField.set(jsonTreeReader, stack);\n\n    java.lang.reflect.Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    java.lang.reflect.Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n    pathNames[0] = null;\n    pathNamesField.set(jsonTreeReader, pathNames);\n\n    java.lang.reflect.Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0;\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n  }\n\n  @Test\n  public void testLocationString_withDefaultPath() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method locationStringMethod = JsonTreeReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n\n    String result = (String) locationStringMethod.invoke(jsonTreeReader);\n\n    // The default getPath() returns \"$\" (root path) for a new reader\n    assertEquals(\" at path $\", result);\n  }\n\n  @Test\n  public void testLocationString_withModifiedPath() throws Exception {\n    // Use reflection to set private fields to simulate a path\n    // Set stackSize to 2 to simulate some path depth\n    java.lang.reflect.Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 2);\n\n    // Set pathNames with one name at index 1\n    java.lang.reflect.Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n    pathNames[0] = null;\n    pathNames[1] = \"fieldName\";\n    pathNamesField.set(jsonTreeReader, pathNames);\n\n    // Set pathIndices with one index at index 1\n    java.lang.reflect.Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0;\n    pathIndices[1] = 1;\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Push dummy objects onto the stack to match stackSize\n    java.lang.reflect.Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = new JsonPrimitive(\"dummy0\");\n    stack[1] = new JsonPrimitive(\"dummy1\");\n    stackField.set(jsonTreeReader, stack);\n\n    Method locationStringMethod = JsonTreeReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String result = (String) locationStringMethod.invoke(jsonTreeReader);\n\n    // The path should reflect the simulated stack and pathNames/Indices\n    // The path format normally is \"$[1].fieldName\"\n    // So locationString should be \" at path $[1].fieldName\"\n    assertEquals(\" at path $[1].fieldName\", result);\n  }\n\n  @Test\n  public void testLocationString_withArrayIndexPath() throws Exception {\n    // Setup stackSize and pathIndices to simulate array indexing\n    java.lang.reflect.Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 3);\n\n    java.lang.reflect.Field pathNamesField = JsonTreeReader.class.getDeclaredField(\"pathNames\");\n    pathNamesField.setAccessible(true);\n    String[] pathNames = (String[]) pathNamesField.get(jsonTreeReader);\n    pathNames[0] = null;\n    pathNames[1] = null;\n    pathNames[2] = \"lastField\";\n    pathNamesField.set(jsonTreeReader, pathNames);\n\n    java.lang.reflect.Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0;\n    pathIndices[1] = 5;\n    pathIndices[2] = 0;\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Push dummy objects onto the stack to match stackSize\n    java.lang.reflect.Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = new JsonPrimitive(\"dummy0\");\n    stack[1] = new JsonPrimitive(\"dummy1\");\n    stack[2] = new JsonPrimitive(\"dummy2\");\n    stackField.set(jsonTreeReader, stack);\n\n    Method locationStringMethod = JsonTreeReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String result = (String) locationStringMethod.invoke(jsonTreeReader);\n\n    // Expected path: $[0][5].lastField\n    assertEquals(\" at path $[0][5].lastField\", result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889986,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1365,
+    "prompt_tokens": 2560,
+    "total_tokens": 3925,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 21.85
+  }
+}

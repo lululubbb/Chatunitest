@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CwAHJKMtc03fmDVu5NXwMNv9RTOoB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.util.Arrays;\nimport java.util.Collections;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterTest {\n\n    private Appendable out;\n    private CSVFormat format;\n    private CSVPrinter printer;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        out = mock(Appendable.class);\n        format = mock(CSVFormat.class);\n        printer = new CSVPrinter(out, format);\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingObjectArray() throws IOException {\n        Object[] record = new Object[] { \"a\", \"b\" };\n        Iterable<Object[]> values = Collections.singletonList(record);\n\n        printer.printRecords(values);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingIterable() throws IOException {\n        Iterable<String> innerIterable = Arrays.asList(\"x\", \"y\");\n        Iterable<Iterable<String>> values = Collections.singletonList(innerIterable);\n\n        printer.printRecords(values);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecords_withIterableContainingSingleObject() throws IOException {\n        // Use raw Iterable and cast to avoid compilation issues\n        Iterable<?> values = Collections.singletonList((Object) \"singleValue\");\n\n        printer.printRecords(values);\n\n        verify(out, atLeastOnce()).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrintRecords_withEmptyIterable() throws IOException {\n        Iterable<Object> values = Collections.emptyList();\n\n        printer.printRecords(values);\n\n        // No append calls expected because no records to print\n        verify(out, never()).append(any(CharSequence.class));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767978569,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 375,
+    "prompt_tokens": 920,
+    "total_tokens": 1295,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.61
+  }
+}

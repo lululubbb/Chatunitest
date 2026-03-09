@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9bkvcRdrzJ2OpBFJx84UIghXWMN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Constructor;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testGetHeader_WithNonNullHeader() throws Exception {\n        String[] header = new String[] {\"col1\", \"col2\", \"col3\"};\n        CSVFormat format = createCSVFormatWithHeader(header);\n\n        String[] result = format.getHeader();\n\n        assertNotNull(result);\n        assertArrayEquals(header, result);\n        assertNotSame(header, result); // ensure clone is returned, not original array\n    }\n\n    @Test\n    public void testGetHeader_WithNullHeader() throws Exception {\n        CSVFormat format = createCSVFormatWithHeader(null);\n\n        String[] result = format.getHeader();\n\n        assertNull(result);\n    }\n\n    private CSVFormat createCSVFormatWithHeader(String[] header) throws Exception {\n        Class<CSVFormat> clazz = CSVFormat.class;\n        Class<?> quoteClass = Class.forName(\"org.apache.commons.csv.CSVFormat$Quote\");\n        Constructor<CSVFormat> constructor = clazz.getDeclaredConstructor(\n                char.class, Character.class, quoteClass, Character.class,\n                Character.class, boolean.class, boolean.class, String.class,\n                String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        return constructor.newInstance(\n                ',',                        // delimiter\n                '\"',                        // quoteChar\n                null,                       // quotePolicy\n                null,                       // commentStart\n                null,                       // escape\n                false,                      // ignoreSurroundingSpaces\n                true,                       // ignoreEmptyLines\n                \"\\r\\n\",                     // recordSeparator\n                null,                       // nullString\n                header,                     // header\n                false                       // skipHeaderRecord\n        );\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975992,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 382,
+    "prompt_tokens": 1365,
+    "total_tokens": 1747,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.13
+  }
+}

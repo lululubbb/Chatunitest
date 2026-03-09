@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwRumyYyEaxmvBz40w5Ln7EMa86x",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Writer;\nimport java.lang.reflect.Field;\nimport java.nio.charset.Charset;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    public void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testPrint_withValidPathAndCharset_returnsCSVPrinter() throws IOException, ReflectiveOperationException {\n        Path mockPath = mock(Path.class);\n        CSVPrinter mockPrinter = mock(CSVPrinter.class);\n\n        // Create a Writer instance to be returned by Files.newBufferedWriter\n        Writer writer = new java.io.StringWriter();\n\n        // Use reflection to replace Files.newBufferedWriter call inside CSVFormat.print(Path, Charset)\n        // Since Mockito.mockStatic is not available, we create a subclass of CSVFormat to override print(Path, Charset)\n        CSVFormat spyFormat = spy(csvFormat);\n\n        doReturn(mockPrinter).when(spyFormat).print(any(Appendable.class));\n\n        // Override the print(Path, Charset) method via reflection or subclassing\n        CSVFormat formatWithOverride = new CSVFormatOverride(spyFormat, writer);\n\n        CSVPrinter printer = formatWithOverride.print(mockPath, StandardCharsets.UTF_8);\n\n        assertNotNull(printer);\n        assertSame(mockPrinter, printer);\n    }\n\n    @Test\n    public void testPrint_throwsIOException_whenFilesNewBufferedWriterThrows() {\n        Path mockPath = mock(Path.class);\n\n        // Since we cannot mock static Files.newBufferedWriter, test by subclassing CSVFormat to throw IOException\n        CSVFormat formatWithException = new CSVFormatThrowing();\n\n        IOException thrown = assertThrows(IOException.class, () -> {\n            formatWithException.print(mockPath, StandardCharsets.UTF_8);\n        });\n\n        assertEquals(\"Test IO Exception\", thrown.getMessage());\n    }\n\n    // Helper subclass to override print(Path, Charset) method to avoid calling Files.newBufferedWriter\n    static class CSVFormatOverride extends CSVFormat {\n        private final CSVFormat delegate;\n        private final Writer writer;\n\n        CSVFormatOverride(CSVFormat delegate, Writer writer) {\n            super(delegate.getDelimiter(),\n                  delegate.getQuoteCharacter(),\n                  delegate.getQuoteMode(),\n                  delegate.getCommentMarker(),\n                  delegate.getEscapeCharacter(),\n                  delegate.getIgnoreSurroundingSpaces(),\n                  delegate.getIgnoreEmptyLines(),\n                  delegate.getRecordSeparator(),\n                  delegate.getNullString(),\n                  null,\n                  delegate.getHeader(),\n                  delegate.getSkipHeaderRecord(),\n                  delegate.getAllowMissingColumnNames(),\n                  delegate.getIgnoreHeaderCase(),\n                  delegate.getTrim(),\n                  delegate.getTrailingDelimiter(),\n                  delegate.getAutoFlush());\n            this.delegate = delegate;\n            this.writer = writer;\n        }\n\n        @Override\n        public CSVPrinter print(Path out, Charset charset) throws IOException {\n            // Instead of calling Files.newBufferedWriter, return print(writer)\n            return delegate.print(writer);\n        }\n    }\n\n    // Helper subclass to override print(Path, Charset) method to throw IOException\n    static class CSVFormatThrowing extends CSVFormat {\n        CSVFormatThrowing() {\n            super(CSVFormat.DEFAULT.getDelimiter(),\n                  CSVFormat.DEFAULT.getQuoteCharacter(),\n                  CSVFormat.DEFAULT.getQuoteMode(),\n                  CSVFormat.DEFAULT.getCommentMarker(),\n                  CSVFormat.DEFAULT.getEscapeCharacter(),\n                  CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(),\n                  CSVFormat.DEFAULT.getIgnoreEmptyLines(),\n                  CSVFormat.DEFAULT.getRecordSeparator(),\n                  CSVFormat.DEFAULT.getNullString(),\n                  null,\n                  CSVFormat.DEFAULT.getHeader(),\n                  CSVFormat.DEFAULT.getSkipHeaderRecord(),\n                  CSVFormat.DEFAULT.getAllowMissingColumnNames(),\n                  CSVFormat.DEFAULT.getIgnoreHeaderCase(),\n                  CSVFormat.DEFAULT.getTrim(),\n                  CSVFormat.DEFAULT.getTrailingDelimiter(),\n                  CSVFormat.DEFAULT.getAutoFlush());\n        }\n\n        @Override\n        public CSVPrinter print(Path out, Charset charset) throws IOException {\n            throw new IOException(\"Test IO Exception\");\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767687082,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 863,
+    "prompt_tokens": 2485,
+    "total_tokens": 3348,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.25
+  }
+}

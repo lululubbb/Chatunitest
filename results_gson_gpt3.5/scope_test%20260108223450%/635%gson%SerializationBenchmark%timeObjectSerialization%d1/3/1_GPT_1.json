@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnFuvnhaWIqoWLPfVGfgYAxPREBE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass SerializationBenchmarkTest {\n\n  private SerializationBenchmark serializationBenchmark;\n\n  @Mock\n  private Gson mockGson;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    MockitoAnnotations.openMocks(this);\n    serializationBenchmark = new SerializationBenchmark();\n\n    // Use reflection to set private fields gson and bag\n    java.lang.reflect.Field gsonField = SerializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(serializationBenchmark, mockGson);\n\n    java.lang.reflect.Field bagField = SerializationBenchmark.class.getDeclaredField(\"bag\");\n    bagField.setAccessible(true);\n    bagField.set(serializationBenchmark, new BagOfPrimitives());\n\n    // Set pretty field (not used in timeObjectSerialization but required by class)\n    java.lang.reflect.Field prettyField = SerializationBenchmark.class.getDeclaredField(\"pretty\");\n    prettyField.setAccessible(true);\n    prettyField.set(serializationBenchmark, false);\n  }\n\n  @Test\n  void timeObjectSerialization_invokesToJsonRepsTimes() {\n    int reps = 5;\n\n    serializationBenchmark.timeObjectSerialization(reps);\n\n    verify(mockGson, times(reps)).toJson(any(BagOfPrimitives.class));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890070,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 297,
+    "prompt_tokens": 893,
+    "total_tokens": 1190,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 36.45
+  }
+}

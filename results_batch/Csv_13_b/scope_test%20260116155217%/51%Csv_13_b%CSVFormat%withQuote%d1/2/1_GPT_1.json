@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyYzMTz6IrNulVymqwjhdpUXQv8ju",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithQuote_NullQuoteChar() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withQuote((Character) null);\n        assertNotNull(result);\n        assertNull(result.getQuoteCharacter());\n        // Other properties remain unchanged\n        assertEquals(format.getDelimiter(), result.getDelimiter());\n        assertEquals(format.getQuoteMode(), result.getQuoteMode());\n        assertEquals(format.getCommentMarker(), result.getCommentMarker());\n        assertEquals(format.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(format.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), result.getRecordSeparator());\n        assertArrayEquals(format.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(format.getHeader(), result.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(format.getNullString(), result.getNullString());\n        assertEquals(format.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(format.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n    }\n\n    @Test\n    public void testWithQuote_ValidQuoteChar() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Character quoteChar = '\\'';\n        CSVFormat result = format.withQuote(quoteChar);\n        assertNotNull(result);\n        assertEquals(quoteChar, result.getQuoteCharacter());\n        // Other properties remain unchanged\n        assertEquals(format.getDelimiter(), result.getDelimiter());\n        assertEquals(format.getQuoteMode(), result.getQuoteMode());\n        assertEquals(format.getCommentMarker(), result.getCommentMarker());\n        assertEquals(format.getEscapeCharacter(), result.getEscapeCharacter());\n        assertEquals(format.getIgnoreSurroundingSpaces(), result.getIgnoreSurroundingSpaces());\n        assertEquals(format.getIgnoreEmptyLines(), result.getIgnoreEmptyLines());\n        assertEquals(format.getRecordSeparator(), result.getRecordSeparator());\n        assertArrayEquals(format.getHeaderComments(), result.getHeaderComments());\n        assertArrayEquals(format.getHeader(), result.getHeader());\n        assertEquals(format.getSkipHeaderRecord(), result.getSkipHeaderRecord());\n        assertEquals(format.getNullString(), result.getNullString());\n        assertEquals(format.getAllowMissingColumnNames(), result.getAllowMissingColumnNames());\n        assertEquals(format.getIgnoreHeaderCase(), result.getIgnoreHeaderCase());\n    }\n\n    @Test\n    public void testWithQuote_ThrowsOnLineBreak() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to access private static isLineBreak(Character)\n        Method isLineBreakMethod = CSVFormat.class.getDeclaredMethod(\"isLineBreak\", Character.class);\n        isLineBreakMethod.setAccessible(true);\n\n        // Validate isLineBreak returns true for '\\n' and '\\r'\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, '\\n'));\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, '\\r'));\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, '\\u000A')); // LF\n        assertTrue((Boolean) isLineBreakMethod.invoke(null, '\\u000D')); // CR\n\n        // Test withQuote throws IllegalArgumentException when quoteChar is line break\n        Character[] lineBreakChars = {'\\n', '\\r', '\\u000A', '\\u000D'};\n        for (Character lb : lineBreakChars) {\n            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n                format.withQuote(lb);\n            });\n            assertEquals(\"The quoteChar cannot be a line break\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550212,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 826,
+    "prompt_tokens": 1212,
+    "total_tokens": 2038,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.61
+  }
+}

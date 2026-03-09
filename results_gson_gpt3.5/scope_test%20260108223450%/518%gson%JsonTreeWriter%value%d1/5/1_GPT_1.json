@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmjBBSB4Omqib3nJLbMGklfYB1kG",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\npublic class JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  public void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  public void value_validDouble_returnsThis() throws IOException {\n    JsonWriter returned = jsonTreeWriter.value(1.23);\n    assertSame(jsonTreeWriter, returned);\n  }\n\n  @Test\n  public void value_NaN_throwsIllegalArgumentException() {\n    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {\n      jsonTreeWriter.value(Double.NaN);\n    });\n    assertTrue(thrown.getMessage().contains(\"NaN\"));\n  }\n\n  @Test\n  public void value_Infinite_throwsIllegalArgumentException() {\n    IllegalArgumentException thrownPos = assertThrows(IllegalArgumentException.class, () -> {\n      jsonTreeWriter.value(Double.POSITIVE_INFINITY);\n    });\n    assertTrue(thrownPos.getMessage().contains(\"infinities\"));\n\n    IllegalArgumentException thrownNeg = assertThrows(IllegalArgumentException.class, () -> {\n      jsonTreeWriter.value(Double.NEGATIVE_INFINITY);\n    });\n    assertTrue(thrownNeg.getMessage().contains(\"infinities\"));\n  }\n\n  @Test\n  public void value_allowsNaNIfLenient() throws Exception {\n    // Use reflection to set lenient to true since isLenient() is inherited and not shown here\n    // We assume isLenient() comes from JsonWriter and defaults to false\n    // So we mock JsonTreeWriter to override isLenient() to return true\n\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n    doReturn(true).when(spyWriter).isLenient();\n\n    JsonWriter returned = spyWriter.value(Double.NaN);\n    assertSame(spyWriter, returned);\n  }\n\n  @Test\n  public void value_putCalledWithJsonPrimitive() throws Exception {\n    // Use reflection to spy on private put method call by spying on JsonTreeWriter\n    JsonTreeWriter spyWriter = spy(jsonTreeWriter);\n\n    double testValue = 5.5;\n    spyWriter.value(testValue);\n\n    // Capture argument passed to put()\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", com.google.gson.JsonElement.class);\n    putMethod.setAccessible(true);\n    // We cannot verify private method call with Mockito easily, so verify indirectly:\n    // We invoke get() and check that it contains the JsonPrimitive with the value set\n\n    com.google.gson.JsonElement result = spyWriter.get();\n    assertTrue(result.isJsonPrimitive());\n    JsonPrimitive primitive = result.getAsJsonPrimitive();\n    assertTrue(primitive.isNumber());\n    assertEquals(testValue, primitive.getAsDouble(), 0.0);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888041,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 641,
+    "prompt_tokens": 557,
+    "total_tokens": 1198,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.73
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuxjmy9sHUoDDAHlYxs9XOdj8AiVj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.nio.charset.Charset;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVParserParseTest {\n\n    private MockedStatic<Assertions> assertionsMockedStatic;\n    private MockedStatic<Files> filesMockedStatic;\n\n    @BeforeEach\n    void setUp() {\n        assertionsMockedStatic = Mockito.mockStatic(Assertions.class);\n        filesMockedStatic = Mockito.mockStatic(Files.class);\n    }\n\n    @AfterEach\n    void tearDown() {\n        assertionsMockedStatic.close();\n        filesMockedStatic.close();\n    }\n\n    @Test\n    void parse_givenNullPath_throwsException() {\n        Path path = null;\n        Charset charset = Charset.defaultCharset();\n        CSVFormat format = mock(CSVFormat.class);\n\n        assertionsMockedStatic.when(() -> Assertions.notNull(path, \"path\"))\n                              .thenThrow(new NullPointerException(\"path\"));\n\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(path, charset, format);\n        });\n        assertEquals(\"path\", ex.getMessage());\n        assertionsMockedStatic.verify(() -> Assertions.notNull(path, \"path\"));\n    }\n\n    @Test\n    void parse_givenNullFormat_throwsException() {\n        Path path = mock(Path.class);\n        Charset charset = Charset.defaultCharset();\n        CSVFormat format = null;\n\n        assertionsMockedStatic.when(() -> Assertions.notNull(path, \"path\")).thenReturn(null);\n        assertionsMockedStatic.when(() -> Assertions.notNull(format, \"format\"))\n                              .thenThrow(new NullPointerException(\"format\"));\n\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(path, charset, format);\n        });\n        assertEquals(\"format\", ex.getMessage());\n        assertionsMockedStatic.verify(() -> Assertions.notNull(path, \"path\"));\n        assertionsMockedStatic.verify(() -> Assertions.notNull(format, \"format\"));\n    }\n\n    @Test\n    void parse_readsBufferedReaderAndDelegates() throws IOException {\n        Path path = mock(Path.class);\n        Charset charset = Charset.defaultCharset();\n        CSVFormat format = mock(CSVFormat.class);\n        BufferedReader reader = mock(BufferedReader.class);\n\n        assertionsMockedStatic.when(() -> Assertions.notNull(path, \"path\")).thenReturn(null);\n        assertionsMockedStatic.when(() -> Assertions.notNull(format, \"format\")).thenReturn(null);\n\n        filesMockedStatic.when(() -> Files.newBufferedReader(path, charset)).thenReturn(reader);\n\n        // Spy on CSVParser to verify static call to parse(Reader, CSVFormat)\n        try (MockedStatic<CSVParser> csvParserStatic = Mockito.mockStatic(CSVParser.class)) {\n            CSVParser dummyParser = mock(CSVParser.class);\n            csvParserStatic.when(() -> CSVParser.parse(reader, format)).thenReturn(dummyParser);\n\n            CSVParser result = CSVParser.parse(path, charset, format);\n\n            assertSame(dummyParser, result);\n\n            assertionsMockedStatic.verify(() -> Assertions.notNull(path, \"path\"));\n            assertionsMockedStatic.verify(() -> Assertions.notNull(format, \"format\"));\n            filesMockedStatic.verify(() -> Files.newBufferedReader(path, charset));\n            csvParserStatic.verify(() -> CSVParser.parse(reader, format));\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692034,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 751,
+    "prompt_tokens": 627,
+    "total_tokens": 1378,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.26
+  }
+}

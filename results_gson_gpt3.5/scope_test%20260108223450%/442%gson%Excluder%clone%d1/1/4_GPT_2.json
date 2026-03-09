@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnKPwKQkNIeVrAQ1UQaXdlPbcNqs",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.util.List;\n\nclass ExcluderTest {\n\n  @Test\n  void clone_shouldReturnDistinctButEqualInstance() throws Exception {\n    Excluder original = new Excluder();\n    Excluder cloned = original.clone();\n\n    assertNotNull(cloned);\n    assertNotSame(original, cloned);\n\n    // Use reflection to access private fields and compare their values\n    Field versionField = Excluder.class.getDeclaredField(\"version\");\n    versionField.setAccessible(true);\n    assertEquals(versionField.get(original), versionField.get(cloned));\n\n    Field modifiersField = Excluder.class.getDeclaredField(\"modifiers\");\n    modifiersField.setAccessible(true);\n    assertEquals(modifiersField.get(original), modifiersField.get(cloned));\n\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    assertEquals(serializeInnerClassesField.get(original), serializeInnerClassesField.get(cloned));\n\n    Field requireExposeField = Excluder.class.getDeclaredField(\"requireExpose\");\n    requireExposeField.setAccessible(true);\n    assertEquals(requireExposeField.get(original), requireExposeField.get(cloned));\n\n    Field serializationStrategiesField = Excluder.class.getDeclaredField(\"serializationStrategies\");\n    serializationStrategiesField.setAccessible(true);\n    assertEquals(serializationStrategiesField.get(original), serializationStrategiesField.get(cloned));\n\n    Field deserializationStrategiesField = Excluder.class.getDeclaredField(\"deserializationStrategies\");\n    deserializationStrategiesField.setAccessible(true);\n    assertEquals(deserializationStrategiesField.get(original), deserializationStrategiesField.get(cloned));\n  }\n\n  @Test\n  void clone_onCloneNotSupportedException_shouldThrowAssertionError() {\n    // Since Excluder is final, we cannot subclass it.\n    // Instead, use Mockito spy and mock the clone method to throw CloneNotSupportedException wrapped in AssertionError.\n    Excluder excluderSpy = Mockito.spy(new Excluder());\n\n    Mockito.doAnswer(invocation -> {\n      throw new AssertionError(new CloneNotSupportedException(\"forced\"));\n    }).when(excluderSpy).clone();\n\n    AssertionError error = assertThrows(AssertionError.class, excluderSpy::clone);\n    assertTrue(error.getCause() instanceof CloneNotSupportedException);\n    assertEquals(\"forced\", error.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890349,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 515,
+    "prompt_tokens": 2045,
+    "total_tokens": 2560,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.96
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n  private Method checkLenientMethod;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException {\n    Reader mockReader = mock(Reader.class);\n    jsonReader = new JsonReader(mockReader);\n    checkLenientMethod = JsonReader.class.getDeclaredMethod(\"checkLenient\");\n    checkLenientMethod.setAccessible(true);\n  }\n\n  @Test\n  void testCheckLenient_whenLenientTrue_doesNotThrow() {\n    jsonReader.setLenient(true);\n    assertDoesNotThrow(() -> {\n      try {\n        checkLenientMethod.invoke(jsonReader);\n      } catch (InvocationTargetException e) {\n        // unwrap underlying exception\n        throw e.getCause();\n      }\n    });\n  }\n\n  @Test\n  void testCheckLenient_whenLenientFalse_throwsIOException() {\n    jsonReader.setLenient(false);\n    IOException thrown = assertThrows(IOException.class, () -> {\n      try {\n        checkLenientMethod.invoke(jsonReader);\n      } catch (InvocationTargetException e) {\n        // unwrap underlying exception\n        throw e.getCause();\n      }\n    });\n    assertTrue(thrown.getMessage().startsWith(\"Use JsonReader.setLenient(true) to accept malformed JSON\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1724,
+  "completion_tokens": 328,
+  "total_tokens": 2052,
+  "llm_elapsed_time_seconds": 5.97
+}

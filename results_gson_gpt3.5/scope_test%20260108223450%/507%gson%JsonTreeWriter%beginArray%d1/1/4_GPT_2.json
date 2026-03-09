@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmqgY4jXE0pOBtlUO8zIOjhkMzr7",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonNull;\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonTreeWriterTest {\n\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  void beginArray_shouldReturnThisAndModifyStackAndCallPut() throws Exception {\n    // Call beginArray\n    JsonWriter returned = jsonTreeWriter.beginArray();\n\n    // returned should be the same instance\n    assertSame(jsonTreeWriter, returned);\n\n    // Access private field 'stack' via reflection\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    // stack should have exactly one element which is a JsonArray\n    assertEquals(1, stack.size());\n    assertTrue(stack.get(0) instanceof JsonArray);\n\n    // Access private field 'product' to check if put() updated it\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(jsonTreeWriter);\n\n    // product should be the same JsonArray instance as in stack\n    assertSame(stack.get(0), product);\n  }\n\n  @Test\n  void put_privateMethod_shouldSetProductAndModifyStackCorrectly() throws Exception {\n    // Use reflection to get private method put(JsonElement)\n    Method putMethod = JsonTreeWriter.class.getDeclaredMethod(\"put\", JsonElement.class);\n    putMethod.setAccessible(true);\n\n    // Prepare a JsonPrimitive to put\n    JsonPrimitive primitive = new JsonPrimitive(\"test\");\n\n    // invoke put\n    putMethod.invoke(jsonTreeWriter, primitive);\n\n    // Check that product is set to primitive\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(jsonTreeWriter);\n    assertSame(primitive, product);\n  }\n\n  @Test\n  void peek_privateMethod_shouldReturnTopOfStackOrProduct() throws Exception {\n    // Use reflection to get private method peek()\n    Method peekMethod = JsonTreeWriter.class.getDeclaredMethod(\"peek\");\n    peekMethod.setAccessible(true);\n\n    // Initially stack is empty, peek() should return product (JsonNull.INSTANCE)\n    JsonElement peeked = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(jsonTreeWriter);\n    assertSame(product, peeked);\n\n    // Add element to stack and test peek returns top element\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    JsonArray array = new JsonArray();\n    stack.add(array);\n\n    JsonElement peekedAfterAdd = (JsonElement) peekMethod.invoke(jsonTreeWriter);\n    assertSame(array, peekedAfterAdd);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767888506,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 758,
+    "prompt_tokens": 1609,
+    "total_tokens": 2367,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.68
+  }
+}

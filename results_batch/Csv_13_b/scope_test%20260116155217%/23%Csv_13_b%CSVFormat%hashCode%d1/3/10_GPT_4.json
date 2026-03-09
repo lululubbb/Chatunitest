@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZW8Kyk75Qz5A4afAwDTl8RV8tvp",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertNotEquals;\n\nimport java.lang.reflect.Constructor;\nimport java.util.Arrays;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.QuoteMode;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatHashCodeTest {\n\n    private CSVFormat csvFormatDefault;\n    private CSVFormat csvFormatCustom;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        // Accessing private constructor via reflection to create custom instances\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n\n        // Default CSVFormat instance for baseline comparison\n        csvFormatDefault = CSVFormat.DEFAULT;\n\n        // Custom CSVFormat with different fields to test hashCode variations\n        csvFormatCustom = constructor.newInstance(';', '\"', QuoteMode.ALL, '#', '\\\\', true, false,\n                \"\\n\", \"NULL\", null, new String[] {\"h1\", \"h2\"}, true, true, true);\n    }\n\n    @Test\n    void testHashCode_sameObject() {\n        // hashCode should be consistent for the same instance\n        int hash1 = csvFormatDefault.hashCode();\n        int hash2 = csvFormatDefault.hashCode();\n        assertEquals(hash1, hash2);\n    }\n\n    @Test\n    void testHashCode_equalObjects() throws Exception {\n        // Create another instance with the same field values as csvFormatCustom to test equality of hashCode\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        CSVFormat another = constructor.newInstance(';', '\"', QuoteMode.ALL, '#', '\\\\', true, false,\n                \"\\n\", \"NULL\", null, new String[] {\"h1\", \"h2\"}, true, true, true);\n\n        assertEquals(csvFormatCustom.hashCode(), another.hashCode());\n    }\n\n    @Test\n    void testHashCode_differentObjects() {\n        // hashCode should differ for objects with different field values\n        assertNotEquals(csvFormatDefault.hashCode(), csvFormatCustom.hashCode());\n    }\n\n    @Test\n    void testHashCode_nullFields() throws Exception {\n        // Create CSVFormat with null quoteMode, quoteCharacter, commentMarker, escapeCharacter, nullString, recordSeparator, header\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        CSVFormat nullFieldsFormat = constructor.newInstance(',', null, null, null, null, false, false,\n                null, null, null, null, false, false, false);\n\n        // Calculate expected hashCode manually\n        final int prime = 31;\n        int result = 1;\n        result = prime * result + ',';\n        result = prime * result + 0; // quoteMode null\n        result = prime * result + 0; // quoteCharacter null\n        result = prime * result + 0; // commentMarker null\n        result = prime * result + 0; // escapeCharacter null\n        result = prime * result + 0; // nullString null\n        result = prime * result + (false ? 1231 : 1237);\n        result = prime * result + (false ? 1231 : 1237);\n        result = prime * result + (false ? 1231 : 1237);\n        result = prime * result + (false ? 1231 : 1237);\n        result = prime * result + 0; // recordSeparator null\n        result = prime * result + Arrays.hashCode((String[]) null); // header null treated as 0\n\n        assertEquals(result, nullFieldsFormat.hashCode());\n    }\n\n    @Test\n    void testHashCode_booleanFields() throws Exception {\n        // Create CSVFormat with all boolean fields true\n        Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(char.class, Character.class, QuoteMode.class, Character.class,\n                Character.class, boolean.class, boolean.class, String.class, String.class, Object[].class, String[].class,\n                boolean.class, boolean.class, boolean.class);\n        constructor.setAccessible(true);\n        CSVFormat allTrueBooleans = constructor.newInstance(',', '\"', QuoteMode.MINIMAL, null, null,\n                true, true, \"\\r\\n\", \"null\", null, new String[] {\"header\"}, true, true, true);\n\n        // Create CSVFormat with all boolean fields false\n        CSVFormat allFalseBooleans = constructor.newInstance(',', '\"', QuoteMode.MINIMAL, null, null,\n                false, false, \"\\r\\n\", \"null\", null, new String[] {\"header\"}, false, false, false);\n\n        // Their hashCodes should differ due to boolean fields\n        assertNotEquals(allTrueBooleans.hashCode(), allFalseBooleans.hashCode());\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768552244,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1165,
+    "prompt_tokens": 2304,
+    "total_tokens": 3469,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 19.09
+  }
+}

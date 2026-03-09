@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuqgZ9aYhhnasBTQe3BSKg9mDcupr",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.Collections;\nimport java.util.Iterator;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\npublic class CSVRecordTest {\n\n    @Test\n    void testCSVRecordConstructorAndGetters() throws Exception {\n        String[] values = new String[] { \"a\", \"b\", \"c\" };\n        Map<String, Integer> mapping = Map.of(\"col1\", 0, \"col2\", 1, \"col3\", 2);\n        String comment = \"comment\";\n        long recordNumber = 42L;\n\n        // Use reflection to invoke the constructor since it is package-private\n        Constructor<CSVRecord> constructor = CSVRecord.class.getDeclaredConstructor(String[].class, Map.class, String.class, long.class);\n        constructor.setAccessible(true);\n        CSVRecord record = constructor.newInstance(values, mapping, comment, recordNumber);\n\n        // Validate fields via public methods\n        assertEquals(\"a\", record.get(0));\n        assertEquals(\"b\", record.get(1));\n        assertEquals(\"c\", record.get(2));\n        assertEquals(\"a\", record.get(\"col1\"));\n        assertEquals(\"b\", record.get(\"col2\"));\n        assertEquals(\"c\", record.get(\"col3\"));\n        assertEquals(comment, record.getComment());\n        assertEquals(recordNumber, record.getRecordNumber());\n        assertEquals(3, record.size());\n\n        assertTrue(record.isConsistent());\n        assertTrue(record.isMapped(\"col1\"));\n        assertFalse(record.isMapped(\"colX\"));\n        assertTrue(record.isSet(\"col1\"));\n        assertFalse(record.isSet(\"colX\"));\n\n        Iterator<String> iterator = record.iterator();\n        assertNotNull(iterator);\n        assertTrue(iterator.hasNext());\n        assertEquals(\"a\", iterator.next());\n\n        String[] vals = record.values();\n        assertArrayEquals(values, vals);\n\n        String toStringResult = record.toString();\n        assertNotNull(toStringResult);\n        assertTrue(toStringResult.contains(\"a\"));\n        assertTrue(toStringResult.contains(\"b\"));\n        assertTrue(toStringResult.contains(\"c\"));\n        assertTrue(toStringResult.contains(\"comment\"));\n\n        // Test constructor with null values array -> should use EMPTY_STRING_ARRAY\n        CSVRecord record2 = constructor.newInstance(null, Collections.emptyMap(), null, 0L);\n        assertEquals(0, record2.size());\n        assertFalse(record2.iterator().hasNext());\n        assertNull(record2.getComment());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767664927,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 541,
+    "prompt_tokens": 370,
+    "total_tokens": 911,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.88
+  }
+}

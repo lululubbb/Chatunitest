@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport com.google.gson.internal.bind.JsonTreeReader;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.io.Writer;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonIOException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass TypeAdapterTest {\n\n  private TypeAdapter<String> typeAdapter;\n\n  @BeforeEach\n  void setUp() {\n    typeAdapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) throws IOException {\n        if (value == null) {\n          out.nullValue();\n        } else {\n          out.value(value);\n        }\n      }\n\n      @Override\n      public String read(com.google.gson.stream.JsonReader in) {\n        return null;\n      }\n    };\n  }\n\n  @Test\n  void toJson_shouldReturnJsonString_whenValueIsNonNull() {\n    String input = \"test\";\n    String json = typeAdapter.toJson(input);\n    assertEquals(\"\\\"test\\\"\", json);\n  }\n\n  @Test\n  void toJson_shouldReturnJsonNull_whenValueIsNull() {\n    String json = typeAdapter.toJson(null);\n    assertEquals(\"null\", json);\n  }\n\n  @Test\n  void toJson_shouldThrowJsonIOException_whenIOExceptionOccurs() {\n    TypeAdapter<String> adapter = new TypeAdapter<String>() {\n      @Override\n      public void write(JsonWriter out, String value) throws IOException {\n        throw new IOException(\"forced\");\n      }\n\n      @Override\n      public String read(com.google.gson.stream.JsonReader in) {\n        return null;\n      }\n    };\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> adapter.toJson(\"any\"));\n    assertEquals(\"java.io.IOException: forced\", thrown.getCause().toString());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 375,
+  "completion_tokens": 378,
+  "total_tokens": 753,
+  "llm_elapsed_time_seconds": 7.99,
+  "repair_elapsed_time_seconds": 24.58,
+  "round_total_time_seconds": 24.58
+}

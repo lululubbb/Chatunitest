@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport com.google.gson.JsonElement;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Method;\n\npublic class JsonElementTest {\n\n    @Test\n    public void testGetAsLong_UnsupportedOperationExceptionThrown() throws Exception {\n        JsonElement jsonElement = new JsonElement() {\n            @Override\n            public JsonElement deepCopy() {\n                return null;\n            }\n        };\n\n        // Direct call to getAsLong() should throw UnsupportedOperationException\n        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, jsonElement::getAsLong);\n        assertEquals(jsonElement.getClass().getSimpleName(), exception.getMessage());\n    }\n\n    @Test\n    public void testGetAsLong_UsingReflection() throws Exception {\n        JsonElement jsonElement = new JsonElement() {\n            @Override\n            public JsonElement deepCopy() {\n                return null;\n            }\n        };\n\n        Method getAsLongMethod = JsonElement.class.getDeclaredMethod(\"getAsLong\");\n        getAsLongMethod.setAccessible(true);\n\n        try {\n            getAsLongMethod.invoke(jsonElement);\n        } catch (Exception e) {\n            Throwable cause = e.getCause();\n            assertEquals(UnsupportedOperationException.class, cause.getClass());\n            assertEquals(jsonElement.getClass().getSimpleName(), cause.getMessage());\n        }\n    }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1274,
+  "completion_tokens": 299,
+  "total_tokens": 1573,
+  "llm_elapsed_time_seconds": 7.03
+}

@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class JsonPrimitiveTest {\n\n  @Test\n  public void testIsString_withStringValue() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"test\");\n    assertTrue(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Integer() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(123);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Boolean() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(true);\n    assertFalse(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_Character() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive('c');\n    assertTrue(jsonPrimitive.isString());\n  }\n\n  @Test\n  public void testIsString_withNonStringValue_LazilyParsedNumber() throws Exception {\n    // Using reflection to create JsonPrimitive with LazilyParsedNumber since no direct constructor\n    JsonPrimitive jsonPrimitive = Mockito.mock(JsonPrimitive.class, Mockito.CALLS_REAL_METHODS);\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n    valueField.set(jsonPrimitive, new com.google.gson.internal.LazilyParsedNumber(\"123\"));\n    assertFalse(jsonPrimitive.isString());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1064,
+  "completion_tokens": 318,
+  "total_tokens": 1382,
+  "llm_elapsed_time_seconds": 6.27
+}

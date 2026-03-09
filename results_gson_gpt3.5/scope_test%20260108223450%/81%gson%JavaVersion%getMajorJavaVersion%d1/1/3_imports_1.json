@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  @Test\n  void testGetMajorJavaVersion_withParseDottedSuccess() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n\n    // parseDotted returns a valid version number, e.g. 11\n    int result = (int) method.invoke(null, \"11.0.4\");\n    assertEquals(11, result);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withParseDottedFailAndExtractBeginningIntSuccess() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n\n    // parseDotted returns -1, extractBeginningInt returns 8\n    // To simulate this, we use a string that parseDotted fails but extractBeginningInt succeeds\n    int result = (int) method.invoke(null, \"8u202\");\n    assertEquals(8, result);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withBothParseDottedAndExtractBeginningIntFail() throws Exception {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n\n    // parseDotted and extractBeginningInt both return -1, e.g. empty or invalid string\n    int result = (int) method.invoke(null, \"invalid_version_string\");\n    assertEquals(6, result);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 304,
+  "completion_tokens": 350,
+  "total_tokens": 654,
+  "llm_elapsed_time_seconds": 6.69,
+  "repair_elapsed_time_seconds": 17.03,
+  "round_total_time_seconds": 17.03
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9P7onNQgYquU6V7bJIfkevV89x4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\n\nimport org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoSession;\nimport org.mockito.Mockito;\n\nclass CSVParserCloseTest {\n\n    @Mock\n    private Lexer lexerMock;\n\n    private CSVParser csvParser;\n\n    private MockitoSession mockito;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockito = Mockito.mockitoSession()\n                .initMocks(this)\n                .startMocking();\n        // Use reflection to create CSVParser instance with mocked Lexer\n        csvParser = Mockito.spy(new CSVParser(new java.io.StringReader(\"a,b,c\\n1,2,3\"), CSVFormat.DEFAULT));\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, lexerMock);\n    }\n\n    @AfterEach\n    void tearDown() throws Exception {\n        if (mockito != null) {\n            mockito.finishMocking();\n        }\n    }\n\n    @Test\n    void testClose_WithNonNullLexer_ClosesLexer() throws IOException {\n        csvParser.close();\n        verify(lexerMock, times(1)).close();\n    }\n\n    @Test\n    void testClose_WithNullLexer_DoesNotThrow() throws IOException, NoSuchFieldException, IllegalAccessException {\n        // Set lexer to null using reflection\n        java.lang.reflect.Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        lexerField.set(csvParser, null);\n\n        // Should not throw any exception\n        csvParser.close();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975209,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 360,
+    "prompt_tokens": 986,
+    "total_tokens": 1346,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.49
+  }
+}

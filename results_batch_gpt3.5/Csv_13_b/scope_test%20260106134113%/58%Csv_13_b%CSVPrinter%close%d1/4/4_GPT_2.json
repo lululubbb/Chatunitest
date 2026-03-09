@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuucYTwV81anbaS5Ik65q3gj6gNu2",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Closeable;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterCloseTest {\n\n    private Appendable appendableMock;\n    private CSVFormat formatMock;\n    private CSVPrinter csvPrinter;\n\n    @BeforeEach\n    void setUp() {\n        appendableMock = mock(Appendable.class);\n        formatMock = mock(CSVFormat.class);\n        csvPrinter = new CSVPrinter(appendableMock, formatMock);\n    }\n\n    @Test\n    void close_whenOutIsCloseable_callsClose() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Closeable closeableMock = mock(Closeable.class);\n        CSVPrinter printer = new CSVPrinter(appendableMock, formatMock);\n\n        // Use reflection to set private final 'out' field to closeableMock\n        Field outField = CSVPrinter.class.getDeclaredField(\"out\");\n        outField.setAccessible(true);\n        outField.set(printer, closeableMock);\n\n        printer.close();\n\n        verify(closeableMock, times(1)).close();\n    }\n\n    @Test\n    void close_whenOutIsNotCloseable_doesNotThrow() throws IOException {\n        // appendableMock is not Closeable, so close() should do nothing and not throw\n        csvPrinter.close();\n        // no exception expected, so test passes if no exception is thrown\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680054,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 339,
+    "prompt_tokens": 897,
+    "total_tokens": 1236,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.66
+  }
+}

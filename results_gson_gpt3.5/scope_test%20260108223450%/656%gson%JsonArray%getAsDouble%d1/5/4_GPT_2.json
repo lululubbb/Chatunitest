@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnOSMrVb2n99zIe1VSfLDFR8Xc7n",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement mockElement;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n    mockElement = mock(JsonElement.class);\n  }\n\n  @Test\n  public void testGetAsDouble_withSingleElement_returnsElementDouble() {\n    jsonArray.add(mockElement);\n    when(mockElement.getAsDouble()).thenReturn(123.456);\n\n    double result = jsonArray.getAsDouble();\n\n    assertEquals(123.456, result);\n    verify(mockElement).getAsDouble();\n  }\n\n  @Test\n  public void testGetAsDouble_withMultipleElements_throwsException() {\n    JsonElement first = mock(JsonElement.class);\n    JsonElement second = mock(JsonElement.class);\n    jsonArray.add(first);\n    jsonArray.add(second);\n    when(first.getAsDouble()).thenReturn(42.0);\n\n    assertThrows(IllegalStateException.class, () -> {\n      jsonArray.getAsDouble();\n    });\n\n    verify(first, never()).getAsDouble();\n    verify(second, never()).getAsDouble();\n  }\n\n  @Test\n  public void testGetAsDouble_withEmptyArray_throwsException() throws Exception {\n    // getAsSingleElement is private, use reflection to invoke it and verify it throws\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    Throwable thrown = assertThrows(InvocationTargetException.class, () -> {\n      getAsSingleElementMethod.invoke(jsonArray);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalStateException);\n\n    // Also test that getAsDouble throws when no elements present\n    assertThrows(IllegalStateException.class, () -> {\n      jsonArray.getAsDouble();\n    });\n  }\n\n  @Test\n  public void testGetAsSingleElement_reflection_access() throws Exception {\n    jsonArray.add(mockElement);\n\n    Method getAsSingleElementMethod = JsonArray.class.getDeclaredMethod(\"getAsSingleElement\");\n    getAsSingleElementMethod.setAccessible(true);\n\n    Object result = getAsSingleElementMethod.invoke(jsonArray);\n\n    assertSame(mockElement, result);\n  }\n\n  @Test\n  public void testGetAsDouble_withNullElement_throwsException() {\n    // Add a null element forcibly via reflection to test behavior if elements contain null\n    // This tests robustness of getAsDouble when element is null\n    try {\n      var elementsField = JsonArray.class.getDeclaredField(\"elements\");\n      elementsField.setAccessible(true);\n      @SuppressWarnings(\"unchecked\")\n      var elementsList = (java.util.ArrayList<JsonElement>) elementsField.get(jsonArray);\n      elementsList.add(null);\n    } catch (Exception e) {\n      fail(\"Reflection setup failed: \" + e.getMessage());\n    }\n\n    assertThrows(NullPointerException.class, () -> {\n      jsonArray.getAsDouble();\n    });\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890600,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 663,
+    "prompt_tokens": 1845,
+    "total_tokens": 2508,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.89
+  }
+}

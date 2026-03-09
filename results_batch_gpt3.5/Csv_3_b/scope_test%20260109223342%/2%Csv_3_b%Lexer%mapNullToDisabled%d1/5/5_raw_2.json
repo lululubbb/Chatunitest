@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.mockito.Mockito.mock;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LexerMapNullToDisabledTest {\n\n    private Lexer lexer;\n    private Method mapNullToDisabledMethod;\n\n    @BeforeEach\n    void setUp() throws NoSuchMethodException {\n        // Create a concrete subclass of Lexer since Lexer is abstract\n        lexer = new Lexer(mock(CSVFormat.class), mock(ExtendedBufferedReader.class)) {\n            @Override\n            Token nextToken(Token reusableToken) {\n                return null;\n            }\n        };\n\n        mapNullToDisabledMethod = Lexer.class.getDeclaredMethod(\"mapNullToDisabled\", Character.class);\n        mapNullToDisabledMethod.setAccessible(true);\n    }\n\n    @Test\n    void testMapNullToDisabledWithNull() throws InvocationTargetException, IllegalAccessException {\n        Object result = mapNullToDisabledMethod.invoke(lexer, (Character) null);\n        char c = ((Character) result).charValue();\n        assertEquals('\\ufffe', c);\n    }\n\n    @Test\n    void testMapNullToDisabledWithNonNull() throws InvocationTargetException, IllegalAccessException {\n        Character input = 'a';\n        Object result = mapNullToDisabledMethod.invoke(lexer, input);\n        char c = ((Character) result).charValue();\n        assertEquals('a', c);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_3_b/scope_test%20260109223342%/2%Csv_3_b%Lexer%mapNullToDisabled%d1/5/runtemp/Csv_3_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 791,
+  "completion_tokens": 314,
+  "total_tokens": 1105,
+  "llm_elapsed_time_seconds": 7.24
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnKwly7d5eImbbjHUTZkoVngWpHN",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonArray_existingMember() throws Exception {\n    JsonArray jsonArray = new JsonArray();\n\n    // Use reflection to set the private 'members' field\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    members.put(\"arrayMember\", jsonArray);\n\n    JsonArray result = jsonObject.getAsJsonArray(\"arrayMember\");\n    assertNotNull(result);\n    assertSame(jsonArray, result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_nonExistingMember() {\n    JsonArray result = jsonObject.getAsJsonArray(\"nonExisting\");\n    assertNull(result);\n  }\n\n  @Test\n  public void testGetAsJsonArray_memberIsNotJsonArray() throws Exception {\n    JsonPrimitive jsonPrimitive = new JsonPrimitive(\"stringValue\");\n\n    // Use reflection to set the private 'members' field\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    members.put(\"primitiveMember\", jsonPrimitive);\n\n    // This will throw ClassCastException because the member is not a JsonArray\n    assertThrows(ClassCastException.class, () -> jsonObject.getAsJsonArray(\"primitiveMember\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890382,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 409,
+    "prompt_tokens": 398,
+    "total_tokens": 807,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.62
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlW3XftkYehB4p70R0lrHzutpjCq",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Parameter;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<String> constructor = String.class.getDeclaredConstructor(byte[].class);\n\n    // It should be accessible without exception\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result);\n    assertTrue(constructor.canAccess(null));\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws Exception {\n    // Create a mock constructor that throws when setAccessible(true) is called\n    @SuppressWarnings(\"unchecked\")\n    Constructor<?> mockConstructor = mock(Constructor.class);\n\n    // Use raw Class<?> to avoid generic capture issues\n    when(mockConstructor.getDeclaringClass()).thenReturn((Class) String.class);\n\n    // Mock getParameters to return a non-null array to avoid NPE in appendExecutableParameters\n    Parameter mockParameter = mock(Parameter.class);\n    when(mockParameter.getType()).thenReturn((Class) byte[].class);\n    when(mockParameter.getName()).thenReturn(\"arg0\");\n    when(mockConstructor.getParameters()).thenReturn(new Parameter[] { mockParameter });\n\n    // Mock toString to return a string used in the error message\n    when(mockConstructor.toString()).thenReturn(\"mockConstructorToString\");\n\n    // Throw SecurityException when setAccessible(true) is called\n    doThrow(new SecurityException(\"not allowed\")).when(mockConstructor).setAccessible(true);\n\n    String message = ReflectionHelper.tryMakeAccessible(mockConstructor);\n\n    assertNotNull(message);\n    assertTrue(message.contains(\"Failed making constructor\"));\n    assertTrue(message.contains(\"mockConstructorToString\"));\n    assertTrue(message.contains(\"not allowed\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883383,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 382,
+    "prompt_tokens": 1168,
+    "total_tokens": 1550,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.66
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnJlvw9wets1NuBD6cfHx8M24Nzk",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n    private JsonReader jsonReader;\n    private Reader mockReader;\n\n    @BeforeEach\n    public void setUp() {\n        mockReader = mock(Reader.class);\n        jsonReader = new JsonReader(mockReader);\n    }\n\n    @Test\n    public void testBeginObject_whenPeekedIsPeekedBeginObject_shouldPushEmptyObjectAndResetPeeked() throws Exception {\n        // Set peeked to PEEKED_BEGIN_OBJECT (1)\n        setPrivateField(jsonReader, \"peeked\", 1);\n        // Set stackSize to 0 initially\n        setPrivateField(jsonReader, \"stackSize\", 0);\n\n        jsonReader.beginObject();\n\n        int peeked = (int) getPrivateField(jsonReader, \"peeked\");\n        int stackSize = (int) getPrivateField(jsonReader, \"stackSize\");\n        int[] stack = (int[]) getPrivateField(jsonReader, \"stack\");\n\n        assertEquals(0, peeked, \"peeked should be reset to PEEKED_NONE\");\n        assertEquals(1, stackSize, \"stackSize should be incremented after push\");\n        assertEquals(6, stack[0], \"stack top should be JsonScope.EMPTY_OBJECT (6)\");\n    }\n\n    @Test\n    public void testBeginObject_whenPeekedIsPeekedNoneAndDoPeekReturnsBeginObject_shouldPushEmptyObjectAndResetPeeked() throws Exception {\n        // peeked is PEEKED_NONE (0)\n        setPrivateField(jsonReader, \"peeked\", 0);\n        setPrivateField(jsonReader, \"stackSize\", 0);\n\n        JsonReader spyReader = spy(jsonReader);\n        doReturn(1).when(spyReader).doPeek();\n\n        spyReader.beginObject();\n\n        int peeked = (int) getPrivateField(spyReader, \"peeked\");\n        int stackSize = (int) getPrivateField(spyReader, \"stackSize\");\n        int[] stack = (int[]) getPrivateField(spyReader, \"stack\");\n\n        assertEquals(0, peeked, \"peeked should be reset to PEEKED_NONE\");\n        assertEquals(1, stackSize, \"stackSize should be incremented after push\");\n        assertEquals(6, stack[0], \"stack top should be JsonScope.EMPTY_OBJECT (6)\");\n    }\n\n    @Test\n    public void testBeginObject_whenPeekedIsInvalid_shouldThrowIllegalStateException() throws Exception {\n        // Set peeked to an invalid value (e.g., 5 = PEEKED_TRUE)\n        setPrivateField(jsonReader, \"peeked\", 5);\n\n        // Mock peek() to return a token string\n        JsonToken mockToken = JsonToken.TRUE;\n        JsonReader spyReader = spy(jsonReader);\n        doReturn(mockToken).when(spyReader).peek();\n\n        // Mock locationString() to return location info\n        doReturn(\" at line 1 column 1 path $\").when(spyReader).locationString();\n\n        IllegalStateException thrown = assertThrows(IllegalStateException.class, spyReader::beginObject);\n        assertTrue(thrown.getMessage().contains(\"Expected BEGIN_OBJECT but was TRUE at line 1 column 1 path $\"));\n    }\n\n    // Helper to set private fields via reflection\n    private void setPrivateField(Object target, String fieldName, Object value) throws Exception {\n        Field field = JsonReader.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        field.set(target, value);\n    }\n\n    // Helper to get private fields via reflection\n    private Object getPrivateField(Object target, String fieldName) throws Exception {\n        Field field = JsonReader.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n        return field.get(target);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890309,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 833,
+    "prompt_tokens": 1954,
+    "total_tokens": 2787,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.62
+  }
+}

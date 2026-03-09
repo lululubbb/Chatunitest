@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmaWdQZJFOx0UfGTENXkbFasXNMg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonPrimitive;\nimport com.google.gson.stream.JsonToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    // Create a JsonPrimitive with a long value\n    JsonPrimitive primitive = new JsonPrimitive(1234567890123L);\n\n    // Use the public constructor JsonTreeReader(JsonElement)\n    jsonTreeReader = new JsonTreeReader(primitive);\n\n    // Inject the primitive into the stack manually to control peekStack() and stackSize\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = primitive;\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    // Inject pathIndices array with initial value 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0;\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Spy the JsonTreeReader to mock peek() method\n    jsonTreeReader = spy(jsonTreeReader);\n  }\n\n  @Test\n  public void nextLong_withNumberToken_returnsLongAndUpdatesPathIndices() throws Exception {\n    // Arrange\n    doReturn(JsonToken.NUMBER).when(jsonTreeReader).peek();\n\n    // Act\n    long result = jsonTreeReader.nextLong();\n\n    // Assert\n    assertEquals(1234567890123L, result);\n\n    // Verify stackSize decreased by one after popStack (stackSize was 1, now 0)\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(0, stackSize);\n\n    // Since stackSize is now 0, pathIndices should not increment\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(0, pathIndices[0]);\n  }\n\n  @Test\n  public void nextLong_withStringToken_returnsLongAndUpdatesPathIndices() throws Exception {\n    // Arrange\n    // Replace stack with JsonPrimitive holding numeric string\n    JsonPrimitive primitiveString = new JsonPrimitive(\"9876543210\");\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    stack[0] = primitiveString;\n    stackField.set(jsonTreeReader, stack);\n\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 1);\n\n    doReturn(JsonToken.STRING).when(jsonTreeReader).peek();\n\n    // Act\n    long result = jsonTreeReader.nextLong();\n\n    // Assert\n    assertEquals(9876543210L, result);\n\n    // stackSize after popStack() should be 0\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(0, stackSize);\n\n    // pathIndices not incremented because stackSize is 0\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(0, pathIndices[0]);\n  }\n\n  @Test\n  public void nextLong_withNumberToken_andStackSizeGreaterThanZero_incrementsPathIndices() throws Exception {\n    // Arrange\n    doReturn(JsonToken.NUMBER).when(jsonTreeReader).peek();\n\n    // Increase stackSize to 2 and set pathIndices[1] = 5\n    Field stackSizeField = JsonTreeReader.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    stackSizeField.setInt(jsonTreeReader, 2);\n\n    Field pathIndicesField = JsonTreeReader.class.getDeclaredField(\"pathIndices\");\n    pathIndicesField.setAccessible(true);\n    int[] pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    pathIndices[0] = 0; // ensure index 0 is initialized\n    pathIndices[1] = 5;\n    pathIndicesField.set(jsonTreeReader, pathIndices);\n\n    // Also push a dummy JsonPrimitive on stack at index 0 and 1 so popStack works correctly\n    Field stackField = JsonTreeReader.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    Object[] stack = (Object[]) stackField.get(jsonTreeReader);\n    // Set index 0 to the primitive with 1234567890123L to ensure nextLong reads correct value\n    stack[0] = new JsonPrimitive(1234567890123L);\n    stack[1] = new JsonPrimitive(42L);\n    stackField.set(jsonTreeReader, stack);\n\n    // Act\n    long result = jsonTreeReader.nextLong();\n\n    // Assert\n    assertEquals(1234567890123L, result);\n\n    // stackSize decreased by 1: from 2 to 1\n    int stackSize = stackSizeField.getInt(jsonTreeReader);\n    assertEquals(1, stackSize);\n\n    // pathIndices[0] incremented by 1, was 0\n    pathIndices = (int[]) pathIndicesField.get(jsonTreeReader);\n    assertEquals(1, pathIndices[0]);\n  }\n\n  @Test\n  public void nextLong_withInvalidToken_throwsIllegalStateException() throws Exception {\n    // Arrange\n    doReturn(JsonToken.BEGIN_ARRAY).when(jsonTreeReader).peek();\n\n    // Act & Assert\n    IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {\n      jsonTreeReader.nextLong();\n    });\n    assertTrue(exception.getMessage().contains(\"Expected\"));\n    assertTrue(exception.getMessage().contains(\"but was\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887504,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1386,
+    "prompt_tokens": 2397,
+    "total_tokens": 3783,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 29.87
+  }
+}

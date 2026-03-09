@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\nimport com.google.gson.JsonIOException;\nimport com.google.gson.internal.GsonBuildConfig;\nimport java.lang.reflect.AccessibleObject;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Constructor;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionHelperTest {\n\n  @Test\n  void tryMakeAccessible_success() throws NoSuchMethodException {\n    Constructor<String> constructor = String.class.getDeclaredConstructor(byte[].class);\n    String result = ReflectionHelper.tryMakeAccessible(constructor);\n    assertNull(result, \"Expected null when accessibility change succeeds\");\n    assertTrue(constructor.canAccess(null), \"Constructor should be accessible\");\n  }\n\n  @Test\n  void tryMakeAccessible_failure() throws Exception {\n    // Create a real constructor instance to delegate calls to\n    Constructor<String> realConstructor = String.class.getDeclaredConstructor(byte[].class);\n\n    // Create a spy of the real constructor\n    Constructor<String> spyConstructor = spy(realConstructor);\n\n    // When setAccessible(true) is called on the spy, throw SecurityException\n    doThrow(new SecurityException(\"access denied\")).when(spyConstructor).setAccessible(true);\n\n    // When toString() is called, delegate to real toString() to avoid mismatch in output\n    doCallRealMethod().when(spyConstructor).toString();\n\n    String result = ReflectionHelper.tryMakeAccessible(spyConstructor);\n    assertNotNull(result);\n    assertTrue(result.contains(\"Failed making constructor '\"), \"Message should contain failure notice\");\n    assertTrue(result.contains(\"access denied\"), \"Message should contain exception message\");\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 1102,
+  "completion_tokens": 309,
+  "total_tokens": 1411,
+  "llm_elapsed_time_seconds": 5.94,
+  "repair_elapsed_time_seconds": 34.06,
+  "round_total_time_seconds": 34.06
+}

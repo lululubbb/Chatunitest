@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\npublic class JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  public void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  public void remove_validIndex_removesAndReturnsElement() throws Exception {\n    JsonElement element1 = new JsonPrimitive(\"one\");\n    JsonElement element2 = new JsonPrimitive(\"two\");\n\n    // Use reflection to add elements directly to the private elements list\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    elements.add(element1);\n    elements.add(element2);\n\n    // Remove element at index 0\n    JsonElement removed = jsonArray.remove(0);\n    assertEquals(element1, removed);\n\n    // Verify that the element was removed from the list\n    assertEquals(1, elements.size());\n    assertEquals(element2, elements.get(0));\n  }\n\n  @Test\n  public void remove_invalidIndex_throwsIndexOutOfBoundsException() throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<JsonElement> elements = (ArrayList<JsonElement>) elementsField.get(jsonArray);\n    elements.add(new JsonPrimitive(\"test\"));\n\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.remove(1));\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.remove(-1));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 479,
+  "completion_tokens": 376,
+  "total_tokens": 855,
+  "llm_elapsed_time_seconds": 5.93
+}

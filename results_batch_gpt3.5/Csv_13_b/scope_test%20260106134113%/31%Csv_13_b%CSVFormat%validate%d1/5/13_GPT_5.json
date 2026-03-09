@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cuuiff685hYUSbG0XtFlh2NteLAIb",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVFormatValidateTest {\n\n    private CSVFormat csvFormat;\n\n    private Method validateMethod;\n\n    @BeforeEach\n    public void setUp() throws Exception {\n        // Use the public factory method to create an instance with default values\n        csvFormat = CSVFormat.newFormat(','); // delimiter comma by default\n\n        // Access private validate method via reflection\n        validateMethod = CSVFormat.class.getDeclaredMethod(\"validate\");\n        validateMethod.setAccessible(true);\n    }\n\n    private void invokeValidate(CSVFormat format) throws Exception {\n        // invoke private validate method\n        validateMethod.invoke(format);\n    }\n\n    @Test\n    public void testValidateDelimiterIsLineBreak() throws Exception {\n        CSVFormat format = CSVFormat.newFormat('\\n'); // LF is line break\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The delimiter cannot be a line break\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsDelimiter() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote(','); // quoteChar same as delimiter\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The quoteChar character and the delimiter cannot be the same (',')\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsDelimiter() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote('\"').withEscape(','); // escapeChar same as delimiter\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The escape character and the delimiter cannot be the same (',')\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateCommentMarkerEqualsDelimiter() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote('\"').withCommentMarker(','); // commentMarker same as delimiter\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start character and the delimiter cannot be the same (',')\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateQuoteCharEqualsCommentMarker() throws Exception {\n        Character marker = '#';\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote(marker).withCommentMarker(marker);\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start character and the quoteChar cannot be the same ('#')\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateEscapeCharEqualsCommentMarker() throws Exception {\n        Character marker = '#';\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote('\"').withCommentMarker(marker).withEscape(marker);\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"The comment start and the escape character cannot be the same ('#')\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateNoEscapeCharWithQuoteModeNone() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote(null).withQuoteMode(CSVFormat.QuoteMode.NONE);\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertEquals(\"No quotes mode set but no escape character is set\", ex.getCause().getMessage());\n    }\n\n    @Test\n    public void testValidateHeaderDuplicates() throws Exception {\n        String[] header = new String[] { \"a\", \"b\", \"a\" };\n        CSVFormat format = CSVFormat.newFormat(',');\n        format = format.withQuote('\"').withHeader(header);\n        Exception ex = assertThrows(IllegalArgumentException.class, () -> invokeValidate(format));\n        assertTrue(ex.getCause().getMessage().startsWith(\"The header contains a duplicate entry: 'a' in \"));\n    }\n\n    @Test\n    public void testValidateSuccessMinimal() throws Exception {\n        String[] header = new String[] { \"col1\", \"col2\" };\n        CSVFormat format = CSVFormat.newFormat(',')\n                .withQuote('\"')\n                .withCommentMarker('#')\n                .withEscape('\\\\')\n                .withHeader(header);\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n\n    @Test\n    public void testValidateSuccessNoHeader() throws Exception {\n        CSVFormat format = CSVFormat.newFormat(',')\n                .withQuote('\"')\n                .withCommentMarker('#')\n                .withEscape('\\\\');\n        assertDoesNotThrow(() -> invokeValidate(format));\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767680433,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1033,
+    "prompt_tokens": 2408,
+    "total_tokens": 3441,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.09
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm1NsHht4TDZxcn5fiICDmnKqGLM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.ToNumberPolicy;\nimport com.google.gson.ToNumberStrategy;\nimport com.google.gson.TypeAdapterFactory;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass NumberTypeAdapterTest {\n\n  @Test\n  void getFactory_withLazilyParsedNumber_returnsLazilyParsedNumberFactory() {\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(ToNumberPolicy.LAZILY_PARSED_NUMBER);\n    assertNotNull(factory);\n    assertSame(getPrivateStaticField(\"LAZILY_PARSED_NUMBER_FACTORY\"), factory);\n  }\n\n  @Test\n  void getFactory_withCustomStrategy_returnsNewFactory() {\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n    TypeAdapterFactory factory = NumberTypeAdapter.getFactory(mockStrategy);\n    assertNotNull(factory);\n    assertNotSame(getPrivateStaticField(\"LAZILY_PARSED_NUMBER_FACTORY\"), factory);\n  }\n\n  @Test\n  void newFactory_reflection_invocation_returnsFactory() throws Exception {\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n    Method newFactoryMethod = NumberTypeAdapter.class.getDeclaredMethod(\"newFactory\", ToNumberStrategy.class);\n    newFactoryMethod.setAccessible(true);\n    Object factory = newFactoryMethod.invoke(null, mockStrategy);\n    assertNotNull(factory);\n    assertTrue(factory instanceof TypeAdapterFactory);\n  }\n\n  private Object getPrivateStaticField(String fieldName) {\n    try {\n      var field = NumberTypeAdapter.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(null);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Failed to access private static field: \" + fieldName);\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885325,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 388,
+    "prompt_tokens": 394,
+    "total_tokens": 782,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.68
+  }
+}

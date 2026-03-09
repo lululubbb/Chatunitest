@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CutuM4t4PPJLFRQYSZKujRUNRKzZe",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\npublic class CSVFormatTest {\n\n    @Test\n    public void testWithEscape_char() throws Exception {\n        CSVFormat original = CSVFormat.DEFAULT;\n        char escapeChar = '\\\\';\n\n        // Call the public withEscape(char) method\n        CSVFormat result = original.withEscape(escapeChar);\n\n        // Use reflection to access the private withEscape(Character) method\n        Method privateWithEscape = CSVFormat.class.getDeclaredMethod(\"withEscape\", Character.class);\n        privateWithEscape.setAccessible(true);\n        CSVFormat reflectedResult = (CSVFormat) privateWithEscape.invoke(original, Character.valueOf(escapeChar));\n\n        // Validate that both methods produce the same result\n        assertNotNull(result);\n        assertNotNull(reflectedResult);\n        assertEquals(reflectedResult, result);\n\n        // Check that the escape character is set correctly\n        assertEquals(Character.valueOf(escapeChar), result.getEscapeCharacter());\n\n        // Check that original instance remains unchanged (immutability)\n        assertNotEquals(original.getEscapeCharacter(), result.getEscapeCharacter());\n\n        // Test with different escape char\n        CSVFormat result2 = original.withEscape('\\\"');\n        assertEquals(Character.valueOf('\\\"'), result2.getEscapeCharacter());\n\n        // Test with default escape char (null) via private method\n        CSVFormat nullEscapeFormat = (CSVFormat) privateWithEscape.invoke(original, (Character) null);\n        assertNull(nullEscapeFormat.getEscapeCharacter());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767677314,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 326,
+    "prompt_tokens": 1361,
+    "total_tokens": 1687,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.2
+  }
+}

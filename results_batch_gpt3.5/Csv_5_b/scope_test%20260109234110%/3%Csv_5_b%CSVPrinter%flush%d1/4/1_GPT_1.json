@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8tsQCTSI7GUs5AMY6AovQXOjHfD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.Flushable;\nimport java.io.IOException;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVPrinter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVPrinterFlushTest {\n\n    private CSVFormat format;\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void flush_withFlushableOut_invokesFlush() throws IOException {\n        Flushable flushableOut = mock(Flushable.class);\n        // CSVPrinter expects Appendable, Flushable is not Appendable, so create a mock that implements both\n        Appendable flushableAppendable = mock(Appendable.class, withSettings().extraInterfaces(Flushable.class));\n        when((Flushable) flushableAppendable).thenReturn(flushableOut);\n\n        CSVPrinter printer = new CSVPrinter(flushableAppendable, format);\n\n        printer.flush();\n\n        verify((Flushable) flushableAppendable).flush();\n    }\n\n    @Test\n    void flush_withNonFlushableOut_doesNotThrow() throws IOException {\n        appendable = mock(Appendable.class);\n        CSVPrinter printer = new CSVPrinter(appendable, format);\n\n        assertDoesNotThrow(() -> printer.flush());\n\n        // No flush method to verify since appendable is not flushable\n        verifyNoMoreInteractions(appendable);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767973272,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 316,
+    "prompt_tokens": 435,
+    "total_tokens": 751,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.4
+  }
+}

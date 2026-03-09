@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuxldeKicpP5s2P6ICO1oTrgi19s5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.util.Map;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class CSVParserTest {\n\n    private CSVFormat format;\n\n    @BeforeEach\n    public void setup() {\n        format = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    public void testConstructor_withValidReaderAndFormat() throws Exception {\n        String csvData = \"a,b,c\\n1,2,3\";\n        Reader reader = new StringReader(csvData);\n\n        CSVParser parser = new CSVParser(reader, format, 10L, 5L);\n\n        // Verify fields set correctly via reflection\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(format, formatField.get(parser));\n\n        Field characterOffsetField = CSVParser.class.getDeclaredField(\"characterOffset\");\n        characterOffsetField.setAccessible(true);\n        assertEquals(10L, characterOffsetField.getLong(parser));\n\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        // recordNumber is set to recordNumber - 1\n        assertEquals(4L, recordNumberField.getLong(parser));\n\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        Map<?, ?> headerMap = (Map<?, ?>) headerMapField.get(parser);\n        assertNotNull(headerMap);\n        // Default CSVFormat.DEFAULT has no header, so headerMap should be empty\n        assertTrue(headerMap.isEmpty());\n    }\n\n    @Test\n    public void testConstructor_nullReader_throwsException() {\n        assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, format, 0L, 0L);\n        });\n    }\n\n    @Test\n    public void testConstructor_nullFormat_throwsException() {\n        Reader reader = new StringReader(\"a,b,c\");\n        assertThrows(NullPointerException.class, () -> {\n            new CSVParser(reader, null, 0L, 0L);\n        });\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767692149,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 504,
+    "prompt_tokens": 664,
+    "total_tokens": 1168,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.61
+  }
+}

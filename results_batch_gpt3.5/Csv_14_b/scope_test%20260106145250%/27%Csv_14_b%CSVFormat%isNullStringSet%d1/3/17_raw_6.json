@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsNullStringSet_whenNullStringIsNull() throws Exception {\n        // Use DEFAULT which has nullString == null\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // Use reflection to set nullString field to null to ensure test correctness\n        Field nullStringField = CSVFormat.class.getDeclaredField(\"nullString\");\n        nullStringField.setAccessible(true);\n\n        // Remove final modifier from nullString field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(nullStringField, nullStringField.getModifiers() & ~Modifier.FINAL);\n\n        nullStringField.set(format, null);\n\n        boolean result = format.isNullStringSet();\n        assertFalse(result);\n    }\n\n    @Test\n    void testIsNullStringSet_whenNullStringIsNotNull() throws Exception {\n        // Use withNullString to set a non-null nullString\n        CSVFormat format = CSVFormat.DEFAULT.withNullString(\"NULL\");\n\n        boolean result = format.isNullStringSet();\n        assertTrue(result);\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_14_b/scope_test%20260106145250%/27%Csv_14_b%CSVFormat%isNullStringSet%d1/3/runtemp/Csv_14_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1869,
+  "completion_tokens": 269,
+  "total_tokens": 2138,
+  "llm_elapsed_time_seconds": 4.64
+}

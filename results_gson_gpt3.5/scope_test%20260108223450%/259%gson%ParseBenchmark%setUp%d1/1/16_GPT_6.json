@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmgQXX3Pb2NTZHfh9PUBpHAYNQpE",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.metrics;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nclass ParseBenchmarkTest {\n\n  private ParseBenchmark parseBenchmark;\n\n  @BeforeEach\n  void init() {\n    parseBenchmark = new ParseBenchmark();\n  }\n\n  @Test\n  void testSetUp() throws Exception {\n    // Obtain Document enum class\n    Class<?> documentClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Document\");\n    // Create a mock of Document enum with a custom Answer to stub name() and toString()\n    Object documentMock = mock(documentClass, invocation -> {\n      if (\"name\".equals(invocation.getMethod().getName())) {\n        return \"testdoc\";\n      }\n      if (\"toString\".equals(invocation.getMethod().getName())) {\n        return \"testdoc\";\n      }\n      return invocation.callRealMethod();\n    });\n    setField(parseBenchmark, \"document\", documentMock);\n\n    // Mock Api interface and Parser class\n    Class<?> apiClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Api\");\n    Class<?> parserClass = Class.forName(\"com.google.gson.metrics.ParseBenchmark$Parser\");\n    Object parserMock = mock(parserClass);\n    Object apiProxy = java.lang.reflect.Proxy.newProxyInstance(\n        apiClass.getClassLoader(),\n        new Class<?>[]{apiClass},\n        (proxy, method, args) -> {\n          if (\"newParser\".equals(method.getName()) && (args == null || args.length == 0)) {\n            return parserMock;\n          }\n          return null;\n        });\n    setField(parseBenchmark, \"api\", apiProxy);\n\n    // Mock private static method resourceToString(String) via reflection\n    Method resourceToStringMethod = ParseBenchmark.class.getDeclaredMethod(\"resourceToString\", String.class);\n    resourceToStringMethod.setAccessible(true);\n\n    try (MockedStatic<ParseBenchmark> mockedStatic = Mockito.mockStatic(ParseBenchmark.class, Mockito.CALLS_REAL_METHODS)) {\n      // Mock resourceToString to return \"jsoncontent\" when called with \"testdoc.json\"\n      mockedStatic.when(() -> resourceToStringMethod.invoke(null, \"testdoc.json\")).thenReturn(\"jsoncontent\");\n\n      // Access and invoke private setUp method\n      Method setUpMethod = ParseBenchmark.class.getDeclaredMethod(\"setUp\");\n      setUpMethod.setAccessible(true);\n      setUpMethod.invoke(parseBenchmark);\n\n      // Validate text field set correctly\n      char[] expectedChars = \"jsoncontent\".toCharArray();\n      char[] actualChars = (char[]) getField(parseBenchmark, \"text\");\n      assertArrayEquals(expectedChars, actualChars);\n\n      // Validate parser field set correctly\n      Object parser = getField(parseBenchmark, \"parser\");\n      assertSame(parserMock, parser);\n    }\n  }\n\n  private static void setField(Object target, String fieldName, Object value) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      field.set(target, value);\n    } catch (Exception e) {\n      fail(\"Failed to set field \" + fieldName + \": \" + e.getMessage());\n    }\n  }\n\n  private static Object getField(Object target, String fieldName) {\n    try {\n      Field field = ParseBenchmark.class.getDeclaredField(fieldName);\n      field.setAccessible(true);\n      return field.get(target);\n    } catch (Exception e) {\n      fail(\"Failed to get field \" + fieldName + \": \" + e.getMessage());\n      return null;\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887870,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 773,
+    "prompt_tokens": 2119,
+    "total_tokens": 2892,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 20.66
+  }
+}

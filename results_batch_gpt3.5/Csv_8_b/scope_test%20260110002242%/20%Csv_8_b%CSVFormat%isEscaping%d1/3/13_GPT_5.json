@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Zn2vaby2MiJGY7iD3q4k5DAilf",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsEscaping_whenEscapeIsNull_returnsFalse() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // use reflection to set private final field escape to null\n        Field escapeField = CSVFormat.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n\n        // remove final modifier\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(escapeField, escapeField.getModifiers() & ~Modifier.FINAL);\n\n        // Since CSVFormat is immutable, setting the field on DEFAULT instance will not affect behavior,\n        // so create a new CSVFormat instance with escape null via reflection of constructor or clone.\n        // Instead, create a new instance via constructor with escape=null\n\n        // Find the constructor\n        java.lang.reflect.Constructor<CSVFormat> constructor = CSVFormat.class.getDeclaredConstructor(\n                char.class, Character.class, Object.class, Character.class, Character.class,\n                boolean.class, boolean.class, String.class, String.class, String[].class, boolean.class);\n        constructor.setAccessible(true);\n\n        CSVFormat formatWithNullEscape = constructor.newInstance(\n                format.getDelimiter(),\n                format.getQuoteChar(),\n                format.getQuotePolicy(),\n                format.getCommentStart(),\n                null, // escape set to null\n                format.getIgnoreSurroundingSpaces(),\n                format.getIgnoreEmptyLines(),\n                format.getRecordSeparator(),\n                format.getNullString(),\n                format.getHeader(),\n                format.getSkipHeaderRecord()\n        );\n\n        assertFalse(formatWithNullEscape.isEscaping());\n    }\n\n    @Test\n    void testIsEscaping_whenEscapeIsNonNull_returnsTrue() {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\');\n        assertTrue(format.isEscaping());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975871,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 414,
+    "prompt_tokens": 1499,
+    "total_tokens": 1913,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.91
+  }
+}

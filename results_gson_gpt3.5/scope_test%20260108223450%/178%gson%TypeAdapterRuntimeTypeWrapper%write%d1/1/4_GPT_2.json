@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlgg5AtTS5O83WTzOEihu5LnmKC4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\nimport static org.mockito.ArgumentMatchers.any;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass TypeAdapterRuntimeTypeWrapperTest {\n\n  Gson context;\n  TypeAdapter<Object> delegate;\n  JsonWriter out;\n  TypeAdapterRuntimeTypeWrapper<Object> wrapper;\n\n  // Reflection handles for private methods\n  private Method getRuntimeTypeIfMoreSpecificMethod;\n  private Method isReflectiveMethod;\n\n  @BeforeEach\n  void setup() throws Exception {\n    context = mock(Gson.class);\n    delegate = mock(TypeAdapter.class);\n    out = mock(JsonWriter.class);\n    wrapper = new TypeAdapterRuntimeTypeWrapper<>(context, delegate, Object.class);\n\n    getRuntimeTypeIfMoreSpecificMethod = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"getRuntimeTypeIfMoreSpecific\", Type.class, Object.class);\n    getRuntimeTypeIfMoreSpecificMethod.setAccessible(true);\n\n    isReflectiveMethod = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"isReflective\", TypeAdapter.class);\n    isReflectiveMethod.setAccessible(true);\n  }\n\n  // Helper to invoke private getRuntimeTypeIfMoreSpecific\n  private Type getRuntimeTypeIfMoreSpecific(Type declaredType, Object value) throws Exception {\n    return (Type) getRuntimeTypeIfMoreSpecificMethod.invoke(wrapper, declaredType, value);\n  }\n\n  // Helper to invoke private isReflective\n  private boolean isReflective(TypeAdapter<?> adapter) throws Exception {\n    return (boolean) isReflectiveMethod.invoke(null, adapter);\n  }\n\n  @Test\n  void write_runtimeTypeSameAsDeclared_usesDelegateWrite() throws Exception {\n    Object value = new Object();\n\n    // runtimeType == declared type (Object.class)\n    Type runtimeType = Object.class;\n\n    // Spy on wrapper to mock getRuntimeTypeIfMoreSpecific\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = Mockito.spy(wrapper);\n    doReturn(runtimeType).when(spyWrapper).write(any(), any()); // dummy to avoid unused spy warning\n\n    // Instead of mocking private method, override via spy with doReturn for write method that calls private method\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(Type.class, value);\n\n    // Because getRuntimeTypeIfMoreSpecific is private, we cannot mock it directly.\n    // So we use reflection to call real method or override using spy with doReturn on write method.\n    // Here simpler to call real write but force runtimeType to declared type via reflection:\n\n    // But since mocking private method directly is impossible, call real write with reflection to simulate:\n\n    // Alternative: call write normally and rely on real private method behavior:\n    spyWrapper.write(out, value);\n\n    verify(delegate).write(out, value);\n    verifyNoMoreInteractions(delegate);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterNotReflective_usesRuntimeTypeAdapter() throws Exception {\n    Object value = new String(\"test\");\n    Type runtimeType = String.class;\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> runtimeTypeAdapter = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = Mockito.spy(wrapper);\n\n    // Use reflection to override getRuntimeTypeIfMoreSpecific by spying write method and intercepting call\n    doReturn(runtimeType).when(spyWrapper).write(any(), any()); // dummy to avoid unused spy warning\n\n    // Setup context.getAdapter to return runtimeTypeAdapter:\n    when(context.getAdapter(TypeToken.get(runtimeType))).thenReturn(runtimeTypeAdapter);\n\n    // We cannot mock 'instanceof' directly, so simulate isReflective returning false for runtimeTypeAdapter\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(Object.class, value);\n    doReturn(false).when(spyWrapper).isReflective(runtimeTypeAdapter);\n    doReturn(false).when(spyWrapper).isReflective(delegate);\n\n    // Because getRuntimeTypeIfMoreSpecific and isReflective are private,\n    // we use reflection to override them in spyWrapper:\n    // But simpler to override isReflective calls via spy as above.\n\n    spyWrapper.write(out, value);\n\n    verify(runtimeTypeAdapter).write(out, value);\n    verifyNoMoreInteractions(delegate);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterReflective_delegateNotReflective_usesDelegate() throws Exception {\n    Object value = new String(\"test\");\n    Type runtimeType = String.class;\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> runtimeTypeAdapter = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = Mockito.spy(wrapper);\n\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(Object.class, value);\n    when(context.getAdapter(TypeToken.get(runtimeType))).thenReturn(runtimeTypeAdapter);\n\n    doReturn(true).when(spyWrapper).isReflective(runtimeTypeAdapter);\n    doReturn(false).when(spyWrapper).isReflective(delegate);\n\n    spyWrapper.write(out, value);\n\n    verify(delegate).write(out, value);\n    verifyNoMoreInteractions(runtimeTypeAdapter);\n  }\n\n  @Test\n  void write_runtimeTypeDifferent_runtimeTypeAdapterReflective_delegateReflective_usesRuntimeTypeAdapter() throws Exception {\n    Object value = new String(\"test\");\n    Type runtimeType = String.class;\n\n    @SuppressWarnings(\"unchecked\")\n    TypeAdapter<Object> runtimeTypeAdapter = mock(TypeAdapter.class);\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = Mockito.spy(wrapper);\n\n    doReturn(runtimeType).when(spyWrapper).getRuntimeTypeIfMoreSpecific(Object.class, value);\n    when(context.getAdapter(TypeToken.get(runtimeType))).thenReturn(runtimeTypeAdapter);\n\n    doReturn(true).when(spyWrapper).isReflective(runtimeTypeAdapter);\n    doReturn(true).when(spyWrapper).isReflective(delegate);\n\n    spyWrapper.write(out, value);\n\n    verify(runtimeTypeAdapter).write(out, value);\n    verifyNoMoreInteractions(delegate);\n  }\n\n  @Test\n  void write_nullValue_runtimeTypeSame_usesDelegate() throws Exception {\n    Object value = null;\n\n    TypeAdapterRuntimeTypeWrapper<Object> spyWrapper = Mockito.spy(wrapper);\n\n    doReturn(Object.class).when(spyWrapper).getRuntimeTypeIfMoreSpecific(Object.class, value);\n\n    spyWrapper.write(out, value);\n\n    verify(delegate).write(out, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884042,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1399,
+    "prompt_tokens": 2678,
+    "total_tokens": 4077,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.02
+  }
+}

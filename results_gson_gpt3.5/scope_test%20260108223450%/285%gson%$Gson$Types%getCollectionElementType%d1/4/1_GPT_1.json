@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlcHp22wSXey4foHlHCYhBdHwHsH",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.*;\nimport java.util.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetCollectionElementType_withParameterizedCollection() throws Exception {\n    // Prepare a parameterized type representing List<String>\n    ParameterizedType listStringType = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[]{String.class};\n      }\n      @Override\n      public Type getRawType() {\n        return List.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // Mock getSupertype to return our parameterized type\n    Type context = listStringType;\n    Class<?> contextRawType = List.class;\n\n    // Use reflection to access private static getSupertype method\n    Method getSupertypeMethod = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n    getSupertypeMethod.setAccessible(true);\n\n    // Spy on $Gson$Types to mock getSupertype for this test\n    // Since getSupertype is private static, we cannot mock it easily.\n    // Instead, we create a subclass that overrides getSupertype via reflection.\n    // Alternatively, since getSupertype is private static, we test getCollectionElementType directly by passing a context and contextRawType that produce the parameterized supertype.\n\n    // To do that, create a class that extends ArrayList<String> and use its generic superclass\n    class StringList extends ArrayList<String> {}\n    Type genericSuper = StringList.class.getGenericSuperclass();\n\n    Type elementType = $Gson$Types.getCollectionElementType(genericSuper, StringList.class);\n    assertEquals(String.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withRawCollection() {\n    // Use raw collection type (no parameterization)\n    Type context = ArrayList.class;\n    Class<?> contextRawType = ArrayList.class;\n\n    // For raw types, getCollectionElementType should return Object.class\n    Type elementType = $Gson$Types.getCollectionElementType(context, contextRawType);\n    assertEquals(Object.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withCustomCollectionParameterized() {\n    // Create a parameterized type for Collection<Integer>\n    ParameterizedType collectionIntegerType = new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return new Type[]{Integer.class};\n      }\n      @Override\n      public Type getRawType() {\n        return Collection.class;\n      }\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n\n    // Use getCollectionElementType directly with this parameterized type and Collection.class\n    Type elementType = $Gson$Types.getCollectionElementType(collectionIntegerType, Collection.class);\n    assertEquals(Integer.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withCollectionWithoutTypeArguments() {\n    // Create a subclass of Collection without type arguments\n    class RawCollection implements Collection {\n      public int size() {return 0;}\n      public boolean isEmpty() {return true;}\n      public boolean contains(Object o) {return false;}\n      public Iterator iterator() {return null;}\n      public Object[] toArray() {return null;}\n      public <T> T[] toArray(T[] a) {return null;}\n      public boolean add(Object e) {return false;}\n      public boolean remove(Object o) {return false;}\n      public boolean containsAll(Collection c) {return false;}\n      public boolean addAll(Collection c) {return false;}\n      public boolean removeAll(Collection c) {return false;}\n      public boolean retainAll(Collection c) {return false;}\n      public void clear() {}\n    }\n\n    Type elementType = $Gson$Types.getCollectionElementType(RawCollection.class, RawCollection.class);\n    // Should return Object.class because RawCollection is raw type\n    assertEquals(Object.class, elementType);\n  }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883769,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 875,
+    "prompt_tokens": 661,
+    "total_tokens": 1536,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.19
+  }
+}

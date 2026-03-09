@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZA6NPLa3q6VhSPGN0DfLXDWkq0f",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.sql.ResultSet;\nimport java.sql.ResultSetMetaData;\nimport java.sql.SQLException;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass CSVFormatWithHeaderTest {\n\n    private ResultSet resultSetMock;\n    private ResultSetMetaData metaDataMock;\n\n    @BeforeEach\n    void setup() {\n        resultSetMock = mock(ResultSet.class);\n        metaDataMock = mock(ResultSetMetaData.class);\n    }\n\n    @Test\n    void withHeader_resultSetNull_callsWithHeaderWithNull() throws SQLException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVFormat result = format.withHeader((ResultSet) null);\n        assertNotNull(result);\n        assertNull(result.getHeader());\n    }\n\n    @Test\n    void withHeader_resultSetNonNull_callsWithHeaderWithMetaData() throws SQLException {\n        CSVFormat format = spy(CSVFormat.DEFAULT);\n        when(resultSetMock.getMetaData()).thenReturn(metaDataMock);\n\n        // Use doReturn to stub withHeader(ResultSetMetaData) since it might be final\n        doReturn(format).when(format).withHeader(metaDataMock);\n\n        CSVFormat result = format.withHeader(resultSetMock);\n\n        verify(resultSetMock).getMetaData();\n        verify(format).withHeader(metaDataMock);\n        assertNotNull(result);\n        assertEquals(format, result);\n    }\n\n    @Test\n    void withHeader_resultSetThrowsSQLException_propagatesException() throws SQLException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        when(resultSetMock.getMetaData()).thenThrow(new SQLException(\"metaData error\"));\n\n        SQLException thrown = assertThrows(SQLException.class, () -> format.withHeader(resultSetMock));\n        assertEquals(\"metaData error\", thrown.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550878,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 390,
+    "prompt_tokens": 1603,
+    "total_tokens": 1993,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.95
+  }
+}

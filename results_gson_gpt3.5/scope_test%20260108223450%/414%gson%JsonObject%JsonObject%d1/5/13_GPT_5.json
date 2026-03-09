@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmP19SeKojeJkJnsds3UecK4wMSD",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport java.util.Set;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testConstructor_initialState() throws Exception {\n    // Use reflection to access private field members\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n\n    assertNotNull(members);\n    assertTrue(members.isEmpty());\n  }\n\n  @Test\n  public void testAddAndHasAndGet() {\n    JsonPrimitive primitive = new JsonPrimitive(\"value\");\n    jsonObject.add(\"key\", primitive);\n\n    assertTrue(jsonObject.has(\"key\"));\n    assertEquals(primitive, jsonObject.get(\"key\"));\n  }\n\n  @Test\n  public void testRemove() {\n    JsonPrimitive primitive = new JsonPrimitive(\"value\");\n    jsonObject.add(\"key\", primitive);\n\n    JsonElement removed = jsonObject.remove(\"key\");\n    assertEquals(primitive, removed);\n    assertFalse(jsonObject.has(\"key\"));\n\n    // Removing non-existing key returns null\n    assertNull(jsonObject.remove(\"nonexistent\"));\n  }\n\n  @Test\n  public void testAddProperty_String() {\n    jsonObject.addProperty(\"str\", \"value\");\n    JsonElement element = jsonObject.get(\"str\");\n    assertTrue(element.isJsonPrimitive());\n    assertEquals(\"value\", element.getAsString());\n  }\n\n  @Test\n  public void testAddProperty_Number() {\n    jsonObject.addProperty(\"num\", 123);\n    JsonElement element = jsonObject.get(\"num\");\n    assertTrue(element.isJsonPrimitive());\n    assertEquals(123, element.getAsInt());\n  }\n\n  @Test\n  public void testAddProperty_Boolean() {\n    jsonObject.addProperty(\"bool\", true);\n    JsonElement element = jsonObject.get(\"bool\");\n    assertTrue(element.isJsonPrimitive());\n    assertTrue(element.getAsBoolean());\n  }\n\n  @Test\n  public void testAddProperty_Character() {\n    jsonObject.addProperty(\"char\", 'a');\n    JsonElement element = jsonObject.get(\"char\");\n    assertTrue(element.isJsonPrimitive());\n    assertEquals('a', element.getAsCharacter());\n  }\n\n  @Test\n  public void testEntrySetAndKeySetAndSizeAndIsEmpty() {\n    assertTrue(jsonObject.isEmpty());\n    assertEquals(0, jsonObject.size());\n\n    jsonObject.addProperty(\"a\", \"1\");\n    jsonObject.addProperty(\"b\", 2);\n\n    Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();\n    Set<String> keys = jsonObject.keySet();\n\n    assertEquals(2, entries.size());\n    assertEquals(2, keys.size());\n    assertTrue(keys.contains(\"a\"));\n    assertTrue(keys.contains(\"b\"));\n    assertFalse(jsonObject.isEmpty());\n    assertEquals(2, jsonObject.size());\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive() {\n    jsonObject.addProperty(\"p\", \"val\");\n    JsonElement element = jsonObject.get(\"p\");\n    assertTrue(element.isJsonPrimitive());\n    JsonPrimitive primitive = jsonObject.getAsJsonPrimitive(\"p\");\n    assertNotNull(primitive);\n    assertEquals(\"val\", primitive.getAsString());\n\n    // Non-existing key returns null\n    assertNull(jsonObject.getAsJsonPrimitive(\"nonexistent\"));\n\n    // Add non-primitive element and test returns null\n    JsonObject obj = new JsonObject();\n    jsonObject.add(\"obj\", obj);\n    assertNull(jsonObject.getAsJsonPrimitive(\"obj\"));\n  }\n\n  @Test\n  public void testGetAsJsonArray() {\n    JsonArray array = new JsonArray();\n    jsonObject.add(\"arr\", array);\n    assertEquals(array, jsonObject.getAsJsonArray(\"arr\"));\n\n    assertNull(jsonObject.getAsJsonArray(\"nonexistent\"));\n\n    jsonObject.addProperty(\"p\", \"val\");\n    assertNull(jsonObject.getAsJsonArray(\"p\"));\n  }\n\n  @Test\n  public void testGetAsJsonObject() {\n    JsonObject obj = new JsonObject();\n    jsonObject.add(\"obj\", obj);\n    assertEquals(obj, jsonObject.getAsJsonObject(\"obj\"));\n\n    assertNull(jsonObject.getAsJsonObject(\"nonexistent\"));\n\n    jsonObject.addProperty(\"p\", \"val\");\n    assertNull(jsonObject.getAsJsonObject(\"p\"));\n  }\n\n  @Test\n  public void testAsMap() {\n    jsonObject.addProperty(\"k1\", \"v1\");\n    jsonObject.addProperty(\"k2\", 2);\n\n    Map<String, JsonElement> map = jsonObject.asMap();\n    assertEquals(2, map.size());\n    assertTrue(map.containsKey(\"k1\"));\n    assertTrue(map.containsKey(\"k2\"));\n  }\n\n  @Test\n  public void testEqualsAndHashCode() {\n    JsonObject obj1 = new JsonObject();\n    JsonObject obj2 = new JsonObject();\n\n    assertEquals(obj1, obj2);\n    assertEquals(obj1.hashCode(), obj2.hashCode());\n\n    obj1.addProperty(\"a\", \"1\");\n    assertNotEquals(obj1, obj2);\n\n    obj2.addProperty(\"a\", \"1\");\n    assertEquals(obj1, obj2);\n    assertEquals(obj1.hashCode(), obj2.hashCode());\n\n    obj2.addProperty(\"b\", \"2\");\n    assertNotEquals(obj1, obj2);\n  }\n\n  @Test\n  public void testDeepCopy() {\n    jsonObject.addProperty(\"a\", \"1\");\n    JsonObject copy = jsonObject.deepCopy();\n\n    assertNotSame(jsonObject, copy);\n    assertEquals(jsonObject, copy);\n\n    // Modify original and ensure copy does not change\n    jsonObject.addProperty(\"b\", \"2\");\n    assertNotEquals(jsonObject, copy);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886791,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1291,
+    "prompt_tokens": 2622,
+    "total_tokens": 3913,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 25.86
+  }
+}

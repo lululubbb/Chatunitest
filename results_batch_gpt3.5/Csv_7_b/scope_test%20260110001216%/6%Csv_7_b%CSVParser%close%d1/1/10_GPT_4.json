@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9PACDCG1yCS3AFh9Py1k9GZQZ4I",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass CSVParserTest {\n\n    private CSVParser csvParser;\n\n    @BeforeEach\n    void setUp() throws IOException {\n        // Provide non-null Reader and CSVFormat to avoid NPE in constructor\n        csvParser = new CSVParser(new java.io.StringReader(\"\"), CSVFormat.DEFAULT);\n    }\n\n    @Test\n    void close_lexerNotNull_shouldCloseLexer() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Lexer lexerMock = Mockito.mock(Lexer.class);\n\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier via reflection if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        lexerField.set(csvParser, lexerMock);\n\n        csvParser.close();\n\n        verify(lexerMock, times(1)).close();\n    }\n\n    @Test\n    void close_lexerNull_shouldNotThrow() throws IOException, NoSuchFieldException, IllegalAccessException {\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n\n        // Remove final modifier via reflection if present\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(lexerField, lexerField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n\n        lexerField.set(csvParser, null);\n\n        assertDoesNotThrow(() -> csvParser.close());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975212,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 386,
+    "prompt_tokens": 822,
+    "total_tokens": 1208,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 7.55
+  }
+}

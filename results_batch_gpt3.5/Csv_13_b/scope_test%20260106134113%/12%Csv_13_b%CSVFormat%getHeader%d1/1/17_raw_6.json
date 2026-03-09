@@ -1,0 +1,10 @@
+{
+  "has_code": true,
+  "source_code": "package org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    @Test\n    void testGetHeaderWhenHeaderIsNull() throws Exception {\n        // Create a new CSVFormat instance with header not null\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"col1\");\n\n        Field headerField = CSVFormat.class.getDeclaredField(\"header\");\n        headerField.setAccessible(true);\n\n        // Remove final modifier from the header field\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(headerField, headerField.getModifiers() & ~Modifier.FINAL);\n\n        // Set header to null\n        headerField.set(format, null);\n\n        String[] result = format.getHeader();\n        assertNull(result);\n    }\n\n    @Test\n    void testGetHeaderWhenHeaderIsNotNull() throws Exception {\n        String[] headerValue = new String[]{\"col1\", \"col2\"};\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(headerValue);\n\n        String[] result = format.getHeader();\n        assertNotNull(result);\n        assertArrayEquals(headerValue, result);\n        assertNotSame(headerValue, result); // ensure clone returned, not original reference\n    }\n}",
+  "has_syntactic_error": false,
+  "compile_error": "Compiling 1 source file to /home/chenlu/ChatUniTest_GPT3.5/results_batch/Csv_13_b/scope_test%20260106134113%/12%Csv_13_b%CSVFormat%getHeader%d1/1/runtemp/Csv_13_b/.classes_testgen\n警告: [options] 未与 -source 8 一起设置引导类路径\n1 个警告\n\nrun.gen.tests:\n     [echo] classes.dir: target/classes\n     [echo] build.home: target/classes/..",
+  "prompt_tokens": 1521,
+  "completion_tokens": 283,
+  "total_tokens": 1804,
+  "llm_elapsed_time_seconds": 4.4
+}

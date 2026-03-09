@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmbTSSNx5IG9XuCfbkxKNdPyeByB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.stream;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Method;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    Reader reader = new StringReader(\"\");\n    jsonReader = new JsonReader(reader);\n  }\n\n  @Test\n  void toString_includesClassNameAndLocationString() throws Exception {\n    // Use reflection to invoke private locationString method\n    Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String locationString = (String) locationStringMethod.invoke(jsonReader);\n\n    String toStringResult = jsonReader.toString();\n\n    assertTrue(toStringResult.startsWith(\"JsonReader\"));\n    assertTrue(toStringResult.endsWith(locationString));\n  }\n\n  @Test\n  void locationString_reflectsLineNumberAndPosition() throws Exception {\n    // Initially lineNumber=0, lineStart=0, pos=0, so locationString should be \" at line 1 column 1 path $\"\n    Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String location = (String) locationStringMethod.invoke(jsonReader);\n    assertEquals(\" at line 1 column 1 path $\", location);\n\n    // Change lineNumber, lineStart, pos fields via reflection to simulate reading progress\n    setField(jsonReader, \"lineNumber\", 3);\n    setField(jsonReader, \"lineStart\", 15);\n    setField(jsonReader, \"pos\", 20);\n    setField(jsonReader, \"stackSize\", 1);\n    setField(jsonReader, \"pathNames\", new String[]{\"name\"});\n    setField(jsonReader, \"pathIndices\", new int[]{5});\n\n    location = (String) locationStringMethod.invoke(jsonReader);\n    // lineNumber=3 means line 4, column = pos - lineStart + 1 = 20 - 15 + 1 = 6\n    // pathNames[0] = \"name\", pathIndices[0] = 5, so path should be \"$.name[5]\"\n    assertEquals(\" at line 4 column 6 path $.name[5]\", location);\n  }\n\n  private void setField(Object target, String fieldName, Object value) throws Exception {\n    java.lang.reflect.Field field = JsonReader.class.getDeclaredField(fieldName);\n    field.setAccessible(true);\n    field.set(target, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887563,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 550,
+    "prompt_tokens": 1004,
+    "total_tokens": 1554,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.71
+  }
+}

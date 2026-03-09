@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CzOanLKWqFwydylOpbtIYV9E6IApS",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass ExtendedBufferedReaderTest {\n\n    ExtendedBufferedReader extendedBufferedReader;\n    Reader mockReader;\n\n    @BeforeEach\n    void setUp() {\n        mockReader = mock(Reader.class);\n        extendedBufferedReader = new ExtendedBufferedReader(mockReader);\n    }\n\n    @Test\n    void testLookAheadReturnsCharSuccessfully() throws Exception {\n        // Arrange\n        // Use spy to intercept calls to super methods mark, read, reset\n        ExtendedBufferedReader spyReader = spy(new ExtendedBufferedReader(mockReader));\n\n        // mark(1) does not throw, so no need to stub\n        doNothing().when(spyReader).mark(1);\n        // read() returns 'A' (65)\n        doReturn(65).when(spyReader).read();\n        // reset() does nothing\n        doNothing().when(spyReader).reset();\n\n        // Act\n        int result = spyReader.lookAhead();\n\n        // Assert\n        assertEquals(65, result);\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadReturnsEndOfStream() throws Exception {\n        ExtendedBufferedReader spyReader = spy(new ExtendedBufferedReader(mockReader));\n\n        doNothing().when(spyReader).mark(1);\n        doReturn(-1).when(spyReader).read();\n        doNothing().when(spyReader).reset();\n\n        int result = spyReader.lookAhead();\n\n        assertEquals(-1, result);\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionFromMark() throws Exception {\n        ExtendedBufferedReader spyReader = spy(new ExtendedBufferedReader(mockReader));\n\n        doThrow(new IOException(\"mark failed\")).when(spyReader).mark(1);\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"mark failed\", thrown.getMessage());\n        verify(spyReader).mark(1);\n        verify(spyReader, never()).read();\n        verify(spyReader, never()).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionFromRead() throws Exception {\n        ExtendedBufferedReader spyReader = spy(new ExtendedBufferedReader(mockReader));\n\n        doNothing().when(spyReader).mark(1);\n        doThrow(new IOException(\"read failed\")).when(spyReader).read();\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"read failed\", thrown.getMessage());\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader, never()).reset();\n    }\n\n    @Test\n    void testLookAheadThrowsIOExceptionFromReset() throws Exception {\n        ExtendedBufferedReader spyReader = spy(new ExtendedBufferedReader(mockReader));\n\n        doNothing().when(spyReader).mark(1);\n        doReturn(42).when(spyReader).read();\n        doThrow(new IOException(\"reset failed\")).when(spyReader).reset();\n\n        IOException thrown = assertThrows(IOException.class, spyReader::lookAhead);\n        assertEquals(\"reset failed\", thrown.getMessage());\n        verify(spyReader).mark(1);\n        verify(spyReader).read();\n        verify(spyReader).reset();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768748577,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 752,
+    "prompt_tokens": 291,
+    "total_tokens": 1043,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.42
+  }
+}

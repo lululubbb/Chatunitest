@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnEONZcbKsPMV2KU8sNNP4Jt0AQd",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.internal.Streams;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\nclass GsonToJsonTest {\n\n  private Gson gson;\n\n  @BeforeEach\n  void setUp() {\n    gson = new Gson();\n  }\n\n  @Test\n  void toJson_appendsJsonSuccessfully() throws IOException {\n    StringWriter writer = new StringWriter();\n    Object src = \"testString\";\n    Type typeOfSrc = String.class;\n\n    // Actual call, no mocking\n    gson.toJson(src, typeOfSrc, writer);\n\n    String json = writer.toString();\n    assertNotNull(json);\n    assertTrue(json.contains(\"testString\"));\n  }\n\n  @Test\n  void toJson_throwsJsonIOExceptionOnIOException() throws IOException {\n    Object src = \"testString\";\n    Type typeOfSrc = String.class;\n\n    Appendable failingAppendable = new Appendable() {\n      @Override\n      public Appendable append(CharSequence csq) throws IOException {\n        throw new IOException(\"fail\");\n      }\n\n      @Override\n      public Appendable append(CharSequence csq, int start, int end) throws IOException {\n        throw new IOException(\"fail\");\n      }\n\n      @Override\n      public Appendable append(char c) throws IOException {\n        throw new IOException(\"fail\");\n      }\n    };\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> {\n      gson.toJson(src, typeOfSrc, failingAppendable);\n    });\n    assertNotNull(thrown.getCause());\n    assertTrue(thrown.getCause() instanceof IOException);\n    assertEquals(\"fail\", thrown.getCause().getMessage());\n  }\n\n  @Test\n  void toJson_invokesNewJsonWriterAndToJsonWithJsonWriter() throws Throwable {\n    Object src = \"testString\";\n    Type typeOfSrc = String.class;\n    StringBuilder appendable = new StringBuilder();\n\n    // Spy on gson to verify calls\n    Gson spyGson = Mockito.spy(gson);\n\n    // Use reflection to get private newJsonWriter method\n    Method newJsonWriterMethod = Gson.class.getDeclaredMethod(\"newJsonWriter\", java.io.Writer.class);\n    newJsonWriterMethod.setAccessible(true);\n\n    // Use reflection to get toJson(Object, Type, JsonWriter) method\n    Method toJsonWithWriterMethod = Gson.class.getDeclaredMethod(\"toJson\", Object.class, Type.class, JsonWriter.class);\n    toJsonWithWriterMethod.setAccessible(true);\n\n    // Mock Streams.writerForAppendable to return a Writer that writes into appendable\n    try (MockedStatic<Streams> streamsMockedStatic = mockStatic(Streams.class)) {\n      // Provide a Writer that writes directly into appendable\n      java.io.Writer writerForAppendable = new java.io.Writer() {\n        @Override\n        public void write(char[] cbuf, int off, int len) throws IOException {\n          appendable.append(cbuf, off, len);\n        }\n        @Override\n        public void flush() throws IOException {}\n        @Override\n        public void close() throws IOException {}\n      };\n\n      streamsMockedStatic.when(() -> Streams.writerForAppendable(appendable)).thenReturn(writerForAppendable);\n\n      // Spy newJsonWriter to call real method\n      JsonWriter jsonWriter = (JsonWriter) newJsonWriterMethod.invoke(spyGson, writerForAppendable);\n\n      // Spy toJson(Object, Type, JsonWriter) to call real method\n      doAnswer(invocation -> {\n        Object arg0 = invocation.getArgument(0);\n        Type arg1 = invocation.getArgument(1);\n        JsonWriter arg2 = invocation.getArgument(2);\n        toJsonWithWriterMethod.invoke(spyGson, arg0, arg1, arg2);\n        return null;\n      }).when(spyGson).toJson(any(), any(), any(JsonWriter.class));\n\n      // Call focal method\n      spyGson.toJson(src, typeOfSrc, appendable);\n\n      // Verify Streams.writerForAppendable called once with appendable\n      streamsMockedStatic.verify(() -> Streams.writerForAppendable(appendable), times(1));\n\n      // Verify toJson(Object, Type, JsonWriter) called once\n      verify(spyGson, times(1)).toJson(eq(src), eq(typeOfSrc), any(JsonWriter.class));\n\n      // Verify appendable now contains JSON string\n      String result = appendable.toString();\n      assertNotNull(result);\n      assertTrue(result.contains(\"testString\"));\n    }\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767889976,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 995,
+    "prompt_tokens": 2775,
+    "total_tokens": 3770,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.24
+  }
+}

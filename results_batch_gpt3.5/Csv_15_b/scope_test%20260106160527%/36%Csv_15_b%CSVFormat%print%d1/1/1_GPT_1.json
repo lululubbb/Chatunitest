@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwneI288aEBJLvWIlV90h5pdqJvM",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private Appendable out;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n        out = mock(Appendable.class);\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordTrue() throws Exception {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        printMethod.invoke(csvFormat, null, value, 0, value.length(), out, true);\n\n        verify(out, never()).append(csvFormat.getDelimiter());\n        verify(out).append(value);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordFalse() throws Exception {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"value\";\n        printMethod.invoke(csvFormat, null, value, 0, value.length(), out, false);\n\n        verify(out).append(csvFormat.getDelimiter());\n        verify(out).append(value);\n        verifyNoMoreInteractions(out);\n    }\n\n    @Test\n    void testPrint_quoteCharacterSet() throws Exception {\n        CSVFormat formatWithQuote = CSVFormat.DEFAULT.withQuote('\\\"');\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"quotedValue\";\n        Object object = 123; // Number to test printAndQuote path\n        printMethod.invoke(formatWithQuote, object, value, 0, value.length(), out, false);\n\n        verify(out).append(formatWithQuote.getDelimiter());\n        // printAndQuote is private, so we verify interactions on out append calls indirectly\n        // We expect at least one append call beyond delimiter\n        verify(out, atLeast(1)).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_escapeCharacterSet() throws Exception {\n        CSVFormat formatWithEscape = CSVFormat.DEFAULT.withEscape('\\\\').withQuote(null);\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"escapeValue\";\n        Object object = new Object();\n        printMethod.invoke(formatWithEscape, object, value, 0, value.length(), out, true);\n\n        verify(out, never()).append(formatWithEscape.getDelimiter());\n        // printAndEscape is private, so verify append calls indirectly\n        verify(out, atLeast(1)).append(any(CharSequence.class));\n    }\n\n    @Test\n    void testPrint_noQuoteNoEscape() throws Exception {\n        CSVFormat formatNoQuoteNoEscape = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class, int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n\n        CharSequence value = \"simpleValue\";\n        Object object = new Object();\n        printMethod.invoke(formatNoQuoteNoEscape, object, value, 1, 6, out, false);\n\n        verify(out).append(formatNoQuoteNoEscape.getDelimiter());\n        verify(out).append(value, 1, 7);\n        verifyNoMoreInteractions(out);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688430,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 813,
+    "prompt_tokens": 1885,
+    "total_tokens": 2698,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 11.19
+  }
+}

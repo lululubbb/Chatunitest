@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXoziHL0EoHVwOP6suISD1uBbNw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonDeserializer;\nimport com.google.gson.JsonSerializer;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.annotations.JsonAdapter;\nimport com.google.gson.internal.ConstructorConstructor;\nimport com.google.gson.reflect.TypeToken;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class JsonAdapterAnnotationTypeAdapterFactoryTest {\n\n  JsonAdapterAnnotationTypeAdapterFactory factory;\n  ConstructorConstructor constructorConstructor;\n  Gson gson;\n\n  @BeforeEach\n  public void setUp() {\n    constructorConstructor = mock(ConstructorConstructor.class);\n    gson = mock(Gson.class);\n    factory = new JsonAdapterAnnotationTypeAdapterFactory(constructorConstructor);\n  }\n\n  @Test\n  public void create_NoJsonAdapterAnnotation_ReturnsNull() {\n    TypeToken<FooWithoutAnnotation> typeToken = TypeToken.get(FooWithoutAnnotation.class);\n    TypeAdapter<FooWithoutAnnotation> adapter = factory.create(gson, typeToken);\n    assertNull(adapter);\n  }\n\n  @Test\n  public void create_WithJsonAdapterAnnotation_ReturnsTypeAdapter() throws Exception {\n    TypeToken<FooWithAnnotation> typeToken = TypeToken.get(FooWithAnnotation.class);\n\n    // Use reflection to access private getTypeAdapter method\n    Method getTypeAdapterMethod = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\n        \"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    getTypeAdapterMethod.setAccessible(true);\n\n    JsonAdapter annotation = FooWithAnnotation.class.getAnnotation(JsonAdapter.class);\n    TypeAdapter<?> expectedAdapter = mock(TypeAdapter.class);\n\n    // Mock behavior of getTypeAdapter method by spying on factory\n    JsonAdapterAnnotationTypeAdapterFactory spyFactory = Mockito.spy(factory);\n    doReturn(expectedAdapter).when(spyFactory).getTypeAdapter(constructorConstructor, gson, typeToken, annotation);\n\n    TypeAdapter<FooWithAnnotation> adapter = spyFactory.create(gson, typeToken);\n    assertNotNull(adapter);\n    assertSame(expectedAdapter, adapter);\n  }\n\n  @Test\n  public void getTypeAdapter_ReturnsSerializerAdapter() throws Exception {\n    JsonAdapter annotation = FooWithSerializer.class.getAnnotation(JsonAdapter.class);\n    TypeToken<FooWithSerializer> typeToken = TypeToken.get(FooWithSerializer.class);\n\n    JsonSerializer<FooWithSerializer> serializer = mock(JsonSerializer.class);\n    // Cast lambda to ObjectConstructor<JsonSerializer<FooWithSerializer>>\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<?> objectConstructor = () -> serializer;\n\n    when(constructorConstructor.get(TypeToken.get(annotation.value()))).thenReturn(objectConstructor);\n\n    Method method = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\n        \"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    method.setAccessible(true);\n\n    TypeAdapter<?> adapter = (TypeAdapter<?>) method.invoke(factory, constructorConstructor, gson, typeToken, annotation);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  public void getTypeAdapter_ReturnsDeserializerAdapter() throws Exception {\n    JsonAdapter annotation = FooWithDeserializer.class.getAnnotation(JsonAdapter.class);\n    TypeToken<FooWithDeserializer> typeToken = TypeToken.get(FooWithDeserializer.class);\n\n    JsonDeserializer<FooWithDeserializer> deserializer = mock(JsonDeserializer.class);\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<?> objectConstructor = () -> deserializer;\n\n    when(constructorConstructor.get(TypeToken.get(annotation.value()))).thenReturn(objectConstructor);\n\n    Method method = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\n        \"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    method.setAccessible(true);\n\n    TypeAdapter<?> adapter = (TypeAdapter<?>) method.invoke(factory, constructorConstructor, gson, typeToken, annotation);\n    assertNotNull(adapter);\n  }\n\n  @Test\n  public void getTypeAdapter_ThrowsExceptionWhenNoValidAdapter() throws Exception {\n    JsonAdapter annotation = FooWithInvalidAdapter.class.getAnnotation(JsonAdapter.class);\n    TypeToken<FooWithInvalidAdapter> typeToken = TypeToken.get(FooWithInvalidAdapter.class);\n\n    Object invalidInstance = new Object();\n    @SuppressWarnings(\"unchecked\")\n    ConstructorConstructor.ObjectConstructor<?> objectConstructor = () -> invalidInstance;\n\n    when(constructorConstructor.get(TypeToken.get(annotation.value()))).thenReturn(objectConstructor);\n\n    Method method = JsonAdapterAnnotationTypeAdapterFactory.class.getDeclaredMethod(\n        \"getTypeAdapter\", ConstructorConstructor.class, Gson.class, TypeToken.class, JsonAdapter.class);\n    method.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      method.invoke(factory, constructorConstructor, gson, typeToken, annotation);\n    });\n    assertTrue(thrown.getCause() instanceof IllegalArgumentException);\n  }\n\n  // Test classes with annotations for testing\n\n  static class FooWithoutAnnotation {}\n\n  @JsonAdapter(FooAdapter.class)\n  static class FooWithAnnotation {}\n\n  static class FooAdapter extends TypeAdapter<FooWithAnnotation> {\n    @Override public void write(com.google.gson.stream.JsonWriter out, FooWithAnnotation value) {}\n    @Override public FooWithAnnotation read(com.google.gson.stream.JsonReader in) {return null;}\n  }\n\n  @JsonAdapter(FooSerializer.class)\n  static class FooWithSerializer {}\n\n  static class FooSerializer implements JsonSerializer<FooWithSerializer> {\n    @Override\n    public com.google.gson.JsonElement serialize(FooWithSerializer src, java.lang.reflect.Type typeOfSrc,\n                                                com.google.gson.JsonSerializationContext context) {\n      return null;\n    }\n  }\n\n  @JsonAdapter(FooDeserializer.class)\n  static class FooWithDeserializer {}\n\n  static class FooDeserializer implements JsonDeserializer<FooWithDeserializer> {\n    @Override\n    public FooWithDeserializer deserialize(com.google.gson.JsonElement json, java.lang.reflect.Type typeOfT,\n                                           com.google.gson.JsonDeserializationContext context) {\n      return null;\n    }\n  }\n\n  @JsonAdapter(Object.class)\n  static class FooWithInvalidAdapter {}\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887336,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1294,
+    "prompt_tokens": 2356,
+    "total_tokens": 3650,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 29.99
+  }
+}

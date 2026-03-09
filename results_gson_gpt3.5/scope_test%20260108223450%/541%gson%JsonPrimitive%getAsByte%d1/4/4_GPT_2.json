@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlVS7k9x1ez8uzchPYQhFcaSrvDB",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonPrimitiveTest {\n\n  private JsonPrimitive jsonPrimitive;\n\n  @BeforeEach\n  void setUp() {\n    // no-op before each test\n  }\n\n  @Test\n  void getAsByte_whenValueIsNumber_returnsByteValue() throws Exception {\n    jsonPrimitive = new JsonPrimitive(123);\n\n    // Using reflection to set private final field 'value' to a Number instance\n    setValueField(jsonPrimitive, Integer.valueOf(123));\n\n    // Spy to mock isNumber() and getAsNumber()\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(true).when(spyPrimitive).isNumber();\n\n    // Actually getAsNumber returns Number, so mock getAsNumber to return a Number with byteValue 123\n    doReturn(new Number() {\n      private static final long serialVersionUID = 1L;\n      @Override public int intValue() { return 123; }\n      @Override public long longValue() { return 123L; }\n      @Override public float floatValue() { return 123f; }\n      @Override public double doubleValue() { return 123d; }\n      @Override public byte byteValue() { return (byte) 123; }\n      @Override public short shortValue() { return (short) 123; }\n    }).when(spyPrimitive).getAsNumber();\n\n    byte result = spyPrimitive.getAsByte();\n    assertEquals((byte) 123, result);\n  }\n\n  @Test\n  void getAsByte_whenValueIsNotNumber_returnsParsedByte() throws Exception {\n    jsonPrimitive = new JsonPrimitive(\"45\");\n\n    // Using reflection to set private final field 'value' to a String\n    setValueField(jsonPrimitive, \"45\");\n\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(\"45\").when(spyPrimitive).getAsString();\n\n    byte result = spyPrimitive.getAsByte();\n    assertEquals((byte) 45, result);\n  }\n\n  @Test\n  void getAsByte_whenValueIsNotNumber_invalidByte_throwsNumberFormatException() throws Exception {\n    jsonPrimitive = new JsonPrimitive(\"invalid\");\n\n    setValueField(jsonPrimitive, \"invalid\");\n\n    JsonPrimitive spyPrimitive = spy(jsonPrimitive);\n    doReturn(false).when(spyPrimitive).isNumber();\n    doReturn(\"invalid\").when(spyPrimitive).getAsString();\n\n    assertThrows(NumberFormatException.class, spyPrimitive::getAsByte);\n  }\n\n  // Helper method to set private final field 'value' via reflection\n  private void setValueField(JsonPrimitive instance, Object value) throws Exception {\n    Field valueField = JsonPrimitive.class.getDeclaredField(\"value\");\n    valueField.setAccessible(true);\n\n    // Remove final modifier if present (works on Java <= 11)\n    try {\n      Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n      modifiersField.setAccessible(true);\n      modifiersField.setInt(valueField, valueField.getModifiers() & ~java.lang.reflect.Modifier.FINAL);\n    } catch (NoSuchFieldException ignored) {\n      // Java 12+ does not have 'modifiers' field; ignore\n    }\n\n    valueField.set(instance, value);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883346,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 719,
+    "prompt_tokens": 1608,
+    "total_tokens": 2327,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.07
+  }
+}

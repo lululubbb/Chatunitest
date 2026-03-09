@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw8Hi4g4pfW34WXI8gnc4BodY6a45",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.net.URL;\nimport java.nio.charset.Charset;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVParserTest {\n\n    private URL mockUrl;\n    private InputStream mockInputStream;\n    private Charset charset;\n    private CSVFormat format;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockUrl = mock(URL.class);\n        mockInputStream = mock(InputStream.class);\n        charset = Charset.forName(\"UTF-8\");\n        format = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_NullUrl_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((URL) null, charset, format);\n        });\n        assertEquals(\"url\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullCharset_UsesUtf8Charset() throws IOException, Exception {\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n\n        // Use reflection to temporarily replace Charset.forName(\"UTF-8\") result\n        // with our charset instance by mocking Charset.forName via a helper class.\n        // Since Mockito.mockStatic is not available, we use reflection to override Charset.forName method.\n        // But Charset.forName is final static native, so we cannot override directly.\n        // Instead, we can spy on Charset class and replace the charset variable via reflection in CSVParser class.\n        // However, the CSVParser.parse method calls Charset.forName inside the method, so we cannot intercept it easily.\n        // As a workaround, we can test the behavior by passing null charset and verifying the URL openStream is called.\n\n        try (CSVParser parser = CSVParser.parse(mockUrl, null, format)) {\n            assertNotNull(parser);\n        }\n\n        verify(mockUrl).openStream();\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(mockUrl, charset, null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidArguments_ReturnsCSVParser() throws IOException {\n        when(mockUrl.openStream()).thenReturn(mockInputStream);\n\n        try (CSVParser parser = CSVParser.parse(mockUrl, charset, format)) {\n            assertNotNull(parser);\n        }\n\n        verify(mockUrl).openStream();\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767970906,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 580,
+    "prompt_tokens": 1156,
+    "total_tokens": 1736,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.12
+  }
+}

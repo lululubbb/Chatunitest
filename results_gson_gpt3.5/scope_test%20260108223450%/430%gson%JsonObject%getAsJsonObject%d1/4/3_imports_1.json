@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson;\nimport java.util.Set;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Field;\nimport java.util.Map;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonObject_existingMember_returnsJsonObject() throws Exception {\n    JsonObject expected = new JsonObject();\n\n    // Use reflection to get the private 'members' field and insert the expected JsonObject\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n    members.put(\"testMember\", expected);\n\n    JsonObject actual = jsonObject.getAsJsonObject(\"testMember\");\n    assertSame(expected, actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_nonExistingMember_returnsNull() {\n    JsonObject actual = jsonObject.getAsJsonObject(\"nonExisting\");\n    assertNull(actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_memberIsNotJsonObject_throwsClassCastException() throws Exception {\n    // Put a JsonPrimitive instead of JsonObject to provoke ClassCastException\n    JsonPrimitive primitive = new JsonPrimitive(\"value\");\n\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n    members.put(\"primitiveMember\", primitive);\n\n    assertThrows(ClassCastException.class, () -> jsonObject.getAsJsonObject(\"primitiveMember\"));\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 398,
+  "completion_tokens": 410,
+  "total_tokens": 808,
+  "llm_elapsed_time_seconds": 7.17,
+  "repair_elapsed_time_seconds": 19.65,
+  "round_total_time_seconds": 19.65
+}

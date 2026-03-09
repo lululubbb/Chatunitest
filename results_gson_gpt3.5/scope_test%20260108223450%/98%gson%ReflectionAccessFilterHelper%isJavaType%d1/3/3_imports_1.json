@@ -1,0 +1,11 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal;\nimport java.lang.reflect.AccessibleObject;\nimport java.util.List;\nimport com.google.gson.ReflectionAccessFilter;\nimport com.google.gson.ReflectionAccessFilter.FilterResult;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsJavaType_startsWithJava() throws Exception {\n    // Use reflection to access private static method isJavaType(String)\n    Method method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    method.setAccessible(true);\n\n    // Test string starting with \"java.\"\n    boolean resultJava = (boolean) method.invoke(null, \"java.lang.String\");\n    assertTrue(resultJava);\n\n    // Test string starting with \"javax.\"\n    boolean resultJavax = (boolean) method.invoke(null, \"javax.servlet.Servlet\");\n    assertTrue(resultJavax);\n\n    // Test string not starting with \"java.\" or \"javax.\"\n    boolean resultOther = (boolean) method.invoke(null, \"com.google.gson.internal.ReflectionAccessFilterHelper\");\n    assertFalse(resultOther);\n\n    // Test empty string\n    boolean resultEmpty = (boolean) method.invoke(null, \"\");\n    assertFalse(resultEmpty);\n\n    // Test string starting with \"java\" but no dot\n    boolean resultNoDot = (boolean) method.invoke(null, \"javaLang\");\n    assertFalse(resultNoDot);\n\n    // Test string starting with \"javax\" but no dot\n    boolean resultNoDot2 = (boolean) method.invoke(null, \"javaxx\");\n    assertFalse(resultNoDot2);\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 318,
+  "completion_tokens": 317,
+  "total_tokens": 635,
+  "llm_elapsed_time_seconds": 7.01,
+  "repair_elapsed_time_seconds": 18.64,
+  "round_total_time_seconds": 18.64
+}

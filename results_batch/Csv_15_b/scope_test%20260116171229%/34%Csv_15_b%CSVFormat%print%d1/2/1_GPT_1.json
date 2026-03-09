@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyaD4jycnJKauPoUyfgqOG35I28Fg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n\n    @BeforeEach\n    void setUp() {\n        csvFormat = CSVFormat.DEFAULT;\n    }\n\n    @Test\n    void testPrint_withPath_callsFilesNewBufferedWriterAndReturnsCSVPrinter() throws IOException {\n        Path mockPath = mock(Path.class);\n        StringWriter stringWriter = new StringWriter();\n\n        try (MockedStatic<Files> filesMockedStatic = Mockito.mockStatic(Files.class)) {\n            filesMockedStatic.when(() -> Files.newBufferedWriter(mockPath, StandardCharsets.UTF_8))\n                    .thenReturn(new java.io.BufferedWriter(stringWriter));\n\n            CSVPrinter printer = csvFormat.print(mockPath, StandardCharsets.UTF_8);\n\n            assertNotNull(printer);\n            filesMockedStatic.verify(() -> Files.newBufferedWriter(mockPath, StandardCharsets.UTF_8), times(1));\n        }\n    }\n\n    @Test\n    void testPrint_withPath_throwsIOException_whenFilesNewBufferedWriterThrows() throws IOException {\n        Path mockPath = mock(Path.class);\n\n        try (MockedStatic<Files> filesMockedStatic = Mockito.mockStatic(Files.class)) {\n            filesMockedStatic.when(() -> Files.newBufferedWriter(mockPath, StandardCharsets.UTF_8))\n                    .thenThrow(new IOException(\"Test IOException\"));\n\n            IOException thrown = assertThrows(IOException.class, () -> csvFormat.print(mockPath, StandardCharsets.UTF_8));\n            assertEquals(\"Test IOException\", thrown.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768554906,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 390,
+    "prompt_tokens": 1788,
+    "total_tokens": 2178,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.22
+  }
+}

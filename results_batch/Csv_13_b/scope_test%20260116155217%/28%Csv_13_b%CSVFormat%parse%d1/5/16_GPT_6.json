@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZ29q5Qo9WutFVPeZJq77tFxtVnj",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\n\nimport org.apache.commons.csv.CSVFormat;\nimport org.apache.commons.csv.CSVParser;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatTest {\n\n    private Reader mockReader;\n\n    @BeforeEach\n    void setUp() throws Exception {\n        mockReader = mock(Reader.class);\n\n        // Prepare mockReader to return something usable by CSVParser\n        // CSVParser reads from Reader, so we need to mock read() method.\n        when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenAnswer(invocation -> {\n            char[] buffer = invocation.getArgument(0);\n            int offset = invocation.getArgument(1);\n            int length = invocation.getArgument(2);\n            // Return -1 to simulate EOF immediately, so parser doesn't block\n            return -1;\n        });\n    }\n\n    @Test\n    void testParse_DefaultFormat() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        CSVParser parser = format.parse(mockReader);\n        assertNotNull(parser);\n    }\n\n    @Test\n    void testParse_CustomFormat() throws IOException {\n        CSVFormat format = CSVFormat.newFormat(';')\n                .withQuote('\\'')\n                .withEscape('\\\\')\n                .withIgnoreEmptyLines(true)\n                .withIgnoreSurroundingSpaces(true)\n                .withRecordSeparator(\"\\n\")\n                .withNullString(\"NULL\")\n                .withSkipHeaderRecord(true)\n                .withAllowMissingColumnNames(true)\n                .withIgnoreHeaderCase(true)\n                .withCommentMarker('#')\n                .withHeader(\"col1\", \"col2\")\n                .withHeaderComments(\"comment1\", \"comment2\")\n                .withQuoteMode(null);\n        CSVParser parser = format.parse(mockReader);\n        assertNotNull(parser);\n    }\n\n    @Test\n    void testParse_WithNullReader_ThrowsException() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        assertThrows(NullPointerException.class, () -> format.parse(null));\n    }\n\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768550385,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 446,
+    "prompt_tokens": 1669,
+    "total_tokens": 2115,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.5
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlwgyjbfrKCg9hrc4YeMXrIO8W5p",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.internal.bind.TypeAdapters;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.MockedStatic;\nimport org.mockito.Mockito;\n\nclass StreamsTest {\n\n  private JsonWriter mockWriter;\n  private JsonElement mockElement;\n\n  @BeforeEach\n  void setUp() {\n    mockWriter = mock(JsonWriter.class);\n    mockElement = mock(JsonElement.class);\n  }\n\n  @Test\n  void testWrite_callsTypeAdaptersJsonElementWrite() throws IOException {\n    try (MockedStatic<TypeAdapters> typeAdaptersStatic = Mockito.mockStatic(TypeAdapters.class)) {\n      var jsonElementAdapter = mock(TypeAdapters.JSON_ELEMENT.getClass());\n      // Because JSON_ELEMENT is a static final field, we need to mock its write method directly.\n      // Actually, JSON_ELEMENT is a static final TypeAdapter<JsonElement>, so we mock it directly.\n      // But here we cannot mock a final static field directly, so we mock the static method write on JSON_ELEMENT.\n      // Instead, we spy on TypeAdapters.JSON_ELEMENT to verify write call.\n\n      // Spy on TypeAdapters.JSON_ELEMENT\n      var spyAdapter = Mockito.spy(TypeAdapters.JSON_ELEMENT);\n\n      // Replace the static field JSON_ELEMENT with spyAdapter via reflection\n      var field = TypeAdapters.class.getDeclaredField(\"JSON_ELEMENT\");\n      field.setAccessible(true);\n      var original = field.get(null);\n      field.set(null, spyAdapter);\n\n      // Call the focal method\n      Streams.write(mockElement, mockWriter);\n\n      // Verify write was called with correct params\n      verify(spyAdapter).write(mockWriter, mockElement);\n\n      // Restore original field value\n      field.set(null, original);\n    } catch (NoSuchFieldException | IllegalAccessException e) {\n      fail(\"Reflection error: \" + e.getMessage());\n    }\n  }\n\n  @Test\n  void testPrivateConstructor() throws Exception {\n    var constructor = Streams.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    var instance = constructor.newInstance();\n    assertNotNull(instance);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885034,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 465,
+    "prompt_tokens": 308,
+    "total_tokens": 773,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 127.14
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvluKnqv9L7p2jVpnZknMchPMK9Tw",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport org.junit.jupiter.api.Test;\n\nfinal class TypeAdapterRuntimeTypeWrapperTest {\n\n  @Test\n  void isReflective_returnsTrue_whenReflectiveTypeAdapterFactoryAdapter() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    ReflectiveTypeAdapterFactory.Adapter<Object> reflective = mock(ReflectiveTypeAdapterFactory.Adapter.class);\n    boolean result = invokeIsReflective(reflective);\n    assertTrue(result);\n  }\n\n  @Test\n  void isReflective_returnsFalse_whenNotSerializationDelegatingNorReflective() throws Exception {\n    TypeAdapter<?> simpleAdapter = mock(TypeAdapter.class);\n    boolean result = invokeIsReflective(simpleAdapter);\n    assertFalse(result);\n  }\n\n  @Test\n  void isReflective_returnsTrue_whenNestedSerializationDelegatingToReflective() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    ReflectiveTypeAdapterFactory.Adapter<Object> reflective = mock(ReflectiveTypeAdapterFactory.Adapter.class);\n\n    @SuppressWarnings(\"unchecked\")\n    SerializationDelegatingTypeAdapter<Object> delegatingAdapter = mock(SerializationDelegatingTypeAdapter.class);\n    when(delegatingAdapter.getSerializationDelegate()).thenReturn(reflective);\n\n    boolean result = invokeIsReflective(delegatingAdapter);\n    assertTrue(result);\n  }\n\n  @Test\n  void isReflective_breaksLoop_whenDelegateIsSameInstance() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    SerializationDelegatingTypeAdapter<Object> delegatingAdapter = mock(SerializationDelegatingTypeAdapter.class);\n    when(delegatingAdapter.getSerializationDelegate()).thenReturn(delegatingAdapter);\n\n    boolean result = invokeIsReflective(delegatingAdapter);\n    assertFalse(result);\n  }\n\n  private static boolean invokeIsReflective(TypeAdapter<?> adapter) throws Exception {\n    var method = TypeAdapterRuntimeTypeWrapper.class.getDeclaredMethod(\"isReflective\", TypeAdapter.class);\n    method.setAccessible(true);\n    return (boolean) method.invoke(null, adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884888,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 430,
+    "prompt_tokens": 1345,
+    "total_tokens": 1775,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 6.07
+  }
+}

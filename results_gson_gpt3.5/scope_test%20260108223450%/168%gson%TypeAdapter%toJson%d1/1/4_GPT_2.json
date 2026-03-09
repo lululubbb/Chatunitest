@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm5vJChQa3NGiuSboiA7rFCFTBbh",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nclass TypeAdapterToJsonTest {\n\n    private TypeAdapter<String> typeAdapter;\n    private StringWriter stringWriter;\n\n    @BeforeEach\n    void setUp() {\n        typeAdapter = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                // Simulate writing JSON string value\n                out.value(value);\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null;\n            }\n        };\n        stringWriter = new StringWriter();\n    }\n\n    @Test\n    void toJson_writesValueToJsonWriter() throws IOException {\n        String testValue = \"test\";\n\n        typeAdapter.toJson(stringWriter, testValue);\n\n        String jsonOutput = stringWriter.toString();\n        // The output should be a JSON string representing the testValue, e.g. \"test\"\n        // Since JsonWriter.value(String) writes a JSON string, it should include quotes\n        assert jsonOutput.equals(\"\\\"\" + testValue + \"\\\"\");\n    }\n\n    @Test\n    void toJson_callsWriteWithJsonWriter() throws Exception {\n        StringWriter sw = new StringWriter();\n        JsonWriter spyJsonWriter = spy(new JsonWriter(sw));\n\n        TypeAdapter<String> adapterSpy = new TypeAdapter<String>() {\n            @Override\n            public void write(JsonWriter out, String value) throws IOException {\n                spyJsonWriter.value(value);\n            }\n\n            @Override\n            public String read(com.google.gson.stream.JsonReader in) {\n                return null;\n            }\n        };\n\n        // Use reflection to call toJson(Writer, T) on adapterSpy with a Writer that\n        // does not create a new JsonWriter internally, so spyJsonWriter is used.\n        // Since toJson creates a new JsonWriter internally, we cannot directly verify spyJsonWriter.\n        // Instead, we call write() directly and verify spyJsonWriter was called.\n\n        adapterSpy.write(spyJsonWriter, \"hello\");\n\n        verify(spyJsonWriter).value(\"hello\");\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885607,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 470,
+    "prompt_tokens": 2713,
+    "total_tokens": 3183,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.71
+  }
+}

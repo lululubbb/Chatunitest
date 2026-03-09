@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CuwoCDqYFtwpjyg3UpCYoNpbW7vaT",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.verifyNoInteractions;\nimport static org.mockito.Mockito.when;\n\nimport java.io.IOException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVFormatPrintTest {\n\n    private CSVFormat csvFormat;\n    private Appendable appendable;\n\n    @BeforeEach\n    void setUp() {\n        // Use DEFAULT CSVFormat instance for basic tests\n        csvFormat = CSVFormat.DEFAULT;\n        appendable = new StringBuilder();\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordFalse_appendsDelimiterAndValue() throws Throwable {\n        String value = \"value\";\n        boolean newRecord = false;\n\n        invokePrint(null, value, 0, value.length(), appendable, newRecord);\n\n        String expected = csvFormat.getDelimiter() + value;\n        assertEquals(expected, appendable.toString());\n    }\n\n    @Test\n    void testPrint_nullObject_newRecordTrue_appendsValueOnly() throws Throwable {\n        String value = \"value\";\n        boolean newRecord = true;\n\n        invokePrint(null, value, 0, value.length(), appendable, newRecord);\n\n        assertEquals(value, appendable.toString());\n    }\n\n    @Test\n    void testPrint_quoteCharacterSet_invokesPrintAndQuote() throws Throwable {\n        // Create CSVFormat with quoteCharacter set\n        CSVFormat formatWithQuote = CSVFormat.DEFAULT.withQuote('\\\"');\n\n        String value = \"quotedValue\";\n        boolean newRecord = true;\n\n        // Use a spy Appendable to verify output\n        StringBuilder sb = new StringBuilder();\n\n        // Invoke print with quoteCharacter set\n        invokePrint(formatWithQuote, \"anyObject\", value, 0, value.length(), sb, newRecord);\n\n        // The output must start and end with quote char\n        String output = sb.toString();\n        assertEquals('\\\"', output.charAt(0));\n        assertEquals('\\\"', output.charAt(output.length() - 1));\n        // The value should be contained inside\n        // Because printAndQuote calls printAndEscape or printAndQuote logic internally,\n        // output length should be at least value length + 2 quotes\n        assertEquals(value, output.substring(1, output.length() - 1));\n    }\n\n    @Test\n    void testPrint_escapeCharacterSet_invokesPrintAndEscape() throws Throwable {\n        // Create CSVFormat with escapeCharacter set and no quoteCharacter\n        CSVFormat formatWithEscape = CSVFormat.DEFAULT.withEscape('\\\\').withQuote(null);\n\n        String value = \"escapeValue\";\n        boolean newRecord = true;\n\n        StringBuilder sb = new StringBuilder();\n\n        invokePrint(formatWithEscape, null, value, 0, value.length(), sb, newRecord);\n\n        // The output should contain the original value (printAndEscape appends value with escape if needed)\n        String output = sb.toString();\n        // Since no special characters, output equals value\n        assertEquals(value, output);\n    }\n\n    @Test\n    void testPrint_noQuoteNoEscape_appendsValueRange() throws Throwable {\n        // Create CSVFormat with no quoteCharacter and no escapeCharacter\n        CSVFormat formatNoQuoteEscape = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n\n        String value = \"0123456789\";\n        boolean newRecord = true;\n\n        StringBuilder sb = new StringBuilder();\n\n        // Append a substring (offset 2, len 5) -> substring \"23456\"\n        invokePrint(formatNoQuoteEscape, null, value, 2, 5, sb, newRecord);\n\n        assertEquals(\"23456\", sb.toString());\n    }\n\n    @Test\n    void testPrint_newRecordFalse_appendsDelimiterFirst() throws Throwable {\n        CSVFormat formatNoQuoteEscape = CSVFormat.DEFAULT.withQuote(null).withEscape(null);\n\n        String value = \"value\";\n        boolean newRecord = false;\n\n        StringBuilder sb = new StringBuilder();\n\n        invokePrint(formatNoQuoteEscape, null, value, 0, value.length(), sb, newRecord);\n\n        // Should prepend delimiter\n        assertEquals(formatNoQuoteEscape.getDelimiter() + value, sb.toString());\n    }\n\n    @Test\n    void testPrint_invalidAppendable_throwsIOException() throws Throwable {\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        Appendable failingAppendable = new Appendable() {\n            @Override\n            public Appendable append(CharSequence csq) throws IOException {\n                throw new IOException(\"fail\");\n            }\n\n            @Override\n            public Appendable append(char c) throws IOException {\n                throw new IOException(\"fail\");\n            }\n\n            @Override\n            public Appendable append(CharSequence csq, int start, int end) throws IOException {\n                throw new IOException(\"fail\");\n            }\n        };\n\n        Throwable thrown = assertThrows(IOException.class, () -> {\n            invokePrint(format, null, \"value\", 0, 5, failingAppendable, true);\n        });\n\n        assertEquals(\"fail\", thrown.getMessage());\n    }\n\n    private void invokePrint(CSVFormat csvFormatInstance, Object object, CharSequence value, int offset, int len,\n            Appendable out, boolean newRecord) throws Throwable {\n        Method printMethod = CSVFormat.class.getDeclaredMethod(\"print\", Object.class, CharSequence.class, int.class,\n                int.class, Appendable.class, boolean.class);\n        printMethod.setAccessible(true);\n        try {\n            printMethod.invoke(csvFormatInstance, object, value, offset, len, out, newRecord);\n        } catch (InvocationTargetException e) {\n            throw e.getCause();\n        }\n    }\n\n    private void invokePrint(Object object, CharSequence value, int offset, int len,\n            Appendable out, boolean newRecord) throws Throwable {\n        invokePrint(csvFormat, object, value, offset, len, out, newRecord);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767688464,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 1251,
+    "prompt_tokens": 1885,
+    "total_tokens": 3136,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 14.99
+  }
+}

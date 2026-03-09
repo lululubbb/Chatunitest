@@ -1,0 +1,9 @@
+{
+  "has_code": true,
+  "source_code": "package com.google.gson.internal.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.Test;\n\npublic class ReflectionHelperTest {\n\n  @Test\n  public void testCreateExceptionForUnexpectedIllegalAccess() throws Exception {\n    IllegalAccessException cause = new IllegalAccessException(\"access denied\");\n\n    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {\n      // Use reflection to invoke the static method since it's public static,\n      // can call directly as well.\n      ReflectionHelper.createExceptionForUnexpectedIllegalAccess(cause);\n    });\n\n    String expectedMessageStart = \"Unexpected IllegalAccessException occurred (Gson \";\n    String expectedMessageContains = \"Certain ReflectionAccessFilter features require Java >= 9 to work correctly.\";\n    String expectedMessageEnd = \"If you are not using ReflectionAccessFilter, report this to the Gson maintainers.\";\n\n    String actualMessage = thrown.getMessage();\n\n    // Check that message starts with expected prefix including version\n    assertEquals(true, actualMessage.startsWith(expectedMessageStart));\n    // Check that message contains required substring\n    assertEquals(true, actualMessage.contains(expectedMessageContains));\n    // Check that message ends with expected suffix\n    assertEquals(true, actualMessage.endsWith(expectedMessageEnd));\n\n    // Check cause is the original IllegalAccessException\n    assertEquals(cause, thrown.getCause());\n  }\n}",
+  "has_syntactic_error": false,
+  "prompt_tokens": 447,
+  "completion_tokens": 296,
+  "total_tokens": 743,
+  "llm_elapsed_time_seconds": 11.4
+}

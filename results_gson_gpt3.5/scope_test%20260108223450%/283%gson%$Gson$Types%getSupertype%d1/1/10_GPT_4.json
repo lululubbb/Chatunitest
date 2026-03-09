@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvlj2RZXmNiMfGyFmWsKw1g1j90T3",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.$Gson$Types;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.*;\nimport java.util.Collection;\nimport java.util.List;\nimport java.lang.reflect.InvocationTargetException;\n\nclass GsonTypesGetSupertypeTest {\n\n    @Test\n    void testGetSupertypeWithWildcardType() throws Exception {\n        // Prepare a WildcardType mock with upper bound List.class\n        WildcardType wildcardType = mock(WildcardType.class);\n        Type[] upperBounds = new Type[] { List.class };\n        when(wildcardType.getUpperBounds()).thenReturn(upperBounds);\n        when(wildcardType.getLowerBounds()).thenReturn(new Type[0]);\n\n        // contextRawType is List.class\n        Class<?> contextRawType = List.class;\n\n        // supertype is Collection.class, which is assignable from List.class\n        Class<?> supertype = Collection.class;\n\n        // Use reflection to access private static method getSupertype\n        Method method = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n        method.setAccessible(true);\n\n        Object result = method.invoke(null, wildcardType, contextRawType, supertype);\n\n        // Result should be a Type representing Collection as supertype of List\n        assertNotNull(result);\n        // The result should be assignable to Collection.class raw type\n        Class<?> rawType = $Gson$Types.getRawType((Type) result);\n        assertEquals(supertype, rawType);\n    }\n\n    @Test\n    void testGetSupertypeWithClassContext() throws Exception {\n        // context: ArrayList.class\n        Class<?> context = java.util.ArrayList.class;\n\n        // supertype: List.class (ArrayList implements List)\n        Class<?> supertype = List.class;\n\n        // Use reflection to access private static method getSupertype\n        Method method = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n        method.setAccessible(true);\n\n        Object result = method.invoke(null, context, context, supertype);\n\n        assertNotNull(result);\n        Class<?> rawType = $Gson$Types.getRawType((Type) result);\n        assertEquals(supertype, rawType);\n    }\n\n    @Test\n    void testGetSupertypeWithExactSameType() throws Exception {\n        // context: String.class\n        Class<?> context = String.class;\n\n        // supertype: Object.class (String extends Object)\n        Class<?> supertype = Object.class;\n\n        Method method = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n        method.setAccessible(true);\n\n        Object result = method.invoke(null, context, context, supertype);\n\n        assertNotNull(result);\n        Class<?> rawType = $Gson$Types.getRawType((Type) result);\n        assertEquals(supertype, rawType);\n    }\n\n    @Test\n    void testGetSupertypeThrowsIfNotAssignable() throws Exception {\n        // context: String.class\n        Class<?> context = String.class;\n\n        // supertype: Integer.class (not assignable from String.class)\n        Class<?> supertype = Integer.class;\n\n        Method method = $Gson$Types.class.getDeclaredMethod(\"getSupertype\", Type.class, Class.class, Class.class);\n        method.setAccessible(true);\n\n        // Should throw IllegalArgumentException due to checkArgument failure\n        InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> {\n            method.invoke(null, context, context, supertype);\n        });\n        // InvocationTargetException wraps the actual exception\n        Throwable cause = exception.getCause();\n        assertTrue(cause instanceof IllegalArgumentException);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767884188,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 796,
+    "prompt_tokens": 2738,
+    "total_tokens": 3534,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 10.62
+  }
+}

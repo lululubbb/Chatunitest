@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm4hi0OCAHwe3QrwT6ajq5HZH4Bo",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  LinkedTreeMap<String, String> map;\n\n  @BeforeEach\n  void setUp() {\n    map = new LinkedTreeMap<>();\n  }\n\n  @Test\n  void testGet_existingKey_returnsValue() {\n    map.put(\"key1\", \"value1\");\n    String result = map.get(\"key1\");\n    assertEquals(\"value1\", result);\n  }\n\n  @Test\n  void testGet_nonExistingKey_returnsNull() {\n    map.put(\"key1\", \"value1\");\n    String result = map.get(\"key2\");\n    assertNull(result);\n  }\n\n  @Test\n  void testGet_nullKey_whenNullNotAllowed_returnsNull() {\n    LinkedTreeMap<String, String> noNullMap = new LinkedTreeMap<>(null, false);\n    noNullMap.put(\"key1\", \"value1\");\n    String result = noNullMap.get(null);\n    assertNull(result);\n  }\n\n  @Test\n  void testGet_nullKey_whenNullAllowed_returnsValue() {\n    LinkedTreeMap<String, String> allowNullMap = new LinkedTreeMap<>(null, true);\n    try {\n      allowNullMap.put(null, \"nullValue\");\n    } catch (NullPointerException e) {\n      // fallback: use reflection to insert the null key Node directly\n      try {\n        Method find = LinkedTreeMap.class.getDeclaredMethod(\"find\", Object.class, boolean.class);\n        find.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        LinkedTreeMap.Node<String, String> node = (LinkedTreeMap.Node<String, String>) find.invoke(allowNullMap, null, true);\n        // set key and value for the node in case key is not set\n        Field keyField = LinkedTreeMap.Node.class.getDeclaredField(\"key\");\n        keyField.setAccessible(true);\n        keyField.set(node, null);\n\n        Field valueField = LinkedTreeMap.Node.class.getDeclaredField(\"value\");\n        valueField.setAccessible(true);\n        valueField.set(node, \"nullValue\");\n      } catch (InvocationTargetException ite) {\n        // unwrap the cause of InvocationTargetException and fail with the cause message\n        Throwable cause = ite.getCause();\n        fail(\"Failed to insert null key via reflection: \" + (cause != null ? cause : ite));\n      } catch (Exception ex) {\n        fail(\"Failed to insert null key via reflection: \" + ex);\n      }\n    }\n    String result = allowNullMap.get(null);\n    assertEquals(\"nullValue\", result);\n  }\n\n  @Test\n  void testGet_privateFindByObjectReturnsNode() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    map.put(\"key1\", \"value1\");\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap.Node<String, String> node = (LinkedTreeMap.Node<String, String>) findByObject.invoke(map, \"key1\");\n    assertNotNull(node);\n    assertEquals(\"key1\", node.key);\n    assertEquals(\"value1\", node.value);\n  }\n\n  @Test\n  void testGet_privateFindByObjectReturnsNull() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method findByObject = LinkedTreeMap.class.getDeclaredMethod(\"findByObject\", Object.class);\n    findByObject.setAccessible(true);\n    Object result = findByObject.invoke(map, \"nonexistent\");\n    assertNull(result);\n  }\n\n  @Test\n  void testGet_withDifferentComparator() {\n    LinkedTreeMap<String, String> compMap = new LinkedTreeMap<>(String.CASE_INSENSITIVE_ORDER, false);\n    compMap.put(\"KEY\", \"value\");\n    assertEquals(\"value\", compMap.get(\"key\"));\n    assertNull(compMap.get(\"other\"));\n  }\n\n  @Test\n  void testGet_afterRemove_returnsNull() {\n    map.put(\"key1\", \"value1\");\n    map.remove(\"key1\");\n    assertNull(map.get(\"key1\"));\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885531,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 911,
+    "prompt_tokens": 1916,
+    "total_tokens": 2827,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 13.83
+  }
+}

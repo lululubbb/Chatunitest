@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9Tftt2fg3vN0gqSlgizosxfcE2r",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVFormat mockFormat;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n    }\n\n    @Test\n    void parse_NullString_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse((String) null, mockFormat);\n        });\n        assertEquals(\"string\", ex.getMessage());\n    }\n\n    @Test\n    void parse_NullFormat_ThrowsNullPointerException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            CSVParser.parse(\"some,string\", null);\n        });\n        assertEquals(\"format\", ex.getMessage());\n    }\n\n    @Test\n    void parse_ValidStringAndFormat_ReturnsCSVParser() throws IOException {\n        String input = \"a,b,c\\n1,2,3\\n4,5,6\";\n\n        // Since the CSVFormat is mocked, we need to stub methods that CSVParser constructor or lexer might call.\n        // Stub toString() to avoid potential NPE or unexpected behavior\n        when(mockFormat.toString()).thenReturn(\"mockFormat\");\n\n        CSVParser parser = CSVParser.parse(input, mockFormat);\n        assertNotNull(parser);\n\n        // Verify internal state by reflection\n        try {\n            Field formatField = CSVParser.class.getDeclaredField(\"format\");\n            formatField.setAccessible(true);\n            Object formatValue = formatField.get(parser);\n            assertSame(mockFormat, formatValue);\n\n            Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n            lexerField.setAccessible(true);\n            Object lexerValue = lexerField.get(parser);\n            assertNotNull(lexerValue);\n\n            Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n            recordNumberField.setAccessible(true);\n            long recordNumber = recordNumberField.getLong(parser);\n            assertEquals(0L, recordNumber);\n\n        } catch (NoSuchFieldException | IllegalAccessException e) {\n            fail(\"Reflection access failed: \" + e.getMessage());\n        }\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975491,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 484,
+    "prompt_tokens": 991,
+    "total_tokens": 1475,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.52
+  }
+}

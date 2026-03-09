@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlZBKiIOiQbDdLL3ZdVP4a7BmW1s",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonToken;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Array;\nimport java.lang.reflect.Type;\nimport java.util.ArrayList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.ArgumentCaptor;\nimport org.mockito.InOrder;\n\npublic class ArrayTypeAdapterTest {\n\n  private Gson mockGson;\n  private TypeAdapter<String> mockComponentAdapter;\n  private ArrayTypeAdapter<String> arrayTypeAdapter;\n\n  @BeforeEach\n  public void setUp() {\n    mockGson = mock(Gson.class);\n    mockComponentAdapter = mock(TypeAdapter.class);\n    arrayTypeAdapter = new ArrayTypeAdapter<>(mockGson, mockComponentAdapter, String.class);\n  }\n\n  @Test\n  public void testRead_nullJson_returnsNull() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockReader.peek()).thenReturn(JsonToken.NULL);\n    doNothing().when(mockReader).nextNull();\n\n    Object result = arrayTypeAdapter.read(mockReader);\n\n    assertNull(result);\n    verify(mockReader).nextNull();\n    verifyNoMoreInteractions(mockComponentAdapter);\n  }\n\n  @Test\n  public void testRead_nonNullArray_readsElements() throws IOException {\n    JsonReader mockReader = mock(JsonReader.class);\n    when(mockReader.peek()).thenReturn(JsonToken.BEGIN_ARRAY, JsonToken.STRING, JsonToken.STRING, JsonToken.END_ARRAY);\n\n    doNothing().when(mockReader).beginArray();\n    doNothing().when(mockReader).endArray();\n\n    when(mockComponentAdapter.read(mockReader)).thenReturn(\"a\", \"b\");\n\n    Object result = arrayTypeAdapter.read(mockReader);\n\n    assertNotNull(result);\n    assertTrue(result.getClass().isArray());\n    assertEquals(String[].class, result.getClass());\n    String[] arr = (String[]) result;\n    assertArrayEquals(new String[]{\"a\", \"b\"}, arr);\n\n    InOrder inOrder = inOrder(mockReader, mockComponentAdapter);\n    inOrder.verify(mockReader).peek();\n    inOrder.verify(mockReader).beginArray();\n    inOrder.verify(mockReader).peek();\n    inOrder.verify(mockComponentAdapter, times(1)).read(mockReader);\n    inOrder.verify(mockReader).peek();\n    inOrder.verify(mockComponentAdapter, times(1)).read(mockReader);\n    inOrder.verify(mockReader).peek();\n    inOrder.verify(mockReader).endArray();\n  }\n\n  @Test\n  public void testWrite_nullArray_writesNull() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n    arrayTypeAdapter.write(mockWriter, null);\n    verify(mockWriter).nullValue();\n    verifyNoMoreInteractions(mockComponentAdapter);\n  }\n\n  @Test\n  public void testWrite_nonNullArray_writesElements() throws IOException {\n    JsonWriter mockWriter = mock(JsonWriter.class);\n    String[] input = new String[]{\"x\", \"y\"};\n\n    doNothing().when(mockWriter).beginArray();\n    doNothing().when(mockWriter).endArray();\n\n    doNothing().when(mockComponentAdapter).write(any(JsonWriter.class), any());\n\n    arrayTypeAdapter.write(mockWriter, input);\n\n    InOrder inOrder = inOrder(mockWriter, mockComponentAdapter);\n    inOrder.verify(mockWriter).beginArray();\n    ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);\n    inOrder.verify(mockComponentAdapter).write(eq(mockWriter), eq(\"x\"));\n    inOrder.verify(mockComponentAdapter).write(eq(mockWriter), eq(\"y\"));\n    inOrder.verify(mockWriter).endArray();\n  }\n\n  @Test\n  public void testFactory_create_withArrayType_returnsArrayTypeAdapter() {\n    TypeToken<String[]> typeToken = TypeToken.get(String[].class);\n    Gson gson = mock(Gson.class);\n    TypeAdapter<String> componentAdapter = mock(TypeAdapter.class);\n    when(gson.getAdapter(TypeToken.get(String.class))).thenReturn(componentAdapter);\n\n    TypeAdapter<?> adapter = ArrayTypeAdapter.FACTORY.create(gson, typeToken);\n\n    assertNotNull(adapter);\n    assertTrue(adapter instanceof ArrayTypeAdapter);\n  }\n\n  @Test\n  public void testFactory_create_withNonArrayType_returnsNull() {\n    TypeToken<String> typeToken = TypeToken.get(String.class);\n    Gson gson = mock(Gson.class);\n\n    TypeAdapter<?> adapter = ArrayTypeAdapter.FACTORY.create(gson, typeToken);\n\n    assertNull(adapter);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883577,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 972,
+    "prompt_tokens": 522,
+    "total_tokens": 1494,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 15.9
+  }
+}

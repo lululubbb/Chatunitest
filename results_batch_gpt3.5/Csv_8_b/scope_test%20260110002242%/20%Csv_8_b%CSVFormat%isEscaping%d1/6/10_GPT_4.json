@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9ZK7ylsZcPJWKZtUUTokTT48WbX",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\nclass CSVFormatTest {\n\n    @Test\n    void testIsEscapingWhenEscapeIsNull() throws Exception {\n        // Using DEFAULT which has escape == null\n        CSVFormat format = CSVFormat.DEFAULT;\n\n        // forcibly set escape field to null via reflection to ensure test condition\n        Field escapeField = CSVFormat.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n\n        // The field is final, so need to remove final modifier\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(escapeField, escapeField.getModifiers() & ~Modifier.FINAL);\n\n        escapeField.set(format, null);\n\n        assertFalse(format.isEscaping());\n    }\n\n    @Test\n    void testIsEscapingWhenEscapeIsSet() throws Exception {\n        // Create a CSVFormat instance with escape character set\n        CSVFormat formatWithEscape = CSVFormat.DEFAULT.withEscape('\\\\');\n\n        // forcibly set escape field to '\\\\' via reflection to ensure test condition\n        Field escapeField = CSVFormat.class.getDeclaredField(\"escape\");\n        escapeField.setAccessible(true);\n\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(escapeField, escapeField.getModifiers() & ~Modifier.FINAL);\n\n        escapeField.set(formatWithEscape, '\\\\');\n\n        assertTrue(formatWithEscape.isEscaping());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975842,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 335,
+    "prompt_tokens": 1315,
+    "total_tokens": 1650,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.22
+  }
+}

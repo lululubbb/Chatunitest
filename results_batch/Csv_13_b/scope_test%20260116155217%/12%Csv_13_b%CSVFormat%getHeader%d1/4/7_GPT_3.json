@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CyZPenojftyRLKyCJIoOSSb0n0AsY",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\n\npublic class CSVFormatTest {\n\n    private void setFinalField(Object target, String fieldName, Object value) throws Exception {\n        Field field = CSVFormat.class.getDeclaredField(fieldName);\n        field.setAccessible(true);\n\n        // Remove final modifier\n        Field modifiersField = Field.class.getDeclaredField(\"modifiers\");\n        modifiersField.setAccessible(true);\n        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);\n\n        // For static fields, target should be null\n        if (Modifier.isStatic(field.getModifiers())) {\n            field.set(null, value);\n        } else {\n            field.set(target, value);\n        }\n    }\n\n    @Test\n    void testGetHeaderReturnsCloneWhenHeaderIsNotNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        String[] header = new String[] {\"a\", \"b\", \"c\"};\n        setFinalField(format, \"header\", header);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNotNull(returnedHeader);\n        assertArrayEquals(header, returnedHeader);\n        assertNotSame(header, returnedHeader);\n    }\n\n    @Test\n    void testGetHeaderReturnsNullWhenHeaderIsNull() throws Exception {\n        CSVFormat format = CSVFormat.DEFAULT;\n        setFinalField(format, \"header\", null);\n\n        String[] returnedHeader = format.getHeader();\n\n        assertNull(returnedHeader);\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1768551842,
+  "model": "gpt-3.5-turbo",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 325,
+    "prompt_tokens": 1495,
+    "total_tokens": 1820,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 4.45
+  }
+}

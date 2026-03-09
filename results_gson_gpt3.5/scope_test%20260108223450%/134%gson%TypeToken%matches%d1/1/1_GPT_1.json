@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvlcJ4egeZNlIF5WkRiWjD9xJe4Ij",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenTest {\n\n  @Test\n  void matches_whenToEqualsFrom_returnsTrue() throws Exception {\n    Type from = String.class;\n    Type to = String.class;\n    Map<String, Type> typeMap = new HashMap<>();\n\n    // Use reflection to invoke private static method\n    var method = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(null, from, to, typeMap);\n    assertTrue(result);\n  }\n\n  @Test\n  void matches_whenFromIsTypeVariableAndToEqualsTypeMapValue_returnsTrue() throws Exception {\n    // Create a mock TypeVariable with name \"T\"\n    @SuppressWarnings(\"unchecked\")\n    TypeVariable<?> from = mock(TypeVariable.class);\n    when(from.getName()).thenReturn(\"T\");\n\n    Type to = Integer.class;\n    Map<String, Type> typeMap = new HashMap<>();\n    typeMap.put(\"T\", to);\n\n    var method = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(null, from, to, typeMap);\n    assertTrue(result);\n  }\n\n  @Test\n  void matches_whenFromIsTypeVariableAndToNotEqualsTypeMapValue_returnsFalse() throws Exception {\n    @SuppressWarnings(\"unchecked\")\n    TypeVariable<?> from = mock(TypeVariable.class);\n    when(from.getName()).thenReturn(\"T\");\n\n    Type to = Integer.class;\n    Map<String, Type> typeMap = new HashMap<>();\n    typeMap.put(\"T\", String.class);\n\n    var method = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(null, from, to, typeMap);\n    assertFalse(result);\n  }\n\n  @Test\n  void matches_whenFromNotEqualsToAndFromNotTypeVariable_returnsFalse() throws Exception {\n    Type from = String.class;\n    Type to = Integer.class;\n    Map<String, Type> typeMap = new HashMap<>();\n\n    var method = TypeToken.class.getDeclaredMethod(\"matches\", Type.class, Type.class, Map.class);\n    method.setAccessible(true);\n\n    boolean result = (boolean) method.invoke(null, from, to, typeMap);\n    assertFalse(result);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767883771,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 556,
+    "prompt_tokens": 524,
+    "total_tokens": 1080,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.73
+  }
+}

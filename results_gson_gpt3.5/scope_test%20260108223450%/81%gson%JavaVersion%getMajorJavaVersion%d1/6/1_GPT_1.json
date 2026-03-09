@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cvm0hnauAMw5L9Cr2JVDsWtHUJcNI",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class JavaVersionTest {\n\n  @Test\n  void testGetMajorJavaVersion_withValidDottedVersion() throws Exception {\n    // Using reflection to access private static method parseDotted to verify behavior\n    Method parseDotted = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    parseDotted.setAccessible(true);\n    int parsed = (int) parseDotted.invoke(null, \"1.8.0_181\");\n    assertEquals(8, parsed);\n\n    int result = invokeGetMajorJavaVersion(\"1.8.0_181\");\n    assertEquals(8, result);\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withValidBeginningIntVersion() throws Exception {\n    // parseDotted returns -1, so extractBeginningInt is used\n    Method parseDotted = JavaVersion.class.getDeclaredMethod(\"parseDotted\", String.class);\n    parseDotted.setAccessible(true);\n    int parseResult = (int) parseDotted.invoke(null, \"9\");\n    // If parseDotted returns -1, fallback to extractBeginningInt\n    if (parseResult != -1) {\n      // To force fallback, we test with a string that parseDotted likely returns -1\n      int fallbackResult = invokeGetMajorJavaVersion(\"9\");\n      assertEquals(9, fallbackResult);\n    } else {\n      int fallbackResult = invokeGetMajorJavaVersion(\"9\");\n      assertEquals(9, fallbackResult);\n    }\n  }\n\n  @Test\n  void testGetMajorJavaVersion_withInvalidVersion() throws Exception {\n    // Both parseDotted and extractBeginningInt return -1, expect default 6\n    int result = invokeGetMajorJavaVersion(\"invalid.version.string\");\n    assertEquals(6, result);\n  }\n\n  private int invokeGetMajorJavaVersion(String version) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = JavaVersion.class.getDeclaredMethod(\"getMajorJavaVersion\", String.class);\n    method.setAccessible(true);\n    return (int) method.invoke(null, version);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885283,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 474,
+    "prompt_tokens": 304,
+    "total_tokens": 778,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 9.06
+  }
+}

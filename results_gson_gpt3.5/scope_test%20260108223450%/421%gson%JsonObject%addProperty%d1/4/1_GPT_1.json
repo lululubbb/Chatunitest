@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvnF7zyWFC6suZ2eKXfWaG7zVpr8k",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport java.lang.reflect.Method;\nimport java.util.Map;\nimport java.util.Set;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = spy(new JsonObject());\n  }\n\n  @Test\n  public void testAddProperty_withNonNullCharacter_addsJsonPrimitive() {\n    Character value = 'a';\n    String property = \"key\";\n\n    // Call addProperty\n    jsonObject.addProperty(property, value);\n\n    // Verify add called with property and JsonPrimitive wrapping 'a'\n    verify(jsonObject).add(eq(property), argThat(arg -> arg instanceof JsonPrimitive && ((JsonPrimitive) arg).getAsCharacter() == value));\n    // Also verify size increased and has returns true\n    assertTrue(jsonObject.has(property));\n    assertEquals(1, jsonObject.size());\n    assertEquals(value.charValue(), jsonObject.getAsJsonPrimitive(property).getAsCharacter());\n  }\n\n  @Test\n  public void testAddProperty_withNullCharacter_addsJsonNull() {\n    Character value = null;\n    String property = \"nullKey\";\n\n    jsonObject.addProperty(property, value);\n\n    // Verify add called with property and JsonNull.INSTANCE\n    verify(jsonObject).add(eq(property), eq(JsonNull.INSTANCE));\n    assertTrue(jsonObject.has(property));\n    assertEquals(1, jsonObject.size());\n    assertEquals(JsonNull.INSTANCE, jsonObject.get(property));\n  }\n\n  @Test\n  public void testAddProperty_reflectionInvoke() throws Exception {\n    // Use reflection to invoke private add method to verify coverage indirectly\n    Method addMethod = JsonObject.class.getDeclaredMethod(\"add\", String.class, JsonElement.class);\n    addMethod.setAccessible(true);\n\n    String property = \"reflected\";\n    JsonPrimitive primitive = new JsonPrimitive('z');\n\n    addMethod.invoke(jsonObject, property, primitive);\n\n    assertTrue(jsonObject.has(property));\n    assertEquals(primitive, jsonObject.get(property));\n  }\n\n  @Test\n  public void testAddProperty_multipleAdds() {\n    jsonObject.addProperty(\"char1\", 'x');\n    jsonObject.addProperty(\"char2\", null);\n    jsonObject.addProperty(\"char3\", 'y');\n\n    assertEquals(3, jsonObject.size());\n    assertEquals('x', jsonObject.getAsJsonPrimitive(\"char1\").getAsCharacter());\n    assertEquals(JsonNull.INSTANCE, jsonObject.get(\"char2\"));\n    assertEquals('y', jsonObject.getAsJsonPrimitive(\"char3\").getAsCharacter());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767890021,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 570,
+    "prompt_tokens": 402,
+    "total_tokens": 972,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.3
+  }
+}

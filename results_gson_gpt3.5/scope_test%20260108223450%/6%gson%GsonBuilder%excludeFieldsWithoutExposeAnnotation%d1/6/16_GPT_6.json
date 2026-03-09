@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmJr6SFbxLeEGgvGhB7Q2IMa7Pr4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertSame;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.spy;\nimport static org.mockito.Mockito.verify;\nimport static org.mockito.Mockito.when;\nimport static org.mockito.Mockito.times;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n  private Excluder excluderSpy;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    gsonBuilder = new GsonBuilder();\n    // Use reflection to replace the private final excluder field with a spy\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder originalExcluder = (Excluder) excluderField.get(gsonBuilder);\n    excluderSpy = spy(originalExcluder);\n    excluderField.set(gsonBuilder, excluderSpy);\n  }\n\n  @Test\n  public void testExcludeFieldsWithoutExposeAnnotation_returnsThisAndUpdatesExcluder() throws Exception {\n    Excluder newExcluder = mock(Excluder.class);\n    // when excludeFieldsWithoutExposeAnnotation is called on excluderSpy, return newExcluder\n    when(excluderSpy.excludeFieldsWithoutExposeAnnotation()).thenReturn(newExcluder);\n\n    // Call method under test\n    GsonBuilder returned = gsonBuilder.excludeFieldsWithoutExposeAnnotation();\n\n    // Verify excluder was updated to the new one returned by excludeFieldsWithoutExposeAnnotation()\n    Field excluderField = GsonBuilder.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    Excluder updatedExcluder = (Excluder) excluderField.get(gsonBuilder);\n    assertSame(newExcluder, updatedExcluder);\n\n    // Verify the method returns the same GsonBuilder instance\n    assertSame(gsonBuilder, returned);\n\n    // Verify that excludeFieldsWithoutExposeAnnotation was called exactly once on the excluder spy\n    verify(excluderSpy, times(1)).excludeFieldsWithoutExposeAnnotation();\n\n    // Verify that excludeFieldsWithoutExposeAnnotation was NOT called on newExcluder spy (to avoid extra calls)\n    verify(newExcluder, times(0)).excludeFieldsWithoutExposeAnnotation();\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767886471,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 512,
+    "prompt_tokens": 1995,
+    "total_tokens": 2507,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.49
+  }
+}

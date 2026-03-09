@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-Cw9R7HH9loUzvxMkDnbDOZvWX3Vsm",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport java.lang.reflect.Field;\nimport java.util.List;\nimport java.util.Map;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass CSVParserTest {\n\n    private CSVFormat mockFormat;\n    private Reader reader;\n\n    @BeforeEach\n    void setUp() {\n        mockFormat = mock(CSVFormat.class);\n        reader = new StringReader(\"header1,header2\\nvalue1,value2\");\n    }\n\n    @Test\n    void testConstructor_NullReader_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(null, mockFormat);\n        });\n        assertTrue(ex.getMessage().contains(\"reader\"));\n    }\n\n    @Test\n    void testConstructor_NullFormat_ThrowsException() {\n        NullPointerException ex = assertThrows(NullPointerException.class, () -> {\n            new CSVParser(reader, null);\n        });\n        assertTrue(ex.getMessage().contains(\"format\"));\n    }\n\n    @Test\n    void testConstructor_ValidArguments_InitializesFields() throws Exception {\n        // Arrange\n        doNothing().when(mockFormat).validate();\n\n        // Act\n        CSVParser parser = new CSVParser(reader, mockFormat);\n\n        // Assert\n        // format field\n        Field formatField = CSVParser.class.getDeclaredField(\"format\");\n        formatField.setAccessible(true);\n        assertSame(mockFormat, formatField.get(parser));\n\n        // lexer field not null\n        Field lexerField = CSVParser.class.getDeclaredField(\"lexer\");\n        lexerField.setAccessible(true);\n        assertNotNull(lexerField.get(parser));\n\n        // headerMap initialized (not null)\n        Field headerMapField = CSVParser.class.getDeclaredField(\"headerMap\");\n        headerMapField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        Map<String, Integer> headerMap = (Map<String, Integer>) headerMapField.get(parser);\n        assertNotNull(headerMap);\n\n        // recordNumber initialized to 0\n        Field recordNumberField = CSVParser.class.getDeclaredField(\"recordNumber\");\n        recordNumberField.setAccessible(true);\n        long recordNumber = (long) recordNumberField.get(parser);\n        assertEquals(0L, recordNumber);\n\n        // record list initialized and empty\n        Field recordField = CSVParser.class.getDeclaredField(\"record\");\n        recordField.setAccessible(true);\n        @SuppressWarnings(\"unchecked\")\n        List<?> recordList = (List<?>) recordField.get(parser);\n        assertNotNull(recordList);\n        assertTrue(recordList.isEmpty());\n\n        // reusableToken field not null\n        Field tokenField = CSVParser.class.getDeclaredField(\"reusableToken\");\n        tokenField.setAccessible(true);\n        assertNotNull(tokenField.get(parser));\n    }\n\n    @Test\n    void testConstructor_FormatValidateThrowsException() throws IOException {\n        doThrow(new IOException(\"validate failed\")).when(mockFormat).validate();\n        IOException ex = assertThrows(IOException.class, () -> new CSVParser(reader, mockFormat));\n        assertEquals(\"validate failed\", ex.getMessage());\n    }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767975333,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 668,
+    "prompt_tokens": 1339,
+    "total_tokens": 2007,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 12.1
+  }
+}

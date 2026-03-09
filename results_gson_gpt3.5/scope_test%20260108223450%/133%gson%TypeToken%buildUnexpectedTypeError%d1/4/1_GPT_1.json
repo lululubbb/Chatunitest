@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmAQkwDTgIlMAzEKBrPS7PLvQze4",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson.reflect;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\nimport java.lang.reflect.Type;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.GenericArrayType;\nimport java.lang.reflect.TypeVariable;\n\nimport org.junit.jupiter.api.Test;\n\nclass TypeTokenBuildUnexpectedTypeErrorTest {\n\n  @Test\n  void buildUnexpectedTypeError_withSingleExpectedClass() throws Exception {\n    Type token = String.class;\n    Class<?>[] expected = {Integer.class};\n\n    AssertionError error = invokeBuildUnexpectedTypeError(token, expected);\n\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Unexpected type. Expected one of: \"));\n    assertTrue(message.contains(Integer.class.getName()));\n    assertTrue(message.contains(token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  @Test\n  void buildUnexpectedTypeError_withMultipleExpectedClasses() throws Exception {\n    Type token = Integer.class;\n    Class<?>[] expected = {String.class, Double.class, Long.class};\n\n    AssertionError error = invokeBuildUnexpectedTypeError(token, expected);\n\n    String message = error.getMessage();\n    for (Class<?> clazz : expected) {\n      assertTrue(message.contains(clazz.getName()));\n    }\n    assertTrue(message.contains(token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  @Test\n  void buildUnexpectedTypeError_withNoExpectedClasses() throws Exception {\n    Type token = Double.class;\n    Class<?>[] expected = new Class<?>[0];\n\n    AssertionError error = invokeBuildUnexpectedTypeError(token, expected);\n\n    String message = error.getMessage();\n    assertTrue(message.contains(\"Unexpected type. Expected one of: \"));\n    assertTrue(message.contains(\"but got: \" + token.getClass().getName()));\n    assertTrue(message.contains(token.toString()));\n  }\n\n  private static AssertionError invokeBuildUnexpectedTypeError(Type token, Class<?>... expected) throws Exception {\n    java.lang.reflect.Method method = TypeToken.class.getDeclaredMethod(\"buildUnexpectedTypeError\", Type.class, Class[].class);\n    method.setAccessible(true);\n    return (AssertionError) method.invoke(null, token, expected);\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767885886,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 459,
+    "prompt_tokens": 588,
+    "total_tokens": 1047,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 8.51
+  }
+}

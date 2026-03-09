@@ -1,0 +1,40 @@
+{
+  "id": "chatcmpl-CvmXA3DJNGZL7zsOLA4vKlrTDrywg",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```java\npackage com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonParserTest {\n\n  @Test\n  void parse_WithValidReader_DelegatesToParseReader() throws Exception {\n    // Arrange\n    JsonParser parser = new JsonParser();\n    Reader reader = new StringReader(\"{\\\"key\\\":\\\"value\\\"}\");\n\n    // Act\n    JsonElement result = parser.parse(reader);\n\n    // Assert\n    assertNotNull(result);\n  }\n\n  @Test\n  void parse_WithNullReader_ThrowsNullPointerException() {\n    JsonParser parser = new JsonParser();\n    assertThrows(NullPointerException.class, () -> parser.parse((Reader) null));\n  }\n\n  @Test\n  void parse_WithMalformedJson_ThrowsJsonSyntaxException() throws IOException {\n    Reader reader = new StringReader(\"{malformedJson:\");\n    JsonParser parser = new JsonParser();\n\n    JsonSyntaxException thrown = assertThrows(JsonSyntaxException.class, () -> parser.parse(reader));\n    assertNotNull(thrown.getMessage());\n  }\n\n  @Test\n  void parse_WithIOException_ThrowsJsonIOException() throws IOException {\n    Reader mockReader = mock(Reader.class);\n    when(mockReader.read(any(char[].class), anyInt(), anyInt())).thenThrow(new IOException(\"IO error\"));\n    JsonParser parser = new JsonParser();\n\n    JsonIOException thrown = assertThrows(JsonIOException.class, () -> parser.parse(mockReader));\n    assertEquals(\"IO error\", thrown.getCause().getMessage());\n  }\n}\n```",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": [],
+        "audio": null,
+        "function_call": null,
+        "tool_calls": null
+      }
+    }
+  ],
+  "created": 1767887296,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "object": "chat.completion",
+  "service_tier": null,
+  "system_fingerprint": "fp_3dcd5944f5",
+  "usage": {
+    "completion_tokens": 365,
+    "prompt_tokens": 295,
+    "total_tokens": 660,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    },
+    "llm_elapsed_time_seconds": 5.04
+  }
+}
