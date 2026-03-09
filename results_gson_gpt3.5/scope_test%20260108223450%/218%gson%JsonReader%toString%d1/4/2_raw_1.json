@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.Reader;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  public void setUp() {\n    jsonReader = new JsonReader(new Reader() {\n      @Override\n      public int read(char[] cbuf, int off, int len) {\n        return -1; // EOF\n      }\n      @Override\n      public void close() {\n      }\n    });\n  }\n\n  @Test\n  public void testToString_includesClassNameAndLocationString() throws Exception {\n    // Use reflection to invoke private locationString method\n    Method locationStringMethod = JsonReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String location = (String) locationStringMethod.invoke(jsonReader);\n\n    String expected = JsonReader.class.getSimpleName() + location;\n    String actual = jsonReader.toString();\n\n    assertEquals(expected, actual);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1004,
-  "completion_tokens": 232,
-  "total_tokens": 1236,
-  "llm_elapsed_time_seconds": 5.97
-}

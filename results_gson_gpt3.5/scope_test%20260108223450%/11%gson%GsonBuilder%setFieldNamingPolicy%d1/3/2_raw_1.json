@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.assertSame;\nimport static org.mockito.Mockito.mock;\n\nimport java.lang.reflect.Field;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  void setFieldNamingPolicy_shouldDelegateToSetFieldNamingStrategy_andReturnSameBuilder() throws Exception {\n    // Arrange\n    FieldNamingPolicy namingPolicy = FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;\n\n    // Act\n    GsonBuilder returnedBuilder = gsonBuilder.setFieldNamingPolicy(namingPolicy);\n\n    // Assert\n    // The returned builder is the same instance (this)\n    assertSame(gsonBuilder, returnedBuilder);\n\n    // Using reflection to access private field 'fieldNamingPolicy'\n    Field field = GsonBuilder.class.getDeclaredField(\"fieldNamingPolicy\");\n    field.setAccessible(true);\n    Object fieldNamingStrategyValue = field.get(gsonBuilder);\n\n    // The fieldNamingPolicy field should be set to the namingPolicy passed\n    assertSame(namingPolicy, fieldNamingStrategyValue);\n  }\n\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1064,
-  "completion_tokens": 254,
-  "total_tokens": 1318,
-  "llm_elapsed_time_seconds": 4.81
-}

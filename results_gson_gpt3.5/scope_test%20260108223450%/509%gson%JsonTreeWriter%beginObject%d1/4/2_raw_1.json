@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.internal.bind.JsonTreeWriter;\nimport com.google.gson.JsonNull;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Field;\nimport java.util.List;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonTreeWriterTest {\n  private JsonTreeWriter jsonTreeWriter;\n\n  @BeforeEach\n  void setUp() {\n    jsonTreeWriter = new JsonTreeWriter();\n  }\n\n  @Test\n  void beginObject_shouldAddJsonObjectToStackAndReturnThis() throws IOException, NoSuchFieldException, IllegalAccessException {\n    JsonWriter returned = jsonTreeWriter.beginObject();\n    assertSame(jsonTreeWriter, returned);\n\n    Field stackField = JsonTreeWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    List<JsonElement> stack = (List<JsonElement>) stackField.get(jsonTreeWriter);\n\n    assertFalse(stack.isEmpty());\n    JsonElement top = stack.get(stack.size() - 1);\n    assertTrue(top instanceof JsonObject);\n\n    // Verify that the top of the stack is the same object passed to put()\n    Field productField = JsonTreeWriter.class.getDeclaredField(\"product\");\n    productField.setAccessible(true);\n    JsonElement product = (JsonElement) productField.get(jsonTreeWriter);\n\n    assertNotNull(product);\n    assertTrue(product instanceof JsonNull || product instanceof JsonObject);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 525,
-  "completion_tokens": 331,
-  "total_tokens": 856,
-  "llm_elapsed_time_seconds": 8.1
-}

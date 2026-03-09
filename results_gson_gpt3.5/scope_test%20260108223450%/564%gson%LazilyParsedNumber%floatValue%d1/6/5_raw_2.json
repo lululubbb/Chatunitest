@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nclass LazilyParsedNumberTest {\n\n  @Test\n  void floatValue_ValidFloatString_ReturnsParsedFloat() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"123.45\");\n    float result = number.floatValue();\n    assertEquals(123.45f, result, 0.0001f);\n  }\n\n  @Test\n  void floatValue_InvalidFloatString_ThrowsNumberFormatException() {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"abc\");\n    assertThrows(NumberFormatException.class, number::floatValue);\n  }\n\n  @Test\n  void writeReplace_IsPrivateAndReturnsObject() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1.23\");\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n    Object result = writeReplace.invoke(number);\n    assertNotNull(result);\n  }\n\n  @Test\n  void readObject_IsPrivateAndThrowsInvalidObjectException() throws Exception {\n    LazilyParsedNumber number = new LazilyParsedNumber(\"1.23\");\n    Method readObject = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObject.setAccessible(true);\n    InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> readObject.invoke(number, (Object) null));\n    assertTrue(exception.getCause() instanceof InvalidObjectException);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1058,
-  "completion_tokens": 353,
-  "total_tokens": 1411,
-  "llm_elapsed_time_seconds": 6.47
-}

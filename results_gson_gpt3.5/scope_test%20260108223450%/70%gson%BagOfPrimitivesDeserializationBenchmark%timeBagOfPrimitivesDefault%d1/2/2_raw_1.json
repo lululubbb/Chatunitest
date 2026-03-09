@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class BagOfPrimitivesDeserializationBenchmarkTest {\n\n  private BagOfPrimitivesDeserializationBenchmark benchmark;\n  private Gson mockGson;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    benchmark = new BagOfPrimitivesDeserializationBenchmark();\n\n    // Create mock Gson\n    mockGson = Mockito.mock(Gson.class);\n\n    // Inject mock Gson into benchmark instance via reflection\n    Field gsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(benchmark, mockGson);\n\n    // Inject sample JSON string into benchmark instance via reflection\n    Field jsonField = BagOfPrimitivesDeserializationBenchmark.class.getDeclaredField(\"json\");\n    jsonField.setAccessible(true);\n    jsonField.set(benchmark, \"{\\\"a\\\":1,\\\"b\\\":true,\\\"c\\\":\\\"text\\\"}\");\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesDefault_zeroReps() {\n    // reps = 0, so fromJson should never be called\n    benchmark.timeBagOfPrimitivesDefault(0);\n    verify(mockGson, times(0)).fromJson(anyString(), eq(BagOfPrimitives.class));\n  }\n\n  @Test\n  public void testTimeBagOfPrimitivesDefault_positiveReps() {\n    int reps = 5;\n    benchmark.timeBagOfPrimitivesDefault(reps);\n    verify(mockGson, times(reps)).fromJson(anyString(), eq(BagOfPrimitives.class));\n  }\n\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 914,
-  "completion_tokens": 364,
-  "total_tokens": 1278,
-  "llm_elapsed_time_seconds": 7.17
-}

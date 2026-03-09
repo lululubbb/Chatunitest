@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.io.StringWriter;\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  public void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  public void testReplaceTop() throws Exception {\n    // Use reflection to access private field stackSize and stack\n    Field stackSizeField = JsonWriter.class.getDeclaredField(\"stackSize\");\n    stackSizeField.setAccessible(true);\n    Field stackField = JsonWriter.class.getDeclaredField(\"stack\");\n    stackField.setAccessible(true);\n\n    // Initialize stackSize and stack for testing\n    stackSizeField.setInt(jsonWriter, 3);\n    int[] stackArray = new int[32];\n    stackArray[0] = 10;\n    stackArray[1] = 20;\n    stackArray[2] = 30;\n    stackField.set(jsonWriter, stackArray);\n\n    // Access private method replaceTop via reflection\n    Method replaceTopMethod = JsonWriter.class.getDeclaredMethod(\"replaceTop\", int.class);\n    replaceTopMethod.setAccessible(true);\n\n    // Call replaceTop with a new topOfStack value\n    replaceTopMethod.invoke(jsonWriter, 99);\n\n    // Verify that stack[stackSize - 1] is replaced with 99\n    int[] updatedStack = (int[]) stackField.get(jsonWriter);\n    int updatedStackSize = stackSizeField.getInt(jsonWriter);\n    assertEquals(3, updatedStackSize);\n    assertEquals(10, updatedStack[0]);\n    assertEquals(20, updatedStack[1]);\n    assertEquals(99, updatedStack[2]);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 728,
-  "completion_tokens": 405,
-  "total_tokens": 1133,
-  "llm_elapsed_time_seconds": 9.07
-}

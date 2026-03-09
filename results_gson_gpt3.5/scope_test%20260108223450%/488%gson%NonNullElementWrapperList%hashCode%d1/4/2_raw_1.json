@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> list;\n  private ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = new ArrayList<>();\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void testHashCode_emptyDelegate() {\n    int expectedHashCode = delegate.hashCode();\n    int actualHashCode = list.hashCode();\n    assertEquals(expectedHashCode, actualHashCode);\n  }\n\n  @Test\n  void testHashCode_nonEmptyDelegate() {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n    int expectedHashCode = delegate.hashCode();\n    int actualHashCode = list.hashCode();\n    assertEquals(expectedHashCode, actualHashCode);\n  }\n\n  @Test\n  void testHashCode_reflection_modifyingDelegate() throws Exception {\n    // Using reflection to replace delegate with a new ArrayList with different content\n    ArrayList<String> newDelegate = new ArrayList<>();\n    newDelegate.add(\"x\");\n    newDelegate.add(\"y\");\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    delegateField.set(list, newDelegate);\n\n    int expectedHashCode = newDelegate.hashCode();\n    int actualHashCode = list.hashCode();\n    assertEquals(expectedHashCode, actualHashCode);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 373,
-  "completion_tokens": 338,
-  "total_tokens": 711,
-  "llm_elapsed_time_seconds": 7.07
-}

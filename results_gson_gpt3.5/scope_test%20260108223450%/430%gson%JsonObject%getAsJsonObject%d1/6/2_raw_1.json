@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.LinkedTreeMap;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class JsonObjectTest {\n\n  private JsonObject jsonObject;\n\n  @BeforeEach\n  public void setUp() {\n    jsonObject = new JsonObject();\n  }\n\n  @Test\n  public void testGetAsJsonObject_existingMember_returnsJsonObject() throws Exception {\n    JsonObject expected = new JsonObject();\n    setMembersField(jsonObject, \"existing\", expected);\n\n    JsonObject actual = jsonObject.getAsJsonObject(\"existing\");\n\n    assertSame(expected, actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_nonExistingMember_returnsNull() {\n    JsonObject actual = jsonObject.getAsJsonObject(\"nonExisting\");\n    assertNull(actual);\n  }\n\n  @Test\n  public void testGetAsJsonObject_nullMemberName_returnsNull() {\n    JsonObject actual = jsonObject.getAsJsonObject(null);\n    assertNull(actual);\n  }\n\n  private void setMembersField(JsonObject jsonObject, String key, JsonElement value) throws Exception {\n    Field membersField = JsonObject.class.getDeclaredField(\"members\");\n    membersField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    LinkedTreeMap<String, JsonElement> members = (LinkedTreeMap<String, JsonElement>) membersField.get(jsonObject);\n    members.put(key, value);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 398,
-  "completion_tokens": 319,
-  "total_tokens": 717,
-  "llm_elapsed_time_seconds": 7.75
-}

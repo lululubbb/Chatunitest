@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport com.google.gson.JsonArray;\nimport com.google.gson.JsonElement;\nimport com.google.gson.JsonObject;\nimport com.google.gson.JsonPrimitive;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class JsonTreeReaderTest {\n\n  private JsonTreeReader jsonTreeReader;\n\n  @BeforeEach\n  public void setUp() {\n    // Initialize with a simple JsonElement (JsonObject) for testing\n    JsonObject jsonObject = new JsonObject();\n    jsonObject.add(\"key\", new JsonPrimitive(\"value\"));\n    jsonTreeReader = new JsonTreeReader(jsonObject);\n  }\n\n  @Test\n  public void testToString_shouldReturnClassNamePlusLocationString() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    // Use reflection to invoke private locationString method\n    Method locationStringMethod = JsonTreeReader.class.getDeclaredMethod(\"locationString\");\n    locationStringMethod.setAccessible(true);\n    String locationString = (String) locationStringMethod.invoke(jsonTreeReader);\n\n    String expected = JsonTreeReader.class.getSimpleName() + locationString;\n    String actual = jsonTreeReader.toString();\n\n    assertEquals(expected, actual);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 558,
-  "completion_tokens": 279,
-  "total_tokens": 837,
-  "llm_elapsed_time_seconds": 7.69
-}

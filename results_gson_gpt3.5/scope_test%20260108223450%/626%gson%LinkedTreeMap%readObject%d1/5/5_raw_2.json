@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class LinkedTreeMapTest {\n\n  @Test\n  void testReadObjectThrowsInvalidObjectException() throws Exception {\n    LinkedTreeMap<Object, Object> map = new LinkedTreeMap<>();\n\n    ObjectInputStream mockInputStream = org.mockito.Mockito.mock(ObjectInputStream.class);\n\n    Method readObjectMethod = LinkedTreeMap.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObjectMethod.setAccessible(true);\n\n    InvalidObjectException thrown = assertThrows(InvalidObjectException.class, () -> {\n      try {\n        readObjectMethod.invoke(map, mockInputStream);\n      } catch (InvocationTargetException e) {\n        // unwrap the cause and rethrow if it is InvalidObjectException\n        Throwable cause = e.getCause();\n        if (cause instanceof InvalidObjectException) {\n          throw (InvalidObjectException) cause;\n        }\n        throw e;\n      }\n    });\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1306,
-  "completion_tokens": 238,
-  "total_tokens": 1544,
-  "llm_elapsed_time_seconds": 4.86
-}

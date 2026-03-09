@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.sql;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.sql.SqlTimeTypeAdapter;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.Field;\nimport java.sql.Time;\nimport java.text.SimpleDateFormat;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.InOrder;\n\nclass SqlTimeTypeAdapterTest {\n\n  private SqlTimeTypeAdapter adapter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    Constructor<SqlTimeTypeAdapter> constructor = SqlTimeTypeAdapter.class.getDeclaredConstructor();\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance();\n    jsonWriter = mock(JsonWriter.class);\n  }\n\n  @Test\n  void write_nullValue_callsNullValueOnJsonWriter() throws IOException {\n    adapter.write(jsonWriter, null);\n    verify(jsonWriter).nullValue();\n    verifyNoMoreInteractions(jsonWriter);\n  }\n\n  @Test\n  void write_nonNullValue_formatsTimeAndWritesValue() throws Exception {\n    Time time = Time.valueOf(\"13:45:30\"); // 1:45:30 PM\n\n    SimpleDateFormat format = (SimpleDateFormat) getPrivateField(adapter, \"format\");\n    String expectedFormattedTime = format.format(time);\n\n    adapter.write(jsonWriter, time);\n\n    InOrder inOrder = inOrder(jsonWriter);\n    inOrder.verify(jsonWriter).value(expectedFormattedTime);\n    verifyNoMoreInteractions(jsonWriter);\n  }\n\n  private Object getPrivateField(Object instance, String fieldName) throws Exception {\n    Field field = instance.getClass().getDeclaredField(fieldName);\n    field.setAccessible(true);\n    return field.get(instance);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 908,
-  "completion_tokens": 368,
-  "total_tokens": 1276,
-  "llm_elapsed_time_seconds": 6.4
-}

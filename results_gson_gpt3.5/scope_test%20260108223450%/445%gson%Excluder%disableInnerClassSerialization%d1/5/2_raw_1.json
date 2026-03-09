@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.Test;\n\npublic class ExcluderTest {\n\n  @Test\n  void disableInnerClassSerialization_shouldReturnCloneWithSerializeInnerClassesFalse() throws Exception {\n    Excluder original = new Excluder();\n\n    // Use reflection to invoke private clone() method to verify clone behavior\n    Method cloneMethod = Excluder.class.getDeclaredMethod(\"clone\");\n    cloneMethod.setAccessible(true);\n    Excluder clonedViaReflection = (Excluder) cloneMethod.invoke(original);\n    assertNotNull(clonedViaReflection);\n    // By default, serializeInnerClasses is true\n    Field serializeInnerClassesField = Excluder.class.getDeclaredField(\"serializeInnerClasses\");\n    serializeInnerClassesField.setAccessible(true);\n    assertTrue(serializeInnerClassesField.getBoolean(original));\n    assertTrue(serializeInnerClassesField.getBoolean(clonedViaReflection));\n\n    // Call the focal method\n    Excluder result = original.disableInnerClassSerialization();\n\n    // Check that result is a different instance (clone)\n    assertNotSame(original, result);\n\n    // Check that serializeInnerClasses is false in the result\n    assertFalse(serializeInnerClassesField.getBoolean(result));\n\n    // Original's serializeInnerClasses remains true\n    assertTrue(serializeInnerClassesField.getBoolean(original));\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 601,
-  "completion_tokens": 303,
-  "total_tokens": 904,
-  "llm_elapsed_time_seconds": 4.65
-}

@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Method;\nimport java.text.DateFormat;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSetDateFormat_withStyle_setsDateStyleAndNullifiesDatePattern() throws Exception {\n    // Arrange\n    int newDateStyle = DateFormat.MEDIUM;\n\n    // Set initial non-null datePattern to verify it gets nullified\n    Field datePatternField = GsonBuilder.class.getDeclaredField(\"datePattern\");\n    datePatternField.setAccessible(true);\n    datePatternField.set(gsonBuilder, \"initialPattern\");\n\n    // Act\n    GsonBuilder returned = gsonBuilder.setDateFormat(newDateStyle);\n\n    // Assert returned this for chaining\n    assertSame(gsonBuilder, returned);\n\n    // Verify dateStyle is set to newDateStyle\n    Field dateStyleField = GsonBuilder.class.getDeclaredField(\"dateStyle\");\n    dateStyleField.setAccessible(true);\n    int actualDateStyle = dateStyleField.getInt(gsonBuilder);\n    assertEquals(newDateStyle, actualDateStyle);\n\n    // Verify datePattern is null\n    String actualDatePattern = (String) datePatternField.get(gsonBuilder);\n    assertNull(actualDatePattern);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1071,
-  "completion_tokens": 317,
-  "total_tokens": 1388,
-  "llm_elapsed_time_seconds": 5.83
-}

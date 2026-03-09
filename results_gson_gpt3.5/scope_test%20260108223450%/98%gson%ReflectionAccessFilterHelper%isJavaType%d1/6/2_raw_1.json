@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.InvocationTargetException;\n\nimport org.junit.jupiter.api.Test;\n\nclass ReflectionAccessFilterHelperTest {\n\n  @Test\n  void testIsJavaType_withJavaPrefix() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Method method = ReflectionAccessFilterHelper.class.getDeclaredMethod(\"isJavaType\", String.class);\n    method.setAccessible(true);\n\n    // className starts with \"java.\"\n    boolean resultJava = (boolean) method.invoke(null, \"java.lang.String\");\n    assertTrue(resultJava);\n\n    // className starts with \"javax.\"\n    boolean resultJavax = (boolean) method.invoke(null, \"javax.servlet.Servlet\");\n    assertTrue(resultJavax);\n\n    // className does not start with \"java.\" or \"javax.\"\n    boolean resultOther = (boolean) method.invoke(null, \"com.google.gson.Gson\");\n    assertFalse(resultOther);\n\n    // className is exactly \"java.\"\n    boolean resultExactJava = (boolean) method.invoke(null, \"java.\");\n    assertTrue(resultExactJava);\n\n    // className is exactly \"javax.\"\n    boolean resultExactJavax = (boolean) method.invoke(null, \"javax.\");\n    assertTrue(resultExactJavax);\n\n    // className is empty string\n    boolean resultEmpty = (boolean) method.invoke(null, \"\");\n    assertFalse(resultEmpty);\n\n    // className is null - should throw NullPointerException\n    assertThrows(InvocationTargetException.class, () -> method.invoke(null, (Object) null));\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 318,
-  "completion_tokens": 335,
-  "total_tokens": 653,
-  "llm_elapsed_time_seconds": 8.05
-}

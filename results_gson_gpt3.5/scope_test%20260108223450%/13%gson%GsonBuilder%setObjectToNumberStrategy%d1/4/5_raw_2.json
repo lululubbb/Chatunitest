@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSetObjectToNumberStrategy_NonNullArgument_ShouldSetFieldAndReturnThis() throws Exception {\n    ToNumberStrategy mockStrategy = mock(ToNumberStrategy.class);\n\n    GsonBuilder returned = gsonBuilder.setObjectToNumberStrategy(mockStrategy);\n\n    // Assert method returns this\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to verify private field objectToNumberStrategy is set correctly\n    Field field = GsonBuilder.class.getDeclaredField(\"objectToNumberStrategy\");\n    field.setAccessible(true);\n    Object fieldValue = field.get(gsonBuilder);\n    assertSame(mockStrategy, fieldValue);\n  }\n\n  @Test\n  public void testSetObjectToNumberStrategy_NullArgument_ShouldThrowNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.setObjectToNumberStrategy(null);\n    });\n    // The message from Objects.requireNonNull is null, so check thrown is not null but message may be null\n    assertNotNull(thrown);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1722,
-  "completion_tokens": 297,
-  "total_tokens": 2019,
-  "llm_elapsed_time_seconds": 6.03
-}

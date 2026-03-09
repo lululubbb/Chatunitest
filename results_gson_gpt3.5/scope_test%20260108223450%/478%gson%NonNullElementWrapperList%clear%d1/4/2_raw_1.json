@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> list;\n  private ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void clear_delegatesToDelegateClear() {\n    delegate.add(\"test1\");\n    delegate.add(\"test2\");\n    assertEquals(2, delegate.size());\n\n    list.clear();\n\n    verify(delegate).clear();\n    assertEquals(0, delegate.size());\n  }\n\n  @Test\n  void clear_onEmptyDelegate() {\n    assertEquals(0, delegate.size());\n\n    list.clear();\n\n    verify(delegate).clear();\n    assertEquals(0, delegate.size());\n  }\n\n  @Test\n  void clear_reflectiveAccessToDelegate() throws Exception {\n    // Use reflection to get the private delegate field and clear it directly\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    @SuppressWarnings(\"unchecked\")\n    ArrayList<String> reflectedDelegate = (ArrayList<String>) delegateField.get(list);\n\n    reflectedDelegate.add(\"reflected\");\n    assertEquals(1, reflectedDelegate.size());\n\n    list.clear();\n\n    assertEquals(0, reflectedDelegate.size());\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 370,
-  "completion_tokens": 329,
-  "total_tokens": 699,
-  "llm_elapsed_time_seconds": 6.66
-}

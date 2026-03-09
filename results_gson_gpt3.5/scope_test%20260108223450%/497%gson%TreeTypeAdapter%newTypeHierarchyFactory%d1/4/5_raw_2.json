@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.bind;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.JsonSerializer;\nimport com.google.gson.JsonDeserializer;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\npublic class TreeTypeAdapterTest {\n\n  @Test\n  public void testNewTypeHierarchyFactory() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {\n    Class<?> hierarchyType = Number.class;\n\n    // Provide a valid typeAdapter: either JsonSerializer or JsonDeserializer mock\n    JsonSerializer<?> serializer = mock(JsonSerializer.class);\n\n    // Call the static method directly\n    TypeAdapterFactory factoryDirect = TreeTypeAdapter.newTypeHierarchyFactory(hierarchyType, serializer);\n    assertNotNull(factoryDirect);\n\n    // Use reflection to invoke the private constructor of SingleTypeFactory indirectly via newTypeHierarchyFactory\n    Method method = TreeTypeAdapter.class.getDeclaredMethod(\"newTypeHierarchyFactory\", Class.class, Object.class);\n    method.setAccessible(true);\n    TypeAdapterFactory factoryReflect = (TypeAdapterFactory) method.invoke(null, hierarchyType, serializer);\n    assertNotNull(factoryReflect);\n    assertEquals(factoryDirect.getClass(), factoryReflect.getClass());\n\n    // Validate the returned factory is of expected type by checking class name\n    assertEquals(\"com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory\", factoryDirect.getClass().getName());\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1159,
-  "completion_tokens": 307,
-  "total_tokens": 1466,
-  "llm_elapsed_time_seconds": 5.93
-}

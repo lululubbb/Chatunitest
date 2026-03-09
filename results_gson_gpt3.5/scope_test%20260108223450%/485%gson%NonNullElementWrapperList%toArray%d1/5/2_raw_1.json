@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = new ArrayList<>();\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void testToArray_emptyDelegate_returnsEmptyArray() {\n    Object[] array = list.toArray();\n    assertNotNull(array);\n    assertEquals(0, array.length);\n  }\n\n  @Test\n  void testToArray_nonEmptyDelegate_returnsArrayWithSameElements() {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n    delegate.add(\"c\");\n    Object[] array = list.toArray();\n    assertArrayEquals(new Object[]{\"a\", \"b\", \"c\"}, array);\n  }\n\n  @Test\n  void testToArray_delegateContainsNullElements() {\n    delegate.add(null);\n    delegate.add(\"x\");\n    Object[] array = list.toArray();\n    assertEquals(2, array.length);\n    assertNull(array[0]);\n    assertEquals(\"x\", array[1]);\n  }\n\n  @Test\n  void testToArray_calledViaReflection_returnsSameAsDirectCall() throws Exception {\n    delegate.add(\"ref\");\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\");\n    toArrayMethod.setAccessible(true);\n    Object[] result = (Object[]) toArrayMethod.invoke(list);\n    assertArrayEquals(delegate.toArray(), result);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 373,
-  "completion_tokens": 360,
-  "total_tokens": 733,
-  "llm_elapsed_time_seconds": 8.83
-}

@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.stream;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.io.Reader;\nimport java.lang.reflect.Field;\n\nclass JsonReaderTest {\n\n  private JsonReader jsonReader;\n\n  @BeforeEach\n  void setUp() {\n    Reader dummyReader = new Reader() {\n      @Override\n      public int read(char[] cbuf, int off, int len) {\n        return -1; // EOF immediately\n      }\n      @Override\n      public void close() {}\n    };\n    jsonReader = new JsonReader(dummyReader);\n  }\n\n  @Test\n  void testSetLenientTrue() throws Exception {\n    jsonReader.setLenient(true);\n\n    Field lenientField = JsonReader.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    boolean lenientValue = (boolean) lenientField.get(jsonReader);\n\n    assertTrue(lenientValue, \"lenient should be true after setLenient(true)\");\n  }\n\n  @Test\n  void testSetLenientFalse() throws Exception {\n    // First set true to verify toggle\n    jsonReader.setLenient(true);\n    jsonReader.setLenient(false);\n\n    Field lenientField = JsonReader.class.getDeclaredField(\"lenient\");\n    lenientField.setAccessible(true);\n    boolean lenientValue = (boolean) lenientField.get(jsonReader);\n\n    assertFalse(lenientValue, \"lenient should be false after setLenient(false)\");\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1000,
-  "completion_tokens": 318,
-  "total_tokens": 1318,
-  "llm_elapsed_time_seconds": 5.97
-}

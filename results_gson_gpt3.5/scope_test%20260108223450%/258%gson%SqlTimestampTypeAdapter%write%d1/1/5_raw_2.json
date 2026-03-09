@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.sql;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonWriter;\nimport com.google.gson.TypeAdapter;\nimport java.io.IOException;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.sql.Timestamp;\nimport java.util.Date;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass SqlTimestampTypeAdapterTest {\n\n  private SqlTimestampTypeAdapter adapter;\n  private TypeAdapter<Date> dateTypeAdapter;\n  private JsonWriter jsonWriter;\n\n  @BeforeEach\n  void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {\n    dateTypeAdapter = mock(TypeAdapter.class);\n    jsonWriter = mock(JsonWriter.class);\n\n    Constructor<SqlTimestampTypeAdapter> constructor =\n        SqlTimestampTypeAdapter.class.getDeclaredConstructor(TypeAdapter.class);\n    constructor.setAccessible(true);\n    adapter = constructor.newInstance(dateTypeAdapter);\n  }\n\n  @Test\n  void write_callsDateTypeAdapterWrite_withSameParameters() throws IOException {\n    Timestamp timestamp = new Timestamp(System.currentTimeMillis());\n\n    adapter.write(jsonWriter, timestamp);\n\n    verify(dateTypeAdapter).write(jsonWriter, timestamp);\n  }\n\n  @Test\n  void write_callsDateTypeAdapterWrite_withNullValue() throws IOException {\n    adapter.write(jsonWriter, null);\n\n    verify(dateTypeAdapter).write(jsonWriter, null);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 779,
-  "completion_tokens": 292,
-  "total_tokens": 1071,
-  "llm_elapsed_time_seconds": 6.04
-}

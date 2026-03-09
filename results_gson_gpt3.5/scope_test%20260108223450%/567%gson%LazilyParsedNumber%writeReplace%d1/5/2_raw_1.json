@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.ObjectStreamException;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.math.BigDecimal;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass LazilyParsedNumberTest {\n\n  private LazilyParsedNumber lazilyParsedNumber;\n  private String value = \"123.456\";\n\n  @BeforeEach\n  void setUp() {\n    lazilyParsedNumber = new LazilyParsedNumber(value);\n  }\n\n  @Test\n  void testWriteReplace_returnsBigDecimalWithValue() throws Throwable {\n    Method writeReplace = LazilyParsedNumber.class.getDeclaredMethod(\"writeReplace\");\n    writeReplace.setAccessible(true);\n\n    Object result;\n    try {\n      result = writeReplace.invoke(lazilyParsedNumber);\n    } catch (InvocationTargetException e) {\n      throw e.getCause();\n    }\n\n    assertNotNull(result);\n    assertTrue(result instanceof BigDecimal);\n    assertEquals(new BigDecimal(value), result);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 303,
-  "completion_tokens": 227,
-  "total_tokens": 530,
-  "llm_elapsed_time_seconds": 6.89
-}

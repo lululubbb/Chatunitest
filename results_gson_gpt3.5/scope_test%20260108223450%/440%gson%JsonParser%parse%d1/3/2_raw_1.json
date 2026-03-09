@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.MalformedJsonException;\nimport com.google.gson.stream.JsonToken;\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nclass JsonParserTest {\n\n  @Test\n  void parse_withValidReader_shouldReturnJsonElement() throws IOException {\n    String json = \"{\\\"key\\\":\\\"value\\\"}\";\n    Reader reader = new StringReader(json);\n    JsonParser parser = new JsonParser();\n\n    JsonElement element = parser.parse(reader);\n\n    assertNotNull(element);\n  }\n\n  @Test\n  void parse_withNullReader_shouldThrowJsonSyntaxException() {\n    JsonParser parser = new JsonParser();\n\n    assertThrows(JsonSyntaxException.class, () -> parser.parse((Reader) null));\n  }\n\n  @Test\n  void parse_withMalformedJson_shouldThrowJsonSyntaxException() throws IOException {\n    Reader reader = mock(Reader.class);\n    JsonReader jsonReader = mock(JsonReader.class);\n    JsonParser parser = new JsonParser();\n\n    // Using reflection to mock parseReader(Reader) to throw MalformedJsonException\n    assertThrows(JsonSyntaxException.class, () -> {\n      parser.parse(reader);\n    });\n  }\n\n  @Test\n  void parse_withEmptyJson_shouldReturnJsonElement() throws IOException {\n    String json = \"\";\n    Reader reader = new StringReader(json);\n    JsonParser parser = new JsonParser();\n\n    assertThrows(JsonSyntaxException.class, () -> parser.parse(reader));\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 295,
-  "completion_tokens": 334,
-  "total_tokens": 629,
-  "llm_elapsed_time_seconds": 8.46
-}

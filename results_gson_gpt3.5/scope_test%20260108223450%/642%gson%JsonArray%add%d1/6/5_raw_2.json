@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n  }\n\n  @Test\n  void testAdd_withNonNullString_addsJsonPrimitive() throws Exception {\n    String testString = \"test\";\n\n    jsonArray.add(testString);\n\n    ArrayList<JsonElement> elements = getElementsField(jsonArray);\n    assertEquals(1, elements.size());\n    JsonElement element = elements.get(0);\n    assertTrue(element instanceof JsonPrimitive);\n    assertEquals(testString, ((JsonPrimitive) element).getAsString());\n  }\n\n  @Test\n  void testAdd_withNullString_addsJsonNullInstance() throws Exception {\n    // Cast null to String to resolve ambiguity\n    jsonArray.add((String) null);\n\n    ArrayList<JsonElement> elements = getElementsField(jsonArray);\n    assertEquals(1, elements.size());\n    JsonElement element = elements.get(0);\n    assertSame(JsonNull.INSTANCE, element);\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private ArrayList<JsonElement> getElementsField(JsonArray array) throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    return (ArrayList<JsonElement>) elementsField.get(array);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 839,
-  "completion_tokens": 316,
-  "total_tokens": 1155,
-  "llm_elapsed_time_seconds": 5.56
-}

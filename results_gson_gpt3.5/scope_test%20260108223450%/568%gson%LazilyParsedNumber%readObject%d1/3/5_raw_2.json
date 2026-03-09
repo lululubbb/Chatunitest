@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\n\nimport java.io.InvalidObjectException;\nimport java.io.ObjectInputStream;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\npublic class LazilyParsedNumberTest {\n\n  private LazilyParsedNumber lazilyParsedNumber;\n\n  @BeforeEach\n  public void setUp() {\n    lazilyParsedNumber = new LazilyParsedNumber(\"123.45\");\n  }\n\n  @Test\n  public void testReadObject_throwsInvalidObjectException() throws Exception {\n    ObjectInputStream mockIn = Mockito.mock(ObjectInputStream.class);\n\n    Method readObjectMethod = LazilyParsedNumber.class.getDeclaredMethod(\"readObject\", ObjectInputStream.class);\n    readObjectMethod.setAccessible(true);\n\n    InvocationTargetException thrown = assertThrows(InvocationTargetException.class, () -> {\n      readObjectMethod.invoke(lazilyParsedNumber, mockIn);\n    });\n\n    Throwable cause = thrown.getCause();\n    // The cause should be InvalidObjectException with the expected message\n    assertEquals(InvalidObjectException.class, cause.getClass());\n    assertEquals(\"Deserialization is unsupported\", cause.getMessage());\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 994,
-  "completion_tokens": 276,
-  "total_tokens": 1270,
-  "llm_elapsed_time_seconds": 5.46
-}

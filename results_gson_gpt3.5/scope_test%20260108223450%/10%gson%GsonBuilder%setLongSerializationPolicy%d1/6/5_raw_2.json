@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.Objects;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class GsonBuilderTest {\n\n  private GsonBuilder gsonBuilder;\n\n  @BeforeEach\n  public void setUp() {\n    gsonBuilder = new GsonBuilder();\n  }\n\n  @Test\n  public void testSetLongSerializationPolicy_withValidPolicy_shouldSetAndReturnThis() throws Exception {\n    LongSerializationPolicy policy = LongSerializationPolicy.STRING;\n    GsonBuilder returned = gsonBuilder.setLongSerializationPolicy(policy);\n    assertSame(gsonBuilder, returned);\n\n    // Use reflection to verify the private field longSerializationPolicy is set correctly\n    Field field = GsonBuilder.class.getDeclaredField(\"longSerializationPolicy\");\n    field.setAccessible(true);\n    LongSerializationPolicy actualPolicy = (LongSerializationPolicy) field.get(gsonBuilder);\n    assertSame(policy, actualPolicy);\n  }\n\n  @Test\n  public void testSetLongSerializationPolicy_withNull_shouldThrowNullPointerException() {\n    NullPointerException thrown = assertThrows(NullPointerException.class, () -> {\n      gsonBuilder.setLongSerializationPolicy(null);\n    });\n    assertTrue(thrown.getMessage() == null || thrown.getMessage().contains(\"null\"),\n      () -> \"Expected NullPointerException message to mention null\");\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1750,
-  "completion_tokens": 291,
-  "total_tokens": 2041,
-  "llm_elapsed_time_seconds": 6.12
-}

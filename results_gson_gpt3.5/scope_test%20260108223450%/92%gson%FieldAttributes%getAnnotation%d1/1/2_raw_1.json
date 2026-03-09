@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.annotation.Annotation;\nimport java.lang.reflect.Field;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mock;\nimport org.mockito.MockitoAnnotations;\n\nclass FieldAttributesTest {\n\n  @Mock\n  private Field mockField;\n\n  private FieldAttributes fieldAttributes;\n\n  @BeforeEach\n  void setUp() {\n    MockitoAnnotations.openMocks(this);\n    fieldAttributes = new FieldAttributes(mockField);\n  }\n\n  @Test\n  void getAnnotation_existingAnnotation_returnsAnnotation() {\n    @SuppressWarnings(\"unchecked\")\n    Class<Deprecated> annotationClass = Deprecated.class;\n    Deprecated deprecatedAnnotation = mock(Deprecated.class);\n\n    when(mockField.getAnnotation(annotationClass)).thenReturn(deprecatedAnnotation);\n\n    Deprecated result = fieldAttributes.getAnnotation(annotationClass);\n\n    assertSame(deprecatedAnnotation, result);\n    verify(mockField).getAnnotation(annotationClass);\n  }\n\n  @Test\n  void getAnnotation_nonExistingAnnotation_returnsNull() {\n    @SuppressWarnings(\"unchecked\")\n    Class<Override> annotationClass = Override.class;\n\n    when(mockField.getAnnotation(annotationClass)).thenReturn(null);\n\n    Override result = fieldAttributes.getAnnotation(annotationClass);\n\n    assertNull(result);\n    verify(mockField).getAnnotation(annotationClass);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 280,
-  "completion_tokens": 278,
-  "total_tokens": 558,
-  "llm_elapsed_time_seconds": 24.39
-}

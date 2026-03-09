@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass JsonElementTest {\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullTrue_returnsThisAsJsonNull() {\n    JsonNull jsonNull = new JsonNull();\n    JsonElement jsonElement = spy(jsonNull);\n    when(jsonElement.isJsonNull()).thenReturn(true);\n    // No need to stub getAsJsonNull since spy calls real methods\n\n    JsonNull result = jsonElement.getAsJsonNull();\n\n    assertNotNull(result);\n    assertSame(jsonElement, result);\n  }\n\n  @Test\n  void getAsJsonNull_whenIsJsonNullFalse_throwsIllegalStateException() {\n    JsonElement jsonElement = mock(JsonElement.class);\n    when(jsonElement.isJsonNull()).thenReturn(false);\n    when(jsonElement.toString()).thenReturn(\"mockedJsonElement\");\n    when(jsonElement.getAsJsonNull()).thenCallRealMethod();\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElement::getAsJsonNull);\n    assertEquals(\"Not a JSON Null: mockedJsonElement\", exception.getMessage());\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 906,
-  "completion_tokens": 250,
-  "total_tokens": 1156,
-  "llm_elapsed_time_seconds": 4.71
-}

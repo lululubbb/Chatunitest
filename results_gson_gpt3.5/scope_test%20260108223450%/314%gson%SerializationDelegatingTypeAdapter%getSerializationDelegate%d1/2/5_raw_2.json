@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport java.io.IOException;\n\nclass SerializationDelegatingTypeAdapterTest {\n\n    static class SerializationDelegatingTypeAdapterImpl<T> extends SerializationDelegatingTypeAdapter<T> {\n        private final TypeAdapter<T> delegate;\n\n        SerializationDelegatingTypeAdapterImpl(TypeAdapter<T> delegate) {\n            this.delegate = delegate;\n        }\n\n        @Override\n        public TypeAdapter<T> getSerializationDelegate() {\n            return delegate;\n        }\n\n        @Override\n        public void write(JsonWriter out, T value) throws IOException {\n            // Delegate writing to the delegate adapter\n            delegate.write(out, value);\n        }\n\n        @Override\n        public T read(JsonReader in) throws IOException {\n            // Delegate reading to the delegate adapter\n            return delegate.read(in);\n        }\n    }\n\n    @Test\n    void testGetSerializationDelegate_returnsDelegate() {\n        @SuppressWarnings(\"unchecked\")\n        TypeAdapter<String> mockedDelegate = Mockito.mock(TypeAdapter.class);\n        SerializationDelegatingTypeAdapter<String> adapter = new SerializationDelegatingTypeAdapterImpl<>(mockedDelegate);\n\n        TypeAdapter<String> result = adapter.getSerializationDelegate();\n\n        assertNotNull(result);\n        assertSame(mockedDelegate, result);\n    }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 498,
-  "completion_tokens": 297,
-  "total_tokens": 795,
-  "llm_elapsed_time_seconds": 8.47
-}

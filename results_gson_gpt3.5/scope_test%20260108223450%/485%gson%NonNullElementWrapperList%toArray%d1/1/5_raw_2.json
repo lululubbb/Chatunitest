@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void toArray_shouldReturnDelegateToArrayResult() {\n    delegate.add(\"one\");\n    delegate.add(\"two\");\n\n    Object[] array = list.toArray();\n\n    assertArrayEquals(delegate.toArray(), array);\n    verify(delegate, times(2)).toArray();\n  }\n\n  @Test\n  void toArray_emptyDelegate_returnsEmptyArray() {\n    Object[] array = list.toArray();\n    assertEquals(0, array.length);\n  }\n\n  @Test\n  void toArray_reflectiveInvocation_returnsSameResult() throws Exception {\n    delegate.add(\"a\");\n    delegate.add(\"b\");\n\n    Method toArrayMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"toArray\");\n    toArrayMethod.setAccessible(true);\n    Object[] result = (Object[]) toArrayMethod.invoke(list);\n\n    assertArrayEquals(delegate.toArray(), result);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1101,
-  "completion_tokens": 290,
-  "total_tokens": 1391,
-  "llm_elapsed_time_seconds": 5.02
-}

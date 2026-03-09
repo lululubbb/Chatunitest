@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class JsonElementTest {\n\n  @Test\n  public void testGetAsJsonPrimitive_whenIsJsonPrimitiveTrue_returnsThisAsJsonPrimitive() {\n    JsonPrimitive jsonPrimitive = Mockito.mock(JsonPrimitive.class, Mockito.CALLS_REAL_METHODS);\n    Mockito.when(jsonPrimitive.isJsonPrimitive()).thenReturn(true);\n\n    JsonPrimitive result = jsonPrimitive.getAsJsonPrimitive();\n\n    assertSame(jsonPrimitive, result);\n  }\n\n  @Test\n  public void testGetAsJsonPrimitive_whenIsJsonPrimitiveFalse_throwsIllegalStateException() throws Exception {\n    JsonElement jsonElement = Mockito.mock(JsonElement.class, Mockito.CALLS_REAL_METHODS);\n    Mockito.when(jsonElement.isJsonPrimitive()).thenReturn(false);\n\n    // Use reflection to set the internal \"toString\" field or override toString method by proxying\n    // Since toString() calls internal serialization which fails on mocks, override toString with a fixed string:\n    // We create a subclass to override toString()\n\n    JsonElement jsonElementWithToString = new JsonElement() {\n      @Override\n      public boolean isJsonPrimitive() {\n        return false;\n      }\n\n      @Override\n      public String toString() {\n        return \"mockedJsonElement\";\n      }\n\n      @Override\n      public JsonElement deepCopy() {\n        throw new UnsupportedOperationException();\n      }\n    };\n\n    IllegalStateException exception = assertThrows(IllegalStateException.class, jsonElementWithToString::getAsJsonPrimitive);\n    assertEquals(\"Not a JSON Primitive: mockedJsonElement\", exception.getMessage());\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 975,
-  "completion_tokens": 356,
-  "total_tokens": 1331,
-  "llm_elapsed_time_seconds": 8.73
-}

@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\npublic class NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() {\n    delegateMock = mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(delegateMock);\n  }\n\n  @Test\n  void contains_delegatesToDelegate() {\n    String element = \"testElement\";\n\n    when(delegateMock.contains(element)).thenReturn(true);\n    assertTrue(list.contains(element));\n    verify(delegateMock).contains(element);\n\n    when(delegateMock.contains(element)).thenReturn(false);\n    assertFalse(list.contains(element));\n    verify(delegateMock, times(2)).contains(element);\n  }\n\n  @Test\n  void contains_nullElement() {\n    when(delegateMock.contains(null)).thenReturn(true);\n    assertTrue(list.contains(null));\n    verify(delegateMock).contains(null);\n  }\n\n  @Test\n  void contains_privateDelegateFieldIsUsed() throws Exception {\n    // Use reflection to check the private delegate field is the same as delegateMock\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    Object delegateFieldValue = delegateField.get(list);\n    assertSame(delegateMock, delegateFieldValue);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 372,
-  "completion_tokens": 314,
-  "total_tokens": 686,
-  "llm_elapsed_time_seconds": 4.86
-}

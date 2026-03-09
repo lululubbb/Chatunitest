@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal.bind;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.TypeAdapter;\nimport org.junit.jupiter.api.Test;\n\nclass SerializationDelegatingTypeAdapterTest {\n\n    static class TestSerializationDelegatingTypeAdapter extends SerializationDelegatingTypeAdapter<String> {\n        private final TypeAdapter<String> delegate;\n\n        TestSerializationDelegatingTypeAdapter(TypeAdapter<String> delegate) {\n            this.delegate = delegate;\n        }\n\n        @Override\n        public TypeAdapter<String> getSerializationDelegate() {\n            return delegate;\n        }\n\n        @Override\n        public void write(com.google.gson.stream.JsonWriter out, String value) {\n            // no-op for test\n        }\n\n        @Override\n        public String read(com.google.gson.stream.JsonReader in) {\n            return null;\n        }\n    }\n\n    @Test\n    void getSerializationDelegate_returnsDelegate() {\n        TypeAdapter<String> mockDelegate = mock(TypeAdapter.class);\n        SerializationDelegatingTypeAdapter<String> adapter = new TestSerializationDelegatingTypeAdapter(mockDelegate);\n\n        TypeAdapter<String> serializationDelegate = adapter.getSerializationDelegate();\n\n        assertSame(mockDelegate, serializationDelegate);\n    }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 196,
-  "completion_tokens": 243,
-  "total_tokens": 439,
-  "llm_elapsed_time_seconds": 12.09
-}

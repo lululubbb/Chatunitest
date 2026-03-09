@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass JsonArrayTest {\n\n  private JsonArray jsonArray;\n  private JsonElement element1;\n  private JsonElement element2;\n\n  @BeforeEach\n  void setUp() {\n    jsonArray = new JsonArray();\n    element1 = mock(JsonElement.class);\n    element2 = mock(JsonElement.class);\n  }\n\n  @Test\n  void testGetReturnsCorrectElement() throws Exception {\n    // Use reflection to set private final ArrayList<JsonElement> elements field\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    ArrayList<JsonElement> elementsList = new ArrayList<>();\n    elementsList.add(element1);\n    elementsList.add(element2);\n    elementsField.set(jsonArray, elementsList);\n\n    // Test get(0)\n    JsonElement result0 = jsonArray.get(0);\n    assertSame(element1, result0);\n\n    // Test get(1)\n    JsonElement result1 = jsonArray.get(1);\n    assertSame(element2, result1);\n  }\n\n  @Test\n  void testGetThrowsIndexOutOfBoundsException() throws Exception {\n    Field elementsField = JsonArray.class.getDeclaredField(\"elements\");\n    elementsField.setAccessible(true);\n    ArrayList<JsonElement> elementsList = new ArrayList<>();\n    elementsField.set(jsonArray, elementsList);\n\n    assertThrows(IndexOutOfBoundsException.class, () -> jsonArray.get(0));\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 479,
-  "completion_tokens": 346,
-  "total_tokens": 825,
-  "llm_elapsed_time_seconds": 5.9
-}

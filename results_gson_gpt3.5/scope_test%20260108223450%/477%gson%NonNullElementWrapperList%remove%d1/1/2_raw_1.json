@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = mock(ArrayList.class);\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void remove_shouldCallDelegateRemoveAndReturnValue() {\n    when(delegate.remove(1)).thenReturn(\"removedElement\");\n    String result = list.remove(1);\n    verify(delegate).remove(1);\n    assertEquals(\"removedElement\", result);\n  }\n\n  @Test\n  void remove_shouldThrowIndexOutOfBoundsExceptionWhenDelegateThrows() {\n    when(delegate.remove(5)).thenThrow(new IndexOutOfBoundsException());\n    assertThrows(IndexOutOfBoundsException.class, () -> list.remove(5));\n    verify(delegate).remove(5);\n  }\n\n  @Test\n  void removePrivateMethod_nonNull_shouldReturnSameElement() throws Exception {\n    // Using reflection to access private method nonNull\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    String element = \"testElement\";\n    String result = (String) nonNullMethod.invoke(list, element);\n    assertEquals(element, result);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 372,
-  "completion_tokens": 322,
-  "total_tokens": 694,
-  "llm_elapsed_time_seconds": 5.76
-}

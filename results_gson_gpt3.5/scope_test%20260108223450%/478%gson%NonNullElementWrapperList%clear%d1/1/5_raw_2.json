@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  NonNullElementWrapperList<String> list;\n  ArrayList<String> delegate;\n\n  @BeforeEach\n  void setUp() {\n    delegate = spy(new ArrayList<>());\n    list = new NonNullElementWrapperList<>(delegate);\n  }\n\n  @Test\n  void clear_shouldClearDelegate() {\n    delegate.add(\"one\");\n    delegate.add(\"two\");\n    assertFalse(delegate.isEmpty());\n\n    list.clear();\n\n    verify(delegate).clear();\n    assertTrue(delegate.isEmpty());\n  }\n\n  @Test\n  void clear_onEmptyDelegate_shouldRemainEmpty() {\n    assertTrue(delegate.isEmpty());\n    list.clear();\n    verify(delegate).clear();\n    assertTrue(delegate.isEmpty());\n  }\n\n  @Test\n  void clear_privateMethod_nonNull_invocationViaReflection() throws Exception {\n    Method nonNullMethod = NonNullElementWrapperList.class.getDeclaredMethod(\"nonNull\", Object.class);\n    nonNullMethod.setAccessible(true);\n\n    String input = \"test\";\n    String output = (String) nonNullMethod.invoke(list, input);\n    assertEquals(input, output);\n\n    InvocationTargetException exception = assertThrows(InvocationTargetException.class, () -> nonNullMethod.invoke(list, (Object) null));\n    assertTrue(exception.getCause() instanceof NullPointerException);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1117,
-  "completion_tokens": 329,
-  "total_tokens": 1446,
-  "llm_elapsed_time_seconds": 6.43
-}

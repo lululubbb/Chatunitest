@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.lang.reflect.Field;\nimport java.util.ArrayList;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass NonNullElementWrapperListTest {\n\n  private NonNullElementWrapperList<String> nonNullList;\n  private ArrayList<String> delegateMock;\n\n  @BeforeEach\n  void setUp() throws Exception {\n    delegateMock = mock(ArrayList.class);\n    nonNullList = new NonNullElementWrapperList<>(delegateMock);\n  }\n\n  @Test\n  void contains_delegatesToDelegate_returnsTrue() {\n    when(delegateMock.contains(\"test\")).thenReturn(true);\n    assertTrue(nonNullList.contains(\"test\"));\n    verify(delegateMock).contains(\"test\");\n  }\n\n  @Test\n  void contains_delegatesToDelegate_returnsFalse() {\n    when(delegateMock.contains(\"missing\")).thenReturn(false);\n    assertFalse(nonNullList.contains(\"missing\"));\n    verify(delegateMock).contains(\"missing\");\n  }\n\n  @Test\n  void contains_nullElement_delegatesToDelegate() {\n    when(delegateMock.contains(null)).thenReturn(true);\n    assertTrue(nonNullList.contains(null));\n    verify(delegateMock).contains(null);\n  }\n\n  @Test\n  void contains_privateDelegateFieldIsNonNull() throws Exception {\n    // Use reflection to check delegate field is non-null and used\n    Field delegateField = NonNullElementWrapperList.class.getDeclaredField(\"delegate\");\n    delegateField.setAccessible(true);\n    Object delegateValue = delegateField.get(nonNullList);\n    assertNotNull(delegateValue);\n    assertSame(delegateMock, delegateValue);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 372,
-  "completion_tokens": 351,
-  "total_tokens": 723,
-  "llm_elapsed_time_seconds": 6.5
-}

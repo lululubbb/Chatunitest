@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\n\nimport java.lang.reflect.*;\nimport java.util.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass $Gson$TypesTest {\n\n  @Test\n  void testGetCollectionElementType_withParameterizedType() {\n    // Use a concrete class extending Collection<String> to produce a parameterized supertype\n    class StringList extends ArrayList<String> {}\n\n    Type elementType = $Gson$Types.getCollectionElementType(StringList.class, StringList.class);\n    assertEquals(String.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withRawCollection() {\n    // Use raw collection type (no generics)\n    Type elementType = $Gson$Types.getCollectionElementType(Collection.class, Collection.class);\n    assertEquals(Object.class, elementType);\n  }\n\n  @Test\n  void testGetCollectionElementType_withNonCollectionSupertype() {\n    // Use a class that does not extend Collection (e.g. String)\n    // The method getSupertype throws IllegalArgumentException if supertype is not assignable,\n    // so catch it and assert that elementType is Object.class as fallback.\n    Type elementType;\n    try {\n      elementType = $Gson$Types.getCollectionElementType(String.class, String.class);\n    } catch (IllegalArgumentException e) {\n      // getSupertype throws if contextRawType is not assignable to supertype\n      elementType = Object.class;\n    }\n    assertEquals(Object.class, elementType);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 2000,
-  "completion_tokens": 323,
-  "total_tokens": 2323,
-  "llm_elapsed_time_seconds": 5.92
-}

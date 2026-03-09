@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.stream;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\nimport java.lang.reflect.Method;\n\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport com.google.gson.stream.JsonWriter;\n\nclass JsonWriterTest {\n\n  private JsonWriter jsonWriter;\n  private StringWriter stringWriter;\n\n  @BeforeEach\n  void setUp() {\n    stringWriter = new StringWriter();\n    jsonWriter = new JsonWriter(stringWriter);\n  }\n\n  @Test\n  void testSetLenientTrue() {\n    jsonWriter.setLenient(true);\n    assertTrue(jsonWriter.isLenient());\n  }\n\n  @Test\n  void testSetLenientFalse() {\n    jsonWriter.setLenient(false);\n    assertFalse(jsonWriter.isLenient());\n  }\n\n  @Test\n  void testSetLenientViaReflection() throws Exception {\n    Method setLenientMethod = JsonWriter.class.getDeclaredMethod(\"setLenient\", boolean.class);\n    setLenientMethod.setAccessible(true);\n\n    // invoke with true\n    setLenientMethod.invoke(jsonWriter, true);\n    Method isLenientMethod = JsonWriter.class.getDeclaredMethod(\"isLenient\");\n    isLenientMethod.setAccessible(true);\n    boolean lenientTrue = (boolean) isLenientMethod.invoke(jsonWriter);\n    assertTrue(lenientTrue);\n\n    // invoke with false\n    setLenientMethod.invoke(jsonWriter, false);\n    boolean lenientFalse = (boolean) isLenientMethod.invoke(jsonWriter);\n    assertFalse(lenientFalse);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 723,
-  "completion_tokens": 331,
-  "total_tokens": 1054,
-  "llm_elapsed_time_seconds": 5.77
-}

@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.internal.Excluder;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nimport java.lang.reflect.Field;\n\npublic class GsonTest {\n\n  private Gson gson;\n  private Excluder excluderMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    excluderMock = mock(Excluder.class);\n    gson = new Gson();\n\n    // Use reflection to set the private final excluder field to the mock\n    Field excluderField = Gson.class.getDeclaredField(\"excluder\");\n    excluderField.setAccessible(true);\n    excluderField.set(gson, excluderMock);\n  }\n\n  @Test\n  public void testExcluder_returnsExcluderInstance() {\n    Excluder result = gson.excluder();\n    assertNotNull(result);\n    assertSame(excluderMock, result);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 1586,
-  "completion_tokens": 214,
-  "total_tokens": 1800,
-  "llm_elapsed_time_seconds": 3.21
-}

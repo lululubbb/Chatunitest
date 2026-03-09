@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.internal;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\nimport org.junit.jupiter.api.Test;\n\nclass ExcluderTest {\n\n  @Test\n  void excludeFieldsWithoutExposeAnnotation_shouldReturnCloneWithRequireExposeTrue() {\n    Excluder original = new Excluder();\n    Excluder clone = original.excludeFieldsWithoutExposeAnnotation();\n\n    assertNotNull(clone);\n    assertNotSame(original, clone);\n\n    // Access private field 'requireExpose' via reflection\n    boolean originalRequireExpose = getRequireExpose(original);\n    boolean cloneRequireExpose = getRequireExpose(clone);\n\n    assertFalse(originalRequireExpose, \"Original requireExpose should be false\");\n    assertTrue(cloneRequireExpose, \"Clone requireExpose should be true\");\n  }\n\n  private boolean getRequireExpose(Excluder excluder) {\n    try {\n      var field = Excluder.class.getDeclaredField(\"requireExpose\");\n      field.setAccessible(true);\n      return field.getBoolean(excluder);\n    } catch (ReflectiveOperationException e) {\n      fail(\"Failed to get requireExpose field value via reflection\");\n      return false;\n    }\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 601,
-  "completion_tokens": 246,
-  "total_tokens": 847,
-  "llm_elapsed_time_seconds": 6.29
-}

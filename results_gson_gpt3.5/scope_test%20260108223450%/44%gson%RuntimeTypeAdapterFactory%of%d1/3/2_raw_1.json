@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.typeadapters;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport java.lang.reflect.Method;\n\npublic class RuntimeTypeAdapterFactoryTest {\n\n  @Test\n  public void testOf_withBaseTypeAndTypeFieldName() throws Exception {\n    // Use reflection to get the static method 'of' with two parameters\n    Method ofMethod = RuntimeTypeAdapterFactory.class.getDeclaredMethod(\"of\", Class.class, String.class);\n    Object result = ofMethod.invoke(null, Object.class, \"typeField\");\n\n    assertNotNull(result);\n    assertTrue(result instanceof RuntimeTypeAdapterFactory);\n\n    RuntimeTypeAdapterFactory<?> factory = (RuntimeTypeAdapterFactory<?>) result;\n\n    // Check private fields via reflection\n    var baseTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"baseType\");\n    baseTypeField.setAccessible(true);\n    var baseTypeValue = baseTypeField.get(factory);\n    assertEquals(Object.class, baseTypeValue);\n\n    var typeFieldNameField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"typeFieldName\");\n    typeFieldNameField.setAccessible(true);\n    var typeFieldNameValue = typeFieldNameField.get(factory);\n    assertEquals(\"typeField\", typeFieldNameValue);\n\n    var maintainTypeField = RuntimeTypeAdapterFactory.class.getDeclaredField(\"maintainType\");\n    maintainTypeField.setAccessible(true);\n    var maintainTypeValue = maintainTypeField.get(factory);\n    assertEquals(false, maintainTypeValue);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 493,
-  "completion_tokens": 310,
-  "total_tokens": 803,
-  "llm_elapsed_time_seconds": 6.77
-}

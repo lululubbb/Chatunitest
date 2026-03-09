@@ -1,9 +1,0 @@
-{
-  "has_code": true,
-  "source_code": "package com.google.gson.metrics;\n\nimport static org.mockito.Mockito.*;\n\nimport com.google.gson.Gson;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\nimport org.mockito.Mockito;\n\nimport java.lang.reflect.Field;\n\npublic class SerializationBenchmarkTest {\n\n  private SerializationBenchmark serializationBenchmark;\n  private Gson gsonMock;\n  private BagOfPrimitives bagMock;\n\n  @BeforeEach\n  public void setUp() throws Exception {\n    serializationBenchmark = new SerializationBenchmark();\n\n    gsonMock = Mockito.mock(Gson.class);\n    bagMock = Mockito.mock(BagOfPrimitives.class);\n\n    // Inject mocks into private fields using reflection\n    Field gsonField = SerializationBenchmark.class.getDeclaredField(\"gson\");\n    gsonField.setAccessible(true);\n    gsonField.set(serializationBenchmark, gsonMock);\n\n    Field bagField = SerializationBenchmark.class.getDeclaredField(\"bag\");\n    bagField.setAccessible(true);\n    bagField.set(serializationBenchmark, bagMock);\n  }\n\n  @Test\n  public void testTimeObjectSerialization_zeroReps() {\n    serializationBenchmark.timeObjectSerialization(0);\n    // Verify gson.toJson is never called\n    verify(gsonMock, times(0)).toJson(any());\n  }\n\n  @Test\n  public void testTimeObjectSerialization_positiveReps() {\n    int reps = 5;\n    serializationBenchmark.timeObjectSerialization(reps);\n    // Verify gson.toJson is called exactly reps times with bag\n    verify(gsonMock, times(reps)).toJson(bagMock);\n  }\n\n  @Test\n  public void testTimeObjectSerialization_oneRep() {\n    serializationBenchmark.timeObjectSerialization(1);\n    verify(gsonMock, times(1)).toJson(bagMock);\n  }\n}",
-  "has_syntactic_error": false,
-  "prompt_tokens": 893,
-  "completion_tokens": 357,
-  "total_tokens": 1250,
-  "llm_elapsed_time_seconds": 34.74
-}
