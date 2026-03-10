@@ -65,8 +65,16 @@ def run_script(script_path, arg):
 
 def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
     # sim_dir expected tests*/Similarity
-    bigsum_local = os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv')
-    bigsims_csv = os.path.join(sim_dir, f'{proj_short}_bigSims.csv')
+    # Look for both old and new format filenames
+    bigsum_local_patterns = [
+        os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv'),
+        os.path.join(sim_dir, f'{proj_short}_target_*_bigSimssum.csv')
+    ]
+    bigsims_patterns = [
+        os.path.join(sim_dir, f'{proj_short}_bigSims.csv'),
+        os.path.join(sim_dir, f'{proj_short}_target_*_bigSims.csv')
+    ]
+    
     common_path = os.path.join(root_dir, f'bigSimssum.csv')
     write_header = not os.path.exists(common_path)
 
@@ -75,8 +83,34 @@ def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
     n_tests = ''
     sumsq = ''
     meansq = ''
+    
+    # Find actual bigsum file
+    bigsum_local = None
+    for pattern in bigsum_local_patterns:
+        if '*' in pattern:
+            import glob
+            matches = glob.glob(pattern)
+            if matches:
+                bigsum_local = matches[0]
+                break
+        elif os.path.exists(pattern):
+            bigsum_local = pattern
+            break
+    
+    # Find actual bigsims file
+    bigsims_csv = None
+    for pattern in bigsims_patterns:
+        if '*' in pattern:
+            import glob
+            matches = glob.glob(pattern)
+            if matches:
+                bigsims_csv = matches[0]
+                break
+        elif os.path.exists(pattern):
+            bigsims_csv = pattern
+            break
 
-    if os.path.exists(bigsum_local):
+    if bigsum_local and os.path.exists(bigsum_local):
         try:
             with open(bigsum_local, 'r', encoding='utf-8') as f:
                 reader = csv.reader(f)
@@ -94,8 +128,8 @@ def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
             os.remove(bigsum_local)
         except Exception:
             pass
-    elif os.path.exists(bigsims_csv):
-        # compute from bigSims CSV: combined_similarity is 4th or last column
+    elif bigsims_csv and os.path.exists(bigsims_csv):
+        # compute from bigSims CSV: combined_similarity is 5th or second to last column (may have redundancy_score as last)
         try:
             sims = []
             with open(bigsims_csv, 'r', encoding='utf-8') as f:
@@ -104,9 +138,15 @@ def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
                 for row in reader:
                     if not row:
                         continue
-                    # combined_similarity expected at last column
+                    # combined_similarity expected at column 5 (index 4) in new format
+                    # or last column in old format
                     try:
-                        val = float(row[-1])
+                        # Try new format: index 5 (0-indexed: project, target_class, test_case_1, test_case_2, combined_subtree_size, combined_similarity)
+                        if len(row) >= 6:
+                            val = float(row[5])
+                        else:
+                            # Fallback to last column
+                            val = float(row[-1])
                         sims.append(val)
                     except Exception:
                         continue

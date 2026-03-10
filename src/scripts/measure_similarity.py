@@ -221,6 +221,34 @@ def group_by_method(test_names: List[str]) -> Dict[str, List[str]]:
     
     return groups
 
+def extract_target_class_from_test_names(test_names: List[str]) -> str:
+    """
+    Extract target_class name from test file names.
+    Test file name format: ClassName_methodId_testNum or ClassName_methodId
+    Example: ExtendedBufferedReader_7_3Test -> ExtendedBufferedReader
+    """
+    if not test_names:
+        return ''
+    # Get first test name and extract class name (everything before first _digit_)
+    first_name = test_names[0]
+    # Remove 'Test' suffix if present
+    if first_name.endswith('Test'):
+        first_name = first_name[:-4]
+    # Split by underscore and take the part before numeric tokens
+    parts = first_name.split('_')
+    if parts:
+        # Take everything before the first numeric part
+        target_class = ''
+        for part in parts:
+            if part.isdigit():
+                break
+            if target_class:
+                target_class += '_' + part
+            else:
+                target_class = part
+        return target_class
+    return ''
+
 def process_tests_dir(tests_dir: str):
     tests_dir = os.path.abspath(tests_dir)
     # allow either test_cases dir or top tests dir
@@ -273,18 +301,27 @@ def process_tests_dir(tests_dir: str):
         # compute subtree info
         compute_subtree_info(node)
         trees[fname] = node
+    
+    # Extract target_class from test names
+    target_class = extract_target_class_from_test_names(list(trees.keys()))
+    
     # group by method numeric token
     groups = group_by_method(list(trees.keys()))
     # prepare output dir
     sim_dir = os.path.join(top_tests_dir, 'Similarity')
     os.makedirs(sim_dir, exist_ok=True)
     sims_csv = os.path.join(sim_dir, f'{proj_short}_Sims.csv')
-    big_csv = os.path.join(sim_dir, f'{proj_short}_bigSims.csv')
-    bigsum_csv = os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv')
+    # Include target_class in bigSims filename if available
+    if target_class:
+        big_csv = os.path.join(sim_dir, f'{proj_short}_target_{target_class}_bigSims.csv')
+        bigsum_csv = os.path.join(sim_dir, f'{proj_short}_target_{target_class}_bigSimssum.csv')
+    else:
+        big_csv = os.path.join(sim_dir, f'{proj_short}_bigSims.csv')
+        bigsum_csv = os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv')
     # write header for sims (add project column)
     with open(sims_csv, 'w', newline='', encoding='utf-8') as sf:
         w = csv.writer(sf)
-        w.writerow(['project','test_case_1','test_case_2','topdown_subtree_size','topdown_similarity','bottomup_subtree_size','bottomup_similarity','combined_subtree_size','combined_similarity'])
+        w.writerow(['project','target_class','test_case_1','test_case_2','topdown_subtree_size','topdown_similarity','bottomup_subtree_size','bottomup_similarity','combined_subtree_size','combined_similarity','redundancy_score'])
         # will also collect per-test best
         best_map = {}
         for key, members in groups.items():
@@ -319,7 +356,8 @@ def process_tests_dir(tests_dir: str):
                     # use average per-tree matched nodes (should be equal) => compute nodes_per_tree = (len(union_a) + len(union_b))/2
                     nodes_per_tree = int(round((len(union_a) + len(union_b)) / 2.0))
                     comb_sim = (2.0 * nodes_per_tree) / (size1 + size2) if (size1 + size2) > 0 else 0.0
-                    w.writerow([proj_short, a_name, b_name, td_nodes, f'{td_sim:.6f}', bu_nodes, f'{bu_sim:.6f}', nodes_per_tree, f'{comb_sim:.6f}'])
+                    redundancy = 1.0 - comb_sim
+                    w.writerow([proj_short, target_class, a_name, b_name, td_nodes, f'{td_sim:.6f}', bu_nodes, f'{bu_sim:.6f}', nodes_per_tree, f'{comb_sim:.6f}', f'{redundancy:.6f}'])
                     # update best
                     for src, dst, val in [(a_name, b_name, comb_sim), (b_name, a_name, comb_sim)]:
                         prev = best_map.get(src)
@@ -328,9 +366,11 @@ def process_tests_dir(tests_dir: str):
     # write bigSims
     with open(big_csv, 'w', newline='', encoding='utf-8') as bf:
         w = csv.writer(bf)
-        w.writerow(['project','test_case_1','test_case_2','combined_subtree_size','combined_similarity'])
+        w.writerow(['project','target_class','test_case_1','test_case_2','combined_subtree_size','combined_similarity','redundancy_score'])
         for tc, rec in best_map.items():
-            w.writerow([proj_short, rec[0], rec[1], rec[2], f'{rec[3]:.6f}'])
+            # rec is (src, dst, nodes_per_tree, comb_sim)
+            redundancy = 1.0 - rec[3]
+            w.writerow([proj_short, target_class, rec[0], rec[1], rec[2], f'{rec[3]:.6f}', f'{redundancy:.6f}'])
     # compute bigSimssum: sum-of-squares and mean-of-squares over best combined similarities
     vals = [rec[3] for rec in best_map.values()]
     n = len(vals)

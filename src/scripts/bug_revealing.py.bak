@@ -23,7 +23,6 @@ Note: This script favors correctness and simplicity using Maven runs per test. I
 
 import argparse
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -307,46 +306,6 @@ def main():
             return
 
     # prepare output
-
-    # ── 推断 target_class（modified class 简单类名）──────────────────────────
-    def _resolve_target_class_from_buggy(project_root, tests_top=None):
-        """返回 target_class 简单类名，失败返回空字符串"""
-        meta = os.path.join(project_root, 'modified_classes.src')
-        if os.path.exists(meta):
-            try:
-                with open(meta) as _f:
-                    _line = _f.readline().strip()
-                if _line:
-                    return _line.split('.')[-1]
-            except Exception:
-                pass
-        prop = os.path.join(project_root, 'defects4j.build.properties')
-        if os.path.exists(prop):
-            try:
-                with open(prop) as _f:
-                    for _l in _f:
-                        if 'd4j.classes.modified' in _l and '=' in _l:
-                            _val = _l.split('=', 1)[1].strip()
-                            _first = _val.split(',')[0].strip()
-                            if _first:
-                                return _first.split('.')[-1]
-            except Exception:
-                pass
-        tc_dir = None
-        if tests_top:
-            _cand = os.path.join(tests_top, 'test_cases')
-            tc_dir = _cand if os.path.isdir(_cand) else (tests_top if os.path.isdir(tests_top) else None)
-        if tc_dir:
-            for _fname in os.listdir(tc_dir):
-                if _fname.endswith('Test.java'):
-                    _m = re.match(r'^(.+?)_\d+_\d+Test\.java$', _fname)
-                    if _m:
-                        return _m.group(1)
-                    return _fname.split('_')[0]
-        return ''
-
-    _target_class = _resolve_target_class_from_buggy(buggy, top_tests_dir)
-
     out_rows = []
     total_files = len(test_files)
     total_methods = 0
@@ -565,7 +524,7 @@ def main():
                 bug_revealing_count += 1
                 class_has_revealing = True
             total_methods += 1
-            out_rows.append([proj_prefix, _target_class, full, '', bstat, fstat, 'true' if is_bug_revealing else 'false', str(b_rc), str(f_rc), notes])
+            out_rows.append([proj_name, full, '', bstat, fstat, 'true' if is_bug_revealing else 'false', str(b_rc), str(f_rc), notes])
             # detect and record discovery errors (always set notes regardless of logfh)
             if bstat != 'pass':
                 if is_discovery_error(res_b):
@@ -585,7 +544,7 @@ def main():
                         write_log_entry(logfh, 'fixed', full, '', res_f)
             # ensure notes are reflected in CSV row
             try:
-                out_rows[-1][9] = notes
+                out_rows[-1][8] = notes
             except Exception:
                 pass
         else:
@@ -609,7 +568,7 @@ def main():
                     bug_revealing_count += 1
                     class_has_revealing = True
                 total_methods += 1
-                out_rows.append([proj_prefix, _target_class, full, m, bstat, fstat, 'true' if is_bug_revealing else 'false', str(b_rc), str(f_rc), notes])
+                out_rows.append([proj_prefix, full, m, bstat, fstat, 'true' if is_bug_revealing else 'false', str(b_rc), str(f_rc), notes])
                 # detect and record discovery errors per-method (set notes even if no logfh)
                 if bstat != 'pass':
                     if is_discovery_error(res_b):
@@ -629,7 +588,7 @@ def main():
                             write_log_entry(logfh, 'fixed', full, m, res_f)
                 # ensure notes are reflected in CSV row
                 try:
-                    out_rows[-1][9] = notes
+                    out_rows[-1][8] = notes
                 except Exception:
                     pass
 
@@ -639,57 +598,9 @@ def main():
     # write CSV (per-method rows; test_method can be empty for class-run fallback)
     with open(args.out, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['project_name','target_class','test_class','test_method',
-                         'buggy_status','fixed_status','bug_revealing','buggy_rc','fixed_rc','notes'])
+        writer.writerow(['project_name','test_class','test_method','buggy_status','fixed_status','bug_revealing','buggy_rc','fixed_rc','notes'])
         for r in out_rows:
             writer.writerow(r)
-
-    # ── 类级汇总 *_bugrevealing_class_level.csv ─────────────────────────────
-    # Fields: project_name, target_class, test_class,
-    #         total_methods, bug_revealing_methods,
-    #         bug_revealing_rate, has_bug_revealing, br_score
-    # br_score = bug_revealing_rate (0~1)，触发率越高得分越高，供综合评分使用
-    try:
-        class_level_out = os.path.splitext(args.out)[0] + '_class_level.csv'
-        # out_rows 列序: 0=project_name, 1=target_class, 2=test_class,
-        #                3=test_method, 4=buggy_status, 5=fixed_status,
-        #                6=bug_revealing, 7=buggy_rc, 8=fixed_rc, 9=notes
-        class_stats = {}   # key=(project_name, target_class, test_class)
-        for _row in out_rows:
-            if len(_row) < 7:
-                continue
-            _key = (_row[0], _row[1], _row[2])
-            _br  = str(_row[6]).strip().lower() == 'true'
-            if _key not in class_stats:
-                class_stats[_key] = {'total': 0, 'revealing': 0}
-            class_stats[_key]['total'] += 1
-            if _br:
-                class_stats[_key]['revealing'] += 1
-        with open(class_level_out, 'w', newline='', encoding='utf-8') as _clf:
-            _cl_writer = csv.writer(_clf)
-            _cl_writer.writerow([
-                'project_name', 'target_class', 'test_class',
-                'total_methods', 'bug_revealing_methods',
-                'bug_revealing_rate', 'has_bug_revealing', 'br_score',
-            ])
-            for (_proj_n, _tgt, _ts), _s in class_stats.items():
-                _tot  = _s['total']
-                _rev  = _s['revealing']
-                _rate = round(_rev / _tot, 6) if _tot else 0.0
-                _has  = 'true' if _rev > 0 else 'false'
-                _br_score = _rate   # br_score 直接等于触发率
-                _cl_writer.writerow([
-                    _proj_n, _tgt, _ts,
-                    _tot, _rev, _rate, _has, _br_score,
-                ])
-        print(f'Class-level summary: {os.path.abspath(class_level_out)}')
-        if logfh:
-            try:
-                logfh.write(f'Class-level CSV: {os.path.abspath(class_level_out)}\n')
-            except Exception:
-                pass
-    except Exception as _cl_err:
-        print(f'Warning: failed to write class-level CSV: {_cl_err}')
 
     # write per-project counts into a shared CSV located in the common
     # parent directory of the projects (append mode so multiple runs add rows)
