@@ -67,14 +67,13 @@ def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
     # sim_dir expected tests*/Similarity
     # Look for both old and new format filenames
     bigsum_local_patterns = [
-        os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv'),
-        os.path.join(sim_dir, f'{proj_short}_target_*_bigSimssum.csv')
+        # Csv_1_CSVParser_bigSimssum.csv  (* 匹配任意 target_class 名)
+        os.path.join(sim_dir, f'{proj_short}_*_bigSimssum.csv'),
     ]
     bigsims_patterns = [
-        os.path.join(sim_dir, f'{proj_short}_bigSims.csv'),
-        os.path.join(sim_dir, f'{proj_short}_target_*_bigSims.csv')
-    ]
-    
+        # Csv_1_CSVParser_bigSims.csv
+        os.path.join(sim_dir, f'{proj_short}_*_bigSims.csv'),
+    ] 
     common_path = os.path.join(root_dir, f'bigSimssum.csv')
     write_header = not os.path.exists(common_path)
 
@@ -89,7 +88,9 @@ def append_common_bigsum(root_dir, proj_short, sim_dir, tests_dir):
     for pattern in bigsum_local_patterns:
         if '*' in pattern:
             import glob
-            matches = glob.glob(pattern)
+            matches = sorted(glob.glob(pattern))
+            # 排除自身就是 common_path 的情况
+            matches = [m for m in matches if os.path.abspath(m) != os.path.abspath(common_path)]
             if matches:
                 bigsum_local = matches[0]
                 break

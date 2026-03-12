@@ -104,10 +104,67 @@ class TestRunner:
             "coverage":        os.path.join(logs_dir, "coverage.log"),
             "execution_stats": os.path.join(logs_dir, "execution_stats.log"),
             "compile_failed":  os.path.join(logs_dir, "compile_failed.txt"),
+            "diagnosis": os.path.join(logs_dir, "diagnosis.log"), 
         }
+        
         for p in paths.values():
             open(p, 'w').close()
+        with open(paths["diagnosis"], 'w', encoding='utf-8') as f:
+            f.write("# diagnosis.log — 测试用例问题诊断\n")
+            f.write("# 每个 [DIAGNOSIS] 块对应一个测试类，供优化指令生成使用\n")
+            f.write("# status 取值: compile_fail | exec_fail | exec_timeout | exec_ok\n")
+            f.write("# =============================================================\n\n")
         return paths
+    
+    
+    @staticmethod
+    def _extract_missed_coverage(jacoco_xml_path: str, target_class: str):
+        """
+        从 jacoco.xml 的 <sourcefile>/<line> 元素提取目标类的未覆盖行号和分支。
+ 
+        JaCoCo line 属性：
+          nr = 源码行号
+          mi = missed instructions（未执行指令数，>0 表示该行有未执行部分）
+          ci = covered instructions（已执行指令数）
+          mb = missed branches（未覆盖的分支数）
+          cb = covered branches（已覆盖的分支数）
+ 
+        返回：
+          missed_lines    : list[int]  完全未覆盖行（mi>0 且 ci==0）
+          missed_branches : list[str]  含分支缺口的行描述
+                            如 "line 42: 2/4 branches missed"
+        """
+        missed_lines: list = []
+        missed_branches: list = []
+        try:
+            if not os.path.exists(jacoco_xml_path):
+                return missed_lines, missed_branches
+            tree = ET.parse(jacoco_xml_path)
+            root = tree.getroot()
+            # 支持 "CSVParser" 或 "org.apache.commons.csv.CSVParser"
+            simple = target_class.split('.')[-1] if target_class else ''
+            # 查找 <sourcefile name="CSVParser.java">
+            sf_elem = None
+            for sf in root.findall('.//sourcefile'):
+                sname = sf.get('name', '')
+                if simple and (sname == simple + '.java' or sname == target_class + '.java'):
+                    sf_elem = sf
+                    break
+            if sf_elem is None:
+                return missed_lines, missed_branches
+            for line_elem in sf_elem.findall('line'):
+                nr = int(line_elem.get('nr', 0))
+                mi = int(line_elem.get('mi', 0))
+                ci = int(line_elem.get('ci', 0))
+                mb = int(line_elem.get('mb', 0))
+                cb = int(line_elem.get('cb', 0))
+                if mi > 0 and ci == 0:          # 完全未覆盖行
+                    missed_lines.append(nr)
+                if mb > 0:                       # 分支未完全覆盖
+                    missed_branches.append(f"line {nr}: {mb}/{mb + cb} branches missed")
+        except Exception:
+            pass
+        return missed_lines, missed_branches
 
     # ------------------------------------------------------------------
     # 辅助：从 test_cases 目录文件名推断 target_class（modified_class）
@@ -173,7 +230,7 @@ class TestRunner:
         # ── 推断 target_class ──────────────────────────────────────────
         target_class = self._resolve_target_class(tests_dir)
         project_name = os.path.basename(self.target_path.rstrip('/'))
-        global_csv_parent_dir = os.path.abspath(os.path.join(self.target_path, ".."))
+        global_csv_parent_dir = os.path.abspath(tests_dir)
         os.makedirs(global_csv_parent_dir, exist_ok=True)
 
         # ── per_test_status 内存字典（key=full_class_name）─────────────
@@ -263,6 +320,43 @@ class TestRunner:
                         'compile_score':   0.0,
                         'exec_score':      0.0,
                     }
+
+                    if logs and 'diagnosis' in logs:
+                        _stderr_cf = result.stderr or ''
+                        _lines_cf  = _stderr_cf.strip().splitlines()
+                        _core_cf   = [l.strip() for l in _lines_cf if ': error:' in l][:10]
+                        if not _core_cf:
+                            _core_cf = [_lines_cf[0].strip()] if _lines_cf else ['unknown compile error']
+                        try:
+                            with open(logs['diagnosis'], 'a', encoding='utf-8') as _df:
+                                _df.write(f"[DIAGNOSIS] test_class={full_name}\\n")
+                                _df.write(f"  project={project_name}  target_class={target_class}\\n")
+                                _df.write(f"  status=compile_fail\\n")
+                                _df.write(f"  error_type=compile_error\\n")
+                                _df.write(f"  core_errors ({len(_core_cf)}):\\n")
+                                for _ce in _core_cf:
+                                    _df.write(f"    - {_ce}\\n")
+                                _show_n = min(len(_lines_cf), 100)
+                                _df.write(f"  full_stderr ({_show_n}/{len(_lines_cf)} lines):\\n")
+                                for _ll in _lines_cf[:100]:
+                                    _df.write(f"    {_ll}\\n")
+                                if len(_lines_cf) > 100:
+                                    _df.write(f"    ... [{len(_lines_cf)-100} more lines truncated]\\n")
+                                _df.write("---\\n")
+                        except Exception:
+                            pass
+
+                    # 编译失败的用例也追加到 per_test_records（覆盖率全 None）
+                    per_test_records.append({
+                        'test_class':           full_name,
+                        'exec_file':            None,
+                        'exec_note':            'compile_fail',
+                        'm_per_line_cov':       None,
+                        'm_per_line_total':     None,
+                        'm_per_branch_cov':     None,
+                        'm_per_branch_total':   None,
+                        'per_test_jacoco_xml':  None,  # 编译失败无覆盖数据
+                    })
                     continue  # 编译失败跳过执行
 
                 else:
@@ -312,25 +406,76 @@ class TestRunner:
                             f.write(f"[PER_TEST_RUN] {test_case_file} exec_ok={exec_ok} exec_size={exec_size}\n")
                     except Exception:
                         pass
-
+                
+                if logs and 'diagnosis' in logs and not exec_ok:
+                    try:
+                        with open(logs['diagnosis'], 'a', encoding='utf-8') as _df:
+                            _df.write(f"[DIAGNOSIS] test_class={full_name}\\n")
+                            _df.write(f"  project={project_name}  target_class={target_class}\\n")
+                            if is_timeout:
+                                _df.write(f"  status=exec_timeout\\n")
+                                _df.write(f"  error_type=timeout\\n")
+                                _df.write(f"  core_errors:\\n")
+                                _df.write(f"    - Exceeded TIMEOUT limit\\n")
+                            else:
+                                _df.write(f"  status=exec_fail\\n")
+                                _df.write(f"  error_type=runtime_exception\\n")
+                                # 读已写好的 runtime_error 文件
+                                _rt_file = f"{test_output}-{test_case_file}.txt"
+                                _exc_lines = []
+                                if os.path.exists(_rt_file):
+                                    try:
+                                        _rt_all = open(_rt_file, errors='ignore').read()
+                                        # 提取 XxxException / XxxError 行（最多 5 条）
+                                        _exc_lines = re.findall(
+                                            r'([\w\\.]+(?:Exception|Error)[^\\n]{0,200})',
+                                            _rt_all
+                                        )[:5]
+                                    except Exception:
+                                        pass
+                                if not _exc_lines:
+                                    _exc_lines = ['runtime error (no details captured)']
+                                _df.write(f"  core_errors:\\n")
+                                for _ec in _exc_lines:
+                                    _df.write(f"    - {_ec.strip()}\\n")
+                            _df.write("---\\n")
+                    except Exception:
+                        pass
+                                            
                 # ── 5) 单测覆盖率（针对 modified_class）─────────────────
+                exec_note = 'ok' if exec_ok else ('timeout' if is_timeout else 'fail')
+                m_per_line_cov = m_per_line_total = None
+                m_per_branch_cov = m_per_branch_total = None
+                per_test_jacoco_xml = None  # 单测 jacoco.xml 快照路径，供 diagnosis 读取
+ 
                 if exec_size > 0:
                     per_test_report_dir = os.path.join(report_dir, "per_test_reports", test_basename)
                     self.report(compiled_test_dir, per_test_report_dir, jacoco_exec_override=per_test_exec)
-
+ 
+                    # ★ 根本修复：mvn jacoco:report 固定输出到 target/site/jacoco/jacoco.xml，
+                    # 每个测试跑完后立即把该文件复制到 per_test_report_dir/jacoco.xml，
+                    # 避免被后续测试覆盖导致 missed_lines/missed_branches 读到累积数据。
+                    _global_xml = os.path.join(
+                        self.target_path, "target", "site", "jacoco", "jacoco.xml"
+                    )
+                    if os.path.exists(_global_xml):
+                        os.makedirs(per_test_report_dir, exist_ok=True)
+                        _per_xml = os.path.join(per_test_report_dir, "jacoco.xml")
+                        try:
+                            shutil.copy2(_global_xml, _per_xml)
+                            per_test_jacoco_xml = _per_xml      # 单测独立快照 ✓
+                        except Exception:
+                            per_test_jacoco_xml = _global_xml   # 降级：用当前全局（仍比空好）
+ 
                     # 只提取 modified_class 对应节点的行/分支数据
-                    m_per_line_cov = m_per_line_total = None
-                    m_per_branch_cov = m_per_branch_total = None
                     try:
-                        jacoco_xml_path = os.path.join(self.target_path, "target", "site", "jacoco", "jacoco.xml")
-                        if os.path.exists(jacoco_xml_path) and target_class:
+                        jacoco_xml_path = per_test_jacoco_xml   # ← 读单测快照，而非全局
+                        if jacoco_xml_path and os.path.exists(jacoco_xml_path) and target_class:
                             import xml.etree.ElementTree as ET
                             tree = ET.parse(jacoco_xml_path)
                             root_elem = tree.getroot()
-                            # 在所有 <class> 节点中找 modified_class（匹配简单类名结尾）
                             for class_elem in root_elem.findall('.//class'):
                                 cname = class_elem.attrib.get('name', '')
-                                # 匹配 org/apache/.../ClassName 或内部类 ClassName$Inner
                                 simple = cname.split('/')[-1].split('$')[0]
                                 if simple == target_class or cname.endswith('/' + target_class):
                                     for c in class_elem.findall('counter'):
@@ -341,7 +486,7 @@ class TestRunner:
                                             if m_per_line_cov is None:
                                                 m_per_line_cov   = covered
                                                 m_per_line_total = covered + missed
-                                            else:  # 累加内部类
+                                            else:
                                                 m_per_line_cov   += covered
                                                 m_per_line_total += covered + missed
                                         elif ctype == 'BRANCH':
@@ -354,16 +499,18 @@ class TestRunner:
                     except Exception as _xml_err:
                         if logs:
                             with open(logs.get('coverage', os.devnull), 'a') as _f:
-                                _f.write(f"[PER_TEST_XML_ERR] {test_case_file}: {_xml_err}\n")
-
-                    per_test_records.append({
-                        'test_class':        full_name,
-                        'exec_file':         per_test_exec,
-                        'm_per_line_cov':    m_per_line_cov,
-                        'm_per_line_total':  m_per_line_total,
-                        'm_per_branch_cov':  m_per_branch_cov,
-                        'm_per_branch_total': m_per_branch_total,
-                    })
+                                _f.write(f"[PER_TEST_XML_ERR] {test_case_file}: {_xml_err}\\n")
+ 
+                per_test_records.append({
+                    'test_class':           full_name,
+                    'exec_file':            per_test_exec,
+                    'exec_note':            exec_note,
+                    'm_per_line_cov':       m_per_line_cov,
+                    'm_per_line_total':     m_per_line_total,
+                    'm_per_branch_cov':     m_per_branch_cov,
+                    'm_per_branch_total':   m_per_branch_total,
+                    'per_test_jacoco_xml':  per_test_jacoco_xml,  # ← 新增字段
+                })
 
         # ── 写出 per_test_status.csv ───────────────────────────────────
         self._write_per_test_status(
@@ -450,13 +597,15 @@ class TestRunner:
         #        m_per_branch_cov, m_per_branch_total, m_per_branch_rate,
         #        branch_contrib_pct, coverage_score
         try:
+            tc_slug = (target_class or 'unknown').replace('.', '')
+            pn_slug = project_name.replace('.', '')
             detail_csv = os.path.join(global_csv_parent_dir,
-                                      "testcase_coverage_detail_by_target.csv")
+            f'{pn_slug}_{tc_slug}_coveragedetail.csv')
             header = [
-                'project', 'target_class', 'test_class',
-                'm_per_line_cov', 'm_per_line_total', 'm_per_line_rate',
-                'm_per_branch_cov', 'm_per_branch_total', 'm_per_branch_rate',
-                'branch_contrib_pct', 'coverage_score',
+            'project', 'target_class', 'test_class','exec_status',
+            'm_per_line_cov', 'm_per_line_total', 'm_per_line_rate',
+            'm_per_branch_cov', 'm_per_branch_total', 'm_per_branch_rate',
+            'line_contrib_pct', 'branch_contrib_pct', 'coverage_score',
             ]
             file_exists = os.path.exists(detail_csv)
             with open(detail_csv, 'a', newline='', encoding='utf-8') as csvf:
@@ -473,7 +622,12 @@ class TestRunner:
                     mbc = rec.get('m_per_branch_cov')   or 0
                     mbt = rec.get('m_per_branch_total') or 0
                     mbr = round(100.0 * mbc / mbt, 4) if mbt else 0.0
-
+                    # ── line_contrib_pct：本测试类贡献的行数占该类总行数的比例 ──
+                    denom_line = (m_line_total if m_line_total else mlt) or 0
+                    line_contrib_pct = (
+                    round(100.0 * mlc / denom_line, 4)
+                    if denom_line and mlc else 0.0
+                    )
                     # ── branch_contrib_pct：本测试类贡献的分支数占该类总分支的比例 ──
                     # 分母用全项目 modified_class 分支总数（m_branch_total），
                     # 若不可用则退回到本测试自身分母
@@ -484,30 +638,63 @@ class TestRunner:
                     )
 
                     # ── coverage_score：综合行 & 分支覆盖率的归一化得分 ───
-                    # 公式：0.6 * line_rate/100 + 0.4 * branch_rate/100，
+                    # 公式：0.25*行覆盖率 + 0.25*分支覆盖率 + 0.25*行贡献度 + 0.25*分支贡献度 ，
                     # 若某一项缺失则只用另一项
-                    if mlt and mbt:
-                        coverage_score = round(0.6 * (mlr / 100.0) + 0.4 * (mbr / 100.0), 6)
-                    elif mlt:
-                        coverage_score = round(mlr / 100.0, 6)
-                    elif mbt:
-                        coverage_score = round(mbr / 100.0, 6)
-                    else:
-                        coverage_score = 0.0
-
+                    coverage_score = round(0.25 * (mlr / 100.0) + 0.25 * (mbr / 100.0) + 0.25 * (line_contrib_pct / 100.0) + 0.25 * (branch_contrib_pct / 100.0), 6)
                     writer.writerow([
                         project_name,
                         target_class,
                         rec.get('test_class', ''),
+                        rec.get('exec_note', 'ok'),
                         mlc if mlt else '',
                         mlt if mlt else '',
                         mlr if mlt else '',
                         mbc if mbt else '',
                         mbt if mbt else '',
                         mbr if mbt else '',
+                        line_contrib_pct,
                         branch_contrib_pct,
                         coverage_score,
                     ])
+                    if logs and 'diagnosis' in logs:
+                        try:
+                            _jxml = rec.get('per_test_jacoco_xml') or os.path.join(
+                                self.target_path, "target", "site", "jacoco", "jacoco.xml"
+                            )
+                            _missed_lns, _missed_brs = self._extract_missed_coverage(
+                                _jxml, target_class
+                            )
+                            with open(logs['diagnosis'], 'a', encoding='utf-8') as _df:
+                                _tc_name = rec.get('test_class', '')
+                                _df.write(f"[DIAGNOSIS] test_class={_tc_name}\\n")
+                                _df.write(f"  project={project_name}  target_class={target_class}\\n")
+                                _df.write(f"  status=exec_ok\\n")
+                                _df.write(f"  error_type=coverage_gap\\n")
+                                _df.write(f"  line_rate={mlr:.4f}%  ({mlc}/{mlt})\\n")
+                                _df.write(f"  branch_rate={mbr:.4f}%  ({mbc}/{mbt if mbt else 0})\\n")
+                                _df.write(f"  coverage_score={coverage_score}\\n")
+                                if _missed_lns:
+                                    _lns_str = ', '.join(str(x) for x in _missed_lns[:50])
+                                    _suf = (f' ... [{len(_missed_lns)-50} more]'
+                                            if len(_missed_lns) > 50 else '')
+                                    _df.write(
+                                        f"  missed_lines ({len(_missed_lns)} total): "
+                                        f"{_lns_str}{_suf}\\n"
+                                    )
+                                else:
+                                    _df.write(f"  missed_lines: none\\n")
+                                if _missed_brs:
+                                    _df.write(f"  missed_branches ({len(_missed_brs)} total):\\n")
+                                    for _mb in _missed_brs[:20]:
+                                        _df.write(f"    - {_mb}\\n")
+                                    if len(_missed_brs) > 20:
+                                        _df.write(f"    ... [{len(_missed_brs)-20} more]\\n")
+                                else:
+                                    _df.write(f"  missed_branches: none\\n")
+                                _df.write("---\\n")
+                        except Exception:
+                            pass
+
         except Exception as e:
             print('Failed to write testcase_coverage_detail_by_target.csv:', e)
 
@@ -556,7 +743,9 @@ class TestRunner:
                 'm_line_cov', 'm_line_total', 'm_line_rate',
                 'm_branch_cov', 'm_branch_total', 'm_branch_rate', 'run_time'
             ]
-            summary_fname = os.path.join(global_csv_parent_dir, 'project_test_summary.csv')
+            tc_slug = (target_class or 'unknown').replace('.', '')
+            pn_slug = project_name.replace('.', '')
+            summary_fname = os.path.join(global_csv_parent_dir, f'{pn_slug}_{tc_slug}_coverage.csv')
             file_exists = os.path.exists(summary_fname)
             with open(summary_fname, 'a', newline='', encoding='utf-8') as sf:
                 w = csv.writer(sf)
@@ -628,7 +817,9 @@ class TestRunner:
         if not status_map:
             return
         try:
-            csv_path = os.path.join(output_dir, 'per_test_status.csv')
+            tc_slug = (target_class or 'unknown').replace('.', '')
+            pn_slug = (project_name or 'project').replace('.', '')
+            csv_path = os.path.join(output_dir, f'{pn_slug}_{tc_slug}_status.csv')
             header = [
                 'project', 'target_class', 'test_class',
                 'compile_status', 'exec_status', 'exec_timeout',
