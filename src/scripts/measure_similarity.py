@@ -1,598 +1,416 @@
 #!/usr/bin/env python3
-"""Compute bug_revealing tests for Defects4J-like projects.
+"""Compute tree similarities (top-down, bottom-up, combined) on AST CSV outputs.
 
-Definition: A generated test is "bug-revealing" if it FAILS on the buggy (b) version
-and PASSES on the fixed (f) version.
+Usage:
+  python3 measure_similarity.py /path/to/tests_dir
 
-Usage (examples):
-  python3 bug_revealing.py --buggy /path/to/Csv_1_b --fixed /path/to/Csv_1_f --tests /path/to/tests_dir --out summary.csv
-
-Behavior summary:
-- Auto-detect tests if --tests omitted: looks for newest tests* dir under buggy project.
-- For each test .java: determine full class name from package+basename.
-- Optionally copy tests into both projects' src/test/java (use --copy). If not copied, script will compile and run tests from a temporary location.
-- Execution uses Maven to run a single test class per run:
-    mvn -Dtest=full.test.ClassName test
-  This ensures project classpath and surefire behavior.
-- A test is considered PASS if Maven returns 0 and surefire reports no failures; FAIL otherwise.
-- Output: CSV (default) with per-test b_result/f_result and boolean bug_revealing, and an aggregate summary printed.
-
-Note: This script favors correctness and simplicity using Maven runs per test. It is slower but robust across projects.
+修复历史：
+  Bug A：best_map 更新条件 prev[2] → prev[3]（量纲不同，旧值永不更新）
+  Bug B：AST 解析失败时 continue 导致测试从未进入 best_map，加兜底 sim=0
+  Bug C【根本原因，本次新增】：
+    AST CSV 的标签名含非法 XML 字符（如 <ASSIGNMENT-=>、<OP-+=>），
+    导致 ET.fromstring 抛异常 → trees 里缺少该测试 → bigSims 条目缺失。
+    修复：xml_to_tree 前先用 sanitize_xml_tags 把标签名中非法字符替换为 _。
+    验证：对 Csv_2_AST.csv（72 个测试，5个解析失败）→ 修复后全部 72 个成功。
 """
-
-import argparse
 import os
-import re
-import shutil
-import subprocess
 import sys
 import csv
+import html
+import re
+from collections import defaultdict
+from typing import List, Tuple, Dict
 import xml.etree.ElementTree as ET
-from datetime import datetime
-import urllib.parse
-
-here_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(here_dir, '..'))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
-from test_runner import TestRunner
-from config import JUNIT_JAR, MOCKITO_JAR, LOG4J_JAR
 
 
-def find_newest_tests_dir(project_root):
-    parent = project_root
-    candidates = []
-    try:
-        for name in os.listdir(parent):
-            if name.startswith('tests') and os.path.isdir(os.path.join(parent, name)):
-                candidates.append(os.path.join(parent, name))
-    except Exception:
-        return None
-    if not candidates:
-        return None
-    candidates.sort(key=lambda p: os.path.getmtime(p), reverse=True)
-    return candidates[0]
+# ─────────────────────────────────────────────────────────────────────────────
+# XML 标签名清洗
+# ─────────────────────────────────────────────────────────────────────────────
+def sanitize_xml_tags(xml_str: str) -> str:
+    """
+    将 XML 标签名中不合法的字符替换为下划线。
+    合法 XML 名称字符：字母、数字、_ . - :（且不能以数字或 - 开头）
+    AST 生成器产生的非法示例：<ASSIGNMENT-=>  <OP-+=>  <IF-ELSE>
+    """
+    def fix_match(m):
+        prefix    = m.group(1)   # '' or '/'  (closing slash)
+        tag       = m.group(2)   # raw tag name
+        suffix    = m.group(3)   # '' or '/'  (self-closing slash)
+        tag_clean = re.sub(r'[^A-Za-z0-9_.\-:]', '_', tag)
+        if tag_clean and tag_clean[0] in '0123456789-':
+            tag_clean = '_' + tag_clean
+        return f'<{prefix}{tag_clean}{suffix}>'
+    return re.sub(r'<(/?)([^>/\s][^>]*?)(/?)>', fix_match, xml_str)
 
 
-def discover_test_files(tests_dir):
-    tests = []
-    for root, _, files in os.walk(tests_dir):
-        for f in files:
-            if f.endswith('Test.java'):
-                tests.append(os.path.join(root, f))
-    return sorted(tests)
+# ─────────────────────────────────────────────────────────────────────────────
+# Node / tree
+# ─────────────────────────────────────────────────────────────────────────────
+class Node:
+    _id_counter = 0
+
+    def __init__(self, label):
+        self.label = label
+        self.children = []
+        self.parent = None
+        self.id = Node._id_counter
+        Node._id_counter += 1
+        self.subtree_nodes = None
+        self.subtree_size = None
+        self.signature = None
 
 
-def get_full_class_name(java_file):
-    pkg = ''
-    try:
-        with open(java_file, 'r', errors='ignore') as fh:
-            for line in fh:
-                line = line.strip()
-                if line.startswith('package '):
-                    pkg = line.replace('package', '').replace(';', '').strip()
-                    break
-    except Exception:
-        pass
-    base = os.path.splitext(os.path.basename(java_file))[0]
-    if pkg:
-        return f"{pkg}.{base}"
-    return base
+def build_tree_from_element(elem) -> Node:
+    node = Node(elem.tag)
+    for child in list(elem):
+        child_node = build_tree_from_element(child)
+        child_node.parent = node
+        node.children.append(child_node)
+    return node
 
 
-def java_run_test(project_dir, full_class_name, class_path, timeout=120):
-    cmd = [
-        'java',
-        '-cp', class_path,
-        'org.junit.platform.console.ConsoleLauncher',
-        '--disable-banner',
-        '--disable-ansi-colors',
-        '--details=summary',
-        '--select-class', full_class_name
-    ]
-    try:
-        proc = subprocess.run(cmd, cwd=project_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, text=True)
-    except subprocess.TimeoutExpired:
-        return {'status': 'timeout', 'returncode': None, 'stdout': '', 'stderr': ''}
-    rc = proc.returncode
-    if rc == 0:
-        status = 'pass'
-    else:
-        status = 'fail'
-    return {'status': status, 'returncode': rc, 'stdout': proc.stdout, 'stderr': proc.stderr}
+def compute_subtree_info(root: Node):
+    nodes = []
+
+    def dfs(n):
+        for c in n.children:
+            dfs(c)
+        nodes.append(n)
+
+    dfs(root)
+    for n in nodes:
+        s = {n.id}
+        for c in n.children:
+            s |= c.subtree_nodes
+        n.subtree_nodes = s
+        n.subtree_size = len(s)
+        child_sigs = [c.signature for c in n.children]
+        n.signature = n.label + '(' + ','.join(child_sigs) + ')'
 
 
-def java_run_test_method(project_dir, full_class_name, method_name, class_path, timeout=120):
-    selector = f"{full_class_name}#{method_name}"
-    cmd = [
-        'java',
-        '-cp', class_path,
-        'org.junit.platform.console.ConsoleLauncher',
-        '--disable-banner',
-        '--disable-ansi-colors',
-        '--details=summary',
-        '--select-method', selector
-    ]
-    try:
-        proc = subprocess.run(cmd, cwd=project_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, text=True)
-    except subprocess.TimeoutExpired:
-        return {'status': 'timeout', 'returncode': None, 'stdout': '', 'stderr': ''}
-    rc = proc.returncode
-    if rc == 0:
-        status = 'pass'
-    else:
-        status = 'fail'
-    return {'status': status, 'returncode': rc, 'stdout': proc.stdout, 'stderr': proc.stderr}
+# ─────────────────────────────────────────────────────────────────────────────
+# Top-down similarity
+# ─────────────────────────────────────────────────────────────────────────────
+def topdown_size(a: Node, b: Node, memo: Dict[Tuple[int, int], int]) -> int:
+    key = (a.id, b.id)
+    if key in memo:
+        return memo[key]
+    if a.label != b.label:
+        memo[key] = 0
+        return 0
+    m, n = len(a.children), len(b.children)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m - 1, -1, -1):
+        for j in range(n - 1, -1, -1):
+            v1 = dp[i + 1][j]
+            v2 = dp[i][j + 1]
+            match = topdown_size(a.children[i], b.children[j], memo)
+            v3 = dp[i + 1][j + 1] + match if match > 0 else dp[i + 1][j + 1]
+            dp[i][j] = max(v1, v2, v3)
+    res = 1 + dp[0][0]
+    memo[key] = res
+    return res
 
 
-def discover_test_methods(java_file):
-    methods = []
-    try:
-        with open(java_file, 'r', errors='ignore') as fh:
-            lines = fh.readlines()
-    except Exception:
-        return methods
-
-    i = 0
-    n = len(lines)
-    while i < n:
-        line = lines[i].strip()
-        if line.startswith('@Test') or line.startswith('@org.junit.Test') or line.startswith('@org.junit.jupiter.api.Test'):
-            j = i + 1
-            while j < n:
-                decl = lines[j].strip()
-                if decl.startswith('@') or decl == '':
-                    j += 1
-                    continue
-                m = re.search(r'([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', decl)
-                if m:
-                    name = m.group(1)
-                    methods.append(name)
-                    break
-                else:
-                    j += 1
-            i = j
-        else:
+def topdown_match(a: Node, b: Node, memo: Dict[Tuple[int, int], int]) -> Tuple[set, set]:
+    matched_a, matched_b = set(), set()
+    if a.label != b.label:
+        return matched_a, matched_b
+    matched_a.add(a.id)
+    matched_b.add(b.id)
+    m, n = len(a.children), len(b.children)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m - 1, -1, -1):
+        for j in range(n - 1, -1, -1):
+            v1 = dp[i + 1][j]
+            v2 = dp[i][j + 1]
+            match = topdown_size(a.children[i], b.children[j], memo)
+            v3 = dp[i + 1][j + 1] + match if match > 0 else dp[i + 1][j + 1]
+            dp[i][j] = max(v1, v2, v3)
+    i = j = 0
+    while i < m and j < n:
+        if dp[i][j] == dp[i + 1][j]:
             i += 1
-    return methods
-
-
-def copy_test_to_project(java_file, project_root, tests_subpath='src/test/java'):
-    pkg = ''
-    try:
-        with open(java_file, 'r', errors='ignore') as fh:
-            for line in fh:
-                line = line.strip()
-                if line.startswith('package '):
-                    pkg = line.replace('package', '').replace(';', '').strip()
-                    break
-    except Exception:
-        pass
-    rel_dir = pkg.replace('.', os.sep) if pkg else ''
-    dest_dir = os.path.join(project_root, tests_subpath, rel_dir)
-    os.makedirs(dest_dir, exist_ok=True)
-    dest = os.path.join(dest_dir, os.path.basename(java_file))
-    shutil.copy2(java_file, dest)
-    return dest
-
-
-# ── 推断 target_class（modified class 简单类名）──────────────────────────
-# NOTE: Defined at module level so it can be called before any local scoping issues.
-def resolve_target_class(project_root, tests_top=None):
-    """返回 target_class 简单类名，失败返回空字符串"""
-    meta = os.path.join(project_root, 'modified_classes.src')
-    if os.path.exists(meta):
-        try:
-            with open(meta) as _f:
-                _line = _f.readline().strip()
-            if _line:
-                return _line.split('.')[-1]
-        except Exception:
-            pass
-    prop = os.path.join(project_root, 'defects4j.build.properties')
-    if os.path.exists(prop):
-        try:
-            with open(prop) as _f:
-                for _l in _f:
-                    if 'd4j.classes.modified' in _l and '=' in _l:
-                        _val = _l.split('=', 1)[1].strip()
-                        _first = _val.split(',')[0].strip()
-                        if _first:
-                            return _first.split('.')[-1]
-        except Exception:
-            pass
-    tc_dir = None
-    if tests_top:
-        _cand = os.path.join(tests_top, 'test_cases')
-        tc_dir = _cand if os.path.isdir(_cand) else (tests_top if os.path.isdir(tests_top) else None)
-    if tc_dir:
-        try:
-            for _fname in os.listdir(tc_dir):
-                if _fname.endswith('Test.java'):
-                    _m = re.match(r'^(.+?)_\d+_\d+Test\.java$', _fname)
-                    if _m:
-                        return _m.group(1)
-                    return _fname.split('_')[0]
-        except Exception:
-            pass
-    return ''
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--buggy', required=True, help='Path to buggy (b) project, e.g. /path/to/Csv_1_b')
-    parser.add_argument('--fixed', required=True, help='Path to fixed (f) project, e.g. /path/to/Csv_1_f')
-    parser.add_argument('--tests', required=False, help='Path to generated tests directory (folder containing Test.java files). If omitted tries to find newest tests* under buggy project.')
-    parser.add_argument('--copy', action='store_true', help='Copy tests into both projects under src/test/java before running')
-    parser.add_argument('--out', default=None, help='CSV output path (optional; auto-derived from tests dir if omitted)')
-    parser.add_argument('--timeout', type=int, default=120, help='Timeout seconds per test run')
-    parser.add_argument('--fail-if-no-tests', action='store_true', help='Exit non-zero if no tests found')
-    parser.add_argument('--force-clean', action='store_true', help='Force clean existing target directories or copied tests (optional)')
-    args = parser.parse_args()
-
-    buggy = os.path.abspath(args.buggy)
-    fixed = os.path.abspath(args.fixed)
-
-    # ── project prefix from buggy dir name (strip trailing _b / _f) ──────────
-    proj_basename = os.path.basename(buggy)
-    if proj_basename.lower().endswith('_b') or proj_basename.lower().endswith('_f'):
-        proj_prefix = proj_basename[:-2]
-    else:
-        proj_prefix = proj_basename
-
-    # ── resolve tests_dir ─────────────────────────────────────────────────────
-    tests_dir = args.tests
-    if not tests_dir:
-        tests_dir = find_newest_tests_dir(buggy)
-        if not tests_dir:
-            print('No tests dir found under buggy project and --tests not specified.')
-            if args.fail_if_no_tests:
-                sys.exit(2)
-            tests_dir = None
+        elif dp[i][j] == dp[i][j + 1]:
+            j += 1
         else:
-            print(f'Using tests dir: {tests_dir}')
-    else:
-        raw = tests_dir
-        if os.path.exists(raw):
-            tests_dir = os.path.abspath(raw)
-        else:
-            un = urllib.parse.unquote(raw)
-            if os.path.exists(un):
-                tests_dir = os.path.abspath(un)
+            if topdown_size(a.children[i], b.children[j], memo) > 0:
+                sub_a, sub_b = topdown_match(a.children[i], b.children[j], memo)
+                matched_a |= sub_a
+                matched_b |= sub_b
+                i += 1
+                j += 1
             else:
-                tests_dir = os.path.abspath(raw)
-                print(f'Warning: provided --tests path not found as given or unquoted: {raw}')
+                i += 1
+    return matched_a, matched_b
 
-    # if tests dir contains a test_cases subdirectory, prefer that
-    if tests_dir and os.path.isdir(os.path.join(tests_dir, 'test_cases')):
-        tests_dir = os.path.join(tests_dir, 'test_cases')
 
-    # determine top-level tests directory (the tests* directory)
-    top_tests_dir = None
-    if tests_dir:
-        if os.path.basename(tests_dir) == 'test_cases':
-            top_tests_dir = os.path.dirname(tests_dir)
-        elif tests_dir and os.path.basename(tests_dir).startswith('tests'):
-            top_tests_dir = tests_dir
+# ─────────────────────────────────────────────────────────────────────────────
+# Bottom-up similarity
+# ─────────────────────────────────────────────────────────────────────────────
+def bottomup_match(root1: Node, root2: Node) -> Tuple[set, set, int]:
+    sig_map1, sig_map2 = defaultdict(list), defaultdict(list)
+
+    def collect(n, sigmap):
+        sigmap[n.signature].append(n)
+        for c in n.children:
+            collect(c, sigmap)
+
+    collect(root1, sig_map1)
+    collect(root2, sig_map2)
+
+    used1, used2 = set(), set()
+    matched_count = 0
+    ids1, ids2 = set(), set()
+
+    for sig in sig_map1:
+        if sig not in sig_map2:
+            continue
+        l1 = sorted(sig_map1[sig], key=lambda x: x.subtree_size, reverse=True)
+        l2 = sorted(sig_map2[sig], key=lambda x: x.subtree_size, reverse=True)
+        i = j = 0
+        while i < len(l1) and j < len(l2):
+            n1, n2 = l1[i], l2[j]
+            if n1.subtree_nodes & used1:
+                i += 1
+                continue
+            if n2.subtree_nodes & used2:
+                j += 1
+                continue
+            matched_count += n1.subtree_size
+            ids1 |= n1.subtree_nodes
+            ids2 |= n2.subtree_nodes
+            used1 |= n1.subtree_nodes
+            used2 |= n2.subtree_nodes
+            i += 1
+            j += 1
+    return ids1, ids2, matched_count
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# I/O helpers
+# ─────────────────────────────────────────────────────────────────────────────
+def read_ast_csv(ast_csv_path: str) -> Dict[str, list]:
+    res = defaultdict(list)
+    if not os.path.exists(ast_csv_path):
+        return res
+    try:
+        # 以二进制读取，剔除 NUL 字节后再 decode
+        raw = open(ast_csv_path, 'rb').read()
+        if b'\x00' in raw:
+            print(f'  [WARN] NUL bytes found in {os.path.basename(ast_csv_path)}, stripping...')
+            raw = raw.replace(b'\x00', b'')
+        text = raw.decode('utf-8', errors='replace')
+    except Exception as e:
+        print(f'  [ERROR] Cannot read AST CSV {ast_csv_path}: {e}')
+        return res
+ 
+    import io
+    reader = csv.reader(io.StringIO(text))
+    next(reader, None)   # skip header
+    for row in reader:
+        try:
+            if len(row) < 2:
+                continue
+            name = row[0].strip().strip('"')
+            if not name:
+                continue
+            filepart = name.split('.', 1)[0] if '.' in name else name
+            res[filepart].append(html.unescape(row[1]).strip())
+        except Exception:
+            continue
+    return res
+
+
+def xml_to_tree(xml_str: str) -> 'Node | None':
+    """解析 XML 字符串为 Node 树；先清洗标签名（Bug C 修复）再解析。"""
+    sanitized = sanitize_xml_tags(xml_str)
+    try:
+        root_elem = ET.fromstring(sanitized)
+    except Exception:
+        try:
+            root_elem = ET.fromstring('<ROOT>' + sanitized + '</ROOT>')
+        except Exception:
+            return None
+    return build_tree_from_element(root_elem)
+
+
+def group_by_method(test_names: List[str]) -> Dict[str, List[str]]:
+    groups = defaultdict(list)
+    for tn in test_names:
+        m = re.search(r'_(\d+)_', tn)
+        if m:
+            key = m.group(1)
         else:
-            top_tests_dir = os.path.dirname(tests_dir)
+            m2 = re.search(r'(\d+)', tn)
+            key = m2.group(1) if m2 else 'default'
+        groups[key].append(tn)
+    return groups
 
-    # ── resolve target class (now that top_tests_dir is set) ─────────────────
-    _target_class = resolve_target_class(buggy, top_tests_dir)
-    _tgt_slug = _target_class if _target_class else 'unknown'
 
-    # ── resolve output CSV path ───────────────────────────────────────────────
-    # Priority: explicit --out > auto-derived next to tests* dir
-    if args.out:
-        out_path = os.path.abspath(args.out)
-        # ensure the filename is prefixed correctly
-        out_dir  = os.path.dirname(out_path)
-        out_base = os.path.basename(out_path)
-        expected_prefix = f'{proj_prefix}_{_tgt_slug}_'
-        if not out_base.startswith(expected_prefix):
-            out_base = f'{proj_prefix}_{_tgt_slug}_{out_base}'
-        out_path = os.path.join(out_dir, out_base)
+def extract_target_class_from_test_names(test_names: List[str]) -> str:
+    if not test_names:
+        return ''
+    first = test_names[0]
+    if first.endswith('Test'):
+        first = first[:-4]
+    target = ''
+    for p in first.split('_'):
+        if p.isdigit():
+            break
+        target = (target + '_' + p) if target else p
+    return target
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
+def process_tests_dir(tests_dir: str):
+    tests_dir = os.path.abspath(tests_dir)
+    if os.path.basename(tests_dir) == 'test_cases':
+        top_tests_dir = os.path.dirname(tests_dir)
+    elif os.path.basename(tests_dir).startswith('tests'):
+        top_tests_dir = tests_dir
     else:
-        # auto-derive: place in top_tests_dir (the tests* folder)
-        base_dir = top_tests_dir if top_tests_dir else (os.path.dirname(buggy) if buggy else os.getcwd())
-        out_path = os.path.join(base_dir, f'{proj_prefix}_{_tgt_slug}_bugrevealing.csv')
+        top_tests_dir = os.path.dirname(tests_dir)
 
-    # make sure the output directory exists
-    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+    project_dir = os.path.dirname(top_tests_dir)
+    proj_prefix = os.path.basename(project_dir)
+    proj_short  = re.sub(r'(_b|_f)$', '', proj_prefix)
 
-    # ── discover test files ───────────────────────────────────────────────────
-    if tests_dir and os.path.isdir(tests_dir):
-        test_files = discover_test_files(tests_dir)
+    ast_dir = os.path.join(top_tests_dir, 'AST')
+    ast_csv_short  = os.path.join(ast_dir, f'{proj_short}_AST.csv')
+    ast_csv_legacy = os.path.join(ast_dir, f'{proj_prefix}_AST.csv')
+    if os.path.exists(ast_csv_short):
+        ast_csv = ast_csv_short
+    elif os.path.exists(ast_csv_legacy):
+        ast_csv = ast_csv_legacy
     else:
-        test_files = []
-
-    if not test_files:
-        print('No Test.java files found. Exiting.')
-        if args.fail_if_no_tests:
-            sys.exit(2)
-        with open(out_path, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['project_name', 'target_class', 'test_class', 'test_method',
-                             'buggy_status', 'fixed_status', 'bug_revealing',
-                             'buggy_rc', 'fixed_rc', 'notes'])
-        print(f'Wrote empty summary to {out_path}')
+        print('AST CSV not found (tried):', ast_csv_short, 'and', ast_csv_legacy)
         return
 
-    # ── prepare detail log file ───────────────────────────────────────────────
-    log_path = os.path.splitext(os.path.abspath(out_path))[0] + '.details.txt'
-    try:
-        logfh = open(log_path, 'w', encoding='utf-8')
-        logfh.write(f'bug_revealing log started: {datetime.now().isoformat()}\n')
-        logfh.write(f'buggy={buggy}\nfixed={fixed}\ntests_dir={tests_dir}\n\n')
-    except Exception as e:
-        print(f'Warning: cannot open detail log {log_path}: {e}')
-        logfh = None
+    mapping = read_ast_csv(ast_csv)
+    if not mapping:
+        print('No ASTs parsed from', ast_csv)
+        return
 
-    def write_log_entry(fh, project_label, full_class, method_name, res):
-        if not fh:
-            return
-        fh.write('---\n')
-        fh.write(f'[{datetime.now().isoformat()}] {project_label} {full_class}')
-        if method_name:
-            fh.write(f'#{method_name}')
-        fh.write(f' status={res.get("status")} returncode={res.get("returncode")}\n')
-        out = res.get('stdout') or ''
-        err = res.get('stderr') or ''
-        if out:
-            fh.write('STDOUT:\n')
-            fh.write(out)
-            if not out.endswith('\n'):
-                fh.write('\n')
-        if err:
-            fh.write('STDERR:\n')
-            fh.write(err)
-            if not err.endswith('\n'):
-                fh.write('\n')
-        fh.write('\n')
+    # 构建树（sanitize 后应 100% 成功）
+    trees = {}
+    parse_failed = []
+    for fname, xml_list in mapping.items():
+        combined_xml = '<ROOT>' + ''.join(xml_list) + '</ROOT>'
+        node = xml_to_tree(combined_xml)
+        if node is None:
+            parse_failed.append(fname)
+            print(f'  [WARN] xml_to_tree still failed after sanitize: {fname}')
+            continue
+        compute_subtree_info(node)
+        trees[fname] = node
 
-    def is_discovery_error(res):
-        if not res:
-            return False
-        try:
-            text = (res.get('stderr') or '') + '\n' + (res.get('stdout') or '')
-        except Exception:
-            return False
-        if 'failed to discover tests' in text.lower():
-            return True
-        return False
+    all_test_names = list(mapping.keys())   # 全集
+    target_class   = extract_target_class_from_test_names(all_test_names)
+    groups         = group_by_method(all_test_names)
 
-    def write_short_log(fh, project_label, full_class, method_name, res):
-        if not fh:
-            return
-        fh.write('---\n')
-        fh.write(f'[{datetime.now().isoformat()}] {project_label} {full_class}')
-        if method_name:
-            fh.write(f'#{method_name}')
-        fh.write(' discovery_failed\n')
+    print(f'  AST entries: {len(all_test_names)}, trees built: {len(trees)}, '
+          f'parse_failed: {len(parse_failed)}')
 
-    def echo_and_log(msg):
-        try:
-            print(msg)
-        except Exception:
-            pass
-        if logfh:
-            try:
-                logfh.write(msg)
-                if not msg.endswith('\n'):
-                    logfh.write('\n')
-                logfh.flush()
-            except Exception:
-                pass
+    sim_dir = os.path.join(top_tests_dir, 'Similarity')
+    os.makedirs(sim_dir, exist_ok=True)
+    sims_csv = os.path.join(sim_dir, f'{proj_short}_Sims.csv')
+    if target_class:
+        big_csv    = os.path.join(sim_dir, f'{proj_short}_{target_class}_bigSims.csv')
+        bigsum_csv = os.path.join(sim_dir, f'{proj_short}_{target_class}_bigSimssum.csv')
+    else:
+        big_csv    = os.path.join(sim_dir, f'{proj_short}_bigSims.csv')
+        bigsum_csv = os.path.join(sim_dir, f'{proj_short}_bigSimssum.csv')
 
-    if args.copy:
-        echo_and_log('Note: --copy requested but ignored. Using tests from tests*/test_cases and compiling into tests_ChatGPT.')
+    best_map = {}   # {test_name: (src, dst, nodes_per_tree, comb_sim)}
 
-    print('Note: TestRunner initialization skipped; using precompiled classes in tests_ChatGPT if available.')
-    if logfh:
-        try:
-            logfh.write('Note: TestRunner initialization skipped; using precompiled classes in tests_ChatGPT if available.\n')
-        except Exception:
-            pass
+    with open(sims_csv, 'w', newline='', encoding='utf-8') as sf:
+        w = csv.writer(sf)
+        w.writerow(['project', 'target_class', 'test_case_1', 'test_case_2',
+                    'topdown_subtree_size', 'topdown_similarity',
+                    'bottomup_subtree_size', 'bottomup_similarity',
+                    'combined_subtree_size', 'combined_similarity', 'redundancy_score'])
 
-    # ── build classpath ───────────────────────────────────────────────────────
-    def build_classpath(project_root):
-        m2 = os.path.expanduser('~/.m2/repository')
-        def jar(*path):
-            return os.path.join(m2, *path)
+        for key, members in groups.items():
+            for i in range(len(members)):
+                for j in range(i + 1, len(members)):
+                    a_name, b_name = members[i], members[j]
+                    a = trees.get(a_name)
+                    b = trees.get(b_name)
 
-        cp = [
-            os.path.join(project_root, 'target', 'classes'),
-            jar('junit', 'junit', '4.13.2', 'junit-4.13.2.jar'),
-            jar('org', 'hamcrest', 'hamcrest-core', '1.3', 'hamcrest-core-1.3.jar'),
-            jar('commons-io', 'commons-io', '2.11.0', 'commons-io-2.11.0.jar'),
-            jar('org', 'junit', 'jupiter', 'junit-jupiter-api', '5.9.2', 'junit-jupiter-api-5.9.2.jar'),
-            jar('org', 'junit', 'jupiter', 'junit-jupiter-engine', '5.9.2', 'junit-jupiter-engine-5.9.2.jar'),
-            jar('org', 'junit', 'jupiter', 'junit-jupiter-params', '5.9.2', 'junit-jupiter-params-5.9.2.jar'),
-            jar('org', 'junit', 'platform', 'junit-platform-commons', '1.9.2', 'junit-platform-commons-1.9.2.jar'),
-            jar('org', 'junit', 'platform', 'junit-platform-engine', '1.9.2', 'junit-platform-engine-1.9.2.jar'),
-            jar('org', 'junit', 'vintage', 'junit-vintage-engine', '5.9.2', 'junit-vintage-engine-5.9.2.jar'),
-            jar('org', 'mockito', 'mockito-core', '3.12.4', 'mockito-core-3.12.4.jar'),
-            jar('org', 'mockito', 'mockito-junit-jupiter', '3.12.4', 'mockito-junit-jupiter-3.12.4.jar'),
-            jar('net', 'bytebuddy', 'byte-buddy', '1.14.6', 'byte-buddy-1.14.6.jar'),
-            jar('net', 'bytebuddy', 'byte-buddy-agent', '1.14.6', 'byte-buddy-agent-1.14.6.jar'),
-            jar('org', 'objenesis', 'objenesis', '3.3', 'objenesis-3.3.jar'),
-            jar('org', 'junit', 'platform', 'junit-platform-console-standalone', '1.9.2',
-                'junit-platform-console-standalone-1.9.2.jar'),
-        ]
-        # include compiled tests placed under the top-level tests dir (tests_ChatGPT)
-        try:
-            if top_tests_dir:
-                alt = os.path.join(top_tests_dir, 'tests_ChatGPT')
-                if os.path.isdir(alt):
-                    cp.insert(1, alt)
-        except Exception:
-            pass
+                    # Bug B 修复：树缺失时写 sim=0 兜底
+                    if a is None or b is None:
+                        for _missing in ([a_name] if a is None else []) + \
+                                        ([b_name] if b is None else []):
+                            if _missing not in best_map:
+                                best_map[_missing] = (_missing, '', 0, 0.0)
+                                print(f'  [WARN] No tree for {_missing}, sim=0.0')
+                        continue
 
-        cp = [p for p in cp if os.path.exists(p)]
-        return os.pathsep.join(cp)
+                    size1, size2 = a.subtree_size, b.subtree_size
+                    memo = {}
+                    td_nodes = max(0, topdown_size(a, b, memo) - 1)
+                    td_sim   = (2.0 * td_nodes) / (size1 + size2) if (size1 + size2) > 0 else 0.0
+                    td_ids_a, td_ids_b = topdown_match(a, b, memo)
 
-    buggy_cp = build_classpath(buggy)
-    fixed_cp = build_classpath(fixed)
+                    bu_ids_a, bu_ids_b, bu_nodes = bottomup_match(a, b)
+                    bu_sim = (2.0 * bu_nodes) / (size1 + size2) if (size1 + size2) > 0 else 0.0
 
-    # ── main test loop ────────────────────────────────────────────────────────
-    out_rows = []
-    total_methods = 0
-    bug_revealing_count = 0
+                    union_a = set(td_ids_a) | set(bu_ids_a)
+                    union_b = set(td_ids_b) | set(bu_ids_b)
+                    nodes_per_tree = int(round((len(union_a) + len(union_b)) / 2.0))
+                    comb_sim   = (2.0 * nodes_per_tree) / (size1 + size2) if (size1 + size2) > 0 else 0.0
+                    redundancy = 1.0 - comb_sim
 
-    for jf in test_files:
-        full = get_full_class_name(jf)
-        methods = discover_test_methods(jf)
-        if not methods:
-            # fallback: run the whole class
-            echo_and_log(f'Running test class {full} on buggy...')
-            res_b = java_run_test(buggy, full, buggy_cp, timeout=args.timeout)
-            echo_and_log(f'  -> {res_b["status"]}')
-            echo_and_log(f'Running test class {full} on fixed...')
-            res_f = java_run_test(fixed, full, fixed_cp, timeout=args.timeout)
-            echo_and_log(f'  -> {res_f["status"]}')
+                    w.writerow([proj_short, target_class, a_name, b_name,
+                                 td_nodes, f'{td_sim:.6f}',
+                                 bu_nodes, f'{bu_sim:.6f}',
+                                 nodes_per_tree, f'{comb_sim:.6f}', f'{redundancy:.6f}'])
 
-            bstat = res_b.get('status')
-            fstat = res_f.get('status')
-            b_rc  = res_b.get('returncode')
-            f_rc  = res_f.get('returncode')
-            notes = ''
-            if bstat == 'timeout' or fstat == 'timeout':
-                notes = 'timeout'
-            is_bug_revealing = (bstat == 'fail') and (fstat == 'pass')
-            if is_bug_revealing:
-                bug_revealing_count += 1
-            total_methods += 1
-            out_rows.append([proj_prefix, _target_class, full, '', bstat, fstat,
-                              'true' if is_bug_revealing else 'false',
-                              str(b_rc), str(f_rc), notes])
-            if bstat != 'pass':
-                if is_discovery_error(res_b):
-                    notes = 'discovery_failed' if not notes else notes + ';discovery_failed'
-                    write_short_log(logfh, 'buggy', full, '', res_b)
-                else:
-                    write_log_entry(logfh, 'buggy', full, '', res_b)
-            if fstat != 'pass':
-                if is_discovery_error(res_f):
-                    notes = 'discovery_failed' if not notes else notes + ';discovery_failed'
-                    write_short_log(logfh, 'fixed', full, '', res_f)
-                else:
-                    write_log_entry(logfh, 'fixed', full, '', res_f)
-            out_rows[-1][9] = notes
-        else:
-            for m in methods:
-                echo_and_log(f'Running {full}#{m} on buggy...')
-                res_b = java_run_test_method(buggy, full, m, buggy_cp, timeout=args.timeout)
-                echo_and_log(f'  -> {res_b["status"]}')
-                echo_and_log(f'Running {full}#{m} on fixed...')
-                res_f = java_run_test_method(fixed, full, m, fixed_cp, timeout=args.timeout)
-                echo_and_log(f'  -> {res_f["status"]}')
+                    # Bug A 修复：prev[3] 才是 comb_sim
+                    for src, dst, val in [(a_name, b_name, comb_sim),
+                                          (b_name, a_name, comb_sim)]:
+                        prev = best_map.get(src)
+                        if prev is None or val > prev[3]:
+                            best_map[src] = (src, dst, nodes_per_tree, comb_sim)
 
-                bstat = res_b.get('status')
-                fstat = res_f.get('status')
-                b_rc  = res_b.get('returncode')
-                f_rc  = res_f.get('returncode')
-                notes = ''
-                if bstat == 'timeout' or fstat == 'timeout':
-                    notes = 'timeout'
-                is_bug_revealing = (bstat == 'fail') and (fstat == 'pass')
-                if is_bug_revealing:
-                    bug_revealing_count += 1
-                total_methods += 1
-                out_rows.append([proj_prefix, _target_class, full, m, bstat, fstat,
-                                  'true' if is_bug_revealing else 'false',
-                                  str(b_rc), str(f_rc), notes])
-                if bstat != 'pass':
-                    if is_discovery_error(res_b):
-                        notes = 'discovery_failed' if not notes else notes + ';discovery_failed'
-                        write_short_log(logfh, 'buggy', full, m, res_b)
-                    else:
-                        write_log_entry(logfh, 'buggy', full, m, res_b)
-                if fstat != 'pass':
-                    if is_discovery_error(res_f):
-                        notes = 'discovery_failed' if not notes else notes + ';discovery_failed'
-                        write_short_log(logfh, 'fixed', full, m, res_f)
-                    else:
-                        write_log_entry(logfh, 'fixed', full, m, res_f)
-                out_rows[-1][9] = notes
+    # 兜底：全集里没进入 best_map 的（孤立 / 漏网）
+    for tc in all_test_names:
+        if tc not in best_map:
+            best_map[tc] = (tc, '', 0, 0.0)
+            print(f'  [UNMATCHED] {tc}: no valid pair found, sim=0.0')
 
-    # ── write per-method CSV ──────────────────────────────────────────────────
-    with open(out_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['project_name', 'target_class', 'test_class', 'test_method',
-                         'buggy_status', 'fixed_status', 'bug_revealing',
-                         'buggy_rc', 'fixed_rc', 'notes'])
-        for r in out_rows:
-            writer.writerow(r)
+    # bigSims
+    with open(big_csv, 'w', newline='', encoding='utf-8') as bf:
+        w = csv.writer(bf)
+        w.writerow(['project', 'target_class', 'test_case_1', 'test_case_2',
+                    'combined_subtree_size', 'combined_similarity', 'redundancy_score'])
+        for tc, rec in best_map.items():
+            w.writerow([proj_short, target_class, rec[0], rec[1],
+                        rec[2], f'{rec[3]:.6f}', f'{1.0 - rec[3]:.6f}'])
 
-    # ── class-level summary CSV ───────────────────────────────────────────────
-    try:
-        class_level_out = os.path.splitext(out_path)[0] + '_class_level.csv'
-        class_stats = {}
-        for _row in out_rows:
-            if len(_row) < 7:
-                continue
-            _key = (_row[0], _row[1], _row[2])
-            _br  = str(_row[6]).strip().lower() == 'true'
-            if _key not in class_stats:
-                class_stats[_key] = {'total': 0, 'revealing': 0}
-            class_stats[_key]['total'] += 1
-            if _br:
-                class_stats[_key]['revealing'] += 1
-        with open(class_level_out, 'w', newline='', encoding='utf-8') as _clf:
-            _cl_writer = csv.writer(_clf)
-            _cl_writer.writerow(['project_name', 'target_class', 'test_class',
-                                  'total_methods', 'bug_revealing_methods',
-                                  'bug_revealing_rate', 'has_bug_revealing', 'br_score'])
-            for (_proj_n, _tgt, _ts), _s in class_stats.items():
-                _tot   = _s['total']
-                _rev   = _s['revealing']
-                _rate  = round(_rev / _tot, 6) if _tot else 0.0
-                _has   = 'true' if _rev > 0 else 'false'
-                _cl_writer.writerow([_proj_n, _tgt, _ts, _tot, _rev, _rate, _has, _rate])
-        echo_and_log(f'Class-level summary: {os.path.abspath(class_level_out)}')
-        if logfh:
-            try:
-                logfh.write(f'Class-level CSV: {os.path.abspath(class_level_out)}\n')
-            except Exception:
-                pass
-    except Exception as _cl_err:
-        print(f'Warning: failed to write class-level CSV: {_cl_err}')
+    # bigSimssum
+    vals   = [rec[3] for rec in best_map.values()]
+    n      = len(vals)
+    sumsq  = sum(v * v for v in vals)
+    meansq = sumsq / n if n > 0 else 0.0
+    with open(bigsum_csv, 'w', newline='', encoding='utf-8') as bs:
+        w = csv.writer(bs)
+        w.writerow(['project', 'n_tests', 'sum_of_squares', 'mean_of_squares'])
+        w.writerow([proj_short, n, f'{sumsq:.6f}', f'{meansq:.6f}'])
 
-    # ── shared per-project counts CSV ─────────────────────────────────────────
-    counts_path = None
-    try:
-        shared_dir = os.path.dirname(buggy)
-        counts_path = os.path.join(shared_dir, 'bugrevealing_counts.csv')
-        write_header = not os.path.exists(counts_path)
-        with open(counts_path, 'a', newline='') as cf:
-            cwriter = csv.writer(cf)
-            if write_header:
-                cwriter.writerow(['project', 'testcount', 'revealingcount'])
-            cwriter.writerow([proj_prefix, total_methods, bug_revealing_count])
-    except Exception:
-        pass
-
-    # ── final summary ─────────────────────────────────────────────────────────
-    echo_and_log('\n===== SUMMARY =====')
-    echo_and_log(f'Total tests evaluated: {total_methods}')
-    echo_and_log(f'Bug revealing tests: {bug_revealing_count}')
-    echo_and_log(f'Summary CSV: {os.path.abspath(out_path)}')
-
-    if logfh:
-        try:
-            logfh.write('\n===== SUMMARY =====\n')
-            logfh.write(f'Total tests evaluated: {total_methods}\n')
-            logfh.write(f'Bug revealing tests: {bug_revealing_count}\n')
-            logfh.write(f'Summary CSV: {os.path.abspath(out_path)}\n')
-            if counts_path:
-                logfh.write(f'Per-project counts CSV: {os.path.abspath(counts_path)}\n')
-            logfh.write(f'\nlog finished: {datetime.now().isoformat()}\n')
-            logfh.close()
-            print(f'Detailed log: {os.path.abspath(log_path)}')
-        except Exception:
-            pass
+    complete = len(best_map) == len(all_test_names)
+    print(f'Wrote similarity CSVs to {sim_dir}')
+    print(f'  bigSims: {len(best_map)}/{len(all_test_names)} '
+          f'({"✅ complete" if complete else "⚠️ INCOMPLETE"})')
+    if not complete:
+        print(f'  Missing: {set(all_test_names) - set(best_map.keys())}')
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        print('Usage: measure_similarity.py /path/to/tests_dir')
+        sys.exit(1)
+    process_tests_dir(sys.argv[1])
