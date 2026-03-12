@@ -137,33 +137,72 @@ class TestRunner:
         missed_lines: list = []
         missed_branches: list = []
         try:
-            if not os.path.exists(jacoco_xml_path):
+            if not jacoco_xml_path or not os.path.exists(jacoco_xml_path):
                 return missed_lines, missed_branches
             tree = ET.parse(jacoco_xml_path)
             root = tree.getroot()
-            # 支持 "CSVParser" 或 "org.apache.commons.csv.CSVParser"
-            simple = target_class.split('.')[-1] if target_class else ''
-            # 查找 <sourcefile name="CSVParser.java">
-            sf_elem = None
-            for sf in root.findall('.//sourcefile'):
-                sname = sf.get('name', '')
-                if simple and (sname == simple + '.java' or sname == target_class + '.java'):
-                    sf_elem = sf
-                    break
-            if sf_elem is None:
+ 
+            # 提取简单类名，去掉包名前缀和内部类符号 $
+            simple = target_class.split('.')[-1].split('$')[0] if target_class else ''
+            if not simple:
                 return missed_lines, missed_branches
-            for line_elem in sf_elem.findall('line'):
-                nr = int(line_elem.get('nr', 0))
-                mi = int(line_elem.get('mi', 0))
-                ci = int(line_elem.get('ci', 0))
-                mb = int(line_elem.get('mb', 0))
-                cb = int(line_elem.get('cb', 0))
-                if mi > 0 and ci == 0:          # 完全未覆盖行
-                    missed_lines.append(nr)
-                if mb > 0:                       # 分支未完全覆盖
-                    missed_branches.append(f"line {nr}: {mb}/{mb + cb} branches missed")
-        except Exception:
-            pass
+ 
+            target_java = simple + '.java'
+            sf_elem = None
+ 
+            # 策略1：在 <package> 元素下查找（JaCoCo 标准 XML 结构）
+            for pkg_elem in root.findall('.//package'):
+                for sf in pkg_elem.findall('sourcefile'):
+                    if sf.get('name', '') == target_java:
+                        sf_elem = sf
+                        break
+                if sf_elem is not None:
+                    break
+ 
+            # 策略2：全局 .//sourcefile 搜索（降级）
+            if sf_elem is None:
+                for sf in root.findall('.//sourcefile'):
+                    if sf.get('name', '') == target_java:
+                        sf_elem = sf
+                        break
+ 
+            # 策略3：忽略大小写模糊匹配（最后兜底）
+            if sf_elem is None:
+                for sf in root.findall('.//sourcefile'):
+                    if sf.get('name', '').lower() == target_java.lower():
+                        sf_elem = sf
+                        break
+ 
+            if sf_elem is None:
+                # 打印调试信息帮助排查 XML 结构
+                all_sf = [sf.get('name', '') for sf in root.findall('.//sourcefile')]
+                print(f'  [WARN] _extract_missed_coverage: "{target_java}" not found in '
+                      f'{os.path.basename(jacoco_xml_path)}. Available: {all_sf[:10]}')
+                return missed_lines, missed_branches
+ 
+            # 提取 <line> 子元素
+            line_elems = sf_elem.findall('line')
+            if not line_elems:
+                lines_wrap = sf_elem.find('lines')
+                if lines_wrap is not None:
+                    line_elems = lines_wrap.findall('line')
+ 
+            for line_elem in line_elems:
+                try:
+                    nr = int(line_elem.get('nr', 0))
+                    mi = int(line_elem.get('mi', 0))
+                    ci = int(line_elem.get('ci', 0))
+                    mb = int(line_elem.get('mb', 0))
+                    cb = int(line_elem.get('cb', 0))
+                    if mi > 0 and ci == 0:
+                        missed_lines.append(nr)
+                    if mb > 0:
+                        missed_branches.append(f"line {nr}: {mb}/{mb + cb} branches missed")
+                except Exception:
+                    continue
+ 
+        except Exception as _ex:
+            print(f'  [WARN] _extract_missed_coverage exception: {_ex}')
         return missed_lines, missed_branches
 
     # ------------------------------------------------------------------
@@ -656,13 +695,16 @@ class TestRunner:
                         branch_contrib_pct,
                         coverage_score,
                     ])
-                    if logs and 'diagnosis' in logs:
+                    # 只对真正执行成功（exec_note='ok'）的记录写 coverage_gap
+                    if logs and 'diagnosis' in logs and rec.get('exec_note', 'ok') == 'ok':
                         try:
                             _jxml = rec.get('per_test_jacoco_xml') or os.path.join(
                                 self.target_path, "target", "site", "jacoco", "jacoco.xml"
                             )
-                            _missed_lns, _missed_brs = self._extract_missed_coverage(
-                                _jxml, target_class
+                            _jxml_valid = _jxml and os.path.exists(_jxml)
+                            _missed_lns, _missed_brs = (
+                                self._extract_missed_coverage(_jxml, target_class)
+                                if _jxml_valid else ([], [])
                             )
                             with open(logs['diagnosis'], 'a', encoding='utf-8') as _df:
                                 _tc_name = rec.get('test_class', '')
@@ -670,6 +712,8 @@ class TestRunner:
                                 _df.write(f"  project={project_name}  target_class={target_class}\\n")
                                 _df.write(f"  status=exec_ok\\n")
                                 _df.write(f"  error_type=coverage_gap\\n")
+                                if not _jxml_valid:
+                                    _df.write(f"  jacoco_data=none  → JaCoCo exec 为空，覆盖数据未采集\\n")
                                 _df.write(f"  line_rate={mlr:.4f}%  ({mlc}/{mlt})\\n")
                                 _df.write(f"  branch_rate={mbr:.4f}%  ({mbc}/{mbt if mbt else 0})\\n")
                                 _df.write(f"  coverage_score={coverage_score}\\n")
