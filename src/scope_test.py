@@ -107,13 +107,48 @@ def start_generation(sql_query, multiprocess=True, repair=True, confirmed=True):
     # Find all the files
     source_dir = os.path.join(dataset_dir, "direction_1")
 
-    start_whole_process(source_dir, result_path, multiprocess=multiprocess, repair=repair)
+    token_results = start_whole_process(source_dir, result_path, multiprocess=multiprocess, repair=repair)
     print("WHOLE PROCESS FINISHED")
-    # Run accumulated tests
+
+    # Run accumulated tests — 此步骤会在 project_dir 下创建 tests%{date}/ 目录
     project_path = os.path.abspath(project_dir)
     print("START ALL TESTS")
 
     Task.all_test(result_path, project_path)
+
+    # ── 新增：Task.all_test() 完成后，找到刚刚创建的 tests%* 目录，写入 summary ──
+    try:
+        import glob as _glob
+        import re as _re
+        from collections import defaultdict as _defaultdict
+
+        def _find_latest_tests_dir(base_dir):
+            """在 base_dir 下找最新的 tests%* 目录（按目录名中的时间戳排序）。"""
+            candidates = [
+                p for p in _glob.glob(os.path.join(base_dir, "tests%*"))
+                if os.path.isdir(p)
+            ]
+            if not candidates:
+                return None
+            def _ts_key(p):
+                m = _re.search(r"(\d+)", os.path.basename(p))
+                return int(m.group(1)) if m else 0
+            candidates.sort(key=_ts_key)
+            return candidates[-1]
+
+        summary_output_dir = _find_latest_tests_dir(project_path)
+        if summary_output_dir is None:
+            summary_output_dir = result_path   # 回退：写到 result_path
+        print(Fore.CYAN + f"\n[Summary] summary 文件将写入: {summary_output_dir}" + Style.RESET_ALL)
+
+        token_results = token_results or []
+        write_llm_summary(token_results, summary_output_dir)
+        
+    except Exception as _e:
+        import traceback
+        print(Fore.RED + f"[Summary] 写入 summary 失败: {_e}" + Style.RESET_ALL)
+        traceback.print_exc()
+
     try:
         with open(record_path, "a") as f:
             f.write("Whole test result at: " + find_result_in_projects() + "\n")

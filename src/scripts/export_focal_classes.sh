@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-repos=(Csv)
+repos=(Csv Cli Codec Closure Chart Collections Compress Gson JacksonCore JacksonDatabind JacksonXml Jsoup JxPath Lang Math Mockito Time)
 
 revisions_dir=/home/chenlu/ChatUniTest_GPT3.5/defect4j_projects
 repo_type=f
@@ -19,7 +19,7 @@ export_revisions() {
 }
 
 
-export_revisions
+# export_revisions
 
 
 export_focal_classes() {
@@ -40,7 +40,7 @@ export_focal_classes() {
 	echo $json_array > focal_classes.json
 }
 
-# export_focal_classes
+export_focal_classes
 
 
 export_focal_classes_json() {

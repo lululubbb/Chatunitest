@@ -2,7 +2,7 @@ import configparser
 
 # Use configparser.ConfigParser() to read config.ini file.
 config = configparser.ConfigParser()
-config.read("../config/config.ini")
+config.read("/home/chenlu/ChatUniTest_GPT3.5/config/config.ini")
 
 process_number = eval(config.get("DEFAULT", "process_number"))
 test_number = eval(config.get("DEFAULT", "test_number"))

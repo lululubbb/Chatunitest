@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ===================================== 配置项（可根据需求修改） =====================================
 # 1. 总项目根目录（包含所有子项目文件夹，如csv_1_b）
-DEFECT4J_PROJECTS_ROOT="/home/chenlu/ChatUniTest/defect4j_projects"
+DEFECT4J_PROJECTS_ROOT="/home/chenlu/refine_test_gen_v5/defect4j_projects"
 # 2. 是否自动注入 Jacoco 插件（true=自动注入，false=仅检查不修改）
 INJECT_JACOCO=true
 # 3. Jacoco 插件版本（推荐使用稳定版，兼容大多数 Maven 项目）
@@ -11,20 +11,21 @@ JACOCO_VERSION="0.8.11"
 # ==================================================================================================
 
 # 函数：打印带颜色的日志（方便区分不同状态）
+# 函数：打印纯文本日志（无颜色代码）
 print_info() {
-  echo -e "\033[34m[INFO] $1\033[0m"
+  echo "[INFO] $1"
 }
 
 print_success() {
-  echo -e "\033[32m[SUCCESS] $1\033[0m"
+  echo "[SUCCESS] $1"
 }
 
 print_warning() {
-  echo -e "\033[33m[WARNING] $1\033[0m"
+  echo "[WARNING] $1"
 }
 
 print_error() {
-  echo -e "\033[31m[ERROR] $1\033[0m"
+  echo "[ERROR] $1"
 }
 
 # 核心函数：处理单个 pom.xml 文件（注入 Jacoco 插件，保留原有核心逻辑）
@@ -131,7 +132,7 @@ ${jacoco_snippet_raw}
   </build>"
     
     # 在 </project> 之前插入完整 <build> 块
-    sed -i.bak "s|</project>|${build_block}\n</project>|" "$pom_path"
+    sed -i.bak "s|@</project>|${build_block}\n</project>|" "$pom_path"
     # 清理 sed 生成的临时备份文件（与我们的自定义备份区分）
     rm -f "${pom_path}.bak"
   fi
